@@ -374,8 +374,7 @@ var Topspeed;
         Static.isInited = false;
         return Static;
     }());
-    Topspeed.initRouter = function (routes, initName, staticRes, options) {
-        if (staticRes === void 0) { staticRes = []; }
+    Topspeed.initApp = function (routes, initName, options) {
         if (options === void 0) { options = {}; }
         // Check whether or not it is initialized multiple times
         if (Static.isInited) {
@@ -396,7 +395,7 @@ var Topspeed;
             navigation: {
                 routes: routes,
                 initName: initName,
-                staticRes: staticRes,
+                staticRes: options['res'],
                 uriProfix: options['uriProfix'],
                 onLoaded: options['onLoaded'],
                 onLoadProgress: options['onLoadProgress']

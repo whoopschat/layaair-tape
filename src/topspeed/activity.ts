@@ -357,7 +357,7 @@ module Topspeed {
         public static isInited = false;
     }
 
-    export const initRouter = function (routes, initName, staticRes: Array<Object> = [], options = {}) {
+    export const initApp = function (routes, initName, options = {}) {
         // Check whether or not it is initialized multiple times
         if (Static.isInited) {
             return;
@@ -374,7 +374,7 @@ module Topspeed {
             navigation: {
                 routes: routes,
                 initName: initName,
-                staticRes: staticRes,
+                staticRes: options['res'],
                 uriProfix: options['uriProfix'],
                 onLoaded: options['onLoaded'],
                 onLoadProgress: options['onLoadProgress']

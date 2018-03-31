@@ -10,13 +10,13 @@ var GameMain = /** @class */ (function () {
                 activity: App.Page2
             }
         };
-        var staticRes = [
-            { url: 'res/atlas/comp.atlas', type: Laya.Loader.ATLAS }
-        ];
         var options = {
-            uriProfix: "baidu://elm/"
+            uriProfix: "baidu://elm/",
+            res: [
+                { url: 'res/atlas/comp.atlas', type: Laya.Loader.ATLAS }
+            ]
         };
-        Topspeed.initRouter(routes, "Page2", staticRes, options);
+        Topspeed.initApp(routes, "Page2", options);
     }
     return GameMain;
 }());
