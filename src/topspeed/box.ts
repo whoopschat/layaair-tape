@@ -1,5 +1,9 @@
 module Topspeed {
 
+    export const RES_ATLAS = Laya.Loader.ATLAS;
+    export const RES_JSON = Laya.Loader.JSON;
+    export const RES_FONT = Laya.Loader.FONT;
+
     export class Box {
 
         ////////////////////////////

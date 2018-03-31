@@ -46,9 +46,13 @@ var App;
         Page2.prototype.onResume = function () {
             var _this = this;
             var page2 = new ui.Page2UI();
+            var socket = new Topspeed.WebSocket();
+            socket.onConnected = function () {
+                _this.link("baidu://elm/Main?name=你好");
+            };
             this.addChild(page2);
             page2.btn.on(Laya.Event.CLICK, this, function () {
-                _this.link("baidu://elm/Main?name=你好");
+                socket.connect("wss://127.0.0.1:9011/websocket");
             });
             page2.btnBack.on(Laya.Event.CLICK, this, function () {
                 _this.finish();

@@ -1,0 +1,20 @@
+{
+  "name": "package-js",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "gulp bundle"
+  },
+  "license": "UNLICENSED",
+  "dependencies": {},
+  "devDependencies": {
+    "array-union": "^1.0.2",
+    "concat-with-sourcemaps": "^1.0.5",
+    "del": "^3.0.0",
+    "gulp": "^4.0.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^3.0.0",
+    "merge-stream": "^1.0.1"
+  },
+  "description": ""
+}

@@ -30,9 +30,13 @@ module App {
 
         protected onResume() {
             let page2 = new ui.Page2UI();
+            let socket = new Topspeed.WebSocket();
+            socket.onConnected = () => {
+                this.link("baidu://elm/Main?name=你好");
+            };
             this.addChild(page2);
             page2.btn.on(Laya.Event.CLICK, this, () => {
-                this.link("baidu://elm/Main?name=你好");
+                socket.connect("wss://127.0.0.1:9011/websocket");
             })
             page2.btnBack.on(Laya.Event.CLICK, this, () => {
                 this.finish();

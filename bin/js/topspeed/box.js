@@ -1,5 +1,8 @@
 var Topspeed;
 (function (Topspeed) {
+    Topspeed.RES_ATLAS = Laya.Loader.ATLAS;
+    Topspeed.RES_JSON = Laya.Loader.JSON;
+    Topspeed.RES_FONT = Laya.Loader.FONT;
     var Box = /** @class */ (function () {
         function Box() {
         }

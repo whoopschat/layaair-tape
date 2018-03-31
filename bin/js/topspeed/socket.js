@@ -1,13 +1,3 @@
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 // socket
 var Topspeed;
 (function (Topspeed) {
@@ -20,51 +10,79 @@ var Topspeed;
         var _a;
     };
     /**
-     * Socket Event
+     * Socket TAG
      */
-    var SocketEvent = /** @class */ (function () {
-        function SocketEvent() {
+    var SocketTAG = /** @class */ (function () {
+        function SocketTAG() {
         }
         // connecting
-        SocketEvent.EVENT_SOCKET_CONNECTE_ING = "event_socket_connect_ing";
+        SocketTAG.EVENT_SOCKET_CONNECTE_ING = "event_socket_connect_ing";
         // connected
-        SocketEvent.EVENT_SOCKET_CONNECTED = "event_socket_connected";
+        SocketTAG.EVENT_SOCKET_CONNECTED = "event_socket_connected";
         // connect closed
-        SocketEvent.EVENT_SOCKET_CONNECT_CLOSDE = "event_socket_connect_closed";
+        SocketTAG.EVENT_SOCKET_CONNECT_CLOSDE = "event_socket_connect_closed";
         // connect error
-        SocketEvent.EVENT_SOCKET_CONNECT_ERROR = "event_socket_connect_error";
+        SocketTAG.EVENT_SOCKET_CONNECT_ERROR = "event_socket_connect_error";
         // connect reveived
-        SocketEvent.EVENT_SOCKET_MESSAGE_REVEIVED = "event_socket_message_reveived";
+        SocketTAG.EVENT_SOCKET_MESSAGE_REVEIVED = "event_socket_message_reveived";
         // connect delivered
-        SocketEvent.EVENT_SOCKET_MESSAGE_DELIVERED = "event_socket_message_delivered";
+        SocketTAG.EVENT_SOCKET_MESSAGE_DELIVERED = "event_socket_message_delivered";
         // connect publish
-        SocketEvent.EVENT_SOCKET_MESSAGE_PUBLISH = "event_socket_message_publish";
-        return SocketEvent;
+        SocketTAG.EVENT_SOCKET_MESSAGE_PUBLISH = "event_socket_message_publish";
+        return SocketTAG;
     }());
-    Topspeed.SocketEvent = SocketEvent;
     /**
      * WEB Socket
      */
-    var WebSocket = /** @class */ (function (_super) {
-        __extends(WebSocket, _super);
+    var WebSocket = /** @class */ (function () {
         function WebSocket() {
-            var _this = _super.call(this) || this;
-            _this.__web_socket__ = null;
-            return _this;
+            this.__web_socket__ = null;
+            this.onConnecting = null;
+            this.onConnected = null;
+            this.onClosed = null;
+            this.onError = null;
+            this.onMessageReveived = null;
         }
         WebSocket.prototype.connect = function (socketUrl) {
+            var _this = this;
             if (this.isConnecting()) {
                 return;
             }
-            printLog(" -----WS---" + SocketEvent.EVENT_SOCKET_CONNECTE_ING);
-            this.event(SocketEvent.EVENT_SOCKET_CONNECTE_ING);
+            printLog(" -----WS---" + SocketTAG.EVENT_SOCKET_CONNECTE_ING);
+            if (this.onConnecting) {
+                this.onConnecting();
+            }
             this.__is_connect_ing__ = true;
             this.__web_socket__ = new (Topspeed.Box.Socket())();
             this.__web_socket__.connectByUrl(socketUrl);
-            this.__web_socket__.on(Topspeed.Box.Event().OPEN, this, this.onSocketConnected);
-            this.__web_socket__.on(Topspeed.Box.Event().CLOSE, this, this.onSocketConnectClosed);
-            this.__web_socket__.on(Topspeed.Box.Event().MESSAGE, this, this.onSocketMessageReveived);
-            this.__web_socket__.on(Topspeed.Box.Event().ERROR, this, this.onSocketConnectError);
+            this.__web_socket__.on(Topspeed.Box.Event().OPEN, this, function () {
+                printLog(" -----WS---" + SocketTAG.EVENT_SOCKET_CONNECTED);
+                if (_this.onConnected) {
+                    _this.onConnected();
+                }
+            });
+            this.__web_socket__.on(Topspeed.Box.Event().CLOSE, this, function (error) {
+                printLog(" -----WS---" + SocketTAG.EVENT_SOCKET_CONNECT_CLOSDE, error);
+                _this.__is_connect__ = false;
+                _this.__is_connect_ing__ = false;
+                if (_this.onClosed) {
+                    _this.onClosed(error);
+                }
+            });
+            this.__web_socket__.on(Topspeed.Box.Event().ERROR, this, function (error) {
+                printLog(" -----WS---" + SocketTAG.EVENT_SOCKET_CONNECT_ERROR, error);
+                _this.__is_connect__ = false;
+                _this.__is_connect_ing__ = false;
+                if (_this.onError) {
+                    _this.onError(error);
+                }
+            });
+            this.__web_socket__.on(Topspeed.Box.Event().MESSAGE, this, function (message) {
+                printLog(" -----WS---" + SocketTAG.EVENT_SOCKET_MESSAGE_REVEIVED, message);
+                if (_this.onMessageReveived) {
+                    _this.onMessageReveived(message);
+                }
+            });
         };
         WebSocket.prototype.disconnect = function () {
             if (this.isConnecting() || this.isConnected()) {
@@ -90,53 +108,31 @@ var Topspeed;
             else if (typeof message === 'string') {
                 messagePayload = message;
             }
-            printLog(" -----WS---" + SocketEvent.EVENT_SOCKET_MESSAGE_PUBLISH, messagePayload);
+            printLog(" -----WS---" + SocketTAG.EVENT_SOCKET_MESSAGE_PUBLISH, messagePayload);
             this.__web_socket__.send(messagePayload);
         };
-        WebSocket.prototype.onSocketConnected = function () {
-            printLog(" -----WS---" + SocketEvent.EVENT_SOCKET_CONNECTED);
-            this.__is_connect__ = true;
-            this.__is_connect_ing__ = false;
-            this.event(SocketEvent.EVENT_SOCKET_CONNECTED);
-        };
-        WebSocket.prototype.onSocketConnectError = function (e) {
-            printLog(" -----WS---" + SocketEvent.EVENT_SOCKET_CONNECT_ERROR, e);
-            this.__web_socket__ = null;
-            this.__is_connect__ = false;
-            this.__is_connect_ing__ = false;
-            this.event(SocketEvent.EVENT_SOCKET_CONNECT_ERROR);
-        };
-        WebSocket.prototype.onSocketConnectClosed = function (e) {
-            printLog(" -----WS---" + SocketEvent.EVENT_SOCKET_CONNECT_CLOSDE, e);
-            this.__web_socket__ = null;
-            this.__is_connect__ = false;
-            this.__is_connect_ing__ = false;
-            this.event(SocketEvent.EVENT_SOCKET_CONNECT_CLOSDE);
-        };
-        WebSocket.prototype.onSocketMessageReveived = function (message) {
-            printLog(" -----WS---" + SocketEvent.EVENT_SOCKET_MESSAGE_REVEIVED, message);
-            this.event(SocketEvent.EVENT_SOCKET_MESSAGE_REVEIVED, message);
-            this.__web_socket__.input.clear();
-        };
         return WebSocket;
-    }(Topspeed.Box.EventDispatcher()));
+    }());
     Topspeed.WebSocket = WebSocket;
     /**
      *  MQTT Socket
      */
-    var MQTTSocket = /** @class */ (function (_super) {
-        __extends(MQTTSocket, _super);
+    var MQTTSocket = /** @class */ (function () {
         function MQTTSocket() {
-            var _this = _super.call(this) || this;
-            _this.__mqtt_socket__ = null;
-            _this.__options__ = {
+            this.__mqtt_socket__ = null;
+            this.__default_options__ = {
                 timeout: 3,
                 keepAliveInterval: 30,
                 cleanSession: true,
                 useSSL: false,
                 reconnect: false
             };
-            return _this;
+            this.onConnecting = null;
+            this.onConnected = null;
+            this.onClosed = null;
+            this.onError = null;
+            this.onMessageReveived = null;
+            this.onMessageDelivered = null;
         }
         MQTTSocket.prototype.connect = function (host, port, clientId, username, password, options) {
             var _this = this;
@@ -144,34 +140,59 @@ var Topspeed;
             if (this.isConnecting()) {
                 return;
             }
-            printLog(" -----MQTT---" + SocketEvent.EVENT_SOCKET_CONNECTE_ING);
-            this.event(SocketEvent.EVENT_SOCKET_CONNECTE_ING);
+            printLog(" -----MQTT---" + SocketTAG.EVENT_SOCKET_CONNECTE_ING);
+            if (this.onConnecting) {
+                this.onConnecting();
+            }
             this.__is_connect_ing__ = true;
             if (window.hasOwnProperty("Paho")) {
                 this.__mqtt_socket__ = new window['Paho'].MQTT.Client(host, Number(port), clientId);
                 this.__mqtt_socket__.onConnectionLost = function (error) {
-                    _this.onSocketConnectClosed(error);
+                    printLog(" -----MQTT---" + SocketTAG.EVENT_SOCKET_CONNECT_CLOSDE, error);
+                    _this.__is_connect__ = false;
+                    _this.__is_connect_ing__ = false;
+                    if (_this.onClosed) {
+                        _this.onClosed(error);
+                    }
                 };
                 this.__mqtt_socket__.onMessageArrived = function (msg) {
-                    _this.onSocketMessageReveived(msg);
+                    printLog(" -----MQTT---" + SocketTAG.EVENT_SOCKET_MESSAGE_REVEIVED, _this.formatMessage(msg));
+                    if (_this.onMessageReveived) {
+                        _this.onMessageReveived(msg);
+                    }
                 };
                 this.__mqtt_socket__.onMessageDelivered = function (msg) {
-                    _this.onSocketMessageDelivered(msg);
+                    printLog(" -----MQTT---" + SocketTAG.EVENT_SOCKET_MESSAGE_DELIVERED, _this.formatMessage(msg));
+                    if (_this.onMessageDelivered) {
+                        _this.onMessageDelivered(msg);
+                    }
                 };
                 ;
-                this.__mqtt_socket__.connect(Object.assign(this.__options__, {
+                this.__mqtt_socket__.connect(Object.assign({}, this.__default_options__, {
                     userName: username,
                     password: password,
                     onSuccess: function () {
-                        _this.onSocketConnected();
+                        printLog(" -----MQTT---" + SocketTAG.EVENT_SOCKET_CONNECTED);
+                        if (_this.onConnected) {
+                            _this.onConnected();
+                        }
                     },
-                    onFailure: function (e) {
-                        _this.onSocketConnectError(e);
+                    onFailure: function (error) {
+                        printLog(" -----MQTT---" + SocketTAG.EVENT_SOCKET_CONNECT_ERROR, error);
+                        _this.__is_connect__ = false;
+                        _this.__is_connect_ing__ = false;
+                        if (_this.onError) {
+                            _this.onError(error);
+                        }
                     }
                 }, options));
             }
             else {
-                this.onSocketConnectError("Cannot find name 'Paho'.");
+                var error = "Cannot find mqtt client support.";
+                printLog(" -----MQTT---" + SocketTAG.EVENT_SOCKET_CONNECT_ERROR, error);
+                if (this.onError) {
+                    this.onError(error);
+                }
             }
         };
         MQTTSocket.prototype.disconnect = function () {
@@ -205,39 +226,14 @@ var Topspeed;
                 mqttMessage.destinationName = topic;
                 mqttMessage.qos = qos;
                 mqttMessage.retained = retained;
-                printLog(" -----MQTT---" + SocketEvent.EVENT_SOCKET_MESSAGE_PUBLISH, mqttMessage.topic + " " + mqttMessage.payloadString);
+                printLog(" -----MQTT---" + SocketTAG.EVENT_SOCKET_MESSAGE_PUBLISH, this.formatMessage(mqttMessage));
                 this.__mqtt_socket__.send(mqttMessage);
             }
         };
-        MQTTSocket.prototype.onSocketConnected = function () {
-            printLog(" -----MQTT---" + SocketEvent.EVENT_SOCKET_CONNECTED);
-            this.__is_connect__ = true;
-            this.__is_connect_ing__ = false;
-            this.event(SocketEvent.EVENT_SOCKET_CONNECTED);
-        };
-        MQTTSocket.prototype.onSocketConnectError = function (error) {
-            printLog(" -----MQTT---" + SocketEvent.EVENT_SOCKET_CONNECT_ERROR, error);
-            this.__mqtt_socket__ = null;
-            this.__is_connect__ = false;
-            this.__is_connect_ing__ = false;
-            this.event(SocketEvent.EVENT_SOCKET_CONNECT_ERROR, error);
-        };
-        MQTTSocket.prototype.onSocketConnectClosed = function (error) {
-            printLog(" -----MQTT---" + SocketEvent.EVENT_SOCKET_CONNECT_CLOSDE, error);
-            this.__mqtt_socket__ = null;
-            this.__is_connect__ = false;
-            this.__is_connect_ing__ = false;
-            this.event(SocketEvent.EVENT_SOCKET_CONNECT_CLOSDE, error);
-        };
-        MQTTSocket.prototype.onSocketMessageDelivered = function (message) {
-            printLog(" -----MQTT---" + SocketEvent.EVENT_SOCKET_MESSAGE_DELIVERED, message.topic + " " + message.payloadString);
-            this.event(SocketEvent.EVENT_SOCKET_MESSAGE_DELIVERED, message);
-        };
-        MQTTSocket.prototype.onSocketMessageReveived = function (message) {
-            printLog(" -----MQTT---" + SocketEvent.EVENT_SOCKET_MESSAGE_REVEIVED, message.topic + " " + message.payloadString);
-            this.event(SocketEvent.EVENT_SOCKET_MESSAGE_REVEIVED, message);
+        MQTTSocket.prototype.formatMessage = function (message) {
+            return message.topic + " " + message.payloadString;
         };
         return MQTTSocket;
-    }(Topspeed.Box.EventDispatcher()));
+    }());
     Topspeed.MQTTSocket = MQTTSocket;
 })(Topspeed || (Topspeed = {}));
