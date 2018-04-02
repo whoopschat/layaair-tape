@@ -28,7 +28,7 @@ var App;
             page1.btn.on(Laya.Event.CLICK, this, function () {
                 var message = new ui.MessageToastUI();
                 message.text.text = _this.routeName + JSON.stringify(_this.params);
-                Topspeed.Toast.show("msg", message, 500, 0.5, 0.2);
+                Tape.Toast.show("msg", message, 500, 0.5, 0.2);
                 _this.navigate("Page2");
             });
             page1.btnBack.on(Laya.Event.CLICK, this, function () {
@@ -36,7 +36,7 @@ var App;
             });
         };
         return Main;
-    }(Topspeed.Activity));
+    }(Tape.Activity));
     App.Main = Main;
     var Page2 = /** @class */ (function (_super) {
         __extends(Page2, _super);
@@ -46,19 +46,20 @@ var App;
         Page2.prototype.onResume = function () {
             var _this = this;
             var page2 = new ui.Page2UI();
-            var socket = new Topspeed.WebSocket();
+            var socket = new Tape.WebSocket();
             socket.onConnected = function () {
                 _this.link("baidu://elm/Main?name=你好");
             };
             this.addChild(page2);
             page2.btn.on(Laya.Event.CLICK, this, function () {
-                socket.connect("wss://127.0.0.1:9011/websocket");
+                _this.link("baidu://elm/Main?name=你好");
+                // socket.connect("wss://127.0.0.1:9011/websocket");
             });
             page2.btnBack.on(Laya.Event.CLICK, this, function () {
                 _this.finish();
             });
         };
         return Page2;
-    }(Topspeed.Activity));
+    }(Tape.Activity));
     App.Page2 = Page2;
 })(App || (App = {}));

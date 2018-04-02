@@ -1,6 +1,9 @@
-// logger
-var Topspeed;
-(function (Topspeed) {
+// utils
+var Tape;
+(function (Tape) {
+    /**
+     * Logger
+     */
     var Logger = /** @class */ (function () {
         function Logger() {
         }
@@ -63,5 +66,42 @@ var Topspeed;
         Logger.__is_debug__ = true;
         return Logger;
     }());
-    Topspeed.Logger = Logger;
-})(Topspeed || (Topspeed = {}));
+    Tape.Logger = Logger;
+    /**
+     * Toast
+     */
+    var Toast = /** @class */ (function () {
+        function Toast() {
+        }
+        Toast.show = function (type, view, duration, widthRatio, heightRatio) {
+            if (duration === void 0) { duration = 500; }
+            if (widthRatio === void 0) { widthRatio = 0.5; }
+            if (heightRatio === void 0) { heightRatio = 0.618; }
+            if (view && view.parent == null) {
+                if (!this.__toast_object__.hasOwnProperty(type)) {
+                    this.__toast_object__[type] = new Array();
+                }
+                var list_1 = this.__toast_object__[type];
+                view.x = Tape.Box.width() * widthRatio;
+                view.y = Tape.Box.height() * heightRatio;
+                view.alpha = 0;
+                view.pivot(view.width / 2, view.height / 2);
+                Tape.Box.tweenTo(view, { alpha: 1 }, duration, Tape.Box.Ease.quintOut);
+                Tape.Box.tweenTo(view, { alpha: 0 }, duration, Tape.Box.Ease.quintIn, function () {
+                    list_1.splice(list_1.indexOf(view), 1);
+                    view.removeSelf();
+                }, duration);
+                Tape.Box.drawView(view);
+                for (var i in list_1) {
+                    if (list_1[i]) {
+                        list_1[i].y -= list_1[i].height - 5;
+                    }
+                }
+                list_1.push(view);
+            }
+        };
+        Toast.__toast_object__ = {};
+        return Toast;
+    }());
+    Tape.Toast = Toast;
+})(Tape || (Tape = {}));

@@ -1,29 +1,20 @@
-var Topspeed;
-(function (Topspeed) {
-    Topspeed.RES_ATLAS = Laya.Loader.ATLAS;
-    Topspeed.RES_JSON = Laya.Loader.JSON;
-    Topspeed.RES_FONT = Laya.Loader.FONT;
+var Tape;
+(function (Tape) {
     var Box = /** @class */ (function () {
         function Box() {
         }
-        ////////////////////////////
-        //// imports module
-        ////////////////////////////
-        Box.Component = function () {
-            return Laya.Component;
-        };
-        Box.EventDispatcher = function () {
-            return Laya.EventDispatcher;
-        };
-        Box.Socket = function () {
-            return Laya.Socket;
-        };
-        Box.Event = function () {
-            return Laya.Event;
-        };
-        Box.TweenEase = function () {
-            return Laya.Ease;
-        };
+        // RES TYPE
+        Box.ATLAS = Laya.Loader.ATLAS;
+        Box.JSON = Laya.Loader.JSON;
+        Box.FONT = Laya.Loader.FONT;
+        Box.SOUND = Laya.Loader.SOUND;
+        Box.IMAGE = Laya.Loader.IMAGE;
+        // Component
+        Box.Component = Laya.Component;
+        Box.EventDispatcher = Laya.EventDispatcher;
+        Box.Socket = Laya.Socket;
+        Box.Event = Laya.Event;
+        Box.Ease = Laya.Ease;
         ////////////////////////////
         //// imports method
         ////////////////////////////
@@ -33,7 +24,10 @@ var Topspeed;
         Box.tweenFrom = function (target, props, duration, ease, complete, delay, coverBefore, autoRecover) {
             Laya.Tween.from(target, props, duration, ease, Laya.Handler.create(target, complete), delay, coverBefore, autoRecover);
         };
-        Box.loadRes = function (res, caller, handler, progress) {
+        /**
+         * load res
+         */
+        Box.load = function (res, caller, handler, progress) {
             if (handler === void 0) { handler = null; }
             if (progress === void 0) { progress = null; }
             Laya.loader.load(res, Laya.Handler.create(caller, handler), Laya.Handler.create(caller, progress));
@@ -49,5 +43,5 @@ var Topspeed;
         };
         return Box;
     }());
-    Topspeed.Box = Box;
-})(Topspeed || (Topspeed = {}));
+    Tape.Box = Box;
+})(Tape || (Tape = {}));

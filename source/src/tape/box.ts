@@ -1,34 +1,19 @@
-module Topspeed {
-
-    export const RES_ATLAS = Laya.Loader.ATLAS;
-    export const RES_JSON = Laya.Loader.JSON;
-    export const RES_FONT = Laya.Loader.FONT;
+module Tape {
 
     export class Box {
+        // RES TYPE
+        public static ATLAS = Laya.Loader.ATLAS;
+        public static JSON = Laya.Loader.JSON;
+        public static FONT = Laya.Loader.FONT;
+        public static SOUND = Laya.Loader.SOUND;
+        public static IMAGE = Laya.Loader.IMAGE;
 
-        ////////////////////////////
-        //// imports module
-        ////////////////////////////
-
-        public static Component = function () {
-            return Laya.Component
-        }
-
-        public static EventDispatcher = function () {
-            return Laya.EventDispatcher
-        }
-
-        public static Socket = function () {
-            return Laya.Socket
-        }
-
-        public static Event = function () {
-            return Laya.Event
-        }
-
-        public static TweenEase = function () {
-            return Laya.Ease
-        }
+        // Component
+        public static Component = Laya.Component;
+        public static EventDispatcher = Laya.EventDispatcher;
+        public static Socket = Laya.Socket;
+        public static Event = Laya.Event;
+        public static Ease = Laya.Ease;
 
         ////////////////////////////
         //// imports method
@@ -42,7 +27,10 @@ module Topspeed {
             Laya.Tween.from(target, props, duration, ease, Laya.Handler.create(target, complete), delay, coverBefore, autoRecover);
         }
 
-        public static loadRes = function (res, caller: any, handler: Function = null, progress: Function = null) {
+        /**
+         * load res
+         */
+        public static load = function (res, caller: any, handler: Function = null, progress: Function = null) {
             Laya.loader.load(res, Laya.Handler.create(caller, handler), Laya.Handler.create(caller, progress));
         }
 

@@ -16,7 +16,7 @@ class GameMain {
                 { url: 'res/atlas/comp.atlas', type: Laya.Loader.ATLAS }
             ]
         };
-        Topspeed.initApp(routes, "Page2", options);
+        Tape.initApp(routes, "Page2", options);
     }
 }
 new GameMain();

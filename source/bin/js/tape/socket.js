@@ -1,12 +1,12 @@
 // socket
-var Topspeed;
-(function (Topspeed) {
+var Tape;
+(function (Tape) {
     var printLog = function (message) {
         var optionalParams = [];
         for (var _i = 1; _i < arguments.length; _i++) {
             optionalParams[_i - 1] = arguments[_i];
         }
-        (_a = Topspeed.Logger).log.apply(_a, [message].concat(optionalParams));
+        (_a = Tape.Logger).log.apply(_a, [message].concat(optionalParams));
         var _a;
     };
     /**
@@ -53,15 +53,15 @@ var Topspeed;
                 this.onConnecting();
             }
             this.__is_connect_ing__ = true;
-            this.__web_socket__ = new (Topspeed.Box.Socket())();
+            this.__web_socket__ = new Tape.Box.Socket();
             this.__web_socket__.connectByUrl(socketUrl);
-            this.__web_socket__.on(Topspeed.Box.Event().OPEN, this, function () {
+            this.__web_socket__.on(Tape.Box.Event.OPEN, this, function () {
                 printLog(" -----WS---" + SocketTAG.EVENT_SOCKET_CONNECTED);
                 if (_this.onConnected) {
                     _this.onConnected();
                 }
             });
-            this.__web_socket__.on(Topspeed.Box.Event().CLOSE, this, function (error) {
+            this.__web_socket__.on(Tape.Box.Event.CLOSE, this, function (error) {
                 printLog(" -----WS---" + SocketTAG.EVENT_SOCKET_CONNECT_CLOSDE, error);
                 _this.__is_connect__ = false;
                 _this.__is_connect_ing__ = false;
@@ -69,7 +69,7 @@ var Topspeed;
                     _this.onClosed(error);
                 }
             });
-            this.__web_socket__.on(Topspeed.Box.Event().ERROR, this, function (error) {
+            this.__web_socket__.on(Tape.Box.Event.ERROR, this, function (error) {
                 printLog(" -----WS---" + SocketTAG.EVENT_SOCKET_CONNECT_ERROR, error);
                 _this.__is_connect__ = false;
                 _this.__is_connect_ing__ = false;
@@ -77,7 +77,7 @@ var Topspeed;
                     _this.onError(error);
                 }
             });
-            this.__web_socket__.on(Topspeed.Box.Event().MESSAGE, this, function (message) {
+            this.__web_socket__.on(Tape.Box.Event.MESSAGE, this, function (message) {
                 printLog(" -----WS---" + SocketTAG.EVENT_SOCKET_MESSAGE_REVEIVED, message);
                 if (_this.onMessageReveived) {
                     _this.onMessageReveived(message);
@@ -113,7 +113,7 @@ var Topspeed;
         };
         return WebSocket;
     }());
-    Topspeed.WebSocket = WebSocket;
+    Tape.WebSocket = WebSocket;
     /**
      *  MQTT Socket
      */
@@ -235,5 +235,5 @@ var Topspeed;
         };
         return MQTTSocket;
     }());
-    Topspeed.MQTTSocket = MQTTSocket;
-})(Topspeed || (Topspeed = {}));
+    Tape.MQTTSocket = MQTTSocket;
+})(Tape || (Tape = {}));

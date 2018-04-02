@@ -1,8 +1,8 @@
 // socket
-module Topspeed {
+module Tape {
 
     const printLog = function (message?: any, ...optionalParams: any[]) {
-        Topspeed.Logger.log(message, ...optionalParams);
+        Tape.Logger.log(message, ...optionalParams);
     }
 
     /**
@@ -52,15 +52,15 @@ module Topspeed {
                 this.onConnecting();
             }
             this.__is_connect_ing__ = true;
-            this.__web_socket__ = new (Topspeed.Box.Socket())();
+            this.__web_socket__ = new Tape.Box.Socket();
             this.__web_socket__.connectByUrl(socketUrl);
-            this.__web_socket__.on(Topspeed.Box.Event().OPEN, this, () => {
+            this.__web_socket__.on(Tape.Box.Event.OPEN, this, () => {
                 printLog(" -----WS---" + SocketTAG.EVENT_SOCKET_CONNECTED);
                 if (this.onConnected) {
                     this.onConnected();
                 }
             });
-            this.__web_socket__.on(Topspeed.Box.Event().CLOSE, this, (error) => {
+            this.__web_socket__.on(Tape.Box.Event.CLOSE, this, (error) => {
                 printLog(" -----WS---" + SocketTAG.EVENT_SOCKET_CONNECT_CLOSDE, error);
                 this.__is_connect__ = false;
                 this.__is_connect_ing__ = false;
@@ -68,7 +68,7 @@ module Topspeed {
                     this.onClosed(error);
                 }
             });
-            this.__web_socket__.on(Topspeed.Box.Event().ERROR, this, (error) => {
+            this.__web_socket__.on(Tape.Box.Event.ERROR, this, (error) => {
                 printLog(" -----WS---" + SocketTAG.EVENT_SOCKET_CONNECT_ERROR, error);
                 this.__is_connect__ = false;
                 this.__is_connect_ing__ = false;
@@ -76,7 +76,7 @@ module Topspeed {
                     this.onError(error);
                 }
             });
-            this.__web_socket__.on(Topspeed.Box.Event().MESSAGE, this, (message) => {
+            this.__web_socket__.on(Tape.Box.Event.MESSAGE, this, (message) => {
                 printLog(" -----WS---" + SocketTAG.EVENT_SOCKET_MESSAGE_REVEIVED, message);
                 if (this.onMessageReveived) {
                     this.onMessageReveived(message);

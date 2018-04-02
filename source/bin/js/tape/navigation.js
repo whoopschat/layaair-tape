@@ -8,128 +8,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var Topspeed;
-(function (Topspeed) {
-    /////////////////////////////////////////////////////
-    //////// Component
-    /////////////////////////////////////////////////////
-    var PropsComponent = /** @class */ (function (_super) {
-        __extends(PropsComponent, _super);
-        function PropsComponent(props) {
-            if (props === void 0) { props = {}; }
-            var _this = _super.call(this) || this;
-            _this.props = {};
-            _this.props = Object.assign({}, props);
-            return _this;
-        }
-        return PropsComponent;
-    }(Topspeed.Box.Component()));
-    var Activity = /** @class */ (function (_super) {
-        __extends(Activity, _super);
-        function Activity(props) {
-            if (props === void 0) { props = {}; }
-            var _this = _super.call(this, props) || this;
-            _this.routeName = "";
-            _this.params = {};
-            _this.params = Object.assign({}, props['params']);
-            _this.routeName = props['routeName'] || "";
-            return _this;
-        }
-        Activity.prototype.onCreate = function () {
-        };
-        Activity.prototype.onResume = function () {
-        };
-        Activity.prototype.onPause = function () {
-        };
-        Activity.prototype.onDestroy = function () {
-        };
-        ///////////////////////
-        /// Navigator
-        ///////////////////////
-        Activity.prototype.navigate = function (name, params) {
-            if (params === void 0) { params = {}; }
-            if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].navigate(name, params);
-            }
-        };
-        Activity.prototype.link = function (url) {
-            if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].link(url);
-            }
-        };
-        Activity.prototype.finish = function (n) {
-            if (n === void 0) { n = 0; }
-            if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].finish(n);
-            }
-        };
-        Activity.prototype.finishByName = function (name) {
-            if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].finishByName(name);
-            }
-        };
-        Activity.prototype.pop = function (n) {
-            if (n === void 0) { n = 0; }
-            if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].pop(n);
-            }
-        };
-        Activity.prototype.popByName = function (name) {
-            if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].popByName(name);
-            }
-        };
-        Activity.prototype.popToTop = function () {
-            if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].popToTop();
-            }
-        };
-        ///////////////////////
-        /// Logger
-        ///////////////////////
-        Activity.prototype.log = function (message) {
-            var optionalParams = [];
-            for (var _i = 1; _i < arguments.length; _i++) {
-                optionalParams[_i - 1] = arguments[_i];
-            }
-            (_a = Topspeed.Logger).log.apply(_a, [message].concat(optionalParams));
-            var _a;
-        };
-        Activity.prototype.error = function (message) {
-            var optionalParams = [];
-            for (var _i = 1; _i < arguments.length; _i++) {
-                optionalParams[_i - 1] = arguments[_i];
-            }
-            (_a = Topspeed.Logger).error.apply(_a, [message].concat(optionalParams));
-            var _a;
-        };
-        Activity.prototype.info = function (message) {
-            var optionalParams = [];
-            for (var _i = 1; _i < arguments.length; _i++) {
-                optionalParams[_i - 1] = arguments[_i];
-            }
-            (_a = Topspeed.Logger).info.apply(_a, [message].concat(optionalParams));
-            var _a;
-        };
-        Activity.prototype.warn = function (message) {
-            var optionalParams = [];
-            for (var _i = 1; _i < arguments.length; _i++) {
-                optionalParams[_i - 1] = arguments[_i];
-            }
-            (_a = Topspeed.Logger).warn.apply(_a, [message].concat(optionalParams));
-            var _a;
-        };
-        Activity.prototype.debug = function (message) {
-            var optionalParams = [];
-            for (var _i = 1; _i < arguments.length; _i++) {
-                optionalParams[_i - 1] = arguments[_i];
-            }
-            (_a = Topspeed.Logger).debug.apply(_a, [message].concat(optionalParams));
-            var _a;
-        };
-        return Activity;
-    }(PropsComponent));
-    Topspeed.Activity = Activity;
+var Tape;
+(function (Tape) {
     ///////////////////////////////////
     //// Stack
     ///////////////////////////////////
@@ -145,7 +25,7 @@ var Topspeed;
             _this.routeActivity = null;
             _this.routeName = routeName;
             if (res != null && res.length > 0) {
-                Topspeed.Box.loadRes(res, _this, function () {
+                Tape.Box.load(res, _this, function () {
                     var act = new activity(props);
                     _this.create(act);
                     if (loaded) {
@@ -186,7 +66,7 @@ var Topspeed;
             this.routeActivity.onPause();
         };
         return StackLoader;
-    }(PropsComponent));
+    }(Tape.PropsComponent));
     var Stack = /** @class */ (function () {
         function Stack(navigator) {
             this.__navigator__ = null;
@@ -374,7 +254,7 @@ var Topspeed;
         Static.isInited = false;
         return Static;
     }());
-    Topspeed.initApp = function (routes, initName, options) {
+    Tape.initApp = function (routes, initName, options) {
         if (options === void 0) { options = {}; }
         // Check whether or not it is initialized multiple times
         if (Static.isInited) {
@@ -390,8 +270,8 @@ var Topspeed;
                 return _this;
             }
             return class_1;
-        }(PropsComponent));
-        Topspeed.Box.drawView(new StackNavigator({
+        }(Tape.PropsComponent));
+        Tape.Box.drawView(new StackNavigator({
             navigation: {
                 routes: routes,
                 initName: initName,
@@ -403,4 +283,4 @@ var Topspeed;
         }));
         Static.isInited = true;
     };
-})(Topspeed || (Topspeed = {}));
+})(Tape || (Tape = {}));
