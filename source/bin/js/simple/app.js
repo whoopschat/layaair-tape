@@ -13,27 +13,28 @@ var App;
     var Main = /** @class */ (function (_super) {
         __extends(Main, _super);
         function Main() {
-            return _super !== null && _super.apply(this, arguments) || this;
+            var _this = _super !== null && _super.apply(this, arguments) || this;
+            _this.page1 = new ui.Page1UI();
+            return _this;
         }
         Main.prototype.onCreate = function () {
-        };
-        Main.prototype.onPause = function () {
-            this.debug("onPause");
-        };
-        Main.prototype.onResume = function () {
             var _this = this;
-            this.debug("onResume");
-            var page1 = new ui.Page1UI();
-            this.addChild(page1);
-            page1.btn.on(Laya.Event.CLICK, this, function () {
+            this.addChild(this.page1);
+            this.page1.btn.on(Laya.Event.CLICK, this, function () {
                 var message = new ui.MessageToastUI();
                 message.text.text = _this.routeName + JSON.stringify(_this.params);
                 Tape.Toast.show("msg", message, 500, 0.5, 0.2);
                 _this.navigate("Page2");
             });
-            page1.btnBack.on(Laya.Event.CLICK, this, function () {
+            this.page1.btnBack.on(Laya.Event.CLICK, this, function () {
                 _this.finish();
             });
+        };
+        Main.prototype.onPause = function () {
+            this.debug("onPause");
+        };
+        Main.prototype.onResume = function () {
+            this.debug("onResume");
         };
         return Main;
     }(Tape.Activity));
@@ -41,21 +42,22 @@ var App;
     var Page2 = /** @class */ (function (_super) {
         __extends(Page2, _super);
         function Page2() {
-            return _super !== null && _super.apply(this, arguments) || this;
+            var _this = _super !== null && _super.apply(this, arguments) || this;
+            _this.page2 = new ui.Page2UI();
+            return _this;
         }
-        Page2.prototype.onResume = function () {
+        Page2.prototype.onCreate = function () {
             var _this = this;
-            var page2 = new ui.Page2UI();
             var socket = new Tape.WebSocket();
             socket.onConnected = function () {
                 _this.link("baidu://elm/Main?name=你好");
             };
-            this.addChild(page2);
-            page2.btn.on(Laya.Event.CLICK, this, function () {
-                _this.link("baidu://elm/Main?name=你好");
-                // socket.connect("wss://127.0.0.1:9011/websocket");
+            this.addChild(this.page2);
+            this.page2.btn.on(Laya.Event.CLICK, this, function () {
+                // this.link("baidu://elm/Main?name=你好");
+                socket.connect("wss://127.0.0.1:9011/websocket");
             });
-            page2.btnBack.on(Laya.Event.CLICK, this, function () {
+            this.page2.btnBack.on(Laya.Event.CLICK, this, function () {
                 _this.finish();
             });
         };

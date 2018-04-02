@@ -3,9 +3,7 @@ var GameMain = /** @class */ (function () {
     function GameMain() {
         Laya.init(600, 400);
         var routes = {
-            "Main": {
-                activity: App.Main
-            },
+            "Main": App.Main.ROUTE(),
             "Page2": {
                 activity: App.Page2
             }

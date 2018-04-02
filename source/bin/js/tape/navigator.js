@@ -89,7 +89,7 @@ var Tape;
             this.__load_progress_handler__ = navigator.props['navigation']['onLoadProgress'];
             this.__routes__ = navigator.props['navigation']['routes'];
             this.__init_name__ = navigator.props['navigation']['initName'];
-            this.__static_res__ = navigator.props['navigation']['staticRes'];
+            this.__static_res__ = navigator.props['navigation']['staticRes'] || [];
             this.__uri_profix__ = navigator.props['navigation']['uriProfix'] || "://";
             this.__file_version__ = navigator.props['navigation']['fileVersion'];
         }
@@ -114,9 +114,11 @@ var Tape;
                 var route = this.__routes__[name];
                 var activity = route['activity'];
                 var resArray_1 = [];
-                this.__static_res__.forEach(function (res) {
-                    resArray_1.push(res);
-                });
+                if (this.__static_res__) {
+                    this.__static_res__.forEach(function (res) {
+                        resArray_1.push(res);
+                    });
+                }
                 if (route.hasOwnProperty('res')
                     && typeof route['res'] === 'object'
                     && route['res'].length > 0) {

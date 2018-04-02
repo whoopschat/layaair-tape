@@ -204,6 +204,13 @@ var Tape;
             _this.routeName = props['routeName'] || "";
             return _this;
         }
+        Activity.ROUTE = function (options) {
+            if (options === void 0) { options = {}; }
+            return Object.assign({}, options, {
+                activity: this
+            });
+        };
+        ;
         Activity.prototype.onCreate = function () {
         };
         Activity.prototype.onResume = function () {
@@ -392,7 +399,7 @@ var Tape;
             this.__load_progress_handler__ = navigator.props['navigation']['onLoadProgress'];
             this.__routes__ = navigator.props['navigation']['routes'];
             this.__init_name__ = navigator.props['navigation']['initName'];
-            this.__static_res__ = navigator.props['navigation']['staticRes'];
+            this.__static_res__ = navigator.props['navigation']['staticRes'] || [];
             this.__uri_profix__ = navigator.props['navigation']['uriProfix'] || "://";
             this.__file_version__ = navigator.props['navigation']['fileVersion'];
         }
@@ -417,9 +424,11 @@ var Tape;
                 var route = this.__routes__[name];
                 var activity = route['activity'];
                 var resArray_1 = [];
-                this.__static_res__.forEach(function (res) {
-                    resArray_1.push(res);
-                });
+                if (this.__static_res__) {
+                    this.__static_res__.forEach(function (res) {
+                        resArray_1.push(res);
+                    });
+                }
                 if (route.hasOwnProperty('res')
                     && typeof route['res'] === 'object'
                     && route['res'].length > 0) {
@@ -629,19 +638,19 @@ var Tape;
         function SocketTAG() {
         }
         // connecting
-        SocketTAG.EVENT_SOCKET_CONNECTE_ING = "event_socket_connect_ing";
+        SocketTAG.SOCKET_CONNECTE_ING = "connect_ing";
         // connected
-        SocketTAG.EVENT_SOCKET_CONNECTED = "event_socket_connected";
+        SocketTAG.SOCKET_CONNECTED = "connected";
         // connect closed
-        SocketTAG.EVENT_SOCKET_CONNECT_CLOSDE = "event_socket_connect_closed";
+        SocketTAG.SOCKET_CONNECT_CLOSDE = "connect_closed";
         // connect error
-        SocketTAG.EVENT_SOCKET_CONNECT_ERROR = "event_socket_connect_error";
+        SocketTAG.SOCKET_CONNECT_ERROR = "connect_error";
         // connect reveived
-        SocketTAG.EVENT_SOCKET_MESSAGE_REVEIVED = "event_socket_message_reveived";
+        SocketTAG.SOCKET_MESSAGE_REVEIVED = "message_reveived";
         // connect delivered
-        SocketTAG.EVENT_SOCKET_MESSAGE_DELIVERED = "event_socket_message_delivered";
+        SocketTAG.SOCKET_MESSAGE_DELIVERED = "message_delivered";
         // connect publish
-        SocketTAG.EVENT_SOCKET_MESSAGE_PUBLISH = "event_socket_message_publish";
+        SocketTAG.EVENT_SOCKET_MESSAGE_PUBLISH = "message_publish";
         return SocketTAG;
     }());
     /**
@@ -661,7 +670,7 @@ var Tape;
             if (this.isConnecting()) {
                 return;
             }
-            printLog(" -----WS---" + SocketTAG.EVENT_SOCKET_CONNECTE_ING);
+            printLog(" -----WS---" + SocketTAG.SOCKET_CONNECTE_ING);
             if (this.onConnecting) {
                 this.onConnecting();
             }
@@ -669,13 +678,13 @@ var Tape;
             this.__web_socket__ = new Tape.Box.Socket();
             this.__web_socket__.connectByUrl(socketUrl);
             this.__web_socket__.on(Tape.Box.Event.OPEN, this, function () {
-                printLog(" -----WS---" + SocketTAG.EVENT_SOCKET_CONNECTED);
+                printLog(" -----WS---" + SocketTAG.SOCKET_CONNECTED);
                 if (_this.onConnected) {
                     _this.onConnected();
                 }
             });
             this.__web_socket__.on(Tape.Box.Event.CLOSE, this, function (error) {
-                printLog(" -----WS---" + SocketTAG.EVENT_SOCKET_CONNECT_CLOSDE, error);
+                printLog(" -----WS---" + SocketTAG.SOCKET_CONNECT_CLOSDE, error);
                 _this.__is_connect__ = false;
                 _this.__is_connect_ing__ = false;
                 if (_this.onClosed) {
@@ -683,7 +692,7 @@ var Tape;
                 }
             });
             this.__web_socket__.on(Tape.Box.Event.ERROR, this, function (error) {
-                printLog(" -----WS---" + SocketTAG.EVENT_SOCKET_CONNECT_ERROR, error);
+                printLog(" -----WS---" + SocketTAG.SOCKET_CONNECT_ERROR, error);
                 _this.__is_connect__ = false;
                 _this.__is_connect_ing__ = false;
                 if (_this.onError) {
@@ -691,7 +700,7 @@ var Tape;
                 }
             });
             this.__web_socket__.on(Tape.Box.Event.MESSAGE, this, function (message) {
-                printLog(" -----WS---" + SocketTAG.EVENT_SOCKET_MESSAGE_REVEIVED, message);
+                printLog(" -----WS---" + SocketTAG.SOCKET_MESSAGE_REVEIVED, message);
                 if (_this.onMessageReveived) {
                     _this.onMessageReveived(message);
                 }
@@ -753,7 +762,7 @@ var Tape;
             if (this.isConnecting()) {
                 return;
             }
-            printLog(" -----MQTT---" + SocketTAG.EVENT_SOCKET_CONNECTE_ING);
+            printLog(" -----MQTT---" + SocketTAG.SOCKET_CONNECTE_ING);
             if (this.onConnecting) {
                 this.onConnecting();
             }
@@ -761,7 +770,7 @@ var Tape;
             if (window.hasOwnProperty("Paho")) {
                 this.__mqtt_socket__ = new window['Paho'].MQTT.Client(host, Number(port), clientId);
                 this.__mqtt_socket__.onConnectionLost = function (error) {
-                    printLog(" -----MQTT---" + SocketTAG.EVENT_SOCKET_CONNECT_CLOSDE, error);
+                    printLog(" -----MQTT---" + SocketTAG.SOCKET_CONNECT_CLOSDE, error);
                     _this.__is_connect__ = false;
                     _this.__is_connect_ing__ = false;
                     if (_this.onClosed) {
@@ -769,13 +778,13 @@ var Tape;
                     }
                 };
                 this.__mqtt_socket__.onMessageArrived = function (msg) {
-                    printLog(" -----MQTT---" + SocketTAG.EVENT_SOCKET_MESSAGE_REVEIVED, _this.formatMessage(msg));
+                    printLog(" -----MQTT---" + SocketTAG.SOCKET_MESSAGE_REVEIVED, _this.formatMessage(msg));
                     if (_this.onMessageReveived) {
                         _this.onMessageReveived(msg);
                     }
                 };
                 this.__mqtt_socket__.onMessageDelivered = function (msg) {
-                    printLog(" -----MQTT---" + SocketTAG.EVENT_SOCKET_MESSAGE_DELIVERED, _this.formatMessage(msg));
+                    printLog(" -----MQTT---" + SocketTAG.SOCKET_MESSAGE_DELIVERED, _this.formatMessage(msg));
                     if (_this.onMessageDelivered) {
                         _this.onMessageDelivered(msg);
                     }
@@ -785,13 +794,13 @@ var Tape;
                     userName: username,
                     password: password,
                     onSuccess: function () {
-                        printLog(" -----MQTT---" + SocketTAG.EVENT_SOCKET_CONNECTED);
+                        printLog(" -----MQTT---" + SocketTAG.SOCKET_CONNECTED);
                         if (_this.onConnected) {
                             _this.onConnected();
                         }
                     },
                     onFailure: function (error) {
-                        printLog(" -----MQTT---" + SocketTAG.EVENT_SOCKET_CONNECT_ERROR, error);
+                        printLog(" -----MQTT---" + SocketTAG.SOCKET_CONNECT_ERROR, error);
                         _this.__is_connect__ = false;
                         _this.__is_connect_ing__ = false;
                         if (_this.onError) {
@@ -802,7 +811,7 @@ var Tape;
             }
             else {
                 var error = "Cannot find mqtt client support.";
-                printLog(" -----MQTT---" + SocketTAG.EVENT_SOCKET_CONNECT_ERROR, error);
+                printLog(" -----MQTT---" + SocketTAG.SOCKET_CONNECT_ERROR, error);
                 if (this.onError) {
                     this.onError(error);
                 }

@@ -7,6 +7,9 @@ declare module Tape {
     ///////////////////////////////////////////////
 
     class Activity {
+
+        static ROUTE(options?: Object): Object;
+
         public readonly props: Object;
         public readonly params: Object;
         public readonly routeName: String;

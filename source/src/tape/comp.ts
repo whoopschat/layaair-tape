@@ -17,6 +17,12 @@ module Tape {
 
     export class Activity extends PropsComponent {
 
+        static ROUTE(options: Object = {}): Object {
+            return (<any>Object).assign({}, options, {
+                activity: this
+            });
+        };
+
         public readonly routeName: String = "";
         public readonly params: Object = {};
 

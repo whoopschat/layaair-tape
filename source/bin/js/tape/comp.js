@@ -39,6 +39,13 @@ var Tape;
             _this.routeName = props['routeName'] || "";
             return _this;
         }
+        Activity.ROUTE = function (options) {
+            if (options === void 0) { options = {}; }
+            return Object.assign({}, options, {
+                activity: this
+            });
+        };
+        ;
         Activity.prototype.onCreate = function () {
         };
         Activity.prototype.onResume = function () {
