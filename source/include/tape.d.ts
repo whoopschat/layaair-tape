@@ -42,6 +42,10 @@ declare module Tape {
 
         protected onDestroy();
 
+        playSound(url: string, loops?: number, complete?: Function, soundClass?: any, startTime?: number): number;
+        
+        stopSound(id?: number);
+
         ///////////////////////
         /// Navigator
         ///////////////////////

@@ -20,6 +20,7 @@ var App;
         Main.prototype.onCreate = function () {
             var _this = this;
             this.addChild(this.page1);
+            var id = this.playSound("res/sound/bg_sound.mp3", 0);
             this.page1.btn.on(Laya.Event.CLICK, this, function () {
                 var message = new ui.MessageToastUI();
                 message.text.text = _this.routeName + JSON.stringify(_this.params);
@@ -27,6 +28,7 @@ var App;
                 _this.navigate("Page2");
             });
             this.page1.btnBack.on(Laya.Event.CLICK, this, function () {
+                _this.stopSound(id);
                 _this.finish();
             });
         };
@@ -54,8 +56,8 @@ var App;
             };
             this.addChild(this.page2);
             this.page2.btn.on(Laya.Event.CLICK, this, function () {
-                // this.link("baidu://elm/Main?name=你好");
-                socket.connect("wss://127.0.0.1:9011/websocket");
+                _this.link("baidu://elm/Main?name=你好");
+                // socket.connect("wss://127.0.0.1:9011/websocket");
             });
             this.page2.btnBack.on(Laya.Event.CLICK, this, function () {
                 _this.finish();

@@ -22,6 +22,8 @@ var Tape;
         Box.Socket = Laya.Socket;
         Box.Event = Laya.Event;
         Box.Ease = Laya.Ease;
+        Box.SoundManager = Laya.SoundManager;
+        Box.SoundChannel = Laya.SoundChannel;
         ////////////////////////////
         //// imports method
         ////////////////////////////

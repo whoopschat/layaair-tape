@@ -22,6 +22,8 @@ module Tape {
         public static Socket = Laya.Socket;
         public static Event = Laya.Event;
         public static Ease = Laya.Ease;
+        public static SoundManager = Laya.SoundManager;
+        public static SoundChannel = Laya.SoundChannel;
 
         ////////////////////////////
         //// imports method

@@ -3,7 +3,11 @@ class GameMain {
     constructor() {
         Laya.init(600, 400);
         let routes = {
-            "Main": App.Main.ROUTE(),
+            "Main": App.Main.ROUTE({
+                res: [
+                    { url: 'res/sound/bg_sound.mp3', type: Laya.Loader.SOUND }
+                ]
+            }),
             "Page2": {
                 activity: App.Page2
             }

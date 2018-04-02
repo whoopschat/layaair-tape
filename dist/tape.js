@@ -22,6 +22,8 @@ var Tape;
         Box.Socket = Laya.Socket;
         Box.Event = Laya.Event;
         Box.Ease = Laya.Ease;
+        Box.SoundManager = Laya.SoundManager;
+        Box.SoundChannel = Laya.SoundChannel;
         ////////////////////////////
         //// imports method
         ////////////////////////////
@@ -200,6 +202,7 @@ var Tape;
             var _this = _super.call(this, props) || this;
             _this.routeName = "";
             _this.params = {};
+            _this.__sound_play_list = [];
             _this.params = Object.assign({}, props['params']);
             _this.routeName = props['routeName'] || "";
             return _this;
@@ -218,6 +221,31 @@ var Tape;
         Activity.prototype.onPause = function () {
         };
         Activity.prototype.onDestroy = function () {
+        };
+        ///////////////////////
+        /// Sound
+        ///////////////////////
+        Activity.prototype.playSound = function (url, loops, complete, soundClass, startTime) {
+            var soundChancel = Tape.Box.SoundManager.playSound(url, loops, complete ? Tape.Box.Handler.create(this, complete) : null, soundClass, startTime);
+            return this.__sound_play_list.push(soundChancel);
+        };
+        Activity.prototype.stopSound = function (id) {
+            if (id === void 0) { id = 0; }
+            if (id == 0) {
+                this.__sound_play_list.forEach(function (chancel) {
+                    if (chancel && chancel.hasOwnProperty('stop')) {
+                        chancel.stop();
+                    }
+                });
+            }
+            else {
+                if (id - 1 >= 0 && id - 1 < this.__sound_play_list.length) {
+                    var chancel = this.__sound_play_list[id - 1];
+                    if (chancel && chancel.hasOwnProperty('stop')) {
+                        chancel.stop();
+                    }
+                }
+            }
         };
         ///////////////////////
         /// Navigator
