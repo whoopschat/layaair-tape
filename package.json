@@ -1,8 +1,8 @@
 {
-  "name": "package-js",
+  "name": "build-package-js",
   "version": "1.0.0",
   "scripts": {
-    "build": "gulp bundle"
+    "build": "gulp build"
   },
   "license": "UNLICENSED",
   "dependencies": {},
@@ -13,8 +13,7 @@
     "gulp": "^4.0.0",
     "gulp-concat": "^2.6.1",
     "gulp-rename": "^1.2.2",
-    "gulp-uglify": "^3.0.0",
-    "merge-stream": "^1.0.1"
+    "gulp-uglify": "^3.0.0"
   },
   "description": ""
 }
