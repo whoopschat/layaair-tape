@@ -2,5 +2,5 @@
 
 ## Support
 * activity and life cycle
-* navigation
+* activity router
 * socket with `socket` and `mqtt socket`
