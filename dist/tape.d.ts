@@ -7,6 +7,11 @@ declare module Tape {
     ///////////////////////////////////////////////
 
     class Activity {
+        public readonly props: Object;
+        public readonly params: Object;
+        public readonly routeName: String;
+        public readonly width: number;
+        public readonly height: number;
 
         constructor(props?: Object);
 
@@ -35,6 +40,8 @@ declare module Tape {
         protected popByName(name);
 
         protected popToTop();
+
+        protected addChild(clild: any);
 
         ///////////////////////
         /// Logger

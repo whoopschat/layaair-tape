@@ -32,6 +32,8 @@ var Tape;
             var _this = _super.call(this, props) || this;
             _this.routeName = "";
             _this.params = {};
+            _this.width = Tape.Box.width();
+            _this.height = Tape.Box.height();
             _this.params = Object.assign({}, props['params']);
             _this.routeName = props['routeName'] || "";
             return _this;
