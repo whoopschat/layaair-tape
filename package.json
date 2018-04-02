@@ -2,6 +2,7 @@
   "name": "build-package-js",
   "version": "1.0.0",
   "scripts": {
+    "dev": "http-server ./source/bin/",
     "clean": "gulp clean",
     "tsc": "gulp tsc",
     "build": "gulp build"
@@ -18,7 +19,8 @@
     "gulp-typescript": "^4.0.2",
     "gulp-uglify": "^3.0.0",
     "merge-stream": "^1.0.1",
-    "typescript": "^2.8.1"
+    "typescript": "^2.8.1",
+    "http-server": "*"
   },
   "description": ""
 }
