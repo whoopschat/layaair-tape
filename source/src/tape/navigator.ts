@@ -75,6 +75,7 @@ module Tape {
         private __loaded_handler__: Function = null;
         private __load_progress_handler__: Function = null;
         private __uri_profix__ = "://";
+        private __file_version__ = null;
 
         constructor(navigator) {
             this.__navigator__ = navigator;
@@ -84,10 +85,19 @@ module Tape {
             this.__init_name__ = navigator.props['navigation']['initName'];
             this.__static_res__ = navigator.props['navigation']['staticRes'];
             this.__uri_profix__ = navigator.props['navigation']['uriProfix'] || "://";
+            this.__file_version__ = navigator.props['navigation']['fileVersion'];
         }
 
         public init_page() {
-            return this.navigate(this.__init_name__);
+            if (this.__file_version__) {
+                Tape.Box.ResourceVersion.type = Tape.Box.ResourceVersion.FILENAME_VERSION;
+                Tape.Box.ResourceVersion.enable(this.__file_version__,
+                    Tape.Box.Handler.create(this, () => {
+                        this.navigate(this.__init_name__);
+                    }))
+            } else {
+                this.navigate(this.__init_name__);
+            }
         }
 
         public navigate(name, params = {}) {
@@ -280,6 +290,7 @@ module Tape {
                 routes: routes,
                 initName: initName,
                 staticRes: options['res'],
+                fileVersion: options['fileVersion'],
                 uriProfix: options['uriProfix'],
                 onLoaded: options['onLoaded'],
                 onLoadProgress: options['onLoadProgress']

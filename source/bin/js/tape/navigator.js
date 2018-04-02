@@ -83,6 +83,7 @@ var Tape;
             this.__loaded_handler__ = null;
             this.__load_progress_handler__ = null;
             this.__uri_profix__ = "://";
+            this.__file_version__ = null;
             this.__navigator__ = navigator;
             this.__loaded_handler__ = navigator.props['navigation']['onLoaded'];
             this.__load_progress_handler__ = navigator.props['navigation']['onLoadProgress'];
@@ -90,9 +91,19 @@ var Tape;
             this.__init_name__ = navigator.props['navigation']['initName'];
             this.__static_res__ = navigator.props['navigation']['staticRes'];
             this.__uri_profix__ = navigator.props['navigation']['uriProfix'] || "://";
+            this.__file_version__ = navigator.props['navigation']['fileVersion'];
         }
         NavigatorStack.prototype.init_page = function () {
-            return this.navigate(this.__init_name__);
+            var _this = this;
+            if (this.__file_version__) {
+                Tape.Box.ResourceVersion.type = Tape.Box.ResourceVersion.FILENAME_VERSION;
+                Tape.Box.ResourceVersion.enable(this.__file_version__, Tape.Box.Handler.create(this, function () {
+                    _this.navigate(_this.__init_name__);
+                }));
+            }
+            else {
+                this.navigate(this.__init_name__);
+            }
         };
         NavigatorStack.prototype.navigate = function (name, params) {
             var _this = this;
@@ -285,6 +296,7 @@ var Tape;
                 routes: routes,
                 initName: initName,
                 staticRes: options['res'],
+                fileVersion: options['fileVersion'],
                 uriProfix: options['uriProfix'],
                 onLoaded: options['onLoaded'],
                 onLoadProgress: options['onLoadProgress']

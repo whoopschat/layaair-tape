@@ -11,8 +11,13 @@ module Tape {
         public static SOUND = Laya.Loader.SOUND;
         public static IMAGE = Laya.Loader.IMAGE;
 
-        // Component
+        ////////////////////////////
+        //// imports class
+        ////////////////////////////
+
         public static Component = Laya.Component;
+        public static ResourceVersion = Laya.ResourceVersion;
+        public static Handler = Laya.Handler;
         public static EventDispatcher = Laya.EventDispatcher;
         public static Socket = Laya.Socket;
         public static Event = Laya.Event;

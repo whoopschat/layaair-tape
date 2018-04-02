@@ -12,8 +12,12 @@ var Tape;
         Box.FONT = Laya.Loader.FONT;
         Box.SOUND = Laya.Loader.SOUND;
         Box.IMAGE = Laya.Loader.IMAGE;
-        // Component
+        ////////////////////////////
+        //// imports class
+        ////////////////////////////
         Box.Component = Laya.Component;
+        Box.ResourceVersion = Laya.ResourceVersion;
+        Box.Handler = Laya.Handler;
         Box.EventDispatcher = Laya.EventDispatcher;
         Box.Socket = Laya.Socket;
         Box.Event = Laya.Event;

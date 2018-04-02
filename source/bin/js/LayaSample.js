@@ -12,6 +12,7 @@ var GameMain = /** @class */ (function () {
         };
         var options = {
             uriProfix: "baidu://elm/",
+            fileVersion: "version.json",
             res: [
                 { url: 'res/atlas/comp.atlas', type: Laya.Loader.ATLAS }
             ]
