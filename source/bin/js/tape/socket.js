@@ -1,4 +1,6 @@
-// socket
+// =========================== //
+// tape socket.js
+// =========================== //
 var Tape;
 (function (Tape) {
     var printLog = function (message) {

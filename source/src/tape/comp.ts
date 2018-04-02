@@ -1,3 +1,6 @@
+// =========================== //
+// tape comp.js
+// =========================== //
 module Tape {
 
     /////////////////////////////////////////////////////
@@ -16,8 +19,6 @@ module Tape {
 
         public readonly routeName: String = "";
         public readonly params: Object = {};
-        public readonly width:number = Tape.Box.width();
-        public readonly height:number = Tape.Box.height();
 
         constructor(props: Object = {}) {
             super(props);

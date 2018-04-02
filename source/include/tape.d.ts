@@ -10,8 +10,24 @@ declare module Tape {
         public readonly props: Object;
         public readonly params: Object;
         public readonly routeName: String;
-        public readonly width: number;
-        public readonly height: number;
+        gray: boolean;
+        disabled: boolean;
+        tag: any;
+        top: number;
+        bottom: number;
+        left: number;
+        right: number;
+        centerX: number;
+        centerY: number;
+        anchorX: number;
+        anchorY: number;
+        scaleX: number;
+        scaleY: number;
+        height: number;
+        readonly displayHeight: number;
+        width: number;
+        readonly displayWidth: number;
+        layoutEnabled: boolean;
 
         constructor(props?: Object);
 

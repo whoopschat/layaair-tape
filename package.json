@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "clean": "gulp clean",
+    "tsc": "gulp tsc",
     "build": "gulp build"
   },
   "license": "UNLICENSED",
@@ -14,8 +15,10 @@
     "gulp": "^4.0.0",
     "gulp-concat": "^2.6.1",
     "gulp-rename": "^1.2.2",
+    "gulp-typescript": "^4.0.2",
     "gulp-uglify": "^3.0.0",
-    "merge-stream": "^1.0.1"
+    "merge-stream": "^1.0.1",
+    "typescript": "^2.8.1"
   },
   "description": ""
 }

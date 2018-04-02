@@ -1,4 +1,6 @@
-// socket
+// =========================== //
+// tape socket.js
+// =========================== //
 module Tape {
 
     const printLog = function (message?: any, ...optionalParams: any[]) {

@@ -1,10 +1,13 @@
+// =========================== //
+// tape navigator.js
+// =========================== //
 module Tape {
 
     ///////////////////////////////////
-    //// Stack
+    //// NavigatorLoader
     ///////////////////////////////////
 
-    class StackLoader extends Tape.PropsComponent {
+    class NavigatorLoader extends Tape.PropsComponent {
 
         public routeName = "";
         public routeActivity = null;
@@ -55,15 +58,20 @@ module Tape {
             this.visible = false;
             this.routeActivity.onPause();
         }
+
     }
 
-    class Stack {
+    ///////////////////////////////////
+    //// NavigatorStack
+    ///////////////////////////////////
+
+    class NavigatorStack {
 
         private __navigator__ = null;
         private __init_name__ = "";
         private __routes__: Object = {};
         private __static_res__: Array<Object> = [];
-        private __stacks__: Array<StackLoader> = [];
+        private __stacks__: Array<NavigatorLoader> = [];
         private __loaded_handler__: Function = null;
         private __load_progress_handler__: Function = null;
         private __uri_profix__ = "://";
@@ -110,7 +118,7 @@ module Tape {
                     (<any>Object).assign(paramsObject, route['params']);
                 }
                 (<any>Object).assign(paramsObject, params);
-                new StackLoader(activity, name, {
+                new NavigatorLoader(activity, name, {
                     navigation: this,
                     routeName: name,
                     params: paramsObject
@@ -246,21 +254,25 @@ module Tape {
         }
     }
 
-    class Static {
+    ///////////////////////////////////
+    //// NavigatorOptions
+    ///////////////////////////////////
+
+    class NavigatorOptions {
         public static isInited = false;
     }
 
     export const initApp = function (routes, initName, options = {}) {
         // Check whether or not it is initialized multiple times
-        if (Static.isInited) {
+        if (NavigatorOptions.isInited) {
             return;
         }
         let StackNavigator = class extends Tape.PropsComponent {
-            private __stack__: Stack = null;
+            private __navigator__: NavigatorStack = null;
             constructor(props) {
                 super(props);
-                this.__stack__ = new Stack(this);
-                this.__stack__.init_page();
+                this.__navigator__ = new NavigatorStack(this);
+                this.__navigator__.init_page();
             }
         };
         Tape.Box.drawView(new StackNavigator({
@@ -273,7 +285,7 @@ module Tape {
                 onLoadProgress: options['onLoadProgress']
             }
         }));
-        Static.isInited = true;
+        NavigatorOptions.isInited = true;
     }
 
 }

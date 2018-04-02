@@ -8,6 +8,9 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+// =========================== //
+// tape comp.js
+// =========================== //
 var Tape;
 (function (Tape) {
     /////////////////////////////////////////////////////
@@ -32,8 +35,6 @@ var Tape;
             var _this = _super.call(this, props) || this;
             _this.routeName = "";
             _this.params = {};
-            _this.width = Tape.Box.width();
-            _this.height = Tape.Box.height();
             _this.params = Object.assign({}, props['params']);
             _this.routeName = props['routeName'] || "";
             return _this;

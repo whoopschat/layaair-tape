@@ -8,14 +8,17 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+// =========================== //
+// tape navigator.js
+// =========================== //
 var Tape;
 (function (Tape) {
     ///////////////////////////////////
-    //// Stack
+    //// NavigatorLoader
     ///////////////////////////////////
-    var StackLoader = /** @class */ (function (_super) {
-        __extends(StackLoader, _super);
-        function StackLoader(activity, routeName, props, res, loaded, onLoadProgress) {
+    var NavigatorLoader = /** @class */ (function (_super) {
+        __extends(NavigatorLoader, _super);
+        function NavigatorLoader(activity, routeName, props, res, loaded, onLoadProgress) {
             if (props === void 0) { props = {}; }
             if (res === void 0) { res = []; }
             if (loaded === void 0) { loaded = null; }
@@ -46,29 +49,32 @@ var Tape;
             }
             return _this;
         }
-        StackLoader.prototype.create = function (routeActivity) {
+        NavigatorLoader.prototype.create = function (routeActivity) {
             this.routeActivity = routeActivity;
             this.addChild(this.routeActivity);
             this.routeActivity.onCreate();
             this.show();
         };
-        StackLoader.prototype.exit = function () {
+        NavigatorLoader.prototype.exit = function () {
             this.routeActivity.onPause();
             this.removeSelf();
             this.routeActivity.onDestroy();
         };
-        StackLoader.prototype.show = function () {
+        NavigatorLoader.prototype.show = function () {
             this.visible = true;
             this.routeActivity.onResume();
         };
-        StackLoader.prototype.hide = function () {
+        NavigatorLoader.prototype.hide = function () {
             this.visible = false;
             this.routeActivity.onPause();
         };
-        return StackLoader;
+        return NavigatorLoader;
     }(Tape.PropsComponent));
-    var Stack = /** @class */ (function () {
-        function Stack(navigator) {
+    ///////////////////////////////////
+    //// NavigatorStack
+    ///////////////////////////////////
+    var NavigatorStack = /** @class */ (function () {
+        function NavigatorStack(navigator) {
             this.__navigator__ = null;
             this.__init_name__ = "";
             this.__routes__ = {};
@@ -85,10 +91,10 @@ var Tape;
             this.__static_res__ = navigator.props['navigation']['staticRes'];
             this.__uri_profix__ = navigator.props['navigation']['uriProfix'] || "://";
         }
-        Stack.prototype.init_page = function () {
+        NavigatorStack.prototype.init_page = function () {
             return this.navigate(this.__init_name__);
         };
-        Stack.prototype.navigate = function (name, params) {
+        NavigatorStack.prototype.navigate = function (name, params) {
             var _this = this;
             if (params === void 0) { params = {}; }
             if (this.__routes__
@@ -118,7 +124,7 @@ var Tape;
                     Object.assign(paramsObject, route['params']);
                 }
                 Object.assign(paramsObject, params);
-                new StackLoader(activity, name, {
+                new NavigatorLoader(activity, name, {
                     navigation: this,
                     routeName: name,
                     params: paramsObject
@@ -134,7 +140,7 @@ var Tape;
                 return false;
             }
         };
-        Stack.prototype.link = function (url) {
+        NavigatorStack.prototype.link = function (url) {
             var params = {};
             var delimiter = this.__uri_profix__ || '://';
             var urlSplit = url.split(delimiter);
@@ -160,13 +166,13 @@ var Tape;
             }
             this.navigate(path, params);
         };
-        Stack.prototype.back = function () {
+        NavigatorStack.prototype.back = function () {
             this.popStack();
         };
-        Stack.prototype.finish = function (reverseIndex) {
+        NavigatorStack.prototype.finish = function (reverseIndex) {
             this.finishStack(reverseIndex);
         };
-        Stack.prototype.finishByName = function (name) {
+        NavigatorStack.prototype.finishByName = function (name) {
             var _this = this;
             var targetIndexs = [];
             var count = this.__stacks__.length;
@@ -182,13 +188,13 @@ var Tape;
                 });
             }
         };
-        Stack.prototype.pop = function (n) {
+        NavigatorStack.prototype.pop = function (n) {
             if (n === void 0) { n = 1; }
             for (var i = 0; i < n; i++) {
                 this.popStack();
             }
         };
-        Stack.prototype.popByName = function (name) {
+        NavigatorStack.prototype.popByName = function (name) {
             var targetIndex = -1;
             try {
                 for (var i = 0; i < this.__stacks__.length; i++) {
@@ -206,38 +212,38 @@ var Tape;
                 this.pop(n);
             }
         };
-        Stack.prototype.popToTop = function () {
+        NavigatorStack.prototype.popToTop = function () {
             this.pop(this.__stacks__.length);
         };
         /////////////////////////////////
         //// private
         /////////////////////////////////
-        Stack.prototype.hasStack = function (minCount) {
+        NavigatorStack.prototype.hasStack = function (minCount) {
             if (minCount === void 0) { minCount = 1; }
             if (this.__stacks__.length >= minCount) {
                 return true;
             }
             return false;
         };
-        Stack.prototype.lastStack = function () {
+        NavigatorStack.prototype.lastStack = function () {
             if (this.hasStack()) {
                 return this.__stacks__[this.__stacks__.length - 1];
             }
         };
-        Stack.prototype.pushStack = function (stack) {
+        NavigatorStack.prototype.pushStack = function (stack) {
             if (this.hasStack()) {
                 this.__stacks__[this.__stacks__.length - 1].hide();
             }
             this.__stacks__.push(stack);
         };
-        Stack.prototype.popStack = function () {
+        NavigatorStack.prototype.popStack = function () {
             if (this.hasStack(2)) {
                 this.__stacks__[this.__stacks__.length - 1].exit();
                 this.__stacks__.splice(this.__stacks__.length - 1, 1);
                 this.__stacks__[this.__stacks__.length - 1].show();
             }
         };
-        Stack.prototype.finishStack = function (reverseIndex) {
+        NavigatorStack.prototype.finishStack = function (reverseIndex) {
             if (this.hasStack(2)) {
                 this.__stacks__[this.__stacks__.length - 1 - reverseIndex].exit();
                 this.__stacks__.splice(this.__stacks__.length - 1 - reverseIndex, 1);
@@ -246,27 +252,30 @@ var Tape;
                 }
             }
         };
-        return Stack;
+        return NavigatorStack;
     }());
-    var Static = /** @class */ (function () {
-        function Static() {
+    ///////////////////////////////////
+    //// NavigatorOptions
+    ///////////////////////////////////
+    var NavigatorOptions = /** @class */ (function () {
+        function NavigatorOptions() {
         }
-        Static.isInited = false;
-        return Static;
+        NavigatorOptions.isInited = false;
+        return NavigatorOptions;
     }());
     Tape.initApp = function (routes, initName, options) {
         if (options === void 0) { options = {}; }
         // Check whether or not it is initialized multiple times
-        if (Static.isInited) {
+        if (NavigatorOptions.isInited) {
             return;
         }
         var StackNavigator = /** @class */ (function (_super) {
             __extends(class_1, _super);
             function class_1(props) {
                 var _this = _super.call(this, props) || this;
-                _this.__stack__ = null;
-                _this.__stack__ = new Stack(_this);
-                _this.__stack__.init_page();
+                _this.__navigator__ = null;
+                _this.__navigator__ = new NavigatorStack(_this);
+                _this.__navigator__.init_page();
                 return _this;
             }
             return class_1;
@@ -281,6 +290,6 @@ var Tape;
                 onLoadProgress: options['onLoadProgress']
             }
         }));
-        Static.isInited = true;
+        NavigatorOptions.isInited = true;
     };
 })(Tape || (Tape = {}));
