@@ -40,11 +40,13 @@ module Tape {
             this.routeActivity = routeActivity;
             this.addChild(this.routeActivity);
             this.routeActivity.onCreate();
-            this.show();
+        }
+
+        public nextProgress(progress) {
+            this.routeActivity.onNextProgress(progress);
         }
 
         public exit() {
-            this.routeActivity.onPause();
             this.removeSelf();
             this.routeActivity.onDestroy();
         }
@@ -76,6 +78,7 @@ module Tape {
         private __load_progress_handler__: Function = null;
         private __uri_profix__ = "://";
         private __file_version__ = null;
+        private __loading__ = false;
 
         constructor(navigator) {
             this.__navigator__ = navigator;
@@ -100,7 +103,37 @@ module Tape {
             }
         }
 
-        public navigate(name, params = {}) {
+
+        ///////////////////////////////////////////////////////////
+        //// Open
+        ///////////////////////////////////////////////////////////
+
+        public link(url, action: Function = null) {
+            const params = {};
+            const delimiter = this.__uri_profix__ || '://';
+            const urlSplit = url.split(delimiter);
+            let path = '/';
+            if (urlSplit.length > 1) {
+                const pathSplit = urlSplit[1].split('?');
+                path = pathSplit[0];
+                if (pathSplit.length > 1) {
+                    const paramsSplit = pathSplit[1].split('&');
+                    paramsSplit.forEach(value => {
+                        const param = value.split('=');
+                        if (param.length === 2) {
+                            (<any>Object).assign(params, {
+                                [param[0]]: param[1]
+                            })
+                        }
+                    })
+                }
+            } else {
+                path = url
+            }
+            this.navigate(path, params, action);
+        }
+
+        public navigate(name, params = {}, action: Function = null) {
             if (this.__routes__
                 && this.__routes__.hasOwnProperty(name)
                 && this.__routes__[name].hasOwnProperty('activity')) {
@@ -130,140 +163,125 @@ module Tape {
                     (<any>Object).assign(paramsObject, route['params']);
                 }
                 (<any>Object).assign(paramsObject, params);
+                this.__loading__ = true;
                 new NavigatorLoader(activity, name, {
                     navigation: this,
                     routeName: name,
                     params: paramsObject
-                }, resArray, (stack) => {
-                    this.__navigator__.addChild(stack);
-                    this.pushStack(stack);
-                    if (this.__loaded_handler__) {
-                        this.__loaded_handler__(stack);
+                }, resArray, (loader) => {
+                    this.__loading__ = false;
+                    this.__navigator__.addChild(loader);
+                    this.putStack(loader);
+                    action && action();
+                    this.__loaded_handler__ && this.__loaded_handler__(loader);
+                }, (loader, progress) => {
+                    if (this.__loading__) {
+                        var stack = this.lastStack();
+                        stack && stack.nextProgress(progress);
                     }
-                }, this.__load_progress_handler__);
+                    this.__load_progress_handler__ && this.__load_progress_handler__(loader, progress);
+                });
             } else {
                 return false;
             }
         }
 
-        public link(url) {
-            const params = {};
-            const delimiter = this.__uri_profix__ || '://';
-            const urlSplit = url.split(delimiter);
-            let path = '/';
-            if (urlSplit.length > 1) {
-                const pathSplit = urlSplit[1].split('?');
-                path = pathSplit[0];
-                if (pathSplit.length > 1) {
-                    const paramsSplit = pathSplit[1].split('&');
-                    paramsSplit.forEach(value => {
-                        const param = value.split('=');
-                        if (param.length === 2) {
-                            (<any>Object).assign(params, {
-                                [param[0]]: param[1]
-                            })
-                        }
-                    })
-                }
-            } else {
-                path = url
-            }
-            this.navigate(path, params);
-        }
+        ///////////////////////////////////////////////////////////
+        //// finish
+        ///////////////////////////////////////////////////////////
 
-        public back() {
-            this.popStack();
-        }
-
-        public finish(reverseIndex) {
-            this.finishStack(reverseIndex);
-        }
-
-        public finishByName(name) {
-            let targetIndexs = [];
-            let count = this.__stacks__.length;
-            for (let i = 0; i < count; i++) {
-                const stack = this.__stacks__[count - 1 - i];
-                if (stack.routeName === name) {
-                    targetIndexs.push(i);
-                }
-            }
-            if (targetIndexs.length > 0) {
-                targetIndexs.forEach(i => {
-                    this.finish(i);
-                });
-            }
-        }
-
-        public pop(n = 1) {
-            for (let i = 0; i < n; i++) {
-                this.popStack();
-            }
-        }
-
-        public popByName(name) {
-            let targetIndex = -1;
-            try {
-                for (let i = 0; i < this.__stacks__.length; i++) {
-                    const stack = this.__stacks__[i];
-                    if (stack.routeName === name) {
-                        targetIndex = i;
-                        throw new Error("finded route");
-                    }
-                }
-            } catch (e) {
-            }
-            if (targetIndex >= 0) {
-                const n = this.__stacks__.length - 1 - targetIndex;
-                this.pop(n);
-            }
+        public finish(name) {
+            this.finishStack(name);
         }
 
         public popToTop() {
             this.pop(this.__stacks__.length);
         }
 
+        public pop(number: Number) {
+            this.popStack(number);
+        }
+
         /////////////////////////////////
         //// private
         /////////////////////////////////
 
-        private hasStack(minCount = 1) {
-            if (this.__stacks__.length >= minCount) {
-                return true;
-            }
-            return false;
+        private lenStack() {
+            return this.__stacks__.length;
         }
 
         private lastStack() {
-            if (this.hasStack()) {
-                return this.__stacks__[this.__stacks__.length - 1];
+            var len = this.lenStack();
+            if (len > 0) {
+                return this.__stacks__[len - 1];
             }
+            return null;
         }
 
-        private pushStack(stack) {
-            if (this.hasStack()) {
-                this.__stacks__[this.__stacks__.length - 1].hide();
-            }
+        private putStack(stack) {
+            this.hideStack();
             this.__stacks__.push(stack);
+            this.showStack();
         }
 
-        private popStack() {
-            if (this.hasStack(2)) {
-                this.__stacks__[this.__stacks__.length - 1].exit();
-                this.__stacks__.splice(this.__stacks__.length - 1, 1);
-                this.__stacks__[this.__stacks__.length - 1].show();
+        private popStack(count) {
+            if (this.lenStack() > 1) {
+                this.hideStack();
+                for (var i = 0; i < count + 1; i++) {
+                    if (this.lenStack() > 1) {
+                        this.__stacks__.pop().exit();
+                    }
+                }
+                this.showStack();
             }
         }
 
-        private finishStack(reverseIndex) {
-            if (this.hasStack(2)) {
-                this.__stacks__[this.__stacks__.length - 1 - reverseIndex].exit();
-                this.__stacks__.splice(this.__stacks__.length - 1 - reverseIndex, 1);
-                if (reverseIndex == 0) {
-                    this.__stacks__[this.__stacks__.length - 1].show();
+        private finishStack(name) {
+            var len = this.lenStack();
+            if (len > 1) {
+                let targetIndexs = [];
+                for (var i = 0; i < len; i++) {
+                    var stack = this.__stacks__[i];
+                    if (stack.routeName === name) {
+                        targetIndexs.push(i);
+                    }
+                }
+                let first = targetIndexs.pop();
+                let flag = first === len - 1;
+                if (flag) {
+                    this.hideStack();
+                }
+                let slice = this.__stacks__.splice(first, 1);
+                slice.forEach(stack => {
+                    stack.exit();
+                });
+                while (targetIndexs.length > 0) {
+                    first = targetIndexs.pop();
+                    let slice = this.__stacks__.splice(first, 1);
+                    slice.forEach(stack => {
+                        stack.exit();
+                    });
+                }
+                if (flag) {
+                    this.showStack();
                 }
             }
         }
+
+        private hideStack() {
+            var len = this.lenStack();
+            if (len > 0) {
+                this.__stacks__[len - 1].hide();
+            }
+        }
+
+        private showStack() {
+            var len = this.lenStack();
+            if (len > 0) {
+                this.__stacks__[len - 1].show();
+            }
+        }
+
     }
 
     ///////////////////////////////////

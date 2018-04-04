@@ -33,9 +33,9 @@ var Tape;
         function Activity(props) {
             if (props === void 0) { props = {}; }
             var _this = _super.call(this, props) || this;
+            _this.__play_music_list__ = [];
             _this.routeName = "";
             _this.params = {};
-            _this.__sound_play_list = [];
             _this.params = Object.assign({}, props['params']);
             _this.routeName = props['routeName'] || "";
             return _this;
@@ -47,6 +47,9 @@ var Tape;
             });
         };
         ;
+        ///////////////////////
+        /// LifeCycle
+        ///////////////////////
         Activity.prototype.onCreate = function () {
         };
         Activity.prototype.onResume = function () {
@@ -55,65 +58,58 @@ var Tape;
         };
         Activity.prototype.onDestroy = function () {
         };
-        ///////////////////////
-        /// Sound
-        ///////////////////////
-        Activity.prototype.playSound = function (url, loops, complete, soundClass, startTime) {
-            var soundChancel = Tape.Box.SoundManager.playSound(url, loops, complete ? Tape.Box.Handler.create(this, complete) : null, soundClass, startTime);
-            return this.__sound_play_list.push(soundChancel);
+        Activity.prototype.onNextProgress = function (progress) {
         };
-        Activity.prototype.stopSound = function (id) {
+        ///////////////////////
+        /// Music
+        ///////////////////////
+        Activity.prototype.playMusic = function (url, loops, complete) {
+            var audio = new Tape.Audio(url);
+            audio.play(loops);
+            audio.onComplete = complete;
+            return this.__play_music_list__.push(audio);
+        };
+        Activity.prototype.stopMusic = function (id) {
             if (id === void 0) { id = 0; }
             if (id == 0) {
-                this.__sound_play_list.forEach(function (chancel) {
-                    if (chancel && chancel.hasOwnProperty('stop')) {
-                        chancel.stop();
-                    }
-                });
+                while (this.__play_music_list__.length > 0) {
+                    this.__play_music_list__.pop().stop();
+                }
             }
             else {
-                if (id - 1 >= 0 && id - 1 < this.__sound_play_list.length) {
-                    var chancel = this.__sound_play_list[id - 1];
-                    if (chancel && chancel.hasOwnProperty('stop')) {
+                if (id - 1 >= 0 && id - 1 < this.__play_music_list__.length) {
+                    var splice = this.__play_music_list__.splice(id - 1, 1);
+                    splice.forEach(function (chancel) {
                         chancel.stop();
-                    }
+                    });
                 }
             }
         };
         ///////////////////////
         /// Navigator
         ///////////////////////
-        Activity.prototype.navigate = function (name, params) {
+        Activity.prototype.navigate = function (name, params, action) {
             if (params === void 0) { params = {}; }
+            if (action === void 0) { action = null; }
             if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].navigate(name, params);
+                this.props['navigation'].navigate(name, params, action);
             }
         };
-        Activity.prototype.link = function (url) {
+        Activity.prototype.link = function (url, action) {
+            if (action === void 0) { action = null; }
             if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].link(url);
+                this.props['navigation'].link(url, action);
             }
         };
-        Activity.prototype.finish = function (n) {
-            if (n === void 0) { n = 0; }
+        Activity.prototype.finish = function (name) {
+            if (name === void 0) { name = this.routeName; }
             if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].finish(n);
+                this.props['navigation'].finish(name);
             }
         };
-        Activity.prototype.finishByName = function (name) {
+        Activity.prototype.pop = function (number) {
             if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].finishByName(name);
-            }
-        };
-        Activity.prototype.pop = function (n) {
-            if (n === void 0) { n = 0; }
-            if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].pop(n);
-            }
-        };
-        Activity.prototype.popByName = function (name) {
-            if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].popByName(name);
+                this.props['navigation'].pop(number);
             }
         };
         Activity.prototype.popToTop = function () {
@@ -129,7 +125,7 @@ var Tape;
             for (var _i = 1; _i < arguments.length; _i++) {
                 optionalParams[_i - 1] = arguments[_i];
             }
-            (_a = Tape.Logger).log.apply(_a, [message].concat(optionalParams));
+            (_a = Tape.Logger).log.apply(_a, [" ------ " + this.routeName + " ------ :", message].concat(optionalParams));
             var _a;
         };
         Activity.prototype.error = function (message) {
@@ -137,7 +133,7 @@ var Tape;
             for (var _i = 1; _i < arguments.length; _i++) {
                 optionalParams[_i - 1] = arguments[_i];
             }
-            (_a = Tape.Logger).error.apply(_a, [message].concat(optionalParams));
+            (_a = Tape.Logger).error.apply(_a, [" ------ " + this.routeName + " ------ :", message].concat(optionalParams));
             var _a;
         };
         Activity.prototype.info = function (message) {
@@ -145,7 +141,7 @@ var Tape;
             for (var _i = 1; _i < arguments.length; _i++) {
                 optionalParams[_i - 1] = arguments[_i];
             }
-            (_a = Tape.Logger).info.apply(_a, [message].concat(optionalParams));
+            (_a = Tape.Logger).info.apply(_a, [" ------ " + this.routeName + " ------ :", message].concat(optionalParams));
             var _a;
         };
         Activity.prototype.warn = function (message) {
@@ -153,7 +149,7 @@ var Tape;
             for (var _i = 1; _i < arguments.length; _i++) {
                 optionalParams[_i - 1] = arguments[_i];
             }
-            (_a = Tape.Logger).warn.apply(_a, [message].concat(optionalParams));
+            (_a = Tape.Logger).warn.apply(_a, [" ------ " + this.routeName + "  ------ :", message].concat(optionalParams));
             var _a;
         };
         Activity.prototype.debug = function (message) {
@@ -161,7 +157,7 @@ var Tape;
             for (var _i = 1; _i < arguments.length; _i++) {
                 optionalParams[_i - 1] = arguments[_i];
             }
-            (_a = Tape.Logger).debug.apply(_a, [message].concat(optionalParams));
+            (_a = Tape.Logger).debug.apply(_a, [" ------ " + this.routeName + " ------ :", message].concat(optionalParams));
             var _a;
         };
         return Activity;

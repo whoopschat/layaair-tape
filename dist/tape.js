@@ -22,8 +22,6 @@ var Tape;
         Box.Socket = Laya.Socket;
         Box.Event = Laya.Event;
         Box.Ease = Laya.Ease;
-        Box.SoundManager = Laya.SoundManager;
-        Box.SoundChannel = Laya.SoundChannel;
         ////////////////////////////
         //// imports method
         ////////////////////////////
@@ -39,7 +37,7 @@ var Tape;
         Box.load = function (res, caller, handler, progress) {
             if (handler === void 0) { handler = null; }
             if (progress === void 0) { progress = null; }
-            Laya.loader.load(res, Laya.Handler.create(caller, handler), Laya.Handler.create(caller, progress));
+            Laya.loader.load(res, Laya.Handler.create(caller, handler), Laya.Handler.create(caller, progress, null, false));
         };
         Box.drawView = function (view) {
             Laya.stage.addChild(view);
@@ -200,9 +198,9 @@ var Tape;
         function Activity(props) {
             if (props === void 0) { props = {}; }
             var _this = _super.call(this, props) || this;
+            _this.__play_music_list__ = [];
             _this.routeName = "";
             _this.params = {};
-            _this.__sound_play_list = [];
             _this.params = Object.assign({}, props['params']);
             _this.routeName = props['routeName'] || "";
             return _this;
@@ -214,6 +212,9 @@ var Tape;
             });
         };
         ;
+        ///////////////////////
+        /// LifeCycle
+        ///////////////////////
         Activity.prototype.onCreate = function () {
         };
         Activity.prototype.onResume = function () {
@@ -222,65 +223,58 @@ var Tape;
         };
         Activity.prototype.onDestroy = function () {
         };
-        ///////////////////////
-        /// Sound
-        ///////////////////////
-        Activity.prototype.playSound = function (url, loops, complete, soundClass, startTime) {
-            var soundChancel = Tape.Box.SoundManager.playSound(url, loops, complete ? Tape.Box.Handler.create(this, complete) : null, soundClass, startTime);
-            return this.__sound_play_list.push(soundChancel);
+        Activity.prototype.onNextProgress = function (progress) {
         };
-        Activity.prototype.stopSound = function (id) {
+        ///////////////////////
+        /// Music
+        ///////////////////////
+        Activity.prototype.playMusic = function (url, loops, complete) {
+            var audio = new Tape.Audio(url);
+            audio.play(loops);
+            audio.onComplete = complete;
+            return this.__play_music_list__.push(audio);
+        };
+        Activity.prototype.stopMusic = function (id) {
             if (id === void 0) { id = 0; }
             if (id == 0) {
-                this.__sound_play_list.forEach(function (chancel) {
-                    if (chancel && chancel.hasOwnProperty('stop')) {
-                        chancel.stop();
-                    }
-                });
+                while (this.__play_music_list__.length > 0) {
+                    this.__play_music_list__.pop().stop();
+                }
             }
             else {
-                if (id - 1 >= 0 && id - 1 < this.__sound_play_list.length) {
-                    var chancel = this.__sound_play_list[id - 1];
-                    if (chancel && chancel.hasOwnProperty('stop')) {
+                if (id - 1 >= 0 && id - 1 < this.__play_music_list__.length) {
+                    var splice = this.__play_music_list__.splice(id - 1, 1);
+                    splice.forEach(function (chancel) {
                         chancel.stop();
-                    }
+                    });
                 }
             }
         };
         ///////////////////////
         /// Navigator
         ///////////////////////
-        Activity.prototype.navigate = function (name, params) {
+        Activity.prototype.navigate = function (name, params, action) {
             if (params === void 0) { params = {}; }
+            if (action === void 0) { action = null; }
             if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].navigate(name, params);
+                this.props['navigation'].navigate(name, params, action);
             }
         };
-        Activity.prototype.link = function (url) {
+        Activity.prototype.link = function (url, action) {
+            if (action === void 0) { action = null; }
             if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].link(url);
+                this.props['navigation'].link(url, action);
             }
         };
-        Activity.prototype.finish = function (n) {
-            if (n === void 0) { n = 0; }
+        Activity.prototype.finish = function (name) {
+            if (name === void 0) { name = this.routeName; }
             if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].finish(n);
+                this.props['navigation'].finish(name);
             }
         };
-        Activity.prototype.finishByName = function (name) {
+        Activity.prototype.pop = function (number) {
             if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].finishByName(name);
-            }
-        };
-        Activity.prototype.pop = function (n) {
-            if (n === void 0) { n = 0; }
-            if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].pop(n);
-            }
-        };
-        Activity.prototype.popByName = function (name) {
-            if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].popByName(name);
+                this.props['navigation'].pop(number);
             }
         };
         Activity.prototype.popToTop = function () {
@@ -296,7 +290,7 @@ var Tape;
             for (var _i = 1; _i < arguments.length; _i++) {
                 optionalParams[_i - 1] = arguments[_i];
             }
-            (_a = Tape.Logger).log.apply(_a, [message].concat(optionalParams));
+            (_a = Tape.Logger).log.apply(_a, [" ------ " + this.routeName + " ------ :", message].concat(optionalParams));
             var _a;
         };
         Activity.prototype.error = function (message) {
@@ -304,7 +298,7 @@ var Tape;
             for (var _i = 1; _i < arguments.length; _i++) {
                 optionalParams[_i - 1] = arguments[_i];
             }
-            (_a = Tape.Logger).error.apply(_a, [message].concat(optionalParams));
+            (_a = Tape.Logger).error.apply(_a, [" ------ " + this.routeName + " ------ :", message].concat(optionalParams));
             var _a;
         };
         Activity.prototype.info = function (message) {
@@ -312,7 +306,7 @@ var Tape;
             for (var _i = 1; _i < arguments.length; _i++) {
                 optionalParams[_i - 1] = arguments[_i];
             }
-            (_a = Tape.Logger).info.apply(_a, [message].concat(optionalParams));
+            (_a = Tape.Logger).info.apply(_a, [" ------ " + this.routeName + " ------ :", message].concat(optionalParams));
             var _a;
         };
         Activity.prototype.warn = function (message) {
@@ -320,7 +314,7 @@ var Tape;
             for (var _i = 1; _i < arguments.length; _i++) {
                 optionalParams[_i - 1] = arguments[_i];
             }
-            (_a = Tape.Logger).warn.apply(_a, [message].concat(optionalParams));
+            (_a = Tape.Logger).warn.apply(_a, [" ------ " + this.routeName + "  ------ :", message].concat(optionalParams));
             var _a;
         };
         Activity.prototype.debug = function (message) {
@@ -328,7 +322,7 @@ var Tape;
             for (var _i = 1; _i < arguments.length; _i++) {
                 optionalParams[_i - 1] = arguments[_i];
             }
-            (_a = Tape.Logger).debug.apply(_a, [message].concat(optionalParams));
+            (_a = Tape.Logger).debug.apply(_a, [" ------ " + this.routeName + " ------ :", message].concat(optionalParams));
             var _a;
         };
         return Activity;
@@ -391,10 +385,11 @@ var Tape;
             this.routeActivity = routeActivity;
             this.addChild(this.routeActivity);
             this.routeActivity.onCreate();
-            this.show();
+        };
+        NavigatorLoader.prototype.nextProgress = function (progress) {
+            this.routeActivity.onNextProgress(progress);
         };
         NavigatorLoader.prototype.exit = function () {
-            this.routeActivity.onPause();
             this.removeSelf();
             this.routeActivity.onDestroy();
         };
@@ -422,6 +417,7 @@ var Tape;
             this.__load_progress_handler__ = null;
             this.__uri_profix__ = "://";
             this.__file_version__ = null;
+            this.__loading__ = false;
             this.__navigator__ = navigator;
             this.__loaded_handler__ = navigator.props['navigation']['onLoaded'];
             this.__load_progress_handler__ = navigator.props['navigation']['onLoadProgress'];
@@ -443,9 +439,40 @@ var Tape;
                 this.navigate(this.__init_name__);
             }
         };
-        NavigatorStack.prototype.navigate = function (name, params) {
+        ///////////////////////////////////////////////////////////
+        //// Open
+        ///////////////////////////////////////////////////////////
+        NavigatorStack.prototype.link = function (url, action) {
+            if (action === void 0) { action = null; }
+            var params = {};
+            var delimiter = this.__uri_profix__ || '://';
+            var urlSplit = url.split(delimiter);
+            var path = '/';
+            if (urlSplit.length > 1) {
+                var pathSplit = urlSplit[1].split('?');
+                path = pathSplit[0];
+                if (pathSplit.length > 1) {
+                    var paramsSplit = pathSplit[1].split('&');
+                    paramsSplit.forEach(function (value) {
+                        var param = value.split('=');
+                        if (param.length === 2) {
+                            Object.assign(params, (_a = {},
+                                _a[param[0]] = param[1],
+                                _a));
+                        }
+                        var _a;
+                    });
+                }
+            }
+            else {
+                path = url;
+            }
+            this.navigate(path, params, action);
+        };
+        NavigatorStack.prototype.navigate = function (name, params, action) {
             var _this = this;
             if (params === void 0) { params = {}; }
+            if (action === void 0) { action = null; }
             if (this.__routes__
                 && this.__routes__.hasOwnProperty(name)
                 && this.__routes__[name].hasOwnProperty('activity')) {
@@ -475,132 +502,111 @@ var Tape;
                     Object.assign(paramsObject, route['params']);
                 }
                 Object.assign(paramsObject, params);
+                this.__loading__ = true;
                 new NavigatorLoader(activity, name, {
                     navigation: this,
                     routeName: name,
                     params: paramsObject
-                }, resArray_1, function (stack) {
-                    _this.__navigator__.addChild(stack);
-                    _this.pushStack(stack);
-                    if (_this.__loaded_handler__) {
-                        _this.__loaded_handler__(stack);
+                }, resArray_1, function (loader) {
+                    _this.__loading__ = false;
+                    _this.__navigator__.addChild(loader);
+                    _this.putStack(loader);
+                    action && action();
+                    _this.__loaded_handler__ && _this.__loaded_handler__(loader);
+                }, function (loader, progress) {
+                    if (_this.__loading__) {
+                        var stack = _this.lastStack();
+                        stack && stack.nextProgress(progress);
                     }
-                }, this.__load_progress_handler__);
+                    _this.__load_progress_handler__ && _this.__load_progress_handler__(loader, progress);
+                });
             }
             else {
                 return false;
             }
         };
-        NavigatorStack.prototype.link = function (url) {
-            var params = {};
-            var delimiter = this.__uri_profix__ || '://';
-            var urlSplit = url.split(delimiter);
-            var path = '/';
-            if (urlSplit.length > 1) {
-                var pathSplit = urlSplit[1].split('?');
-                path = pathSplit[0];
-                if (pathSplit.length > 1) {
-                    var paramsSplit = pathSplit[1].split('&');
-                    paramsSplit.forEach(function (value) {
-                        var param = value.split('=');
-                        if (param.length === 2) {
-                            Object.assign(params, (_a = {},
-                                _a[param[0]] = param[1],
-                                _a));
-                        }
-                        var _a;
-                    });
-                }
-            }
-            else {
-                path = url;
-            }
-            this.navigate(path, params);
-        };
-        NavigatorStack.prototype.back = function () {
-            this.popStack();
-        };
-        NavigatorStack.prototype.finish = function (reverseIndex) {
-            this.finishStack(reverseIndex);
-        };
-        NavigatorStack.prototype.finishByName = function (name) {
-            var _this = this;
-            var targetIndexs = [];
-            var count = this.__stacks__.length;
-            for (var i = 0; i < count; i++) {
-                var stack = this.__stacks__[count - 1 - i];
-                if (stack.routeName === name) {
-                    targetIndexs.push(i);
-                }
-            }
-            if (targetIndexs.length > 0) {
-                targetIndexs.forEach(function (i) {
-                    _this.finish(i);
-                });
-            }
-        };
-        NavigatorStack.prototype.pop = function (n) {
-            if (n === void 0) { n = 1; }
-            for (var i = 0; i < n; i++) {
-                this.popStack();
-            }
-        };
-        NavigatorStack.prototype.popByName = function (name) {
-            var targetIndex = -1;
-            try {
-                for (var i = 0; i < this.__stacks__.length; i++) {
-                    var stack = this.__stacks__[i];
-                    if (stack.routeName === name) {
-                        targetIndex = i;
-                        throw new Error("finded route");
-                    }
-                }
-            }
-            catch (e) {
-            }
-            if (targetIndex >= 0) {
-                var n = this.__stacks__.length - 1 - targetIndex;
-                this.pop(n);
-            }
+        ///////////////////////////////////////////////////////////
+        //// finish
+        ///////////////////////////////////////////////////////////
+        NavigatorStack.prototype.finish = function (name) {
+            this.finishStack(name);
         };
         NavigatorStack.prototype.popToTop = function () {
             this.pop(this.__stacks__.length);
         };
+        NavigatorStack.prototype.pop = function (number) {
+            this.popStack(number);
+        };
         /////////////////////////////////
         //// private
         /////////////////////////////////
-        NavigatorStack.prototype.hasStack = function (minCount) {
-            if (minCount === void 0) { minCount = 1; }
-            if (this.__stacks__.length >= minCount) {
-                return true;
-            }
-            return false;
+        NavigatorStack.prototype.lenStack = function () {
+            return this.__stacks__.length;
         };
         NavigatorStack.prototype.lastStack = function () {
-            if (this.hasStack()) {
-                return this.__stacks__[this.__stacks__.length - 1];
+            var len = this.lenStack();
+            if (len > 0) {
+                return this.__stacks__[len - 1];
             }
+            return null;
         };
-        NavigatorStack.prototype.pushStack = function (stack) {
-            if (this.hasStack()) {
-                this.__stacks__[this.__stacks__.length - 1].hide();
-            }
+        NavigatorStack.prototype.putStack = function (stack) {
+            this.hideStack();
             this.__stacks__.push(stack);
+            this.showStack();
         };
-        NavigatorStack.prototype.popStack = function () {
-            if (this.hasStack(2)) {
-                this.__stacks__[this.__stacks__.length - 1].exit();
-                this.__stacks__.splice(this.__stacks__.length - 1, 1);
-                this.__stacks__[this.__stacks__.length - 1].show();
+        NavigatorStack.prototype.popStack = function (count) {
+            if (this.lenStack() > 1) {
+                this.hideStack();
+                for (var i = 0; i < count + 1; i++) {
+                    if (this.lenStack() > 1) {
+                        this.__stacks__.pop().exit();
+                    }
+                }
+                this.showStack();
             }
         };
-        NavigatorStack.prototype.finishStack = function (reverseIndex) {
-            if (this.hasStack(2)) {
-                this.__stacks__[this.__stacks__.length - 1 - reverseIndex].exit();
-                this.__stacks__.splice(this.__stacks__.length - 1 - reverseIndex, 1);
-                if (reverseIndex == 0) {
-                    this.__stacks__[this.__stacks__.length - 1].show();
+        NavigatorStack.prototype.finishStack = function (name) {
+            var len = this.lenStack();
+            if (len > 1) {
+                var targetIndexs = [];
+                for (var i = 0; i < len; i++) {
+                    var stack = this.__stacks__[i];
+                    if (stack.routeName === name) {
+                        targetIndexs.push(i);
+                    }
                 }
+                var first = targetIndexs.pop();
+                var flag = first === len - 1;
+                if (flag) {
+                    this.hideStack();
+                }
+                var slice = this.__stacks__.splice(first, 1);
+                slice.forEach(function (stack) {
+                    stack.exit();
+                });
+                while (targetIndexs.length > 0) {
+                    first = targetIndexs.pop();
+                    var slice_1 = this.__stacks__.splice(first, 1);
+                    slice_1.forEach(function (stack) {
+                        stack.exit();
+                    });
+                }
+                if (flag) {
+                    this.showStack();
+                }
+            }
+        };
+        NavigatorStack.prototype.hideStack = function () {
+            var len = this.lenStack();
+            if (len > 0) {
+                this.__stacks__[len - 1].hide();
+            }
+        };
+        NavigatorStack.prototype.showStack = function () {
+            var len = this.lenStack();
+            if (len > 0) {
+                this.__stacks__[len - 1].show();
             }
         };
         return NavigatorStack;

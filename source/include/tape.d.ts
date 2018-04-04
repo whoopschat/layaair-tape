@@ -34,6 +34,12 @@ declare module Tape {
 
         constructor(props?: Object);
 
+        protected addChild(clild: any);
+
+        ///////////////////////
+        /// LifeCycle
+        ///////////////////////
+
         protected onCreate();
 
         protected onResume();
@@ -42,29 +48,29 @@ declare module Tape {
 
         protected onDestroy();
 
-        playSound(url: string, loops?: number, complete?: Function, soundClass?: any, startTime?: number): number;
-        
-        stopSound(id?: number);
+        protected onNextProgress(progress: number);
+
+        ///////////////////////
+        /// Music
+        ///////////////////////
+
+        protected playMusic(url: string, loops?: number, complete?: Function): number;
+
+        protected stopMusic(chancelId?: number);
 
         ///////////////////////
         /// Navigator
         ///////////////////////
 
-        protected navigate(name, params?);
+        protected navigate(name, params?, action?: Function);
 
-        protected link(url);
+        protected link(url, action?: Function);
 
-        protected finish(n?);
+        protected finish(name?: String);
 
-        protected finishByName(name);
-
-        protected pop(n?);
-
-        protected popByName(name);
+        protected pop(n?: number);
 
         protected popToTop();
-
-        protected addChild(clild: any);
 
         ///////////////////////
         /// Logger

@@ -23,16 +23,20 @@ module Tape {
             });
         };
 
+        private __play_music_list__: Array<Tape.Audio> = [];
+
         public readonly routeName: String = "";
         public readonly params: Object = {};
-
-        private __sound_play_list = [];
 
         constructor(props: Object = {}) {
             super(props);
             this.params = (<any>Object).assign({}, props['params']);
             this.routeName = props['routeName'] || "";
         }
+
+        ///////////////////////
+        /// LifeCycle
+        ///////////////////////
 
         protected onCreate() {
         }
@@ -46,28 +50,31 @@ module Tape {
         protected onDestroy() {
         }
 
-        ///////////////////////
-        /// Sound
-        ///////////////////////
-
-        protected playSound(url: string, loops?: number, complete?: Function, soundClass?: any, startTime?: number) {
-            var soundChancel = Tape.Box.SoundManager.playSound(url, loops, complete ? Tape.Box.Handler.create(this, complete) : null, soundClass, startTime);
-            return this.__sound_play_list.push(soundChancel);
+        protected onNextProgress(progress) {
         }
 
-        protected stopSound(id: number = 0) {
+        ///////////////////////
+        /// Music
+        ///////////////////////
+
+        protected playMusic(url: string, loops?: number, complete?: Function) {
+            var audio = new Tape.Audio(url);
+            audio.play(loops);
+            audio.onComplete = complete;
+            return this.__play_music_list__.push(audio);
+        }
+
+        protected stopMusic(id: number = 0) {
             if (id == 0) {
-                this.__sound_play_list.forEach(chancel => {
-                    if (chancel && chancel.hasOwnProperty('stop')) {
-                        chancel.stop();
-                    }
-                });
+                while (this.__play_music_list__.length > 0) {
+                    this.__play_music_list__.pop().stop();
+                }
             } else {
-                if (id - 1 >= 0 && id - 1 < this.__sound_play_list.length) {
-                    let chancel = this.__sound_play_list[id - 1];
-                    if (chancel && chancel.hasOwnProperty('stop')) {
+                if (id - 1 >= 0 && id - 1 < this.__play_music_list__.length) {
+                    let splice = this.__play_music_list__.splice(id - 1, 1);
+                    splice.forEach(chancel => {
                         chancel.stop();
-                    }
+                    });
                 }
             }
         }
@@ -76,39 +83,27 @@ module Tape {
         /// Navigator
         ///////////////////////
 
-        protected navigate(name, params = {}) {
+        protected navigate(name, params: Object = {}, action: Function = null) {
             if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].navigate(name, params);
+                this.props['navigation'].navigate(name, params, action);
             }
         }
 
-        protected link(url) {
+        protected link(url, action: Function = null) {
             if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].link(url);
+                this.props['navigation'].link(url, action);
             }
         }
 
-        protected finish(n = 0) {
+        protected finish(name = this.routeName) {
             if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].finish(n);
+                this.props['navigation'].finish(name);
             }
         }
 
-        protected finishByName(name) {
+        protected pop(number: Number) {
             if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].finishByName(name);
-            }
-        }
-
-        protected pop(n = 0) {
-            if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].pop(n);
-            }
-        }
-
-        protected popByName(name) {
-            if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].popByName(name);
+                this.props['navigation'].pop(number);
             }
         }
 
@@ -123,23 +118,23 @@ module Tape {
         ///////////////////////
 
         protected log(message?: any, ...optionalParams: any[]): void {
-            Tape.Logger.log(message, ...optionalParams);
+            Tape.Logger.log(" ------ " + this.routeName + " ------ :", message, ...optionalParams);
         }
 
         protected error(message?: any, ...optionalParams: any[]): void {
-            Tape.Logger.error(message, ...optionalParams);
+            Tape.Logger.error(" ------ " + this.routeName + " ------ :", message, ...optionalParams);
         }
 
         protected info(message?: any, ...optionalParams: any[]): void {
-            Tape.Logger.info(message, ...optionalParams);
+            Tape.Logger.info(" ------ " + this.routeName + " ------ :", message, ...optionalParams);
         }
 
         protected warn(message?: any, ...optionalParams: any[]): void {
-            Tape.Logger.warn(message, ...optionalParams);
+            Tape.Logger.warn(" ------ " + this.routeName + "  ------ :", message, ...optionalParams);
         }
 
         protected debug(message?: any, ...optionalParams: any[]): void {
-            Tape.Logger.debug(message, ...optionalParams);
+            Tape.Logger.debug(" ------ " + this.routeName + " ------ :", message, ...optionalParams);
         }
 
     }

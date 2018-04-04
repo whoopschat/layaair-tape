@@ -22,8 +22,6 @@ var Tape;
         Box.Socket = Laya.Socket;
         Box.Event = Laya.Event;
         Box.Ease = Laya.Ease;
-        Box.SoundManager = Laya.SoundManager;
-        Box.SoundChannel = Laya.SoundChannel;
         ////////////////////////////
         //// imports method
         ////////////////////////////
@@ -39,7 +37,7 @@ var Tape;
         Box.load = function (res, caller, handler, progress) {
             if (handler === void 0) { handler = null; }
             if (progress === void 0) { progress = null; }
-            Laya.loader.load(res, Laya.Handler.create(caller, handler), Laya.Handler.create(caller, progress));
+            Laya.loader.load(res, Laya.Handler.create(caller, handler), Laya.Handler.create(caller, progress, null, false));
         };
         Box.drawView = function (view) {
             Laya.stage.addChild(view);

@@ -20,7 +20,7 @@ var App;
         Main.prototype.onCreate = function () {
             var _this = this;
             this.addChild(this.page1);
-            var id = this.playSound("res/sound/bg_sound.mp3", 0);
+            this.playMusic("res/sound/bg_sound.mp3", 0);
             this.page1.btn.on(Laya.Event.CLICK, this, function () {
                 var message = new ui.MessageToastUI();
                 message.text.text = _this.routeName + JSON.stringify(_this.params);
@@ -28,7 +28,6 @@ var App;
                 _this.navigate("Page2");
             });
             this.page1.btnBack.on(Laya.Event.CLICK, this, function () {
-                _this.stopSound(id);
                 _this.finish();
             });
         };
@@ -37,6 +36,10 @@ var App;
         };
         Main.prototype.onResume = function () {
             this.debug("onResume");
+        };
+        Main.prototype.onDestroy = function () {
+            this.debug("onDestroy");
+            this.stopMusic();
         };
         return Main;
     }(Tape.Activity));
@@ -50,18 +53,32 @@ var App;
         }
         Page2.prototype.onCreate = function () {
             var _this = this;
+            this.debug("onCreate");
             var socket = new Tape.WebSocket();
             socket.onConnected = function () {
                 _this.link("baidu://elm/Main?name=你好");
             };
             this.addChild(this.page2);
             this.page2.btn.on(Laya.Event.CLICK, this, function () {
-                _this.link("baidu://elm/Main?name=你好");
+                _this.link("baidu://elm/Main?name=你好", function () {
+                    // this.finish();
+                });
                 // socket.connect("wss://127.0.0.1:9011/websocket");
             });
             this.page2.btnBack.on(Laya.Event.CLICK, this, function () {
                 _this.finish();
             });
+        };
+        Page2.prototype.onPause = function () {
+            this.debug("onPause");
+        };
+        Page2.prototype.onResume = function () {
+            this.debug("onResume");
+        };
+        Page2.prototype.onDestroy = function () {
+            this.debug("onDestroy");
+        };
+        Page2.prototype.onNextProgress = function (progress) {
         };
         return Page2;
     }(Tape.Activity));

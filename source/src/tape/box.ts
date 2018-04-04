@@ -22,8 +22,6 @@ module Tape {
         public static Socket = Laya.Socket;
         public static Event = Laya.Event;
         public static Ease = Laya.Ease;
-        public static SoundManager = Laya.SoundManager;
-        public static SoundChannel = Laya.SoundChannel;
 
         ////////////////////////////
         //// imports method
@@ -41,7 +39,7 @@ module Tape {
          * load res
          */
         public static load = function (res, caller: any, handler: Function = null, progress: Function = null) {
-            Laya.loader.load(res, Laya.Handler.create(caller, handler), Laya.Handler.create(caller, progress));
+            Laya.loader.load(res, Laya.Handler.create(caller, handler), Laya.Handler.create(caller, progress, null, false));
         }
 
         public static drawView = function (view) {
