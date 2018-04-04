@@ -13,6 +13,8 @@ declare module Tape {
         public readonly props: Object;
         public readonly params: Object;
         public readonly routeName: String;
+        public readonly routeKey: String;
+
         gray: boolean;
         disabled: boolean;
         tag: any;
@@ -66,7 +68,9 @@ declare module Tape {
 
         protected deeplink(url, action?: Function): Boolean;
 
-        protected finish(name?: String);
+        protected back();
+
+        protected finish(name);
 
         protected pop(n?: number);
 
@@ -104,6 +108,17 @@ declare module Tape {
 
         static debug(message?: any, ...optionalParams: any[]): void;
 
+    }
+
+    class Audio {
+        
+        constructor(url: String);
+
+        public play(loops?: number): void;
+
+        public stop(): void;
+
+        public pause(): void;
     }
 
     class Toast {

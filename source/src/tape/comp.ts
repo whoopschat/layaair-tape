@@ -26,12 +26,14 @@ module Tape {
         private __play_music_list__: Array<Tape.Audio> = [];
 
         public readonly routeName: String = "";
+        public readonly routeKey: String = "";
         public readonly params: Object = {};
 
         constructor(props: Object = {}) {
             super(props);
             this.params = (<any>Object).assign({}, props['params']);
             this.routeName = props['routeName'] || "";
+            this.routeKey = props['routeKey'] || "";
         }
 
         ///////////////////////
@@ -97,7 +99,13 @@ module Tape {
             return false;
         }
 
-        protected finish(name = this.routeName) {
+        protected back() {
+            if (this.props.hasOwnProperty('navigation')) {
+                this.props['navigation'].finish(this.routeName, this.routeKey);
+            }
+        }
+
+        protected finish(name) {
             if (this.props.hasOwnProperty('navigation')) {
                 this.props['navigation'].finish(name);
             }

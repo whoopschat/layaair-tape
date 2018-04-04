@@ -35,9 +35,11 @@ var Tape;
             var _this = _super.call(this, props) || this;
             _this.__play_music_list__ = [];
             _this.routeName = "";
+            _this.routeKey = "";
             _this.params = {};
             _this.params = Object.assign({}, props['params']);
             _this.routeName = props['routeName'] || "";
+            _this.routeKey = props['routeKey'] || "";
             return _this;
         }
         Activity.ROUTE = function (options) {
@@ -103,8 +105,12 @@ var Tape;
             }
             return false;
         };
+        Activity.prototype.back = function () {
+            if (this.props.hasOwnProperty('navigation')) {
+                this.props['navigation'].finish(this.routeName, this.routeKey);
+            }
+        };
         Activity.prototype.finish = function (name) {
-            if (name === void 0) { name = this.routeName; }
             if (this.props.hasOwnProperty('navigation')) {
                 this.props['navigation'].finish(name);
             }

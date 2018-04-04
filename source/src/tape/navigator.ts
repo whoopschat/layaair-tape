@@ -10,11 +10,13 @@ module Tape {
     class NavigatorLoader extends Tape.PropsComponent {
 
         public routeName = "";
+        public routeKey = "";
         public routeActivity = null;
 
-        constructor(activity, routeName, props = {}, res = [], loaded: Function = null, onLoadProgress: Function = null) {
+        constructor(activity, routeName, routeKey, props = {}, res = [], loaded: Function = null, onLoadProgress: Function = null) {
             super();
             this.routeName = routeName;
+            this.routeKey = routeKey;
             if (res != null && res.length > 0) {
                 Tape.Box.load(res, this, () => {
                     let act = new activity(props);
@@ -164,9 +166,11 @@ module Tape {
                 }
                 (<any>Object).assign(paramsObject, params);
                 this.__loading__ = true;
-                new NavigatorLoader(activity, name, {
+                let key = Tape.guid();
+                new NavigatorLoader(activity, name, key, {
                     navigation: this,
                     routeName: name,
+                    routeKey: key,
                     params: paramsObject
                 }, resArray, (loader) => {
                     this.__loading__ = false;
@@ -192,8 +196,8 @@ module Tape {
         //// finish
         ///////////////////////////////////////////////////////////
 
-        public finish(name) {
-            this.finishStack(name);
+        public finish(name, key = null) {
+            this.finishStack(name, key);
         }
 
         public popToTop() {
@@ -238,34 +242,42 @@ module Tape {
             }
         }
 
-        private finishStack(name) {
+        private finishStack(name, key = null) {
             var len = this.lenStack();
             if (len > 1) {
                 let targetIndexs = [];
                 for (var i = 0; i < len; i++) {
                     var stack = this.__stacks__[i];
                     if (stack.routeName === name) {
-                        targetIndexs.push(i);
+                        var flag = true;
+                        if (key) {
+                            flag = stack.routeKey === key;
+                        }
+                        if (flag && targetIndexs.length < len - 1) {
+                            targetIndexs.push(i);
+                        }
                     }
                 }
-                let first = targetIndexs.pop();
-                let flag = first === len - 1;
-                if (flag) {
-                    this.hideStack();
-                }
-                let slice = this.__stacks__.splice(first, 1);
-                slice.forEach(stack => {
-                    stack.exit();
-                });
-                while (targetIndexs.length > 0) {
-                    first = targetIndexs.pop();
+                if (targetIndexs.length > 0) {
+                    let first = targetIndexs.pop();
+                    let flag = first === len - 1;
+                    if (flag) {
+                        this.hideStack();
+                    }
                     let slice = this.__stacks__.splice(first, 1);
                     slice.forEach(stack => {
                         stack.exit();
                     });
-                }
-                if (flag) {
-                    this.showStack();
+                    while (targetIndexs.length > 0) {
+                        first = targetIndexs.pop();
+                        let slice = this.__stacks__.splice(first, 1);
+                        slice.forEach(stack => {
+                            stack.exit();
+                        });
+                    }
+                    if (flag) {
+                        this.showStack();
+                    }
                 }
             }
         }

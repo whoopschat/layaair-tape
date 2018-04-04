@@ -58,6 +58,12 @@ var Tape;
 // =========================== //
 var Tape;
 (function (Tape) {
+    var S4 = function () {
+        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+    };
+    Tape.guid = function () {
+        return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
+    };
     /**
      * Logger
      */
@@ -200,9 +206,11 @@ var Tape;
             var _this = _super.call(this, props) || this;
             _this.__play_music_list__ = [];
             _this.routeName = "";
+            _this.routeKey = "";
             _this.params = {};
             _this.params = Object.assign({}, props['params']);
             _this.routeName = props['routeName'] || "";
+            _this.routeKey = props['routeKey'] || "";
             return _this;
         }
         Activity.ROUTE = function (options) {
@@ -268,8 +276,12 @@ var Tape;
             }
             return false;
         };
+        Activity.prototype.back = function () {
+            if (this.props.hasOwnProperty('navigation')) {
+                this.props['navigation'].finish(this.routeName, this.routeKey);
+            }
+        };
         Activity.prototype.finish = function (name) {
-            if (name === void 0) { name = this.routeName; }
             if (this.props.hasOwnProperty('navigation')) {
                 this.props['navigation'].finish(name);
             }
@@ -332,6 +344,70 @@ var Tape;
     Tape.Activity = Activity;
 })(Tape || (Tape = {}));
 
+var Tape;
+(function (Tape) {
+    var Audio = /** @class */ (function () {
+        function Audio(url) {
+            this.__audio_url__ = "";
+            this.__audio_chancel__ = null;
+            this.__is_playing__ = false;
+            this.onComplete = null;
+            this.__audio_url__ = url;
+        }
+        Audio.prototype.play = function (loops) {
+            var _this = this;
+            if (loops === void 0) { loops = 1; }
+            this.withSBWeixinPlay(function () {
+                if (_this.__audio_chancel__) {
+                    if (!_this.__is_playing__) {
+                        _this.__audio_chancel__.play();
+                    }
+                    return;
+                }
+                _this.__is_playing__ = true;
+                _this.__audio_chancel__ = Laya.SoundManager.playSound(_this.__audio_url__, loops, Tape.Box.Handler.create(_this, function () {
+                    _this.__is_playing__ = false;
+                    _this.onComplete && _this.onComplete();
+                }));
+            });
+        };
+        Audio.prototype.stop = function () {
+            if (this.__audio_chancel__) {
+                this.__audio_chancel__.stop();
+                this.__audio_chancel__ = null;
+                this.__is_playing__ = false;
+            }
+        };
+        Audio.prototype.pause = function () {
+            if (this.__audio_chancel__) {
+                this.__audio_chancel__.pause();
+                this.__is_playing__ = false;
+            }
+        };
+        //////////////////////////////////////
+        ////  private
+        //////////////////////////////////////
+        Audio.prototype.withSBWeixinPlay = function (callback) {
+            var wsb = window;
+            if (wsb['WeixinJSBridge']) {
+                try {
+                    wsb['WeixinJSBridge'].invoke("getNetworkType", {}, function () {
+                        callback && callback();
+                    });
+                }
+                catch (e) {
+                    callback && callback();
+                }
+            }
+            else {
+                callback && callback();
+            }
+        };
+        return Audio;
+    }());
+    Tape.Audio = Audio;
+})(Tape || (Tape = {}));
+
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -352,15 +428,17 @@ var Tape;
     ///////////////////////////////////
     var NavigatorLoader = /** @class */ (function (_super) {
         __extends(NavigatorLoader, _super);
-        function NavigatorLoader(activity, routeName, props, res, loaded, onLoadProgress) {
+        function NavigatorLoader(activity, routeName, routeKey, props, res, loaded, onLoadProgress) {
             if (props === void 0) { props = {}; }
             if (res === void 0) { res = []; }
             if (loaded === void 0) { loaded = null; }
             if (onLoadProgress === void 0) { onLoadProgress = null; }
             var _this = _super.call(this) || this;
             _this.routeName = "";
+            _this.routeKey = "";
             _this.routeActivity = null;
             _this.routeName = routeName;
+            _this.routeKey = routeKey;
             if (res != null && res.length > 0) {
                 Tape.Box.load(res, _this, function () {
                     var act = new activity(props);
@@ -505,9 +583,11 @@ var Tape;
                 }
                 Object.assign(paramsObject, params);
                 this.__loading__ = true;
-                new NavigatorLoader(activity, name, {
+                var key = Tape.guid();
+                new NavigatorLoader(activity, name, key, {
                     navigation: this,
                     routeName: name,
+                    routeKey: key,
                     params: paramsObject
                 }, resArray_1, function (loader) {
                     _this.__loading__ = false;
@@ -532,8 +612,9 @@ var Tape;
         ///////////////////////////////////////////////////////////
         //// finish
         ///////////////////////////////////////////////////////////
-        NavigatorStack.prototype.finish = function (name) {
-            this.finishStack(name);
+        NavigatorStack.prototype.finish = function (name, key) {
+            if (key === void 0) { key = null; }
+            this.finishStack(name, key);
         };
         NavigatorStack.prototype.popToTop = function () {
             this.pop(this.__stacks__.length);
@@ -570,34 +651,43 @@ var Tape;
                 this.showStack();
             }
         };
-        NavigatorStack.prototype.finishStack = function (name) {
+        NavigatorStack.prototype.finishStack = function (name, key) {
+            if (key === void 0) { key = null; }
             var len = this.lenStack();
             if (len > 1) {
                 var targetIndexs = [];
                 for (var i = 0; i < len; i++) {
                     var stack = this.__stacks__[i];
                     if (stack.routeName === name) {
-                        targetIndexs.push(i);
+                        var flag = true;
+                        if (key) {
+                            flag = stack.routeKey === key;
+                        }
+                        if (flag && targetIndexs.length < len - 1) {
+                            targetIndexs.push(i);
+                        }
                     }
                 }
-                var first = targetIndexs.pop();
-                var flag = first === len - 1;
-                if (flag) {
-                    this.hideStack();
-                }
-                var slice = this.__stacks__.splice(first, 1);
-                slice.forEach(function (stack) {
-                    stack.exit();
-                });
-                while (targetIndexs.length > 0) {
-                    first = targetIndexs.pop();
-                    var slice_1 = this.__stacks__.splice(first, 1);
-                    slice_1.forEach(function (stack) {
+                if (targetIndexs.length > 0) {
+                    var first = targetIndexs.pop();
+                    var flag_1 = first === len - 1;
+                    if (flag_1) {
+                        this.hideStack();
+                    }
+                    var slice = this.__stacks__.splice(first, 1);
+                    slice.forEach(function (stack) {
                         stack.exit();
                     });
-                }
-                if (flag) {
-                    this.showStack();
+                    while (targetIndexs.length > 0) {
+                        first = targetIndexs.pop();
+                        var slice_1 = this.__stacks__.splice(first, 1);
+                        slice_1.forEach(function (stack) {
+                            stack.exit();
+                        });
+                    }
+                    if (flag_1) {
+                        this.showStack();
+                    }
                 }
             }
         };

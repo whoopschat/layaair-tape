@@ -25,6 +25,7 @@ var packageList = [
   inputJsPath + moduleName + '/box.js',
   inputJsPath + moduleName + '/utils.js',
   inputJsPath + moduleName + '/comp.js',
+  inputJsPath + moduleName + '/media.js',
   inputJsPath + moduleName + '/navigator.js',
   inputJsPath + moduleName + '/socket.js',
   inputJsPath + moduleName + '/jsfile/**/*.js'

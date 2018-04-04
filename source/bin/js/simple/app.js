@@ -28,7 +28,7 @@ var App;
                 _this.navigate("Page2");
             });
             this.page1.btnBack.on(Laya.Event.CLICK, this, function () {
-                _this.finish();
+                _this.back();
             });
         };
         Main.prototype.onPause = function () {
@@ -61,12 +61,12 @@ var App;
             this.addChild(this.page2);
             this.page2.btn.on(Laya.Event.CLICK, this, function () {
                 _this.deeplink("http://m.baidu.com/Main?name=你好", function () {
-                    _this.finish();
+                    _this.back();
                 });
                 // socket.connect("wss://127.0.0.1:9011/websocket");
             });
             this.page2.btnBack.on(Laya.Event.CLICK, this, function () {
-                _this.finish();
+                _this.back();
             });
         };
         Page2.prototype.onPause = function () {
