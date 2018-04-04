@@ -83,16 +83,18 @@ module Tape {
         /// Navigator
         ///////////////////////
 
-        protected navigate(name, params: Object = {}, action: Function = null) {
+        protected navigate(name, params: Object = {}, action: Function = null): boolean {
             if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].navigate(name, params, action);
+                return this.props['navigation'].navigate(name, params, action);
             }
+            return false;
         }
 
-        protected link(url, action: Function = null) {
+        protected deeplink(url, action: Function = null): boolean {
             if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].link(url, action);
+                return this.props['navigation'].deeplink(url, action);
             }
+            return false;
         }
 
         protected finish(name = this.routeName) {

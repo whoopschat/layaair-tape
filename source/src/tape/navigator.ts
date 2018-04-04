@@ -108,7 +108,7 @@ module Tape {
         //// Open
         ///////////////////////////////////////////////////////////
 
-        public link(url, action: Function = null) {
+        public deeplink(url, action: Function = null): boolean {
             const params = {};
             const delimiter = this.__uri_profix__ || '://';
             const urlSplit = url.split(delimiter);
@@ -130,10 +130,10 @@ module Tape {
             } else {
                 path = url
             }
-            this.navigate(path, params, action);
+            return this.navigate(path, params, action);
         }
 
-        public navigate(name, params = {}, action: Function = null) {
+        public navigate(name, params = {}, action: Function = null): boolean {
             if (this.__routes__
                 && this.__routes__.hasOwnProperty(name)
                 && this.__routes__[name].hasOwnProperty('activity')) {
@@ -172,7 +172,7 @@ module Tape {
                     this.__loading__ = false;
                     this.__navigator__.addChild(loader);
                     this.putStack(loader);
-                    action && action();
+                    action && action(true);
                     this.__loaded_handler__ && this.__loaded_handler__(loader);
                 }, (loader, progress) => {
                     if (this.__loading__) {
@@ -181,7 +181,9 @@ module Tape {
                     }
                     this.__load_progress_handler__ && this.__load_progress_handler__(loader, progress);
                 });
+                return true;
             } else {
+                action && action(false);
                 return false;
             }
         }

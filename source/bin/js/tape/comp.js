@@ -92,14 +92,16 @@ var Tape;
             if (params === void 0) { params = {}; }
             if (action === void 0) { action = null; }
             if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].navigate(name, params, action);
+                return this.props['navigation'].navigate(name, params, action);
             }
+            return false;
         };
-        Activity.prototype.link = function (url, action) {
+        Activity.prototype.deeplink = function (url, action) {
             if (action === void 0) { action = null; }
             if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].link(url, action);
+                return this.props['navigation'].deeplink(url, action);
             }
+            return false;
         };
         Activity.prototype.finish = function (name) {
             if (name === void 0) { name = this.routeName; }

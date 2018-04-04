@@ -62,9 +62,9 @@ declare module Tape {
         /// Navigator
         ///////////////////////
 
-        protected navigate(name, params?, action?: Function);
+        protected navigate(name, params?, action?: Function): Boolean;
 
-        protected link(url, action?: Function);
+        protected deeplink(url, action?: Function): Boolean;
 
         protected finish(name?: String);
 

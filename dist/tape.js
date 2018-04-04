@@ -257,14 +257,16 @@ var Tape;
             if (params === void 0) { params = {}; }
             if (action === void 0) { action = null; }
             if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].navigate(name, params, action);
+                return this.props['navigation'].navigate(name, params, action);
             }
+            return false;
         };
-        Activity.prototype.link = function (url, action) {
+        Activity.prototype.deeplink = function (url, action) {
             if (action === void 0) { action = null; }
             if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].link(url, action);
+                return this.props['navigation'].deeplink(url, action);
             }
+            return false;
         };
         Activity.prototype.finish = function (name) {
             if (name === void 0) { name = this.routeName; }
@@ -442,7 +444,7 @@ var Tape;
         ///////////////////////////////////////////////////////////
         //// Open
         ///////////////////////////////////////////////////////////
-        NavigatorStack.prototype.link = function (url, action) {
+        NavigatorStack.prototype.deeplink = function (url, action) {
             if (action === void 0) { action = null; }
             var params = {};
             var delimiter = this.__uri_profix__ || '://';
@@ -467,7 +469,7 @@ var Tape;
             else {
                 path = url;
             }
-            this.navigate(path, params, action);
+            return this.navigate(path, params, action);
         };
         NavigatorStack.prototype.navigate = function (name, params, action) {
             var _this = this;
@@ -511,7 +513,7 @@ var Tape;
                     _this.__loading__ = false;
                     _this.__navigator__.addChild(loader);
                     _this.putStack(loader);
-                    action && action();
+                    action && action(true);
                     _this.__loaded_handler__ && _this.__loaded_handler__(loader);
                 }, function (loader, progress) {
                     if (_this.__loading__) {
@@ -520,8 +522,10 @@ var Tape;
                     }
                     _this.__load_progress_handler__ && _this.__load_progress_handler__(loader, progress);
                 });
+                return true;
             }
             else {
+                action && action(false);
                 return false;
             }
         };
