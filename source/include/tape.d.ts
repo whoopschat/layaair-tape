@@ -110,8 +110,16 @@ declare module Tape {
 
     }
 
+    class Toast {
+        static show(type: string, view, duration?: number, widthRatio?: number, heightRatio?: number): void
+    }
+
+    ///////////////////////////////////////////////
+    ////// Media
+    ///////////////////////////////////////////////
+
     class Audio {
-        
+   
         constructor(url: String);
 
         public play(loops?: number): void;
@@ -121,9 +129,11 @@ declare module Tape {
         public pause(): void;
     }
 
-    class Toast {
-        static show(type: string, view, duration?: number, widthRatio?: number, heightRatio?: number): void
-    }
+
+    ///////////////////////////////////////////////
+    ////// Net
+    ///////////////////////////////////////////////
+
 
     ///////////////////////////////////////////////
     ////// Socket

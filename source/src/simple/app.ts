@@ -7,6 +7,14 @@ module App {
         protected onCreate() {
             this.addChild(this.page1);
             this.playMusic("res/sound/bg_sound.mp3", 0);
+            this.page1.img.on(Laya.Event.MOUSE_OVER, this, () => {
+                this.log('mov');
+                this.page1.num.index = 0
+            })
+            this.page1.img.on(Laya.Event.MOUSE_OUT, this, () => {
+                this.log('mou');
+                this.page1.num.index = 2
+            })
             this.page1.btn.on(Laya.Event.CLICK, this, () => {
                 let message = new ui.MessageToastUI();
                 message.text.text = this.routeName + JSON.stringify(this.params);

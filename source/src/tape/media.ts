@@ -1,3 +1,6 @@
+// =========================== //
+// tape media.js
+// =========================== //
 module Tape {
 
     export class Audio {

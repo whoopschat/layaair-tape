@@ -21,6 +21,14 @@ var App;
             var _this = this;
             this.addChild(this.page1);
             this.playMusic("res/sound/bg_sound.mp3", 0);
+            this.page1.img.on(Laya.Event.MOUSE_OVER, this, function () {
+                _this.log('mov');
+                _this.page1.num.index = 0;
+            });
+            this.page1.img.on(Laya.Event.MOUSE_OUT, this, function () {
+                _this.log('mou');
+                _this.page1.num.index = 2;
+            });
             this.page1.btn.on(Laya.Event.CLICK, this, function () {
                 var message = new ui.MessageToastUI();
                 message.text.text = _this.routeName + JSON.stringify(_this.params);
