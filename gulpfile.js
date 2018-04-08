@@ -10,6 +10,7 @@ var del = require('del');
 var moduleName = 'tape';
 var includePath = './source/include/';
 var inputJsPath = './source/bin/js/';
+var inputLayaPath = './source/bin/libs/min/';
 var outputPath = './dist/';
 
 gulp.task('clean', del.bind(null, [outputPath + '*', inputJsPath + '*']));
@@ -33,7 +34,7 @@ var packageList = [
 
 gulp.task('bundle', function () {
 
-  var bundleJs = gulp.src(packageList)
+  var bundleTapeJs = gulp.src(packageList)
   .pipe(concat(moduleName + '.js'))
   .pipe(gulp.dest(outputPath))
   .pipe(uglify())
@@ -45,7 +46,7 @@ gulp.task('bundle', function () {
 
   var tasks = [
     copyInclude,
-    bundleJs
+    bundleTapeJs
   ];
   return merge(tasks);
 });
