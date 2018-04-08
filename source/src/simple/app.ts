@@ -6,37 +6,54 @@ module App {
 
         protected onCreate() {
             this.addChild(this.page1);
-            this.playMusic("res/sound/bg_sound.mp3", 0);
+            this.playBackgroundMusic("res/sound/bg_sound.mp3", 0);
             this.page1.img.on(Laya.Event.MOUSE_OVER, this, () => {
-                this.log('mov');
+                this.printLog('mov');
                 this.page1.num.index = 0
             })
             this.page1.img.on(Laya.Event.MOUSE_OUT, this, () => {
-                this.log('mou');
+                this.printLog('mou');
                 this.page1.num.index = 2
             })
             this.page1.btn.on(Laya.Event.CLICK, this, () => {
                 let message = new ui.MessageToastUI();
-                message.text.text = this.routeName + JSON.stringify(this.params);
-                Tape.Toast.show("msg", message, 500, 0.5, 0.2);
+                message.text.text = this.routeName + this.routeKey + "\n" + JSON.stringify(this.params);
+                Tape.Toast.show("msg", message, 200, 200, 500);
                 this.navigate("Page2");
             });
             this.page1.btnBack.on(Laya.Event.CLICK, this, () => {
                 this.back();
             });
+
+            var n = null;
+            new Tape.Task(function (re, rj) {
+                setTimeout(function () {
+                    re("nihao");
+                }, 5000);
+            }).then(data => {
+                alert(data);
+                alert(n.toString());
+                return "11111111";
+            }).then(data => {
+                alert(data);
+            }).catch(error => {
+                let message = new ui.MessageToastUI();
+                message.text.text = error.message;
+                Tape.Toast.show("error", message, 100, 100, 500);
+            });;
         }
 
         protected onPause() {
-            this.debug("onPause");
+            this.printDebug("onPause");
         }
 
         protected onResume() {
-            this.debug("onResume");
+            this.printDebug("onResume");
         }
 
         protected onDestroy() {
-            this.debug("onDestroy");
-            this.stopMusic();
+            this.printDebug("onDestroy");
+            // this.stopMusic();
         }
     }
 
@@ -46,7 +63,7 @@ module App {
         private page2 = new ui.Page2UI();
 
         protected onCreate() {
-            this.debug("onCreate");
+            this.printDebug("onCreate");
             let socket = new Tape.WebSocket();
             socket.onConnected = () => {
                 this.deeplink("http://m.baidu.com/Main?name=你好");
@@ -64,15 +81,15 @@ module App {
         }
 
         protected onPause() {
-            this.debug("onPause");
+            this.printDebug("onPause");
         }
 
         protected onResume() {
-            this.debug("onResume");
+            this.printDebug("onResume");
         }
 
         protected onDestroy() {
-            this.debug("onDestroy");
+            this.printDebug("onDestroy");
         }
 
         protected onNextProgress(progress) {

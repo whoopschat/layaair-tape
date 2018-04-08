@@ -210,6 +210,7 @@ var Tape;
             this.pop(this.__stacks__.length);
         };
         NavigatorStack.prototype.pop = function (number) {
+            if (number === void 0) { number = 1; }
             this.popStack(number);
         };
         /////////////////////////////////
@@ -231,9 +232,9 @@ var Tape;
             this.showStack();
         };
         NavigatorStack.prototype.popStack = function (count) {
-            if (this.lenStack() > 1) {
+            if (this.lenStack() > 1 && count > 0) {
                 this.hideStack();
-                for (var i = 0; i < count + 1; i++) {
+                for (var i = 0; i < count; i++) {
                     if (this.lenStack() > 1) {
                         this.__stacks__.pop().exit();
                     }

@@ -65,13 +65,19 @@ var Tape;
         ///////////////////////
         /// Music
         ///////////////////////
-        Activity.prototype.playMusic = function (url, loops, complete) {
+        Activity.prototype.playBackgroundMusic = function (url, loops) {
+            Tape.BackgroundMusic.play(url, loops);
+        };
+        Activity.prototype.stopBackgroundMusic = function () {
+            Tape.BackgroundMusic.stop();
+        };
+        Activity.prototype.playAudio = function (url, loops, complete) {
             var audio = new Tape.Audio(url);
             audio.play(loops);
             audio.onComplete = complete;
             return this.__play_music_list__.push(audio);
         };
-        Activity.prototype.stopMusic = function (id) {
+        Activity.prototype.stopAudio = function (id) {
             if (id === void 0) { id = 0; }
             if (id == 0) {
                 while (this.__play_music_list__.length > 0) {
@@ -128,7 +134,7 @@ var Tape;
         ///////////////////////
         /// Logger
         ///////////////////////
-        Activity.prototype.log = function (message) {
+        Activity.prototype.printLog = function (message) {
             var optionalParams = [];
             for (var _i = 1; _i < arguments.length; _i++) {
                 optionalParams[_i - 1] = arguments[_i];
@@ -136,7 +142,7 @@ var Tape;
             (_a = Tape.Logger).log.apply(_a, [" ------ " + this.routeName + " ------ :", message].concat(optionalParams));
             var _a;
         };
-        Activity.prototype.error = function (message) {
+        Activity.prototype.printError = function (message) {
             var optionalParams = [];
             for (var _i = 1; _i < arguments.length; _i++) {
                 optionalParams[_i - 1] = arguments[_i];
@@ -144,7 +150,7 @@ var Tape;
             (_a = Tape.Logger).error.apply(_a, [" ------ " + this.routeName + " ------ :", message].concat(optionalParams));
             var _a;
         };
-        Activity.prototype.info = function (message) {
+        Activity.prototype.printInfo = function (message) {
             var optionalParams = [];
             for (var _i = 1; _i < arguments.length; _i++) {
                 optionalParams[_i - 1] = arguments[_i];
@@ -152,7 +158,7 @@ var Tape;
             (_a = Tape.Logger).info.apply(_a, [" ------ " + this.routeName + " ------ :", message].concat(optionalParams));
             var _a;
         };
-        Activity.prototype.warn = function (message) {
+        Activity.prototype.printWarn = function (message) {
             var optionalParams = [];
             for (var _i = 1; _i < arguments.length; _i++) {
                 optionalParams[_i - 1] = arguments[_i];
@@ -160,7 +166,7 @@ var Tape;
             (_a = Tape.Logger).warn.apply(_a, [" ------ " + this.routeName + "  ------ :", message].concat(optionalParams));
             var _a;
         };
-        Activity.prototype.debug = function (message) {
+        Activity.prototype.printDebug = function (message) {
             var optionalParams = [];
             for (var _i = 1; _i < arguments.length; _i++) {
                 optionalParams[_i - 1] = arguments[_i];

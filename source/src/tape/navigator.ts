@@ -204,7 +204,7 @@ module Tape {
             this.pop(this.__stacks__.length);
         }
 
-        public pop(number: Number) {
+        public pop(number: Number = 1) {
             this.popStack(number);
         }
 
@@ -231,9 +231,9 @@ module Tape {
         }
 
         private popStack(count) {
-            if (this.lenStack() > 1) {
+            if (this.lenStack() > 1 && count > 0) {
                 this.hideStack();
-                for (var i = 0; i < count + 1; i++) {
+                for (var i = 0; i < count; i++) {
                     if (this.lenStack() > 1) {
                         this.__stacks__.pop().exit();
                     }

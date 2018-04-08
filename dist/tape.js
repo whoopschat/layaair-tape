@@ -58,15 +58,18 @@ var Tape;
 // =========================== //
 var Tape;
 (function (Tape) {
+    ///////////////////////////////////////////////////
+    ///// GUID
+    ///////////////////////////////////////////////////
     var S4 = function () {
         return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
     };
     Tape.guid = function () {
         return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
     };
-    /**
-     * Logger
-     */
+    ///////////////////////////////////////////////////
+    ///// Logger
+    ///////////////////////////////////////////////////
     var Logger = /** @class */ (function () {
         function Logger() {
         }
@@ -130,30 +133,41 @@ var Tape;
         return Logger;
     }());
     Tape.Logger = Logger;
+    ///////////////////////////////////////////////////
+    ///// Toast
+    ///////////////////////////////////////////////////
+    var fadeIn = function (view, duration, delay, complete) {
+        if (complete === void 0) { complete = null; }
+        Tape.Box.tweenTo(view, { alpha: 1 }, duration, Tape.Box.Ease.quintOut, null, delay);
+    };
+    var fadeOut = function (view, duration, delay, complete) {
+        if (complete === void 0) { complete = null; }
+        Tape.Box.tweenTo(view, { alpha: 0 }, duration, Tape.Box.Ease.quintOut, complete, delay);
+    };
     /**
      * Toast
      */
     var Toast = /** @class */ (function () {
         function Toast() {
         }
-        Toast.show = function (type, view, duration, widthRatio, heightRatio) {
+        Toast.show = function (type, view, x, y, duration, pivotX, pivoxY) {
             if (duration === void 0) { duration = 500; }
-            if (widthRatio === void 0) { widthRatio = 0.5; }
-            if (heightRatio === void 0) { heightRatio = 0.618; }
+            if (pivotX === void 0) { pivotX = 0.5; }
+            if (pivoxY === void 0) { pivoxY = 0.5; }
             if (view && view.parent == null) {
                 if (!this.__toast_object__.hasOwnProperty(type)) {
                     this.__toast_object__[type] = new Array();
                 }
                 var list_1 = this.__toast_object__[type];
-                view.x = Tape.Box.width() * widthRatio;
-                view.y = Tape.Box.height() * heightRatio;
+                view.x = x;
+                view.y = y;
                 view.alpha = 0;
-                view.pivot(view.width / 2, view.height / 2);
-                Tape.Box.tweenTo(view, { alpha: 1 }, duration, Tape.Box.Ease.quintOut);
-                Tape.Box.tweenTo(view, { alpha: 0 }, duration, Tape.Box.Ease.quintIn, function () {
+                view.pivot(view.width * pivotX, view.height * pivoxY);
+                fadeIn(view, duration, 0);
+                fadeOut(view, duration, duration, function () {
                     list_1.splice(list_1.indexOf(view), 1);
                     view.removeSelf();
-                }, duration);
+                });
                 Tape.Box.drawView(view);
                 for (var i in list_1) {
                     if (list_1[i]) {
@@ -167,6 +181,103 @@ var Tape;
         return Toast;
     }());
     Tape.Toast = Toast;
+    ///////////////////////////////////////////////////
+    ///// Task
+    ///////////////////////////////////////////////////
+    var Task = /** @class */ (function () {
+        /**
+         * fn: args -> resolve,reject
+         */
+        function Task(fn) {
+            var _this = this;
+            this.state = 'pending';
+            this.value = null;
+            this.callbacks = [];
+            var reject = function (reason) {
+                _this.state = 'rejected';
+                _this.value = reason;
+                _this.execute();
+            };
+            var resolve = function (newValue) {
+                if (newValue && (typeof newValue === 'object' || typeof newValue === 'function')) {
+                    var then = newValue.then;
+                    if (typeof then === 'function') {
+                        try {
+                            then.call(newValue, resolve, reject);
+                        }
+                        catch (error) {
+                            reject(error);
+                        }
+                        return;
+                    }
+                }
+                _this.state = 'fulfilled';
+                _this.value = newValue;
+                _this.execute();
+            };
+            try {
+                fn(resolve, reject);
+            }
+            catch (error) {
+                reject(error);
+            }
+        }
+        Task.prototype.then = function (onFulfilled, onRejected) {
+            var _this = this;
+            if (onRejected === void 0) { onRejected = null; }
+            return new Task(function (resolve, reject) {
+                _this.handle({
+                    onFulfilled: onFulfilled || null,
+                    onRejected: onRejected || null,
+                    resolve: resolve,
+                    reject: reject
+                });
+            });
+        };
+        Task.prototype.catch = function (onRejected) {
+            var _this = this;
+            return new Task(function (resolve, reject) {
+                _this.handle({
+                    onFulfilled: null,
+                    onRejected: onRejected || null,
+                    resolve: resolve,
+                    reject: reject
+                });
+            });
+        };
+        ///////////////////////////////////////
+        ///// Private
+        ///////////////////////////////////////
+        Task.prototype.handle = function (callback) {
+            if (this.state === 'pending') {
+                this.callbacks.push(callback);
+                return;
+            }
+            var cb = this.state === 'fulfilled' ? callback.onFulfilled : callback.onRejected;
+            if (cb === null) {
+                cb = this.state === 'fulfilled' ? callback.resolve : callback.reject;
+                cb(this.value);
+                return;
+            }
+            try {
+                var ret = cb(this.value);
+                callback.resolve(ret);
+            }
+            catch (error) {
+                callback.reject(error);
+            }
+        };
+        Task.prototype.execute = function () {
+            var _this = this;
+            setTimeout(function () {
+                _this.callbacks.forEach(function (callback) {
+                    _this.handle(callback);
+                });
+            }, 0);
+        };
+        return Task;
+    }());
+    Tape.Task = Task;
 })(Tape || (Tape = {}));
 
 var __extends = (this && this.__extends) || (function () {
@@ -236,13 +347,19 @@ var Tape;
         ///////////////////////
         /// Music
         ///////////////////////
-        Activity.prototype.playMusic = function (url, loops, complete) {
+        Activity.prototype.playBackgroundMusic = function (url, loops) {
+            Tape.BackgroundMusic.play(url, loops);
+        };
+        Activity.prototype.stopBackgroundMusic = function () {
+            Tape.BackgroundMusic.stop();
+        };
+        Activity.prototype.playAudio = function (url, loops, complete) {
             var audio = new Tape.Audio(url);
             audio.play(loops);
             audio.onComplete = complete;
             return this.__play_music_list__.push(audio);
         };
-        Activity.prototype.stopMusic = function (id) {
+        Activity.prototype.stopAudio = function (id) {
             if (id === void 0) { id = 0; }
             if (id == 0) {
                 while (this.__play_music_list__.length > 0) {
@@ -299,7 +416,7 @@ var Tape;
         ///////////////////////
         /// Logger
         ///////////////////////
-        Activity.prototype.log = function (message) {
+        Activity.prototype.printLog = function (message) {
             var optionalParams = [];
             for (var _i = 1; _i < arguments.length; _i++) {
                 optionalParams[_i - 1] = arguments[_i];
@@ -307,7 +424,7 @@ var Tape;
             (_a = Tape.Logger).log.apply(_a, [" ------ " + this.routeName + " ------ :", message].concat(optionalParams));
             var _a;
         };
-        Activity.prototype.error = function (message) {
+        Activity.prototype.printError = function (message) {
             var optionalParams = [];
             for (var _i = 1; _i < arguments.length; _i++) {
                 optionalParams[_i - 1] = arguments[_i];
@@ -315,7 +432,7 @@ var Tape;
             (_a = Tape.Logger).error.apply(_a, [" ------ " + this.routeName + " ------ :", message].concat(optionalParams));
             var _a;
         };
-        Activity.prototype.info = function (message) {
+        Activity.prototype.printInfo = function (message) {
             var optionalParams = [];
             for (var _i = 1; _i < arguments.length; _i++) {
                 optionalParams[_i - 1] = arguments[_i];
@@ -323,7 +440,7 @@ var Tape;
             (_a = Tape.Logger).info.apply(_a, [" ------ " + this.routeName + " ------ :", message].concat(optionalParams));
             var _a;
         };
-        Activity.prototype.warn = function (message) {
+        Activity.prototype.printWarn = function (message) {
             var optionalParams = [];
             for (var _i = 1; _i < arguments.length; _i++) {
                 optionalParams[_i - 1] = arguments[_i];
@@ -331,7 +448,7 @@ var Tape;
             (_a = Tape.Logger).warn.apply(_a, [" ------ " + this.routeName + "  ------ :", message].concat(optionalParams));
             var _a;
         };
-        Activity.prototype.debug = function (message) {
+        Activity.prototype.printDebug = function (message) {
             var optionalParams = [];
             for (var _i = 1; _i < arguments.length; _i++) {
                 optionalParams[_i - 1] = arguments[_i];
@@ -349,6 +466,72 @@ var Tape;
 // =========================== //
 var Tape;
 (function (Tape) {
+    var withWeixinAudioPlay = function (callback) {
+        var wsb = window;
+        if (wsb['WeixinJSBridge']) {
+            try {
+                wsb['WeixinJSBridge'].invoke("getNetworkType", {}, function () {
+                    callback && callback();
+                });
+            }
+            catch (e) {
+                callback && callback();
+            }
+        }
+        else {
+            callback && callback();
+        }
+    };
+    /**
+     * BackgroundMusic
+     */
+    var BackgroundMusic = /** @class */ (function () {
+        function BackgroundMusic() {
+        }
+        BackgroundMusic.play = function (url, loops) {
+            var _this = this;
+            if (loops === void 0) { loops = 1; }
+            if (this.__audio_url__ !== url) {
+                this.__audio_url__ = url;
+                this.stop();
+            }
+            withWeixinAudioPlay(function () {
+                if (_this.__audio_chancel__) {
+                    if (!_this.__is_playing__) {
+                        _this.__audio_chancel__.play();
+                    }
+                    return;
+                }
+                _this.__is_playing__ = true;
+                _this.__audio_chancel__ = Laya.SoundManager.playMusic(_this.__audio_url__, loops, Tape.Box.Handler.create(_this, function () {
+                    _this.__is_playing__ = false;
+                    _this.onComplete && _this.onComplete();
+                }));
+            });
+        };
+        BackgroundMusic.stop = function () {
+            if (this.__audio_chancel__) {
+                this.__audio_chancel__.stop();
+                this.__audio_chancel__ = null;
+                this.__is_playing__ = false;
+            }
+        };
+        BackgroundMusic.pause = function () {
+            if (this.__audio_chancel__) {
+                this.__audio_chancel__.pause();
+                this.__is_playing__ = false;
+            }
+        };
+        BackgroundMusic.__audio_url__ = "";
+        BackgroundMusic.__audio_chancel__ = null;
+        BackgroundMusic.__is_playing__ = false;
+        BackgroundMusic.onComplete = null;
+        return BackgroundMusic;
+    }());
+    Tape.BackgroundMusic = BackgroundMusic;
+    /**
+     * Audio
+     */
     var Audio = /** @class */ (function () {
         function Audio(url) {
             this.__audio_url__ = "";
@@ -360,7 +543,7 @@ var Tape;
         Audio.prototype.play = function (loops) {
             var _this = this;
             if (loops === void 0) { loops = 1; }
-            this.withSBWeixinPlay(function () {
+            withWeixinAudioPlay(function () {
                 if (_this.__audio_chancel__) {
                     if (!_this.__is_playing__) {
                         _this.__audio_chancel__.play();
@@ -385,25 +568,6 @@ var Tape;
             if (this.__audio_chancel__) {
                 this.__audio_chancel__.pause();
                 this.__is_playing__ = false;
-            }
-        };
-        //////////////////////////////////////
-        ////  private
-        //////////////////////////////////////
-        Audio.prototype.withSBWeixinPlay = function (callback) {
-            var wsb = window;
-            if (wsb['WeixinJSBridge']) {
-                try {
-                    wsb['WeixinJSBridge'].invoke("getNetworkType", {}, function () {
-                        callback && callback();
-                    });
-                }
-                catch (e) {
-                    callback && callback();
-                }
-            }
-            else {
-                callback && callback();
             }
         };
         return Audio;
@@ -623,6 +787,7 @@ var Tape;
             this.pop(this.__stacks__.length);
         };
         NavigatorStack.prototype.pop = function (number) {
+            if (number === void 0) { number = 1; }
             this.popStack(number);
         };
         /////////////////////////////////
@@ -644,9 +809,9 @@ var Tape;
             this.showStack();
         };
         NavigatorStack.prototype.popStack = function (count) {
-            if (this.lenStack() > 1) {
+            if (this.lenStack() > 1 && count > 0) {
                 this.hideStack();
-                for (var i = 0; i < count + 1; i++) {
+                for (var i = 0; i < count; i++) {
                     if (this.lenStack() > 1) {
                         this.__stacks__.pop().exit();
                     }
@@ -777,7 +942,7 @@ var Tape;
         // connect error
         SocketTAG.SOCKET_CONNECT_ERROR = "connect_error";
         // connect reveived
-        SocketTAG.SOCKET_MESSAGE_REVEIVED = "message_reveived";
+        SocketTAG.SOCKET_MESSAGE_RECEIVED = "message_received";
         // connect delivered
         SocketTAG.SOCKET_MESSAGE_DELIVERED = "message_delivered";
         // connect publish
@@ -794,7 +959,7 @@ var Tape;
             this.onConnected = null;
             this.onClosed = null;
             this.onError = null;
-            this.onMessageReveived = null;
+            this.onMessageReceived = null;
         }
         WebSocket.prototype.connect = function (socketUrl) {
             var _this = this;
@@ -802,39 +967,29 @@ var Tape;
                 return;
             }
             printLog(" -----WS---" + SocketTAG.SOCKET_CONNECTE_ING);
-            if (this.onConnecting) {
-                this.onConnecting();
-            }
+            this.onConnecting && this.onConnecting();
             this.__is_connect_ing__ = true;
             this.__web_socket__ = new Tape.Box.Socket();
             this.__web_socket__.connectByUrl(socketUrl);
             this.__web_socket__.on(Tape.Box.Event.OPEN, this, function () {
                 printLog(" -----WS---" + SocketTAG.SOCKET_CONNECTED);
-                if (_this.onConnected) {
-                    _this.onConnected();
-                }
+                _this.onConnected && _this.onConnected();
             });
             this.__web_socket__.on(Tape.Box.Event.CLOSE, this, function (error) {
                 printLog(" -----WS---" + SocketTAG.SOCKET_CONNECT_CLOSDE, error);
                 _this.__is_connect__ = false;
                 _this.__is_connect_ing__ = false;
-                if (_this.onClosed) {
-                    _this.onClosed(error);
-                }
+                _this.onClosed && _this.onClosed(error);
             });
             this.__web_socket__.on(Tape.Box.Event.ERROR, this, function (error) {
                 printLog(" -----WS---" + SocketTAG.SOCKET_CONNECT_ERROR, error);
                 _this.__is_connect__ = false;
                 _this.__is_connect_ing__ = false;
-                if (_this.onError) {
-                    _this.onError(error);
-                }
+                _this.onError && _this.onError(error);
             });
-            this.__web_socket__.on(Tape.Box.Event.MESSAGE, this, function (message) {
-                printLog(" -----WS---" + SocketTAG.SOCKET_MESSAGE_REVEIVED, message);
-                if (_this.onMessageReveived) {
-                    _this.onMessageReveived(message);
-                }
+            this.__web_socket__.on(Tape.Box.Event.MESSAGE, this, function (msg) {
+                printLog(" -----WS---" + SocketTAG.SOCKET_MESSAGE_RECEIVED, msg);
+                _this.onMessageReceived && _this.onMessageReceived(msg);
             });
         };
         WebSocket.prototype.disconnect = function () {
@@ -884,7 +1039,7 @@ var Tape;
             this.onConnected = null;
             this.onClosed = null;
             this.onError = null;
-            this.onMessageReveived = null;
+            this.onMessageReceived = null;
             this.onMessageDelivered = null;
         }
         MQTTSocket.prototype.connect = function (host, port, clientId, username, password, options) {
@@ -894,9 +1049,7 @@ var Tape;
                 return;
             }
             printLog(" -----MQTT---" + SocketTAG.SOCKET_CONNECTE_ING);
-            if (this.onConnecting) {
-                this.onConnecting();
-            }
+            this.onConnecting && this.onConnecting();
             this.__is_connect_ing__ = true;
             if (window.hasOwnProperty("Paho")) {
                 this.__mqtt_socket__ = new window['Paho'].MQTT.Client(host, Number(port), clientId);
@@ -904,21 +1057,15 @@ var Tape;
                     printLog(" -----MQTT---" + SocketTAG.SOCKET_CONNECT_CLOSDE, error);
                     _this.__is_connect__ = false;
                     _this.__is_connect_ing__ = false;
-                    if (_this.onClosed) {
-                        _this.onClosed(error);
-                    }
+                    _this.onClosed && _this.onClosed(error);
                 };
                 this.__mqtt_socket__.onMessageArrived = function (msg) {
-                    printLog(" -----MQTT---" + SocketTAG.SOCKET_MESSAGE_REVEIVED, _this.formatMessage(msg));
-                    if (_this.onMessageReveived) {
-                        _this.onMessageReveived(msg);
-                    }
+                    printLog(" -----MQTT---" + SocketTAG.SOCKET_MESSAGE_RECEIVED, _this.formatMessage(msg));
+                    _this.onMessageReceived && _this.onMessageReceived(msg);
                 };
                 this.__mqtt_socket__.onMessageDelivered = function (msg) {
                     printLog(" -----MQTT---" + SocketTAG.SOCKET_MESSAGE_DELIVERED, _this.formatMessage(msg));
-                    if (_this.onMessageDelivered) {
-                        _this.onMessageDelivered(msg);
-                    }
+                    _this.onMessageDelivered && _this.onMessageDelivered(msg);
                 };
                 ;
                 this.__mqtt_socket__.connect(Object.assign({}, this.__default_options__, {
@@ -926,26 +1073,20 @@ var Tape;
                     password: password,
                     onSuccess: function () {
                         printLog(" -----MQTT---" + SocketTAG.SOCKET_CONNECTED);
-                        if (_this.onConnected) {
-                            _this.onConnected();
-                        }
+                        _this.onConnected && _this.onConnected();
                     },
                     onFailure: function (error) {
                         printLog(" -----MQTT---" + SocketTAG.SOCKET_CONNECT_ERROR, error);
                         _this.__is_connect__ = false;
                         _this.__is_connect_ing__ = false;
-                        if (_this.onError) {
-                            _this.onError(error);
-                        }
+                        _this.onError && _this.onError(error);
                     }
                 }, options));
             }
             else {
                 var error = "Cannot find mqtt client support.";
                 printLog(" -----MQTT---" + SocketTAG.SOCKET_CONNECT_ERROR, error);
-                if (this.onError) {
-                    this.onError(error);
-                }
+                this.onError && this.onError(error);
             }
         };
         MQTTSocket.prototype.disconnect = function () {

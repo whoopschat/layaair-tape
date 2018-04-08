@@ -25,8 +25,8 @@ module Tape {
 
         private __play_music_list__: Array<Tape.Audio> = [];
 
-        public readonly routeName: String = "";
-        public readonly routeKey: String = "";
+        public readonly routeName: string = "";
+        public readonly routeKey: string = "";
         public readonly params: Object = {};
 
         constructor(props: Object = {}) {
@@ -59,14 +59,22 @@ module Tape {
         /// Music
         ///////////////////////
 
-        protected playMusic(url: string, loops?: number, complete?: Function) {
+        protected playBackgroundMusic(url: string, loops?: number) {
+            Tape.BackgroundMusic.play(url, loops);
+        }
+
+        protected stopBackgroundMusic() {
+            Tape.BackgroundMusic.stop();
+        }
+
+        protected playAudio(url: string, loops?: number, complete?: Function) {
             var audio = new Tape.Audio(url);
             audio.play(loops);
             audio.onComplete = complete;
             return this.__play_music_list__.push(audio);
         }
 
-        protected stopMusic(id: number = 0) {
+        protected stopAudio(id: number = 0) {
             if (id == 0) {
                 while (this.__play_music_list__.length > 0) {
                     this.__play_music_list__.pop().stop();
@@ -111,7 +119,7 @@ module Tape {
             }
         }
 
-        protected pop(number: Number) {
+        protected pop(number?: Number) {
             if (this.props.hasOwnProperty('navigation')) {
                 this.props['navigation'].pop(number);
             }
@@ -127,23 +135,23 @@ module Tape {
         /// Logger
         ///////////////////////
 
-        protected log(message?: any, ...optionalParams: any[]): void {
+        protected printLog(message?: any, ...optionalParams: any[]): void {
             Tape.Logger.log(" ------ " + this.routeName + " ------ :", message, ...optionalParams);
         }
 
-        protected error(message?: any, ...optionalParams: any[]): void {
+        protected printError(message?: any, ...optionalParams: any[]): void {
             Tape.Logger.error(" ------ " + this.routeName + " ------ :", message, ...optionalParams);
         }
 
-        protected info(message?: any, ...optionalParams: any[]): void {
+        protected printInfo(message?: any, ...optionalParams: any[]): void {
             Tape.Logger.info(" ------ " + this.routeName + " ------ :", message, ...optionalParams);
         }
 
-        protected warn(message?: any, ...optionalParams: any[]): void {
+        protected printWarn(message?: any, ...optionalParams: any[]): void {
             Tape.Logger.warn(" ------ " + this.routeName + "  ------ :", message, ...optionalParams);
         }
 
-        protected debug(message?: any, ...optionalParams: any[]): void {
+        protected printDebug(message?: any, ...optionalParams: any[]): void {
             Tape.Logger.debug(" ------ " + this.routeName + " ------ :", message, ...optionalParams);
         }
 
