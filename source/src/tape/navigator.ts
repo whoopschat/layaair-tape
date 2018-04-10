@@ -166,7 +166,7 @@ module Tape {
                 }
                 (<any>Object).assign(paramsObject, params);
                 this.__loading__ = true;
-                let key = Tape.guid();
+                let key = Tape.UUID.guid();
                 new NavigatorLoader(activity, name, key, {
                     navigation: this,
                     routeName: name,
@@ -302,15 +302,7 @@ module Tape {
     //// NavigatorOptions
     ///////////////////////////////////
 
-    class NavigatorOptions {
-        public static isInited = false;
-    }
-
-    export const initApp = function (routes, initName, options = {}) {
-        // Check whether or not it is initialized multiple times
-        if (NavigatorOptions.isInited) {
-            return;
-        }
+    export const createApp = function (routes, initName, options = {}): any {
         let StackNavigator = class extends Tape.PropsComponent {
             private __navigator__: NavigatorStack = null;
             constructor(props) {
@@ -319,7 +311,7 @@ module Tape {
                 this.__navigator__.init_page();
             }
         };
-        Tape.Box.drawView(new StackNavigator({
+        return new StackNavigator({
             navigation: {
                 routes: routes,
                 initName: initName,
@@ -329,8 +321,7 @@ module Tape {
                 onLoaded: options['onLoaded'],
                 onLoadProgress: options['onLoadProgress']
             }
-        }));
-        NavigatorOptions.isInited = true;
+        });
     }
 
 }

@@ -1,6 +1,6 @@
 declare module Tape {
 
-    function initApp(routes, initName, options?: Object): void;
+    function createApp(routes, initName, options?: Object);
 
     ///////////////////////////////////////////////
     ////// Component
@@ -126,9 +126,11 @@ declare module Tape {
     ///////////////////////////////////////////////
 
     /**
-     * generate uid
+     * uuid
      */
-    function guid(): String;
+    class UUID {
+        static guid(): string;
+    }
 
     /**
      * logger

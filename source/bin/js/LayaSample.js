@@ -19,7 +19,8 @@ var GameMain = /** @class */ (function () {
                 { url: 'res/atlas/comp.atlas', type: Laya.Loader.ATLAS }
             ]
         };
-        Tape.initApp(routes, "Page2", options);
+        var app = Tape.createApp(routes, "Page2", options);
+        Laya.stage.addChild(app);
     }
     return GameMain;
 }());

@@ -173,7 +173,7 @@ var Tape;
                 }
                 Object.assign(paramsObject, params);
                 this.__loading__ = true;
-                var key = Tape.guid();
+                var key = Tape.UUID.guid();
                 new NavigatorLoader(activity, name, key, {
                     navigation: this,
                     routeName: name,
@@ -299,18 +299,8 @@ var Tape;
     ///////////////////////////////////
     //// NavigatorOptions
     ///////////////////////////////////
-    var NavigatorOptions = /** @class */ (function () {
-        function NavigatorOptions() {
-        }
-        NavigatorOptions.isInited = false;
-        return NavigatorOptions;
-    }());
-    Tape.initApp = function (routes, initName, options) {
+    Tape.createApp = function (routes, initName, options) {
         if (options === void 0) { options = {}; }
-        // Check whether or not it is initialized multiple times
-        if (NavigatorOptions.isInited) {
-            return;
-        }
         var StackNavigator = /** @class */ (function (_super) {
             __extends(class_1, _super);
             function class_1(props) {
@@ -322,7 +312,7 @@ var Tape;
             }
             return class_1;
         }(Tape.PropsComponent));
-        Tape.Box.drawView(new StackNavigator({
+        return new StackNavigator({
             navigation: {
                 routes: routes,
                 initName: initName,
@@ -332,7 +322,6 @@ var Tape;
                 onLoaded: options['onLoaded'],
                 onLoadProgress: options['onLoadProgress']
             }
-        }));
-        NavigatorOptions.isInited = true;
+        });
     };
 })(Tape || (Tape = {}));

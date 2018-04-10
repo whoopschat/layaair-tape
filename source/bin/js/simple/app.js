@@ -21,14 +21,6 @@ var App;
             var _this = this;
             this.addChild(this.page1);
             this.playBackgroundMusic("res/sound/bg_sound.mp3", 0);
-            this.page1.img.on(Laya.Event.MOUSE_OVER, this, function () {
-                _this.printLog('mov');
-                _this.page1.num.index = 0;
-            });
-            this.page1.img.on(Laya.Event.MOUSE_OUT, this, function () {
-                _this.printLog('mou');
-                _this.page1.num.index = 2;
-            });
             this.page1.btn.on(Laya.Event.CLICK, this, function () {
                 var message = new ui.MessageToastUI();
                 message.text.text = _this.routeName + _this.routeKey + "\n" + JSON.stringify(_this.params);
@@ -38,23 +30,6 @@ var App;
             this.page1.btnBack.on(Laya.Event.CLICK, this, function () {
                 _this.back();
             });
-            var n = null;
-            new Tape.Task(function (re, rj) {
-                setTimeout(function () {
-                    re("nihao");
-                }, 5000);
-            }).then(function (data) {
-                alert(data);
-                alert(n.toString());
-                return "11111111";
-            }).then(function (data) {
-                alert(data);
-            }).catch(function (error) {
-                var message = new ui.MessageToastUI();
-                message.text.text = error.message;
-                Tape.Toast.show("error", message, 100, 100, 500);
-            });
-            ;
         };
         Main.prototype.onPause = function () {
             this.printDebug("onPause");
@@ -78,17 +53,12 @@ var App;
         }
         Page2.prototype.onCreate = function () {
             var _this = this;
-            this.printDebug("onCreate");
-            var socket = new Tape.WebSocket();
-            socket.onConnected = function () {
-                _this.deeplink("http://m.baidu.com/Main?name=你好");
-            };
             this.addChild(this.page2);
+            this.printDebug("onCreate");
             this.page2.btn.on(Laya.Event.CLICK, this, function () {
                 _this.deeplink("http://m.baidu.com/Main?name=你好", function () {
                     _this.back();
                 });
-                // socket.connect("wss://127.0.0.1:9011/websocket");
             });
             this.page2.btnBack.on(Laya.Event.CLICK, this, function () {
                 _this.back();

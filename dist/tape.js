@@ -59,14 +59,20 @@ var Tape;
 var Tape;
 (function (Tape) {
     ///////////////////////////////////////////////////
-    ///// GUID
+    ///// UUID
     ///////////////////////////////////////////////////
-    var S4 = function () {
-        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-    };
-    Tape.guid = function () {
-        return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
-    };
+    var UUID = /** @class */ (function () {
+        function UUID() {
+        }
+        UUID.S4 = function () {
+            return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+        };
+        UUID.guid = function () {
+            return (this.S4() + this.S4() + "-" + this.S4() + "-" + this.S4() + "-" + this.S4() + "-" + this.S4() + this.S4() + this.S4());
+        };
+        return UUID;
+    }());
+    Tape.UUID = UUID;
     ///////////////////////////////////////////////////
     ///// Logger
     ///////////////////////////////////////////////////
@@ -136,14 +142,6 @@ var Tape;
     ///////////////////////////////////////////////////
     ///// Toast
     ///////////////////////////////////////////////////
-    var fadeIn = function (view, duration, delay, complete) {
-        if (complete === void 0) { complete = null; }
-        Tape.Box.tweenTo(view, { alpha: 1 }, duration, Tape.Box.Ease.quintOut, null, delay);
-    };
-    var fadeOut = function (view, duration, delay, complete) {
-        if (complete === void 0) { complete = null; }
-        Tape.Box.tweenTo(view, { alpha: 0 }, duration, Tape.Box.Ease.quintOut, complete, delay);
-    };
     /**
      * Toast
      */
@@ -163,8 +161,8 @@ var Tape;
                 view.y = y;
                 view.alpha = 0;
                 view.pivot(view.width * pivotX, view.height * pivoxY);
-                fadeIn(view, duration, 0);
-                fadeOut(view, duration, duration, function () {
+                this.fadeIn(view, duration, 0);
+                this.fadeOut(view, duration, duration, function () {
                     list_1.splice(list_1.indexOf(view), 1);
                     view.removeSelf();
                 });
@@ -176,6 +174,14 @@ var Tape;
                 }
                 list_1.push(view);
             }
+        };
+        Toast.fadeIn = function (view, duration, delay, complete) {
+            if (complete === void 0) { complete = null; }
+            Tape.Box.tweenTo(view, { alpha: 1 }, duration, Tape.Box.Ease.quintOut, null, delay);
+        };
+        Toast.fadeOut = function (view, duration, delay, complete) {
+            if (complete === void 0) { complete = null; }
+            Tape.Box.tweenTo(view, { alpha: 0 }, duration, Tape.Box.Ease.quintOut, complete, delay);
         };
         Toast.__toast_object__ = {};
         return Toast;
@@ -750,7 +756,7 @@ var Tape;
                 }
                 Object.assign(paramsObject, params);
                 this.__loading__ = true;
-                var key = Tape.guid();
+                var key = Tape.UUID.guid();
                 new NavigatorLoader(activity, name, key, {
                     navigation: this,
                     routeName: name,
@@ -876,18 +882,8 @@ var Tape;
     ///////////////////////////////////
     //// NavigatorOptions
     ///////////////////////////////////
-    var NavigatorOptions = /** @class */ (function () {
-        function NavigatorOptions() {
-        }
-        NavigatorOptions.isInited = false;
-        return NavigatorOptions;
-    }());
-    Tape.initApp = function (routes, initName, options) {
+    Tape.createApp = function (routes, initName, options) {
         if (options === void 0) { options = {}; }
-        // Check whether or not it is initialized multiple times
-        if (NavigatorOptions.isInited) {
-            return;
-        }
         var StackNavigator = /** @class */ (function (_super) {
             __extends(class_1, _super);
             function class_1(props) {
@@ -899,7 +895,7 @@ var Tape;
             }
             return class_1;
         }(Tape.PropsComponent));
-        Tape.Box.drawView(new StackNavigator({
+        return new StackNavigator({
             navigation: {
                 routes: routes,
                 initName: initName,
@@ -909,8 +905,7 @@ var Tape;
                 onLoaded: options['onLoaded'],
                 onLoadProgress: options['onLoadProgress']
             }
-        }));
-        NavigatorOptions.isInited = true;
+        });
     };
 })(Tape || (Tape = {}));
 

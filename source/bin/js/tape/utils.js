@@ -4,14 +4,20 @@
 var Tape;
 (function (Tape) {
     ///////////////////////////////////////////////////
-    ///// GUID
+    ///// UUID
     ///////////////////////////////////////////////////
-    var S4 = function () {
-        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-    };
-    Tape.guid = function () {
-        return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
-    };
+    var UUID = /** @class */ (function () {
+        function UUID() {
+        }
+        UUID.S4 = function () {
+            return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+        };
+        UUID.guid = function () {
+            return (this.S4() + this.S4() + "-" + this.S4() + "-" + this.S4() + "-" + this.S4() + "-" + this.S4() + this.S4() + this.S4());
+        };
+        return UUID;
+    }());
+    Tape.UUID = UUID;
     ///////////////////////////////////////////////////
     ///// Logger
     ///////////////////////////////////////////////////
@@ -81,14 +87,6 @@ var Tape;
     ///////////////////////////////////////////////////
     ///// Toast
     ///////////////////////////////////////////////////
-    var fadeIn = function (view, duration, delay, complete) {
-        if (complete === void 0) { complete = null; }
-        Tape.Box.tweenTo(view, { alpha: 1 }, duration, Tape.Box.Ease.quintOut, null, delay);
-    };
-    var fadeOut = function (view, duration, delay, complete) {
-        if (complete === void 0) { complete = null; }
-        Tape.Box.tweenTo(view, { alpha: 0 }, duration, Tape.Box.Ease.quintOut, complete, delay);
-    };
     /**
      * Toast
      */
@@ -108,8 +106,8 @@ var Tape;
                 view.y = y;
                 view.alpha = 0;
                 view.pivot(view.width * pivotX, view.height * pivoxY);
-                fadeIn(view, duration, 0);
-                fadeOut(view, duration, duration, function () {
+                this.fadeIn(view, duration, 0);
+                this.fadeOut(view, duration, duration, function () {
                     list_1.splice(list_1.indexOf(view), 1);
                     view.removeSelf();
                 });
@@ -121,6 +119,14 @@ var Tape;
                 }
                 list_1.push(view);
             }
+        };
+        Toast.fadeIn = function (view, duration, delay, complete) {
+            if (complete === void 0) { complete = null; }
+            Tape.Box.tweenTo(view, { alpha: 1 }, duration, Tape.Box.Ease.quintOut, null, delay);
+        };
+        Toast.fadeOut = function (view, duration, delay, complete) {
+            if (complete === void 0) { complete = null; }
+            Tape.Box.tweenTo(view, { alpha: 0 }, duration, Tape.Box.Ease.quintOut, complete, delay);
         };
         Toast.__toast_object__ = {};
         return Toast;

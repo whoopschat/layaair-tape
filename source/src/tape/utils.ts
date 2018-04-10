@@ -4,15 +4,19 @@
 module Tape {
 
     ///////////////////////////////////////////////////
-    ///// GUID
+    ///// UUID
     ///////////////////////////////////////////////////
 
-    const S4 = function () {
-        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-    }
+    export class UUID {
 
-    export const guid = function () {
-        return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
+        private static S4() {
+            return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+        }
+
+        public static guid() {
+            return (this.S4() + this.S4() + "-" + this.S4() + "-" + this.S4() + "-" + this.S4() + "-" + this.S4() + this.S4() + this.S4());
+        }
+
     }
 
     ///////////////////////////////////////////////////
@@ -71,14 +75,6 @@ module Tape {
     ///// Toast
     ///////////////////////////////////////////////////
 
-    const fadeIn = function (view, duration, delay, complete: Function = null) {
-        Tape.Box.tweenTo(view, { alpha: 1 }, duration, Tape.Box.Ease.quintOut, null, delay);
-    }
-
-    const fadeOut = function (view, duration, delay, complete: Function = null) {
-        Tape.Box.tweenTo(view, { alpha: 0 }, duration, Tape.Box.Ease.quintOut, complete, delay);
-    }
-
     /**
      * Toast
      */
@@ -96,8 +92,8 @@ module Tape {
                 view.y = y;
                 view.alpha = 0;
                 view.pivot(view.width * pivotX, view.height * pivoxY);
-                fadeIn(view, duration, 0);
-                fadeOut(view, duration, duration, () => {
+                this.fadeIn(view, duration, 0);
+                this.fadeOut(view, duration, duration, () => {
                     list.splice(list.indexOf(view), 1);
                     view.removeSelf();
                 });
@@ -110,6 +106,15 @@ module Tape {
                 list.push(view);
             }
         }
+
+        private static fadeIn(view, duration, delay, complete: Function = null) {
+            Tape.Box.tweenTo(view, { alpha: 1 }, duration, Tape.Box.Ease.quintOut, null, delay);
+        }
+
+        private static fadeOut(view, duration, delay, complete: Function = null) {
+            Tape.Box.tweenTo(view, { alpha: 0 }, duration, Tape.Box.Ease.quintOut, complete, delay);
+        }
+
     }
 
     ///////////////////////////////////////////////////

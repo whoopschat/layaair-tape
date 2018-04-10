@@ -19,7 +19,8 @@ class GameMain {
                 { url: 'res/atlas/comp.atlas', type: Laya.Loader.ATLAS }
             ]
         };
-        Tape.initApp(routes, "Page2", options);
+        var app:any = Tape.createApp(routes, "Page2", options);
+        Laya.stage.addChild(app);
     }
 }
 new GameMain();
