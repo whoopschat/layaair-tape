@@ -29,6 +29,7 @@ var packageList = [
   inputJsPath + moduleName + '/media.js',
   inputJsPath + moduleName + '/navigator.js',
   inputJsPath + moduleName + '/socket.js',
+  inputJsPath + moduleName + '/wechat.js',
   inputJsPath + moduleName + '/jsfile/**/*.js'
 ];
 

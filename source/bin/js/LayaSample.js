@@ -1,7 +1,7 @@
 // 程序入口
 var GameMain = /** @class */ (function () {
     function GameMain() {
-        Laya.init(600, 400);
+        Laya.init(600, 400, Laya.WebGL);
         var routes = {
             "Main": App.Main.ROUTE({
                 res: [
@@ -20,6 +20,9 @@ var GameMain = /** @class */ (function () {
             ]
         };
         var app = Tape.createApp(routes, "Page2", options);
+        Tape.WeChat.init('wxaf6906f92799e750', function (wechatCode) {
+            alert(wechatCode);
+        });
         Laya.stage.addChild(app);
     }
     return GameMain;

@@ -188,6 +188,31 @@ declare module Tape {
     }
 
     ///////////////////////////////////////////////
+    ////// WeChat
+    ///////////////////////////////////////////////
+
+    class WeChat {
+
+        /**
+         * <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+         * 
+         * @param appId	 wechat appid
+         * @param success init success callback
+         */
+        public static init(appId: string, success: Function): void;
+
+        /**
+         * @param configMap	 configMap{appId, timestamp, nonceStr, signature}
+         * @param shareOptions	 shareOptions{title, link, desc, imageUrl}
+         * @param onShareSuccess	share success callback
+         * @param onShareCancel	 share cancel callback
+         * @param onError	config error callback
+         */
+        public static configTicket(configMap: Object, shareOptions: Object, onShareSuccess?: Function, onShareCancel?: Function, onError?: Function): void;
+
+    }
+
+    ///////////////////////////////////////////////
     ////// Media
     ///////////////////////////////////////////////
 
@@ -255,10 +280,25 @@ declare module Tape {
         onError: Function;
         onMessageReceived: Function;
 
+        /**
+         * @param socketUrl	 socket url
+         */
         connect(socketUrl: String): void;
+        /**
+         * disconnect
+         */
         disconnect(): void;
+        /**
+         * @return is connected
+         */
         isConnected(): Boolean;
+        /**
+         * @return is connecting
+         */
         isConnecting(): Boolean;
+        /**
+         * @param message socket message
+         */
         publishMessage(message: any): void;
     }
 
@@ -273,10 +313,33 @@ declare module Tape {
         onMessageReceived: Function;
         onMessageDelivered: Function;
 
+        /**
+         * @param host	 mqtt host
+         * @param port	 mqtt port
+         * @param clientId	 mqtt clientId
+         * @param username	 mqtt username
+         * @param password	 mqtt password
+         * @param options	 mqtt options
+         */
         connect(host: string, port: number, clientId: string, username: string, password: string, options?: Object): void;
+        /**
+         * disconnect
+         */
         disconnect(): void;
+        /**
+         * @return is connected
+         */
         isConnected(): Boolean;
+        /**
+         * @return is connecting
+         */
         isConnecting(): Boolean;
+        /**
+         * @param topic	 mqtt topic
+         * @param message	 mqtt message
+         * @param qos	 mqtt qos
+         * @param retained	 mqtt retained
+         */
         publishMessage(topic: string, message: any, qos?: number, retained?: boolean): void;
     }
 

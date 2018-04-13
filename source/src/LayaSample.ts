@@ -1,7 +1,7 @@
 // 程序入口
 class GameMain {
     constructor() {
-        Laya.init(600, 400);
+        Laya.init(600, 400, Laya.WebGL);
         let routes = {
             "Main": App.Main.ROUTE({
                 res: [
@@ -19,7 +19,10 @@ class GameMain {
                 { url: 'res/atlas/comp.atlas', type: Laya.Loader.ATLAS }
             ]
         };
-        var app:any = Tape.createApp(routes, "Page2", options);
+        var app: any = Tape.createApp(routes, "Page2", options);
+        Tape.WeChat.init('wxaf6906f92799e750',wechatCode => {
+            alert(wechatCode);
+        })
         Laya.stage.addChild(app);
     }
 }
