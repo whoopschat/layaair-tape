@@ -668,7 +668,7 @@ var Tape;
             this.__stacks__ = [];
             this.__loaded_handler__ = null;
             this.__load_progress_handler__ = null;
-            this.__uri_profix__ = "://";
+            this.__uri_prefix__ = "://";
             this.__file_version__ = null;
             this.__loading__ = false;
             this.__navigator__ = navigator;
@@ -677,7 +677,7 @@ var Tape;
             this.__routes__ = navigator.props['navigation']['routes'];
             this.__init_name__ = navigator.props['navigation']['initName'];
             this.__static_res__ = navigator.props['navigation']['staticRes'] || [];
-            this.__uri_profix__ = navigator.props['navigation']['uriProfix'] || "://";
+            this.__uri_prefix__ = navigator.props['navigation']['uriPrefix'] || "://";
             this.__file_version__ = navigator.props['navigation']['fileVersion'];
         }
         NavigatorStack.prototype.init_page = function () {
@@ -698,7 +698,7 @@ var Tape;
         NavigatorStack.prototype.deeplink = function (url, action) {
             if (action === void 0) { action = null; }
             var params = {};
-            var delimiter = this.__uri_profix__ || '://';
+            var delimiter = this.__uri_prefix__ || '://';
             var urlSplit = url.split(delimiter);
             var path = '/';
             if (urlSplit.length > 1) {
@@ -901,7 +901,7 @@ var Tape;
                 initName: initName,
                 staticRes: options['res'],
                 fileVersion: options['fileVersion'],
-                uriProfix: options['uriProfix'],
+                uriPrefix: options['uriPrefix'],
                 onLoaded: options['onLoaded'],
                 onLoadProgress: options['onLoadProgress']
             }

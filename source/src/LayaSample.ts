@@ -13,14 +13,14 @@ class GameMain {
             }
         };
         let options = {
-            uriProfix: "http://m.baidu.com/",
+            uriPrefix: "http://m.baidu.com/",
             fileVersion: "version.json",
             res: [
                 { url: 'res/atlas/comp.atlas', type: Laya.Loader.ATLAS }
             ]
         };
         var app: any = Tape.createApp(routes, "Page2", options);
-        Tape.WeChat.init('wxaf6906f92799e750',wechatCode => {
+        Tape.WeChat.init('abc', wechatCode => {
             alert(wechatCode);
         })
         Laya.stage.addChild(app);

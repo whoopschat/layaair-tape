@@ -78,7 +78,7 @@ module Tape {
         private __stacks__: Array<NavigatorLoader> = [];
         private __loaded_handler__: Function = null;
         private __load_progress_handler__: Function = null;
-        private __uri_profix__ = "://";
+        private __uri_prefix__ = "://";
         private __file_version__ = null;
         private __loading__ = false;
 
@@ -89,7 +89,7 @@ module Tape {
             this.__routes__ = navigator.props['navigation']['routes'];
             this.__init_name__ = navigator.props['navigation']['initName'];
             this.__static_res__ = navigator.props['navigation']['staticRes'] || [];
-            this.__uri_profix__ = navigator.props['navigation']['uriProfix'] || "://";
+            this.__uri_prefix__ = navigator.props['navigation']['uriPrefix'] || "://";
             this.__file_version__ = navigator.props['navigation']['fileVersion'];
         }
 
@@ -112,7 +112,7 @@ module Tape {
 
         public deeplink(url, action: Function = null): boolean {
             const params = {};
-            const delimiter = this.__uri_profix__ || '://';
+            const delimiter = this.__uri_prefix__ || '://';
             const urlSplit = url.split(delimiter);
             let path = '/';
             if (urlSplit.length > 1) {
@@ -317,7 +317,7 @@ module Tape {
                 initName: initName,
                 staticRes: options['res'],
                 fileVersion: options['fileVersion'],
-                uriProfix: options['uriProfix'],
+                uriPrefix: options['uriPrefix'],
                 onLoaded: options['onLoaded'],
                 onLoadProgress: options['onLoadProgress']
             }
