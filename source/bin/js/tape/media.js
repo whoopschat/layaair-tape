@@ -42,6 +42,7 @@ var Tape;
                 _this.__is_playing__ = true;
                 _this.__audio_chancel__ = Laya.SoundManager.playMusic(_this.__audio_url__, loops, Tape.Box.Handler.create(_this, function () {
                     _this.__is_playing__ = false;
+                    _this.__audio_chancel__ = null;
                     _this.onComplete && _this.onComplete();
                 }));
             });

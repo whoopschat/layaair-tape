@@ -43,6 +43,7 @@ module Tape {
                 this.__is_playing__ = true;
                 this.__audio_chancel__ = Laya.SoundManager.playMusic(this.__audio_url__, loops, Tape.Box.Handler.create(this, () => {
                     this.__is_playing__ = false;
+                    this.__audio_chancel__ = null;
                     this.onComplete && this.onComplete();
                 }));
             });
