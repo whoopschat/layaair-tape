@@ -135,7 +135,7 @@ module Tape {
         constructor() {
         }
 
-        connect(host, port, clientId, username, password, options: Object = {}) {
+        connect(host: string, port: number, clientId: string, username: string = '', password: string = '', options: Object = {}) {
             if (this.isConnecting()) {
                 return;
             }
@@ -143,7 +143,7 @@ module Tape {
             this.onConnecting && this.onConnecting();
             this.__is_connect_ing__ = true;
             if (window.hasOwnProperty("Paho")) {
-                this.__mqtt_socket__ = new window['Paho'].MQTT.Client(host, Number(port), clientId);
+                this.__mqtt_socket__ = new window['Paho'].MQTT.Client(host, port, clientId);
                 this.__mqtt_socket__.onConnectionLost = (error) => {
                     printLog(" -----MQTT---" + SocketTAG.SOCKET_CONNECT_CLOSDE, error);
                     this.__is_connect__ = false;

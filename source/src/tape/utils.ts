@@ -4,6 +4,39 @@
 module Tape {
 
     ///////////////////////////////////////////////////
+    ///// NumUtil
+    ///////////////////////////////////////////////////
+
+    export class NumUtil {
+
+        public static rangedValue(val: number, min: number, max: number): number {
+            if (val < min)
+                return min;
+            else if (val > max)
+                return max;
+            else
+                return val;
+        }
+
+        public static rand(min: number, max: number): number {
+            return Math.floor(Math.random() * (max - min)) + min;
+        }
+
+    }
+
+    ///////////////////////////////////////////////////
+    ///// LinkUtil
+    ///////////////////////////////////////////////////
+
+    export class LinkUtil {
+
+        public static openURL(url: string) {
+            window.location.href = url;
+        }
+
+    }
+
+    ///////////////////////////////////////////////////
     ///// UUID
     ///////////////////////////////////////////////////
 

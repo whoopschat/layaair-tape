@@ -128,6 +128,8 @@ var Tape;
         }
         MQTTSocket.prototype.connect = function (host, port, clientId, username, password, options) {
             var _this = this;
+            if (username === void 0) { username = ''; }
+            if (password === void 0) { password = ''; }
             if (options === void 0) { options = {}; }
             if (this.isConnecting()) {
                 return;
@@ -136,7 +138,7 @@ var Tape;
             this.onConnecting && this.onConnecting();
             this.__is_connect_ing__ = true;
             if (window.hasOwnProperty("Paho")) {
-                this.__mqtt_socket__ = new window['Paho'].MQTT.Client(host, Number(port), clientId);
+                this.__mqtt_socket__ = new window['Paho'].MQTT.Client(host, port, clientId);
                 this.__mqtt_socket__.onConnectionLost = function (error) {
                     printLog(" -----MQTT---" + SocketTAG.SOCKET_CONNECT_CLOSDE, error);
                     _this.__is_connect__ = false;

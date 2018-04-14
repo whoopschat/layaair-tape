@@ -4,6 +4,38 @@
 var Tape;
 (function (Tape) {
     ///////////////////////////////////////////////////
+    ///// NumUtil
+    ///////////////////////////////////////////////////
+    var NumUtil = /** @class */ (function () {
+        function NumUtil() {
+        }
+        NumUtil.rangedValue = function (val, min, max) {
+            if (val < min)
+                return min;
+            else if (val > max)
+                return max;
+            else
+                return val;
+        };
+        NumUtil.rand = function (min, max) {
+            return Math.floor(Math.random() * (max - min)) + min;
+        };
+        return NumUtil;
+    }());
+    Tape.NumUtil = NumUtil;
+    ///////////////////////////////////////////////////
+    ///// LinkUtil
+    ///////////////////////////////////////////////////
+    var LinkUtil = /** @class */ (function () {
+        function LinkUtil() {
+        }
+        LinkUtil.openURL = function (url) {
+            window.location.href = url;
+        };
+        return LinkUtil;
+    }());
+    Tape.LinkUtil = LinkUtil;
+    ///////////////////////////////////////////////////
     ///// UUID
     ///////////////////////////////////////////////////
     var UUID = /** @class */ (function () {

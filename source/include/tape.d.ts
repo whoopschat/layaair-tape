@@ -126,6 +126,24 @@ declare module Tape {
     ///////////////////////////////////////////////
 
     /**
+     * numUtil
+     */
+    class NumUtil {
+
+        static rangedValue(val: number, min: number, max: number): number;
+
+        static rand(min: number, max: number): number;
+
+    }
+
+    /**
+     * linkUtil
+     */
+    class LinkUtil {
+        static openURL(url: string): void;
+    }
+
+    /**
      * uuid
      */
     class UUID {
@@ -260,12 +278,6 @@ declare module Tape {
         public pause(): void;
     }
 
-
-    ///////////////////////////////////////////////
-    ////// Net
-    ///////////////////////////////////////////////
-
-
     ///////////////////////////////////////////////
     ////// Socket
     ///////////////////////////////////////////////
@@ -321,7 +333,7 @@ declare module Tape {
          * @param password	 mqtt password
          * @param options	 mqtt options
          */
-        connect(host: string, port: number, clientId: string, username: string, password: string, options?: Object): void;
+        connect(host: string, port: number, clientId: string, username?: string, password?: string, options?: Object): void;
         /**
          * disconnect
          */
