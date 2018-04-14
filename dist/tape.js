@@ -500,6 +500,22 @@ var Tape;
 })(Tape || (Tape = {}));
 
 // =========================== //
+// tape conch.js
+// =========================== //
+var Tape;
+(function (Tape) {
+    var Conch = /** @class */ (function () {
+        function Conch() {
+        }
+        Conch.is_conch = function () {
+            return window.hasOwnProperty('conch');
+        };
+        return Conch;
+    }());
+    Tape.Conch = Conch;
+})(Tape || (Tape = {}));
+
+// =========================== //
 // tape media.js
 // =========================== //
 var Tape;
@@ -543,6 +559,7 @@ var Tape;
                 _this.__is_playing__ = true;
                 _this.__audio_chancel__ = Laya.SoundManager.playMusic(_this.__audio_url__, loops, Tape.Box.Handler.create(_this, function () {
                     _this.__is_playing__ = false;
+                    _this.__audio_chancel__ = null;
                     _this.onComplete && _this.onComplete();
                 }));
             });
