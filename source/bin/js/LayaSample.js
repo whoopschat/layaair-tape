@@ -20,9 +20,6 @@ var GameMain = /** @class */ (function () {
             ]
         };
         var app = Tape.createApp(routes, "Page2", options);
-        Tape.WeChat.init('abc', function (wechatCode) {
-            alert(wechatCode);
-        });
         Laya.stage.addChild(app);
     }
     return GameMain;

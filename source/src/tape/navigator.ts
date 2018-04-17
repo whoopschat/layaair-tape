@@ -166,7 +166,7 @@ module Tape {
                 }
                 (<any>Object).assign(paramsObject, params);
                 this.__loading__ = true;
-                let key = Tape.UUID.guid();
+                let key = Tape.UUID.randUUID();
                 new NavigatorLoader(activity, name, key, {
                     navigation: this,
                     routeName: name,

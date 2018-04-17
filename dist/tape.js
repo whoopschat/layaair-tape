@@ -99,7 +99,7 @@ var Tape;
         UUID.S4 = function () {
             return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
         };
-        UUID.guid = function () {
+        UUID.randUUID = function () {
             return (this.S4() + this.S4() + "-" + this.S4() + "-" + this.S4() + "-" + this.S4() + "-" + this.S4() + this.S4() + this.S4());
         };
         return UUID;
@@ -353,7 +353,6 @@ var Tape;
         function Activity(props) {
             if (props === void 0) { props = {}; }
             var _this = _super.call(this, props) || this;
-            _this.__play_music_list__ = [];
             _this.routeName = "";
             _this.routeKey = "";
             _this.params = {};
@@ -381,37 +380,6 @@ var Tape;
         Activity.prototype.onDestroy = function () {
         };
         Activity.prototype.onNextProgress = function (progress) {
-        };
-        ///////////////////////
-        /// Music
-        ///////////////////////
-        Activity.prototype.playBackgroundMusic = function (url, loops) {
-            Tape.BackgroundMusic.play(url, loops);
-        };
-        Activity.prototype.stopBackgroundMusic = function () {
-            Tape.BackgroundMusic.stop();
-        };
-        Activity.prototype.playAudio = function (url, loops, complete) {
-            var audio = new Tape.Audio(url);
-            audio.play(loops);
-            audio.onComplete = complete;
-            return this.__play_music_list__.push(audio);
-        };
-        Activity.prototype.stopAudio = function (id) {
-            if (id === void 0) { id = 0; }
-            if (id == 0) {
-                while (this.__play_music_list__.length > 0) {
-                    this.__play_music_list__.pop().stop();
-                }
-            }
-            else {
-                if (id - 1 >= 0 && id - 1 < this.__play_music_list__.length) {
-                    var splice = this.__play_music_list__.splice(id - 1, 1);
-                    splice.forEach(function (chancel) {
-                        chancel.stop();
-                    });
-                }
-            }
         };
         ///////////////////////
         /// Navigator
@@ -500,19 +468,91 @@ var Tape;
 })(Tape || (Tape = {}));
 
 // =========================== //
-// tape conch.js
+// tape market.js
 // =========================== //
 var Tape;
 (function (Tape) {
-    var Conch = /** @class */ (function () {
-        function Conch() {
+    var Market = /** @class */ (function () {
+        function Market() {
         }
-        Conch.is_conch = function () {
+        Market.is_conch = function () {
             return window.hasOwnProperty('conch');
         };
-        return Conch;
+        Market.authorize = function (jsonParam, callback) {
+            if (this.is_conch()) {
+                Laya.conchMarket.authorize(jsonParam, callback);
+            }
+            else {
+                this.onAuthorize && this.onAuthorize(jsonParam, callback);
+            }
+        };
+        Market.sendMessage = function (jsonParam, callback) {
+            if (this.is_conch()) {
+                Laya.conchMarket.sendMessageToPlatform(jsonParam, callback);
+            }
+            else {
+                this.onSendMessage && this.onSendMessage(jsonParam, callback);
+            }
+        };
+        Market.enterShare = function (jsonParam, callback) {
+            if (this.is_conch()) {
+                Laya.conchMarket.enterShareAndFeed(jsonParam, callback);
+            }
+            else {
+                this.onEnterShare && this.onEnterShare(jsonParam, callback);
+            }
+        };
+        Market.getUserInfo = function (jsonParam, callback) {
+            if (this.is_conch()) {
+                Laya.conchMarket.getUserInfo(jsonParam, callback);
+            }
+            else {
+                this.onGetUserInfo && this.onGetUserInfo(jsonParam, callback);
+            }
+        };
+        Market.getMarketName = function () {
+            if (this.is_conch()) {
+                return Laya.conchMarket.getMarketName();
+            }
+            else {
+                return this.onGetMarketName && this.onGetMarketName();
+            }
+        };
+        Market.getFriends = function (jsonParam, callback) {
+            if (this.is_conch()) {
+                Laya.conchMarket.getGameFriends(jsonParam, callback);
+            }
+            else {
+                this.onGetFriends && this.onGetFriends(jsonParam, callback);
+            }
+        };
+        Market.login = function (jsonParam, callback) {
+            if (this.is_conch()) {
+                Laya.conchMarket.login(jsonParam, callback);
+            }
+            else {
+                this.onLogin && this.onLogin(jsonParam, callback);
+            }
+        };
+        Market.logout = function (jsonParam, callback) {
+            if (this.is_conch()) {
+                Laya.conchMarket.logout(jsonParam, callback);
+            }
+            else {
+                this.onLogout && this.onLogout(jsonParam, callback);
+            }
+        };
+        Market.onAuthorize = null;
+        Market.onSendMessage = null;
+        Market.onEnterShare = null;
+        Market.onGetMarketName = null;
+        Market.onGetUserInfo = null;
+        Market.onGetFriends = null;
+        Market.onLogin = null;
+        Market.onLogout = null;
+        return Market;
     }());
-    Tape.Conch = Conch;
+    Tape.Market = Market;
 })(Tape || (Tape = {}));
 
 // =========================== //
@@ -595,6 +635,12 @@ var Tape;
             this.onComplete = null;
             this.__audio_url__ = url;
         }
+        Audio.play = function (url, loops) {
+            if (loops === void 0) { loops = 1; }
+            var audio = new Audio(url);
+            audio.play(loops);
+            return audio;
+        };
         Audio.prototype.play = function (loops) {
             var _this = this;
             if (loops === void 0) { loops = 1; }
@@ -805,7 +851,7 @@ var Tape;
                 }
                 Object.assign(paramsObject, params);
                 this.__loading__ = true;
-                var key = Tape.UUID.guid();
+                var key = Tape.UUID.randUUID();
                 new NavigatorLoader(activity, name, key, {
                     navigation: this,
                     routeName: name,
@@ -1176,93 +1222,6 @@ var Tape;
         return MQTTSocket;
     }());
     Tape.MQTTSocket = MQTTSocket;
-})(Tape || (Tape = {}));
-
-var Tape;
-(function (Tape) {
-    var __param = function (name) {
-        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
-        var r = window.location.search.substr(1).match(reg);
-        if (r != null)
-            return decodeURI(r[2]);
-        return null;
-    };
-    var WeChat = /** @class */ (function () {
-        function WeChat() {
-        }
-        WeChat.is_import_sdk = function () {
-            return window.hasOwnProperty("wx");
-        };
-        WeChat.init = function (appId, success) {
-            this.__wechatCode__ = __param("code");
-            if (!this.__wechatCode__ && this.is_weixn()) {
-                var url = encodeURIComponent(location.origin + location.pathname);
-                location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid='
-                    + appId
-                    + '&redirect_uri='
-                    + url
-                    + '&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect';
-            }
-            if (this.__wechatCode__) {
-                success && success(this.__wechatCode__);
-            }
-        };
-        WeChat.configTicket = function (configMap, shareOptions, onShareSuccess, onShareCancel, onError) {
-            if (configMap === void 0) { configMap = {}; }
-            if (shareOptions === void 0) { shareOptions = {}; }
-            if (onShareSuccess === void 0) { onShareSuccess = null; }
-            if (onShareCancel === void 0) { onShareCancel = null; }
-            if (onError === void 0) { onError = null; }
-            if (this.is_import_sdk() && this.is_weixn()) {
-                var configOptions = {
-                    appId: configMap['appId'] || '',
-                    timestamp: configMap['timestamp'] || '',
-                    nonceStr: configMap['nonceStr'] || '',
-                    signature: configMap['signature'] || '',
-                    jsApiList: ['onMenuShareTimeline', 'onMenuShareAppMessage']
-                };
-                window['wx'].config(configOptions);
-                window['wx'].onMenuShareTimeline({
-                    title: shareOptions['title'] || '',
-                    link: shareOptions['link'] || location.origin + location.pathname,
-                    imgUrl: shareOptions['imageUrl'] || '',
-                    success: function (res) {
-                        onShareSuccess && onShareSuccess(res);
-                    },
-                    cancel: function (res) {
-                        onShareCancel && onShareCancel(res);
-                    }
-                });
-                window['wx'].onMenuShareAppMessage({
-                    title: shareOptions['title'] || '',
-                    desc: shareOptions['link'] || location.origin + location.pathname,
-                    link: shareOptions['desc'] || '',
-                    imgUrl: shareOptions['imageUrl'],
-                    success: function (res) {
-                        onShareSuccess && onShareSuccess(res);
-                    },
-                    cancel: function (res) {
-                        onShareCancel && onShareCancel(res);
-                    }
-                });
-                window['wx'].error(function (res) {
-                    onError && onError(res);
-                });
-            }
-        };
-        WeChat.__wechatCode__ = null;
-        WeChat.is_weixn = function () {
-            var ua = navigator.userAgent.toLowerCase();
-            if (ua.match(/MicroMessenger/i) + '' == "micromessenger") {
-                return true;
-            }
-            else {
-                return false;
-            }
-        };
-        return WeChat;
-    }());
-    Tape.WeChat = WeChat;
 })(Tape || (Tape = {}));
 
 /*******************************************************************************

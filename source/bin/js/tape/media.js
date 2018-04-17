@@ -78,6 +78,12 @@ var Tape;
             this.onComplete = null;
             this.__audio_url__ = url;
         }
+        Audio.play = function (url, loops) {
+            if (loops === void 0) { loops = 1; }
+            var audio = new Audio(url);
+            audio.play(loops);
+            return audio;
+        };
         Audio.prototype.play = function (loops) {
             var _this = this;
             if (loops === void 0) { loops = 1; }

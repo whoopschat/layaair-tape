@@ -23,8 +23,6 @@ module Tape {
             });
         };
 
-        private __play_music_list__: Array<Tape.Audio> = [];
-
         public readonly routeName: string = "";
         public readonly routeKey: string = "";
         public readonly params: Object = {};
@@ -53,40 +51,6 @@ module Tape {
         }
 
         protected onNextProgress(progress) {
-        }
-
-        ///////////////////////
-        /// Music
-        ///////////////////////
-
-        protected playBackgroundMusic(url: string, loops?: number) {
-            Tape.BackgroundMusic.play(url, loops);
-        }
-
-        protected stopBackgroundMusic() {
-            Tape.BackgroundMusic.stop();
-        }
-
-        protected playAudio(url: string, loops?: number, complete?: Function) {
-            var audio = new Tape.Audio(url);
-            audio.play(loops);
-            audio.onComplete = complete;
-            return this.__play_music_list__.push(audio);
-        }
-
-        protected stopAudio(id: number = 0) {
-            if (id == 0) {
-                while (this.__play_music_list__.length > 0) {
-                    this.__play_music_list__.pop().stop();
-                }
-            } else {
-                if (id - 1 >= 0 && id - 1 < this.__play_music_list__.length) {
-                    let splice = this.__play_music_list__.splice(id - 1, 1);
-                    splice.forEach(chancel => {
-                        chancel.stop();
-                    });
-                }
-            }
         }
 
         ///////////////////////

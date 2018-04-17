@@ -33,7 +33,6 @@ var Tape;
         function Activity(props) {
             if (props === void 0) { props = {}; }
             var _this = _super.call(this, props) || this;
-            _this.__play_music_list__ = [];
             _this.routeName = "";
             _this.routeKey = "";
             _this.params = {};
@@ -61,37 +60,6 @@ var Tape;
         Activity.prototype.onDestroy = function () {
         };
         Activity.prototype.onNextProgress = function (progress) {
-        };
-        ///////////////////////
-        /// Music
-        ///////////////////////
-        Activity.prototype.playBackgroundMusic = function (url, loops) {
-            Tape.BackgroundMusic.play(url, loops);
-        };
-        Activity.prototype.stopBackgroundMusic = function () {
-            Tape.BackgroundMusic.stop();
-        };
-        Activity.prototype.playAudio = function (url, loops, complete) {
-            var audio = new Tape.Audio(url);
-            audio.play(loops);
-            audio.onComplete = complete;
-            return this.__play_music_list__.push(audio);
-        };
-        Activity.prototype.stopAudio = function (id) {
-            if (id === void 0) { id = 0; }
-            if (id == 0) {
-                while (this.__play_music_list__.length > 0) {
-                    this.__play_music_list__.pop().stop();
-                }
-            }
-            else {
-                if (id - 1 >= 0 && id - 1 < this.__play_music_list__.length) {
-                    var splice = this.__play_music_list__.splice(id - 1, 1);
-                    splice.forEach(function (chancel) {
-                        chancel.stop();
-                    });
-                }
-            }
         };
         ///////////////////////
         /// Navigator

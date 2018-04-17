@@ -27,7 +27,7 @@ module Tape {
             return window.hasOwnProperty("wx");
         }
 
-        public static init(appId, success: Function) {
+        public static auth(appId, success: Function) {
             this.__wechatCode__ = __param("code");
             if (!this.__wechatCode__ && this.is_weixn()) {
                 var url = encodeURIComponent(location.origin + location.pathname);
@@ -42,7 +42,7 @@ module Tape {
             }
         }
 
-        public static configTicket(configMap = {}, shareOptions = {}, onShareSuccess: Function = null, onShareCancel: Function = null, onError: Function = null) {
+        public static configShare(configMap = {}, shareOptions = {}, onShareSuccess: Function = null, onShareCancel: Function = null, onError: Function = null) {
             if (this.is_import_sdk() && this.is_weixn()) {
                 const configOptions = {
                     appId: configMap['appId'] || '',

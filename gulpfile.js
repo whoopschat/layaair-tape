@@ -10,7 +10,6 @@ var del = require('del');
 var moduleName = 'tape';
 var includePath = './source/include/';
 var inputJsPath = './source/bin/js/';
-var inputLayaPath = './source/bin/libs/min/';
 var outputPath = './dist/';
 
 gulp.task('clean', del.bind(null, [outputPath + '*', inputJsPath + '*']));
@@ -26,12 +25,11 @@ var packageList = [
   inputJsPath + moduleName + '/box.js',
   inputJsPath + moduleName + '/utils.js',
   inputJsPath + moduleName + '/comp.js',
-  inputJsPath + moduleName + '/conch.js',
+  inputJsPath + moduleName + '/market.js',
   inputJsPath + moduleName + '/media.js',
   inputJsPath + moduleName + '/navigator.js',
   inputJsPath + moduleName + '/socket.js',
-  inputJsPath + moduleName + '/wechat.js',
-  inputJsPath + moduleName + '/jsfile/**/*.js'
+  inputJsPath + moduleName + '/js/**/*.js'
 ];
 
 gulp.task('bundle', function () {

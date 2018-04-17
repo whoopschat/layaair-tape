@@ -9,9 +9,34 @@ declare module Tape {
     /**
      * Conch
      */
-    class Conch {
+    class Market {
+
+        static onAuthorize: Function;
+        static onSendMessage: Function;
+        static onEnterShare: Function;
+        static onGetMarketName: Function;
+        static onGetUserInfo: Function;
+        static onGetFriends: Function;
+        static onLogin: Function;
+        static onLogout: Function;
 
         static is_conch(): boolean;
+
+        static authorize(jsonParam: string, callback: Function);
+
+        static login(jsonParam: string, callback: Function);
+
+        static logout(jsonParam: string, callback: Function);
+
+        static sendMessage(jsonParam: string, callback: Function): void;
+
+        static enterShare(jsonParam: string, callback: Function): void;
+
+        static getUserInfo(jsonParam: string, callback: Function): void;
+
+        static getMarketName(): string;
+
+        static getFriends(jsonParam: string, callback: Function);
 
     }
 
@@ -29,7 +54,7 @@ declare module Tape {
         public readonly routeKey: string;
 
         ///////////////////////
-        //// extends Component Props
+        //// Extends component props
         ///////////////////////
 
         gray: boolean;
@@ -62,27 +87,31 @@ declare module Tape {
         /// LifeCycle
         ///////////////////////
 
+        /**
+         * onCreate
+         */
         protected onCreate();
 
+        /**
+         * onResume
+         */
         protected onResume();
 
+        /**
+         * onPause
+         */
         protected onPause();
 
+        /**
+         * onDestroy
+         */
         protected onDestroy();
 
+        /**
+         * onNextProgress
+         * @param progress progress
+         */
         protected onNextProgress(progress: number);
-
-        ///////////////////////
-        /// Media
-        ///////////////////////
-
-        protected playBackgroundMusic(url: string, loops?: number): void;
-
-        protected stopBackgroundMusic(): void;
-
-        protected playAudio(url: string, loops?: number, complete?: Function): number;
-
-        protected stopAudio(chancelId?: number);
 
         ///////////////////////
         /// Navigator
@@ -153,14 +182,18 @@ declare module Tape {
      * linkUtil
      */
     class LinkUtil {
+
         static openURL(url: string): void;
+
     }
 
     /**
      * uuid
      */
     class UUID {
-        static guid(): string;
+
+        static randUUID(): string;
+
     }
 
     /**
@@ -219,31 +252,6 @@ declare module Tape {
     }
 
     ///////////////////////////////////////////////
-    ////// WeChat
-    ///////////////////////////////////////////////
-
-    class WeChat {
-
-        /**
-         * <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
-         * 
-         * @param appId	 wechat appid
-         * @param success init success callback
-         */
-        public static init(appId: string, success: Function): void;
-
-        /**
-         * @param configMap	 configMap{appId, timestamp, nonceStr, signature}
-         * @param shareOptions	 shareOptions{title, link, desc, imageUrl}
-         * @param onShareSuccess	share success callback
-         * @param onShareCancel	 share cancel callback
-         * @param onError	config error callback
-         */
-        public static configTicket(configMap: Object, shareOptions: Object, onShareSuccess?: Function, onShareCancel?: Function, onError?: Function): void;
-
-    }
-
-    ///////////////////////////////////////////////
     ////// Media
     ///////////////////////////////////////////////
 
@@ -273,6 +281,15 @@ declare module Tape {
      */
     class Audio {
 
+        /**
+         * play audio
+         */
+        public static play(url: String, loops?: number): Audio;
+
+        /**
+         * constructor
+         * @param url sound url
+         */
         constructor(url: String);
 
         /**
@@ -299,6 +316,7 @@ declare module Tape {
      * WebSocket
      */
     class WebSocket {
+
         onConnecting: Function;
         onConnected: Function;
         onClosed: Function;
@@ -331,6 +349,7 @@ declare module Tape {
      * MQTTSocket
      */
     class MQTTSocket {
+
         onConnecting: Function;
         onConnected: Function;
         onClosed: Function;

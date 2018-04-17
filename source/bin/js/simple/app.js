@@ -20,7 +20,7 @@ var App;
         Main.prototype.onCreate = function () {
             var _this = this;
             this.addChild(this.page1);
-            this.playBackgroundMusic("res/sound/bg_sound.mp3", 0);
+            Tape.BackgroundMusic.play("res/sound/bg_sound.mp3", 0);
             this.page1.btn.on(Laya.Event.CLICK, this, function () {
                 var message = new ui.MessageToastUI();
                 message.text.text = _this.routeName + _this.routeKey + "\n" + JSON.stringify(_this.params);
@@ -39,7 +39,6 @@ var App;
         };
         Main.prototype.onDestroy = function () {
             this.printDebug("onDestroy");
-            // this.stopMusic();
         };
         return Main;
     }(Tape.Activity));

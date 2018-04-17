@@ -71,6 +71,12 @@ module Tape {
      */
     export class Audio {
 
+        public static play(url, loops: number = 1): Audio {
+            let audio = new Audio(url);
+            audio.play(loops);
+            return audio;
+        }
+
         private __audio_url__ = "";
         private __audio_chancel__: Laya.SoundChannel = null;
         private __is_playing__ = false;

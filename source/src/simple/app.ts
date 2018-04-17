@@ -6,7 +6,7 @@ module App {
 
         protected onCreate() {
             this.addChild(this.page1);
-            this.playBackgroundMusic("res/sound/bg_sound.mp3", 0);
+            Tape.BackgroundMusic.play("res/sound/bg_sound.mp3", 0);
             this.page1.btn.on(Laya.Event.CLICK, this, () => {
                 let message = new ui.MessageToastUI();
                 message.text.text = this.routeName + this.routeKey + "\n" + JSON.stringify(this.params);
@@ -28,7 +28,6 @@ module App {
 
         protected onDestroy() {
             this.printDebug("onDestroy");
-            // this.stopMusic();
         }
     }
 
