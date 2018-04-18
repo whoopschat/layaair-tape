@@ -22,21 +22,21 @@ declare module Tape {
 
         static is_conch(): boolean;
 
-        static authorize(jsonParam: string, callback: Function);
-
-        static login(jsonParam: string, callback: Function);
-
-        static logout(jsonParam: string, callback: Function);
-
-        static sendMessage(jsonParam: string, callback: Function): void;
-
-        static enterShare(jsonParam: string, callback: Function): void;
-
-        static getUserInfo(jsonParam: string, callback: Function): void;
-
         static getMarketName(): string;
 
-        static getFriends(jsonParam: string, callback: Function);
+        static authorize(jsonParam: string, callback?: Function): void;
+
+        static login(jsonParam: string, callback?: Function): void;
+
+        static logout(jsonParam: string, callback?: Function): void;
+
+        static sendMessage(jsonParam: string, callback?: Function): void;
+
+        static enterShare(jsonParam: string, callback?: Function): void;
+
+        static getUserInfo(jsonParam: string, callback?: Function): void;
+
+        static getFriends(jsonParam: string, callback?: Function);
 
     }
 
@@ -172,8 +172,14 @@ declare module Tape {
      */
     class NumUtil {
 
+        /**
+         * rangedValue
+         */
         static rangedValue(val: number, min: number, max: number): number;
 
+        /**
+         * rand
+         */
         static rand(min: number, max: number): number;
 
     }
@@ -183,6 +189,9 @@ declare module Tape {
      */
     class LinkUtil {
 
+        /**
+         * openURL
+         */
         static openURL(url: string): void;
 
     }
@@ -192,6 +201,9 @@ declare module Tape {
      */
     class UUID {
 
+        /**
+         * randUUID
+         */
         static randUUID(): string;
 
     }
@@ -245,8 +257,14 @@ declare module Tape {
          */
         constructor(fn: Function);
 
+        /**
+         * then
+         */
         public then(onFulfilled: Function, onRejected?: Function);
 
+        /**
+         * catch
+         */
         public catch(onRejected: Function);
 
     }
@@ -263,7 +281,7 @@ declare module Tape {
         /**
          * play background music
          */
-        public static play(url: String, loops?: number): void;
+        public static play(url: String, loops?: number, complete?: Function): void;
 
         /**
          * stop background music
@@ -282,9 +300,14 @@ declare module Tape {
     class Audio {
 
         /**
+         * config audio
+         */
+        public static config(soundDir: string, soundFormat: string, soundConchDir: string, soundConchFormat: string, showErrorAlert?: boolean);
+
+        /**
          * play audio
          */
-        public static play(url: String, loops?: number): Audio;
+        public static play(url: String, loops?: number, complete?: Function): Audio;
 
         /**
          * constructor
@@ -295,7 +318,7 @@ declare module Tape {
         /**
          * play audio
          */
-        public play(loops?: number): void;
+        public play(loops?: number, complete?: Function): void;
 
         /**
          * stop audio

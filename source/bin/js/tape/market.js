@@ -6,11 +6,20 @@ var Tape;
     var Market = /** @class */ (function () {
         function Market() {
         }
-        Market.is_conch = function () {
+        Market.isConchApp = function () {
             return window.hasOwnProperty('conch');
         };
+        Market.getMarketName = function () {
+            if (this.isConchApp()) {
+                return Laya.conchMarket.getMarketName();
+            }
+            else {
+                return this.onGetMarketName && this.onGetMarketName();
+            }
+        };
         Market.authorize = function (jsonParam, callback) {
-            if (this.is_conch()) {
+            if (callback === void 0) { callback = null; }
+            if (this.isConchApp()) {
                 Laya.conchMarket.authorize(jsonParam, callback);
             }
             else {
@@ -18,7 +27,8 @@ var Tape;
             }
         };
         Market.sendMessage = function (jsonParam, callback) {
-            if (this.is_conch()) {
+            if (callback === void 0) { callback = null; }
+            if (this.isConchApp()) {
                 Laya.conchMarket.sendMessageToPlatform(jsonParam, callback);
             }
             else {
@@ -26,7 +36,8 @@ var Tape;
             }
         };
         Market.enterShare = function (jsonParam, callback) {
-            if (this.is_conch()) {
+            if (callback === void 0) { callback = null; }
+            if (this.isConchApp()) {
                 Laya.conchMarket.enterShareAndFeed(jsonParam, callback);
             }
             else {
@@ -34,23 +45,17 @@ var Tape;
             }
         };
         Market.getUserInfo = function (jsonParam, callback) {
-            if (this.is_conch()) {
+            if (callback === void 0) { callback = null; }
+            if (this.isConchApp()) {
                 Laya.conchMarket.getUserInfo(jsonParam, callback);
             }
             else {
                 this.onGetUserInfo && this.onGetUserInfo(jsonParam, callback);
             }
         };
-        Market.getMarketName = function () {
-            if (this.is_conch()) {
-                return Laya.conchMarket.getMarketName();
-            }
-            else {
-                return this.onGetMarketName && this.onGetMarketName();
-            }
-        };
         Market.getFriends = function (jsonParam, callback) {
-            if (this.is_conch()) {
+            if (callback === void 0) { callback = null; }
+            if (this.isConchApp()) {
                 Laya.conchMarket.getGameFriends(jsonParam, callback);
             }
             else {
@@ -58,7 +63,8 @@ var Tape;
             }
         };
         Market.login = function (jsonParam, callback) {
-            if (this.is_conch()) {
+            if (callback === void 0) { callback = null; }
+            if (this.isConchApp()) {
                 Laya.conchMarket.login(jsonParam, callback);
             }
             else {
@@ -66,7 +72,8 @@ var Tape;
             }
         };
         Market.logout = function (jsonParam, callback) {
-            if (this.is_conch()) {
+            if (callback === void 0) { callback = null; }
+            if (this.isConchApp()) {
                 Laya.conchMarket.logout(jsonParam, callback);
             }
             else {

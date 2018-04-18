@@ -475,11 +475,20 @@ var Tape;
     var Market = /** @class */ (function () {
         function Market() {
         }
-        Market.is_conch = function () {
+        Market.isConchApp = function () {
             return window.hasOwnProperty('conch');
         };
+        Market.getMarketName = function () {
+            if (this.isConchApp()) {
+                return Laya.conchMarket.getMarketName();
+            }
+            else {
+                return this.onGetMarketName && this.onGetMarketName();
+            }
+        };
         Market.authorize = function (jsonParam, callback) {
-            if (this.is_conch()) {
+            if (callback === void 0) { callback = null; }
+            if (this.isConchApp()) {
                 Laya.conchMarket.authorize(jsonParam, callback);
             }
             else {
@@ -487,7 +496,8 @@ var Tape;
             }
         };
         Market.sendMessage = function (jsonParam, callback) {
-            if (this.is_conch()) {
+            if (callback === void 0) { callback = null; }
+            if (this.isConchApp()) {
                 Laya.conchMarket.sendMessageToPlatform(jsonParam, callback);
             }
             else {
@@ -495,7 +505,8 @@ var Tape;
             }
         };
         Market.enterShare = function (jsonParam, callback) {
-            if (this.is_conch()) {
+            if (callback === void 0) { callback = null; }
+            if (this.isConchApp()) {
                 Laya.conchMarket.enterShareAndFeed(jsonParam, callback);
             }
             else {
@@ -503,23 +514,17 @@ var Tape;
             }
         };
         Market.getUserInfo = function (jsonParam, callback) {
-            if (this.is_conch()) {
+            if (callback === void 0) { callback = null; }
+            if (this.isConchApp()) {
                 Laya.conchMarket.getUserInfo(jsonParam, callback);
             }
             else {
                 this.onGetUserInfo && this.onGetUserInfo(jsonParam, callback);
             }
         };
-        Market.getMarketName = function () {
-            if (this.is_conch()) {
-                return Laya.conchMarket.getMarketName();
-            }
-            else {
-                return this.onGetMarketName && this.onGetMarketName();
-            }
-        };
         Market.getFriends = function (jsonParam, callback) {
-            if (this.is_conch()) {
+            if (callback === void 0) { callback = null; }
+            if (this.isConchApp()) {
                 Laya.conchMarket.getGameFriends(jsonParam, callback);
             }
             else {
@@ -527,7 +532,8 @@ var Tape;
             }
         };
         Market.login = function (jsonParam, callback) {
-            if (this.is_conch()) {
+            if (callback === void 0) { callback = null; }
+            if (this.isConchApp()) {
                 Laya.conchMarket.login(jsonParam, callback);
             }
             else {
@@ -535,7 +541,8 @@ var Tape;
             }
         };
         Market.logout = function (jsonParam, callback) {
-            if (this.is_conch()) {
+            if (callback === void 0) { callback = null; }
+            if (this.isConchApp()) {
                 Laya.conchMarket.logout(jsonParam, callback);
             }
             else {
@@ -560,7 +567,7 @@ var Tape;
 // =========================== //
 var Tape;
 (function (Tape) {
-    var withWeixinAudioPlay = function (callback) {
+    var fuckWXAudioPlay = function (callback) {
         var wsb = window;
         if (wsb['WeixinJSBridge']) {
             try {
@@ -582,14 +589,16 @@ var Tape;
     var BackgroundMusic = /** @class */ (function () {
         function BackgroundMusic() {
         }
-        BackgroundMusic.play = function (url, loops) {
+        BackgroundMusic.play = function (url, loops, complete) {
             var _this = this;
             if (loops === void 0) { loops = 1; }
+            if (complete === void 0) { complete = null; }
+            this.__on_complete__ = complete;
             if (this.__audio_url__ !== url) {
                 this.__audio_url__ = url;
                 this.stop();
             }
-            withWeixinAudioPlay(function () {
+            fuckWXAudioPlay(function () {
                 if (_this.__audio_chancel__) {
                     if (!_this.__is_playing__) {
                         _this.__audio_chancel__.play();
@@ -600,7 +609,7 @@ var Tape;
                 _this.__audio_chancel__ = Laya.SoundManager.playMusic(_this.__audio_url__, loops, Tape.Box.Handler.create(_this, function () {
                     _this.__is_playing__ = false;
                     _this.__audio_chancel__ = null;
-                    _this.onComplete && _this.onComplete();
+                    _this.__on_complete__ && _this.__on_complete__();
                 }));
             });
         };
@@ -620,7 +629,7 @@ var Tape;
         BackgroundMusic.__audio_url__ = "";
         BackgroundMusic.__audio_chancel__ = null;
         BackgroundMusic.__is_playing__ = false;
-        BackgroundMusic.onComplete = null;
+        BackgroundMusic.__on_complete__ = null;
         return BackgroundMusic;
     }());
     Tape.BackgroundMusic = BackgroundMusic;
@@ -632,19 +641,30 @@ var Tape;
             this.__audio_url__ = "";
             this.__audio_chancel__ = null;
             this.__is_playing__ = false;
-            this.onComplete = null;
+            this.__on_complete__ = null;
             this.__audio_url__ = url;
         }
-        Audio.play = function (url, loops) {
+        Audio.config = function (soundDir, soundFormat, soundConchDir, soundConchFormat, showErrorAlert) {
+            if (showErrorAlert === void 0) { showErrorAlert = false; }
+            this.soundWebDir = soundDir || "";
+            this.soundWebFormat = soundFormat || "";
+            this.soundConchDir = soundConchDir || "";
+            this.soundConchFormat = soundConchFormat || "";
+            this.showErrorAlert = showErrorAlert;
+        };
+        Audio.play = function (url, loops, complete) {
             if (loops === void 0) { loops = 1; }
+            if (complete === void 0) { complete = null; }
             var audio = new Audio(url);
-            audio.play(loops);
+            audio.play(loops, complete);
             return audio;
         };
-        Audio.prototype.play = function (loops) {
+        Audio.prototype.play = function (loops, complete) {
             var _this = this;
             if (loops === void 0) { loops = 1; }
-            withWeixinAudioPlay(function () {
+            if (complete === void 0) { complete = null; }
+            this.__on_complete__ = complete;
+            fuckWXAudioPlay(function () {
                 if (_this.__audio_chancel__) {
                     if (!_this.__is_playing__) {
                         _this.__audio_chancel__.play();
@@ -652,9 +672,20 @@ var Tape;
                     return;
                 }
                 _this.__is_playing__ = true;
-                _this.__audio_chancel__ = Laya.SoundManager.playSound(_this.__audio_url__, loops, Tape.Box.Handler.create(_this, function () {
+                var soundUrl = "";
+                if (Tape.Market.isConchApp()) {
+                    soundUrl = Audio.soundConchDir + _this.__audio_url__ + Audio.soundConchFormat;
+                    var ext = Laya.Utils.getFileExtension(soundUrl);
+                    if (!Audio.showErrorAlert && ext != "wav" && ext != "ogg") {
+                        return;
+                    }
+                }
+                else {
+                    soundUrl = Audio.soundWebDir + _this.__audio_url__ + Audio.soundWebFormat;
+                }
+                _this.__audio_chancel__ = Laya.SoundManager.playSound(soundUrl, loops, Tape.Box.Handler.create(_this, function () {
                     _this.__is_playing__ = false;
-                    _this.onComplete && _this.onComplete();
+                    _this.__on_complete__ && _this.__on_complete__();
                 }));
             });
         };
@@ -671,6 +702,11 @@ var Tape;
                 this.__is_playing__ = false;
             }
         };
+        Audio.showErrorAlert = false;
+        Audio.soundWebDir = "";
+        Audio.soundWebFormat = "";
+        Audio.soundConchDir = "";
+        Audio.soundConchFormat = "";
         return Audio;
     }());
     Tape.Audio = Audio;
