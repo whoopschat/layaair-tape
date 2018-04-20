@@ -13,9 +13,34 @@ module Tape {
         public static onGetFriends: Function = null;
         public static onLogin: Function = null;
         public static onLogout: Function = null;
+        public static onRecharge: Function = null;
 
         public static isConchApp(): boolean {
             return window.hasOwnProperty('conch');
+        }
+
+        public static showAlertOnJsException(show: boolean): void {
+            if (window.hasOwnProperty("showAlertOnJsException")) {
+                window["showAlertOnJsException"](show);
+            }
+        }
+
+        public static setOnBackPressedFunction(onBackPressed: Function): void {
+            if (this.isConchApp() && window["conch"].hasOwnProperty("setOnBackPressedFunction")) {
+                window["conch"].setOnBackPressedFunction(() => {
+                    onBackPressed && onBackPressed();
+                });
+            }
+        }
+
+        public static getDeviceInfo(): Object {
+            if (this.isConchApp()) {
+                try {
+                    return JSON.parse(window["conch"].config.getDeviceInfo());
+                } catch (error) {
+                }
+            }
+            return {};
         }
 
         public static getMarketName(): string {
@@ -31,6 +56,30 @@ module Tape {
                 Laya.conchMarket.authorize(jsonParam, callback);
             } else {
                 this.onAuthorize && this.onAuthorize(jsonParam, callback);
+            }
+        }
+
+        public static login(jsonParam: string, callback: Function = null): void {
+            if (this.isConchApp()) {
+                Laya.conchMarket.login(jsonParam, callback);
+            } else {
+                this.onLogin && this.onLogin(jsonParam, callback);
+            }
+        }
+
+        public static logout(jsonParam: string, callback: Function = null): void {
+            if (this.isConchApp()) {
+                Laya.conchMarket.logout(jsonParam, callback);
+            } else {
+                this.onLogout && this.onLogout(jsonParam, callback);
+            }
+        }
+
+        public static recharge(jsonParam: string, callback: Function = null): void {
+            if (this.isConchApp()) {
+                Laya.conchMarket.recharge(jsonParam, callback);
+            } else {
+                this.onRecharge && this.onRecharge(jsonParam, callback);
             }
         }
 
@@ -63,22 +112,6 @@ module Tape {
                 Laya.conchMarket.getGameFriends(jsonParam, callback);
             } else {
                 this.onGetFriends && this.onGetFriends(jsonParam, callback);
-            }
-        }
-
-        public static login(jsonParam: string, callback: Function = null): void {
-            if (this.isConchApp()) {
-                Laya.conchMarket.login(jsonParam, callback);
-            } else {
-                this.onLogin && this.onLogin(jsonParam, callback);
-            }
-        }
-
-        public static logout(jsonParam: string, callback: Function = null): void {
-            if (this.isConchApp()) {
-                Laya.conchMarket.logout(jsonParam, callback);
-            } else {
-                this.onLogout && this.onLogout(jsonParam, callback);
             }
         }
 

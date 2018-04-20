@@ -57,6 +57,7 @@ var Tape;
             this.__web_socket__.connectByUrl(socketUrl);
             this.__web_socket__.on(Tape.Box.Event.OPEN, this, function () {
                 printLog(" -----WS---" + SocketTAG.SOCKET_CONNECTED);
+                _this.__is_connect__ = true;
                 _this.onConnected && _this.onConnected();
             });
             this.__web_socket__.on(Tape.Box.Event.CLOSE, this, function (error) {
@@ -159,6 +160,7 @@ var Tape;
                     password: password,
                     onSuccess: function () {
                         printLog(" -----MQTT---" + SocketTAG.SOCKET_CONNECTED);
+                        _this.__is_connect__ = true;
                         _this.onConnected && _this.onConnected();
                     },
                     onFailure: function (error) {

@@ -9,6 +9,28 @@ var Tape;
         Market.isConchApp = function () {
             return window.hasOwnProperty('conch');
         };
+        Market.showAlertOnJsException = function (show) {
+            if (window.hasOwnProperty("showAlertOnJsException")) {
+                window["showAlertOnJsException"](show);
+            }
+        };
+        Market.setOnBackPressedFunction = function (onBackPressed) {
+            if (this.isConchApp() && window["conch"].hasOwnProperty("setOnBackPressedFunction")) {
+                window["conch"].setOnBackPressedFunction(function () {
+                    onBackPressed && onBackPressed();
+                });
+            }
+        };
+        Market.getDeviceInfo = function () {
+            if (this.isConchApp()) {
+                try {
+                    return JSON.parse(window["conch"].config.getDeviceInfo());
+                }
+                catch (error) {
+                }
+            }
+            return {};
+        };
         Market.getMarketName = function () {
             if (this.isConchApp()) {
                 return Laya.conchMarket.getMarketName();
@@ -24,6 +46,33 @@ var Tape;
             }
             else {
                 this.onAuthorize && this.onAuthorize(jsonParam, callback);
+            }
+        };
+        Market.login = function (jsonParam, callback) {
+            if (callback === void 0) { callback = null; }
+            if (this.isConchApp()) {
+                Laya.conchMarket.login(jsonParam, callback);
+            }
+            else {
+                this.onLogin && this.onLogin(jsonParam, callback);
+            }
+        };
+        Market.logout = function (jsonParam, callback) {
+            if (callback === void 0) { callback = null; }
+            if (this.isConchApp()) {
+                Laya.conchMarket.logout(jsonParam, callback);
+            }
+            else {
+                this.onLogout && this.onLogout(jsonParam, callback);
+            }
+        };
+        Market.recharge = function (jsonParam, callback) {
+            if (callback === void 0) { callback = null; }
+            if (this.isConchApp()) {
+                Laya.conchMarket.recharge(jsonParam, callback);
+            }
+            else {
+                this.onRecharge && this.onRecharge(jsonParam, callback);
             }
         };
         Market.sendMessage = function (jsonParam, callback) {
@@ -62,24 +111,6 @@ var Tape;
                 this.onGetFriends && this.onGetFriends(jsonParam, callback);
             }
         };
-        Market.login = function (jsonParam, callback) {
-            if (callback === void 0) { callback = null; }
-            if (this.isConchApp()) {
-                Laya.conchMarket.login(jsonParam, callback);
-            }
-            else {
-                this.onLogin && this.onLogin(jsonParam, callback);
-            }
-        };
-        Market.logout = function (jsonParam, callback) {
-            if (callback === void 0) { callback = null; }
-            if (this.isConchApp()) {
-                Laya.conchMarket.logout(jsonParam, callback);
-            }
-            else {
-                this.onLogout && this.onLogout(jsonParam, callback);
-            }
-        };
         Market.onAuthorize = null;
         Market.onSendMessage = null;
         Market.onEnterShare = null;
@@ -88,6 +119,7 @@ var Tape;
         Market.onGetFriends = null;
         Market.onLogin = null;
         Market.onLogout = null;
+        Market.onRecharge = null;
         return Market;
     }());
     Tape.Market = Market;

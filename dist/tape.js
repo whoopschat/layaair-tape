@@ -478,6 +478,28 @@ var Tape;
         Market.isConchApp = function () {
             return window.hasOwnProperty('conch');
         };
+        Market.showAlertOnJsException = function (show) {
+            if (window.hasOwnProperty("showAlertOnJsException")) {
+                window["showAlertOnJsException"](show);
+            }
+        };
+        Market.setOnBackPressedFunction = function (onBackPressed) {
+            if (this.isConchApp() && window["conch"].hasOwnProperty("setOnBackPressedFunction")) {
+                window["conch"].setOnBackPressedFunction(function () {
+                    onBackPressed && onBackPressed();
+                });
+            }
+        };
+        Market.getDeviceInfo = function () {
+            if (this.isConchApp()) {
+                try {
+                    return JSON.parse(window["conch"].config.getDeviceInfo());
+                }
+                catch (error) {
+                }
+            }
+            return {};
+        };
         Market.getMarketName = function () {
             if (this.isConchApp()) {
                 return Laya.conchMarket.getMarketName();
@@ -493,6 +515,33 @@ var Tape;
             }
             else {
                 this.onAuthorize && this.onAuthorize(jsonParam, callback);
+            }
+        };
+        Market.login = function (jsonParam, callback) {
+            if (callback === void 0) { callback = null; }
+            if (this.isConchApp()) {
+                Laya.conchMarket.login(jsonParam, callback);
+            }
+            else {
+                this.onLogin && this.onLogin(jsonParam, callback);
+            }
+        };
+        Market.logout = function (jsonParam, callback) {
+            if (callback === void 0) { callback = null; }
+            if (this.isConchApp()) {
+                Laya.conchMarket.logout(jsonParam, callback);
+            }
+            else {
+                this.onLogout && this.onLogout(jsonParam, callback);
+            }
+        };
+        Market.recharge = function (jsonParam, callback) {
+            if (callback === void 0) { callback = null; }
+            if (this.isConchApp()) {
+                Laya.conchMarket.recharge(jsonParam, callback);
+            }
+            else {
+                this.onRecharge && this.onRecharge(jsonParam, callback);
             }
         };
         Market.sendMessage = function (jsonParam, callback) {
@@ -531,24 +580,6 @@ var Tape;
                 this.onGetFriends && this.onGetFriends(jsonParam, callback);
             }
         };
-        Market.login = function (jsonParam, callback) {
-            if (callback === void 0) { callback = null; }
-            if (this.isConchApp()) {
-                Laya.conchMarket.login(jsonParam, callback);
-            }
-            else {
-                this.onLogin && this.onLogin(jsonParam, callback);
-            }
-        };
-        Market.logout = function (jsonParam, callback) {
-            if (callback === void 0) { callback = null; }
-            if (this.isConchApp()) {
-                Laya.conchMarket.logout(jsonParam, callback);
-            }
-            else {
-                this.onLogout && this.onLogout(jsonParam, callback);
-            }
-        };
         Market.onAuthorize = null;
         Market.onSendMessage = null;
         Market.onEnterShare = null;
@@ -557,6 +588,7 @@ var Tape;
         Market.onGetFriends = null;
         Market.onLogin = null;
         Market.onLogout = null;
+        Market.onRecharge = null;
         return Market;
     }());
     Tape.Market = Market;
@@ -1099,6 +1131,7 @@ var Tape;
             this.__web_socket__.connectByUrl(socketUrl);
             this.__web_socket__.on(Tape.Box.Event.OPEN, this, function () {
                 printLog(" -----WS---" + SocketTAG.SOCKET_CONNECTED);
+                _this.__is_connect__ = true;
                 _this.onConnected && _this.onConnected();
             });
             this.__web_socket__.on(Tape.Box.Event.CLOSE, this, function (error) {
@@ -1201,6 +1234,7 @@ var Tape;
                     password: password,
                     onSuccess: function () {
                         printLog(" -----MQTT---" + SocketTAG.SOCKET_CONNECTED);
+                        _this.__is_connect__ = true;
                         _this.onConnected && _this.onConnected();
                     },
                     onFailure: function (error) {

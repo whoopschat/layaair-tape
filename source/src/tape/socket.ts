@@ -56,6 +56,7 @@ module Tape {
             this.__web_socket__.connectByUrl(socketUrl);
             this.__web_socket__.on(Tape.Box.Event.OPEN, this, () => {
                 printLog(" -----WS---" + SocketTAG.SOCKET_CONNECTED);
+                this.__is_connect__ = true;
                 this.onConnected && this.onConnected();
             });
             this.__web_socket__.on(Tape.Box.Event.CLOSE, this, (error) => {
@@ -163,6 +164,7 @@ module Tape {
                     password: password,
                     onSuccess: () => {
                         printLog(" -----MQTT---" + SocketTAG.SOCKET_CONNECTED);
+                        this.__is_connect__ = true;
                         this.onConnected && this.onConnected();
                     },
                     onFailure: (error) => {
