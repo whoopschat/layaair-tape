@@ -13,13 +13,11 @@ class GameMain {
             }
         };
         let options = {
-            uriPrefix: "http://m.baidu.com/",
-            fileVersion: "version.json",
             res: [
                 { url: 'res/atlas/comp.atlas', type: Laya.Loader.ATLAS }
             ]
         };
-        var app: any = Tape.createApp(routes, "Page2", options);
+        var app: any = Tape.createNavigator(routes, "Page2", options);
         Laya.stage.addChild(app);
     }
 }

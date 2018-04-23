@@ -2,9 +2,9 @@
   "name": "build-package-js",
   "version": "1.0.0",
   "scripts": {
-    "dev": "http-server ./source/bin/",
-    "clean": "gulp clean",
-    "tsc": "gulp tsc",
+    "dev": "http-server ./",
+    "clean": "gulp build:clean",
+    "tsc": "gulp build:tsc",
     "build": "gulp build"
   },
   "license": "UNLICENSED",

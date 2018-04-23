@@ -3,54 +3,21 @@
 // =========================== //
 var Tape;
 (function (Tape) {
-    var Box = /** @class */ (function () {
-        function Box() {
+    var Display = /** @class */ (function () {
+        function Display() {
         }
-        // RES TYPE
-        Box.ATLAS = Laya.Loader.ATLAS;
-        Box.JSON = Laya.Loader.JSON;
-        Box.FONT = Laya.Loader.FONT;
-        Box.SOUND = Laya.Loader.SOUND;
-        Box.IMAGE = Laya.Loader.IMAGE;
-        ////////////////////////////
-        //// imports class
-        ////////////////////////////
-        Box.Component = Laya.Component;
-        Box.ResourceVersion = Laya.ResourceVersion;
-        Box.Handler = Laya.Handler;
-        Box.EventDispatcher = Laya.EventDispatcher;
-        Box.Socket = Laya.Socket;
-        Box.Event = Laya.Event;
-        Box.Ease = Laya.Ease;
-        ////////////////////////////
-        //// imports method
-        ////////////////////////////
-        Box.tweenTo = function (target, props, duration, ease, complete, delay, coverBefore, autoRecover) {
-            Laya.Tween.to(target, props, duration, ease, Laya.Handler.create(target, complete), delay, coverBefore, autoRecover);
-        };
-        Box.tweenFrom = function (target, props, duration, ease, complete, delay, coverBefore, autoRecover) {
-            Laya.Tween.from(target, props, duration, ease, Laya.Handler.create(target, complete), delay, coverBefore, autoRecover);
-        };
-        /**
-         * load res
-         */
-        Box.load = function (res, caller, handler, progress) {
-            if (handler === void 0) { handler = null; }
-            if (progress === void 0) { progress = null; }
-            Laya.loader.load(res, Laya.Handler.create(caller, handler), Laya.Handler.create(caller, progress, null, false));
-        };
-        Box.drawView = function (view) {
+        Display.addChild = function (view) {
             Laya.stage.addChild(view);
         };
-        Box.width = function () {
+        Display.width = function () {
             return Laya.stage.width;
         };
-        Box.height = function () {
+        Display.height = function () {
             return Laya.stage.height;
         };
-        return Box;
+        return Display;
     }());
-    Tape.Box = Box;
+    Tape.Display = Display;
 })(Tape || (Tape = {}));
 
 // =========================== //
@@ -58,9 +25,51 @@ var Tape;
 // =========================== //
 var Tape;
 (function (Tape) {
-    ///////////////////////////////////////////////////
-    ///// NumUtil
-    ///////////////////////////////////////////////////
+    /**
+     * Timer
+     */
+    var Timer = /** @class */ (function () {
+        function Timer() {
+            this.__loop_runing__ = false;
+            this.__loop_callback__ = null;
+            this.__loop_date__ = null;
+        }
+        Timer.sleep = function (numberMillis) {
+            var now = new Date();
+            var exitTime = now.getTime() + numberMillis;
+            while (true) {
+                now = new Date();
+                if (now.getTime() > exitTime)
+                    return;
+            }
+        };
+        Timer.prototype.loop = function (callback, delay) {
+            var _this = this;
+            this.__loop_callback__ = callback;
+            this.__loop_runing__ = true;
+            this.__loop_date__ = new Date();
+            new Tape.Task(function (resolve) {
+                while (_this.__loop_runing__) {
+                    var now = new Date();
+                    callback && callback(now.getTime() - _this.__loop_date__.getTime());
+                    Timer.sleep(delay);
+                }
+                resolve();
+            }).then(function () {
+                _this.__loop_callback__ = null;
+                _this.__loop_runing__ = false;
+                _this.__loop_date__ = null;
+            });
+        };
+        Timer.prototype.stop = function () {
+            this.__loop_runing__ = false;
+        };
+        return Timer;
+    }());
+    Tape.Timer = Timer;
+    /**
+     * NumUtil
+     */
     var NumUtil = /** @class */ (function () {
         function NumUtil() {
         }
@@ -78,9 +87,9 @@ var Tape;
         return NumUtil;
     }());
     Tape.NumUtil = NumUtil;
-    ///////////////////////////////////////////////////
-    ///// LinkUtil
-    ///////////////////////////////////////////////////
+    /**
+     * LinkUtil
+     */
     var LinkUtil = /** @class */ (function () {
         function LinkUtil() {
         }
@@ -90,9 +99,9 @@ var Tape;
         return LinkUtil;
     }());
     Tape.LinkUtil = LinkUtil;
-    ///////////////////////////////////////////////////
-    ///// UUID
-    ///////////////////////////////////////////////////
+    /**
+     * UUID
+     */
     var UUID = /** @class */ (function () {
         function UUID() {
         }
@@ -105,18 +114,27 @@ var Tape;
         return UUID;
     }());
     Tape.UUID = UUID;
-    ///////////////////////////////////////////////////
-    ///// Logger
-    ///////////////////////////////////////////////////
+    /**
+     * Logger
+     */
     var Logger = /** @class */ (function () {
         function Logger() {
         }
+        /**
+         * setDebug
+         */
         Logger.setDebug = function (debug) {
             this.__is_debug__ = debug;
         };
+        /**
+         * isDebug
+         */
         Logger.isDebug = function () {
             return this.__is_debug__;
         };
+        /**
+         * log
+         */
         Logger.log = function (message) {
             var optionalParams = [];
             for (var _i = 1; _i < arguments.length; _i++) {
@@ -127,6 +145,9 @@ var Tape;
             }
             console.log.apply(console, [message].concat(optionalParams));
         };
+        /**
+         * error
+         */
         Logger.error = function (message) {
             var optionalParams = [];
             for (var _i = 1; _i < arguments.length; _i++) {
@@ -137,6 +158,9 @@ var Tape;
             }
             console.error.apply(console, [message].concat(optionalParams));
         };
+        /**
+         * info
+         */
         Logger.info = function (message) {
             var optionalParams = [];
             for (var _i = 1; _i < arguments.length; _i++) {
@@ -147,6 +171,9 @@ var Tape;
             }
             console.info.apply(console, [message].concat(optionalParams));
         };
+        /**
+         * warn
+         */
         Logger.warn = function (message) {
             var optionalParams = [];
             for (var _i = 1; _i < arguments.length; _i++) {
@@ -157,6 +184,9 @@ var Tape;
             }
             console.warn.apply(console, [message].concat(optionalParams));
         };
+        /**
+         * debug
+         */
         Logger.debug = function (message) {
             var optionalParams = [];
             for (var _i = 1; _i < arguments.length; _i++) {
@@ -171,60 +201,13 @@ var Tape;
         return Logger;
     }());
     Tape.Logger = Logger;
-    ///////////////////////////////////////////////////
-    ///// Toast
-    ///////////////////////////////////////////////////
     /**
-     * Toast
+     * Task
      */
-    var Toast = /** @class */ (function () {
-        function Toast() {
-        }
-        Toast.show = function (type, view, x, y, duration, pivotX, pivoxY) {
-            if (duration === void 0) { duration = 500; }
-            if (pivotX === void 0) { pivotX = 0.5; }
-            if (pivoxY === void 0) { pivoxY = 0.5; }
-            if (view && view.parent == null) {
-                if (!this.__toast_object__.hasOwnProperty(type)) {
-                    this.__toast_object__[type] = new Array();
-                }
-                var list_1 = this.__toast_object__[type];
-                view.x = x;
-                view.y = y;
-                view.alpha = 0;
-                view.pivot(view.width * pivotX, view.height * pivoxY);
-                this.fadeIn(view, duration, 0);
-                this.fadeOut(view, duration, duration, function () {
-                    list_1.splice(list_1.indexOf(view), 1);
-                    view.removeSelf();
-                });
-                Tape.Box.drawView(view);
-                for (var i in list_1) {
-                    if (list_1[i]) {
-                        list_1[i].y -= list_1[i].height - 5;
-                    }
-                }
-                list_1.push(view);
-            }
-        };
-        Toast.fadeIn = function (view, duration, delay, complete) {
-            if (complete === void 0) { complete = null; }
-            Tape.Box.tweenTo(view, { alpha: 1 }, duration, Tape.Box.Ease.quintOut, null, delay);
-        };
-        Toast.fadeOut = function (view, duration, delay, complete) {
-            if (complete === void 0) { complete = null; }
-            Tape.Box.tweenTo(view, { alpha: 0 }, duration, Tape.Box.Ease.quintOut, complete, delay);
-        };
-        Toast.__toast_object__ = {};
-        return Toast;
-    }());
-    Tape.Toast = Toast;
-    ///////////////////////////////////////////////////
-    ///// Task
-    ///////////////////////////////////////////////////
     var Task = /** @class */ (function () {
         /**
-         * fn: args -> resolve,reject
+         * constructor
+         * @param fn args -> resolve,reject
          */
         function Task(fn) {
             var _this = this;
@@ -260,6 +243,11 @@ var Tape;
                 reject(error);
             }
         }
+        /**
+         * then
+         * @param onFulfilled onFulfilled
+         * @param onRejected onRejected
+         */
         Task.prototype.then = function (onFulfilled, onRejected) {
             var _this = this;
             if (onRejected === void 0) { onRejected = null; }
@@ -272,6 +260,10 @@ var Tape;
                 });
             });
         };
+        /**
+         * catch
+         * @param onRejected onRejected
+         */
         Task.prototype.catch = function (onRejected) {
             var _this = this;
             return new Task(function (resolve, reject) {
@@ -283,9 +275,6 @@ var Tape;
                 });
             });
         };
-        ///////////////////////////////////////
-        ///// Private
-        ///////////////////////////////////////
         Task.prototype.handle = function (callback) {
             if (this.state === 'pending') {
                 this.callbacks.push(callback);
@@ -333,9 +322,9 @@ var __extends = (this && this.__extends) || (function () {
 // =========================== //
 var Tape;
 (function (Tape) {
-    /////////////////////////////////////////////////////
-    //////// Component
-    /////////////////////////////////////////////////////
+    /**
+     * PropsComponent
+     */
     var PropsComponent = /** @class */ (function (_super) {
         __extends(PropsComponent, _super);
         function PropsComponent(props) {
@@ -346,8 +335,11 @@ var Tape;
             return _this;
         }
         return PropsComponent;
-    }(Tape.Box.Component));
+    }(Laya.Component));
     Tape.PropsComponent = PropsComponent;
+    /**
+     * Activity
+     */
     var Activity = /** @class */ (function (_super) {
         __extends(Activity, _super);
         function Activity(props) {
@@ -419,9 +411,6 @@ var Tape;
                 this.props['navigation'].popToTop();
             }
         };
-        ///////////////////////
-        /// Logger
-        ///////////////////////
         Activity.prototype.printLog = function (message) {
             var optionalParams = [];
             for (var _i = 1; _i < arguments.length; _i++) {
@@ -465,6 +454,54 @@ var Tape;
         return Activity;
     }(PropsComponent));
     Tape.Activity = Activity;
+    /**
+     * Toast
+     */
+    var Toast = /** @class */ (function () {
+        function Toast() {
+        }
+        Toast.show = function (type, view, x, y, duration, pivotX, pivoxY) {
+            if (duration === void 0) { duration = 500; }
+            if (pivotX === void 0) { pivotX = 0.5; }
+            if (pivoxY === void 0) { pivoxY = 0.5; }
+            if (view && view.parent == null) {
+                if (!this.__toast_object__.hasOwnProperty(type)) {
+                    this.__toast_object__[type] = new Array();
+                }
+                var list_1 = this.__toast_object__[type];
+                view.x = x;
+                view.y = y;
+                view.alpha = 0;
+                view.pivot(view.width * pivotX, view.height * pivoxY);
+                this.fadeIn(view, duration, 0);
+                this.fadeOut(view, duration, duration, function () {
+                    list_1.splice(list_1.indexOf(view), 1);
+                    view.removeSelf();
+                });
+                Laya.stage.addChild(view);
+                Tape.Display.addChild(view);
+                for (var i in list_1) {
+                    if (list_1[i]) {
+                        list_1[i].y -= list_1[i].height - 5;
+                    }
+                }
+                list_1.push(view);
+            }
+        };
+        Toast.fadeIn = function (view, duration, delay, complete) {
+            if (complete === void 0) { complete = null; }
+            Laya.Tween.to(view, { alpha: 1 }, duration, Laya.Ease.quintOut, null, delay);
+        };
+        Toast.fadeOut = function (view, duration, delay, complete) {
+            if (complete === void 0) { complete = null; }
+            Laya.Tween.to(view, { alpha: 0 }, duration, Laya.Ease.quintOut, Laya.Handler.create(this, function () {
+                complete && complete();
+            }), delay);
+        };
+        Toast.__toast_object__ = {};
+        return Toast;
+    }());
+    Tape.Toast = Toast;
 })(Tape || (Tape = {}));
 
 // =========================== //
@@ -472,25 +509,33 @@ var Tape;
 // =========================== //
 var Tape;
 (function (Tape) {
-    var Market = /** @class */ (function () {
-        function Market() {
+    /**
+     * MarketHandler
+     */
+    var MarketHandler = /** @class */ (function () {
+        function MarketHandler() {
         }
-        Market.isConchApp = function () {
+        MarketHandler.isConchApp = function () {
             return window.hasOwnProperty('conch');
         };
-        Market.showAlertOnJsException = function (show) {
-            if (window.hasOwnProperty("showAlertOnJsException")) {
+        MarketHandler.conchShowAlertOnJsException = function (show) {
+            if (this.isConchApp() && window.hasOwnProperty("showAlertOnJsException")) {
                 window["showAlertOnJsException"](show);
             }
         };
-        Market.setOnBackPressedFunction = function (onBackPressed) {
+        MarketHandler.conchSetOnBackPressedFunction = function (onBackPressed) {
             if (this.isConchApp() && window["conch"].hasOwnProperty("setOnBackPressedFunction")) {
                 window["conch"].setOnBackPressedFunction(function () {
                     onBackPressed && onBackPressed();
                 });
             }
         };
-        Market.getDeviceInfo = function () {
+        MarketHandler.conchExit = function () {
+            if (this.isConchApp() && window["conch"].hasOwnProperty("exit")) {
+                window["conch"].exit();
+            }
+        };
+        MarketHandler.conchDeviceInfo = function () {
             if (this.isConchApp()) {
                 try {
                     return JSON.parse(window["conch"].config.getDeviceInfo());
@@ -500,95 +545,104 @@ var Tape;
             }
             return {};
         };
+        MarketHandler.onAuthorize = null;
+        MarketHandler.onSendMessage = null;
+        MarketHandler.onEnterShare = null;
+        MarketHandler.onGetMarketName = null;
+        MarketHandler.onGetUserInfo = null;
+        MarketHandler.onGetFriends = null;
+        MarketHandler.onLogin = null;
+        MarketHandler.onLogout = null;
+        MarketHandler.onRecharge = null;
+        return MarketHandler;
+    }());
+    Tape.MarketHandler = MarketHandler;
+    /**
+     * Market
+     */
+    var Market = /** @class */ (function () {
+        function Market() {
+        }
         Market.getMarketName = function () {
-            if (this.isConchApp()) {
+            if (MarketHandler.isConchApp()) {
                 return Laya.conchMarket.getMarketName();
             }
             else {
-                return this.onGetMarketName && this.onGetMarketName();
+                return MarketHandler.onGetMarketName && MarketHandler.onGetMarketName();
             }
         };
         Market.authorize = function (jsonParam, callback) {
             if (callback === void 0) { callback = null; }
-            if (this.isConchApp()) {
+            if (MarketHandler.isConchApp()) {
                 Laya.conchMarket.authorize(jsonParam, callback);
             }
             else {
-                this.onAuthorize && this.onAuthorize(jsonParam, callback);
+                MarketHandler.onAuthorize && MarketHandler.onAuthorize(jsonParam, callback);
             }
         };
         Market.login = function (jsonParam, callback) {
             if (callback === void 0) { callback = null; }
-            if (this.isConchApp()) {
+            if (MarketHandler.isConchApp()) {
                 Laya.conchMarket.login(jsonParam, callback);
             }
             else {
-                this.onLogin && this.onLogin(jsonParam, callback);
+                MarketHandler.onLogin && MarketHandler.onLogin(jsonParam, callback);
             }
         };
         Market.logout = function (jsonParam, callback) {
             if (callback === void 0) { callback = null; }
-            if (this.isConchApp()) {
+            if (MarketHandler.isConchApp()) {
                 Laya.conchMarket.logout(jsonParam, callback);
             }
             else {
-                this.onLogout && this.onLogout(jsonParam, callback);
+                MarketHandler.onLogout && MarketHandler.onLogout(jsonParam, callback);
             }
         };
         Market.recharge = function (jsonParam, callback) {
             if (callback === void 0) { callback = null; }
-            if (this.isConchApp()) {
+            if (MarketHandler.isConchApp()) {
                 Laya.conchMarket.recharge(jsonParam, callback);
             }
             else {
-                this.onRecharge && this.onRecharge(jsonParam, callback);
+                MarketHandler.onRecharge && MarketHandler.onRecharge(jsonParam, callback);
             }
         };
         Market.sendMessage = function (jsonParam, callback) {
             if (callback === void 0) { callback = null; }
-            if (this.isConchApp()) {
+            if (MarketHandler.isConchApp()) {
                 Laya.conchMarket.sendMessageToPlatform(jsonParam, callback);
             }
             else {
-                this.onSendMessage && this.onSendMessage(jsonParam, callback);
+                MarketHandler.onSendMessage && MarketHandler.onSendMessage(jsonParam, callback);
             }
         };
         Market.enterShare = function (jsonParam, callback) {
             if (callback === void 0) { callback = null; }
-            if (this.isConchApp()) {
+            if (MarketHandler.isConchApp()) {
                 Laya.conchMarket.enterShareAndFeed(jsonParam, callback);
             }
             else {
-                this.onEnterShare && this.onEnterShare(jsonParam, callback);
+                MarketHandler.onEnterShare && MarketHandler.onEnterShare(jsonParam, callback);
             }
         };
         Market.getUserInfo = function (jsonParam, callback) {
             if (callback === void 0) { callback = null; }
-            if (this.isConchApp()) {
+            if (MarketHandler.isConchApp()) {
                 Laya.conchMarket.getUserInfo(jsonParam, callback);
             }
             else {
-                this.onGetUserInfo && this.onGetUserInfo(jsonParam, callback);
+                MarketHandler.onGetUserInfo && MarketHandler.onGetUserInfo(jsonParam, callback);
             }
         };
-        Market.getFriends = function (jsonParam, callback) {
+        Market.getFriendList = function (jsonParam, callback) {
             if (callback === void 0) { callback = null; }
-            if (this.isConchApp()) {
+            if (MarketHandler.isConchApp()) {
                 Laya.conchMarket.getGameFriends(jsonParam, callback);
             }
             else {
-                this.onGetFriends && this.onGetFriends(jsonParam, callback);
+                MarketHandler.onGetFriends && MarketHandler.onGetFriends(jsonParam, callback);
             }
         };
-        Market.onAuthorize = null;
-        Market.onSendMessage = null;
-        Market.onEnterShare = null;
-        Market.onGetMarketName = null;
-        Market.onGetUserInfo = null;
-        Market.onGetFriends = null;
-        Market.onLogin = null;
-        Market.onLogout = null;
-        Market.onRecharge = null;
         return Market;
     }());
     Tape.Market = Market;
@@ -638,7 +692,7 @@ var Tape;
                     return;
                 }
                 _this.__is_playing__ = true;
-                _this.__audio_chancel__ = Laya.SoundManager.playMusic(_this.__audio_url__, loops, Tape.Box.Handler.create(_this, function () {
+                _this.__audio_chancel__ = Laya.SoundManager.playMusic(_this.__audio_url__, loops, Laya.Handler.create(_this, function () {
                     _this.__is_playing__ = false;
                     _this.__audio_chancel__ = null;
                     _this.__on_complete__ && _this.__on_complete__();
@@ -705,7 +759,7 @@ var Tape;
                 }
                 _this.__is_playing__ = true;
                 var soundUrl = "";
-                if (Tape.Market.isConchApp()) {
+                if (Tape.MarketHandler.isConchApp()) {
                     soundUrl = Audio.soundConchDir + _this.__audio_url__ + Audio.soundConchFormat;
                     var ext = Laya.Utils.getFileExtension(soundUrl);
                     if (!Audio.showErrorAlert && ext != "wav" && ext != "ogg") {
@@ -715,7 +769,7 @@ var Tape;
                 else {
                     soundUrl = Audio.soundWebDir + _this.__audio_url__ + Audio.soundWebFormat;
                 }
-                _this.__audio_chancel__ = Laya.SoundManager.playSound(soundUrl, loops, Tape.Box.Handler.create(_this, function () {
+                _this.__audio_chancel__ = Laya.SoundManager.playSound(soundUrl, loops, Laya.Handler.create(_this, function () {
                     _this.__is_playing__ = false;
                     _this.__on_complete__ && _this.__on_complete__();
                 }));
@@ -759,12 +813,12 @@ var __extends = (this && this.__extends) || (function () {
 // =========================== //
 var Tape;
 (function (Tape) {
-    ///////////////////////////////////
-    //// NavigatorLoader
-    ///////////////////////////////////
-    var NavigatorLoader = /** @class */ (function (_super) {
-        __extends(NavigatorLoader, _super);
-        function NavigatorLoader(activity, routeName, routeKey, props, res, loaded, onLoadProgress) {
+    /**
+     * NavigationLoader
+     */
+    var NavigationLoader = /** @class */ (function (_super) {
+        __extends(NavigationLoader, _super);
+        function NavigationLoader(activity, routeName, routeKey, props, res, loaded, onLoadProgress) {
             if (props === void 0) { props = {}; }
             if (res === void 0) { res = []; }
             if (loaded === void 0) { loaded = null; }
@@ -776,17 +830,17 @@ var Tape;
             _this.routeName = routeName;
             _this.routeKey = routeKey;
             if (res != null && res.length > 0) {
-                Tape.Box.load(res, _this, function () {
+                Laya.loader.load(res, Laya.Handler.create(_this, function () {
                     var act = new activity(props);
                     _this.create(act);
                     if (loaded) {
                         loaded(_this);
                     }
-                }, function (progress) {
+                }), Laya.Handler.create(_this, function (progress) {
                     if (onLoadProgress) {
                         onLoadProgress(_this, progress);
                     }
-                });
+                }, null, false));
             }
             else {
                 var act = new activity(props);
@@ -797,33 +851,33 @@ var Tape;
             }
             return _this;
         }
-        NavigatorLoader.prototype.create = function (routeActivity) {
+        NavigationLoader.prototype.create = function (routeActivity) {
             this.routeActivity = routeActivity;
             this.addChild(this.routeActivity);
             this.routeActivity.onCreate();
         };
-        NavigatorLoader.prototype.nextProgress = function (progress) {
+        NavigationLoader.prototype.nextProgress = function (progress) {
             this.routeActivity.onNextProgress(progress);
         };
-        NavigatorLoader.prototype.exit = function () {
+        NavigationLoader.prototype.exit = function () {
             this.removeSelf();
             this.routeActivity.onDestroy();
         };
-        NavigatorLoader.prototype.show = function () {
+        NavigationLoader.prototype.show = function () {
             this.visible = true;
             this.routeActivity.onResume();
         };
-        NavigatorLoader.prototype.hide = function () {
+        NavigationLoader.prototype.hide = function () {
             this.visible = false;
             this.routeActivity.onPause();
         };
-        return NavigatorLoader;
+        return NavigationLoader;
     }(Tape.PropsComponent));
-    ///////////////////////////////////
-    //// NavigatorStack
-    ///////////////////////////////////
-    var NavigatorStack = /** @class */ (function () {
-        function NavigatorStack(navigator) {
+    /**
+     * NavigationStack
+     */
+    var NavigationStack = /** @class */ (function () {
+        function NavigationStack(navigator) {
             this.__navigator__ = null;
             this.__init_name__ = "";
             this.__routes__ = {};
@@ -843,11 +897,11 @@ var Tape;
             this.__uri_prefix__ = navigator.props['navigation']['uriPrefix'] || "://";
             this.__file_version__ = navigator.props['navigation']['fileVersion'];
         }
-        NavigatorStack.prototype.init_page = function () {
+        NavigationStack.prototype.init_page = function () {
             var _this = this;
             if (this.__file_version__) {
-                Tape.Box.ResourceVersion.type = Tape.Box.ResourceVersion.FILENAME_VERSION;
-                Tape.Box.ResourceVersion.enable(this.__file_version__, Tape.Box.Handler.create(this, function () {
+                Laya.ResourceVersion.type = Laya.ResourceVersion.FILENAME_VERSION;
+                Laya.ResourceVersion.enable(this.__file_version__, Laya.Handler.create(this, function () {
                     _this.navigate(_this.__init_name__);
                 }));
             }
@@ -855,10 +909,10 @@ var Tape;
                 this.navigate(this.__init_name__);
             }
         };
-        ///////////////////////////////////////////////////////////
-        //// Open
-        ///////////////////////////////////////////////////////////
-        NavigatorStack.prototype.deeplink = function (url, action) {
+        /**
+         * deeplink
+         */
+        NavigationStack.prototype.deeplink = function (url, action) {
             if (action === void 0) { action = null; }
             var params = {};
             var delimiter = this.__uri_prefix__ || '://';
@@ -885,7 +939,10 @@ var Tape;
             }
             return this.navigate(path, params, action);
         };
-        NavigatorStack.prototype.navigate = function (name, params, action) {
+        /**
+         * navigate
+         */
+        NavigationStack.prototype.navigate = function (name, params, action) {
             var _this = this;
             if (params === void 0) { params = {}; }
             if (action === void 0) { action = null; }
@@ -920,7 +977,7 @@ var Tape;
                 Object.assign(paramsObject, params);
                 this.__loading__ = true;
                 var key = Tape.UUID.randUUID();
-                new NavigatorLoader(activity, name, key, {
+                new NavigationLoader(activity, name, key, {
                     navigation: this,
                     routeName: name,
                     routeKey: key,
@@ -945,39 +1002,42 @@ var Tape;
                 return false;
             }
         };
-        ///////////////////////////////////////////////////////////
-        //// finish
-        ///////////////////////////////////////////////////////////
-        NavigatorStack.prototype.finish = function (name, key) {
+        /**
+         * finish
+         */
+        NavigationStack.prototype.finish = function (name, key) {
             if (key === void 0) { key = null; }
             this.finishStack(name, key);
         };
-        NavigatorStack.prototype.popToTop = function () {
+        /**
+         * popToTop
+         */
+        NavigationStack.prototype.popToTop = function () {
             this.pop(this.__stacks__.length);
         };
-        NavigatorStack.prototype.pop = function (number) {
+        /**
+         * pop
+         */
+        NavigationStack.prototype.pop = function (number) {
             if (number === void 0) { number = 1; }
             this.popStack(number);
         };
-        /////////////////////////////////
-        //// private
-        /////////////////////////////////
-        NavigatorStack.prototype.lenStack = function () {
+        NavigationStack.prototype.lenStack = function () {
             return this.__stacks__.length;
         };
-        NavigatorStack.prototype.lastStack = function () {
+        NavigationStack.prototype.lastStack = function () {
             var len = this.lenStack();
             if (len > 0) {
                 return this.__stacks__[len - 1];
             }
             return null;
         };
-        NavigatorStack.prototype.putStack = function (stack) {
+        NavigationStack.prototype.putStack = function (stack) {
             this.hideStack();
             this.__stacks__.push(stack);
             this.showStack();
         };
-        NavigatorStack.prototype.popStack = function (count) {
+        NavigationStack.prototype.popStack = function (count) {
             if (this.lenStack() > 1 && count > 0) {
                 this.hideStack();
                 for (var i = 0; i < count; i++) {
@@ -988,7 +1048,7 @@ var Tape;
                 this.showStack();
             }
         };
-        NavigatorStack.prototype.finishStack = function (name, key) {
+        NavigationStack.prototype.finishStack = function (name, key) {
             if (key === void 0) { key = null; }
             var len = this.lenStack();
             if (len > 1) {
@@ -1028,31 +1088,34 @@ var Tape;
                 }
             }
         };
-        NavigatorStack.prototype.hideStack = function () {
+        NavigationStack.prototype.hideStack = function () {
             var len = this.lenStack();
             if (len > 0) {
                 this.__stacks__[len - 1].hide();
             }
         };
-        NavigatorStack.prototype.showStack = function () {
+        NavigationStack.prototype.showStack = function () {
             var len = this.lenStack();
             if (len > 0) {
                 this.__stacks__[len - 1].show();
             }
         };
-        return NavigatorStack;
+        return NavigationStack;
     }());
-    ///////////////////////////////////
-    //// NavigatorOptions
-    ///////////////////////////////////
-    Tape.createApp = function (routes, initName, options) {
+    /**
+     * createNavigator
+     * @param routes routes
+     * @param initName initName
+     * @param options options
+     */
+    Tape.createNavigator = function (routes, initName, options) {
         if (options === void 0) { options = {}; }
         var StackNavigator = /** @class */ (function (_super) {
             __extends(class_1, _super);
             function class_1(props) {
                 var _this = _super.call(this, props) || this;
                 _this.__navigator__ = null;
-                _this.__navigator__ = new NavigatorStack(_this);
+                _this.__navigator__ = new NavigationStack(_this);
                 _this.__navigator__.init_page();
                 return _this;
             }
@@ -1063,7 +1126,7 @@ var Tape;
                 routes: routes,
                 initName: initName,
                 staticRes: options['res'],
-                fileVersion: options['fileVersion'],
+                fileVersion: options['fileVersion'] || 'version.json',
                 uriPrefix: options['uriPrefix'],
                 onLoaded: options['onLoaded'],
                 onLoadProgress: options['onLoadProgress']
@@ -1077,14 +1140,6 @@ var Tape;
 // =========================== //
 var Tape;
 (function (Tape) {
-    var printLog = function (message) {
-        var optionalParams = [];
-        for (var _i = 1; _i < arguments.length; _i++) {
-            optionalParams[_i - 1] = arguments[_i];
-        }
-        (_a = Tape.Logger).log.apply(_a, [message].concat(optionalParams));
-        var _a;
-    };
     /**
      * Socket TAG
      */
@@ -1111,43 +1166,46 @@ var Tape;
      * WEB Socket
      */
     var WebSocket = /** @class */ (function () {
-        function WebSocket() {
+        function WebSocket(debug) {
+            if (debug === void 0) { debug = false; }
             this.__web_socket__ = null;
+            this.__debug__ = true;
             this.onConnecting = null;
             this.onConnected = null;
             this.onClosed = null;
             this.onError = null;
             this.onMessageReceived = null;
+            this.__debug__ = debug;
         }
         WebSocket.prototype.connect = function (socketUrl) {
             var _this = this;
             if (this.isConnecting()) {
                 return;
             }
-            printLog(" -----WS---" + SocketTAG.SOCKET_CONNECTE_ING);
+            this.printLog(" -----WS---" + SocketTAG.SOCKET_CONNECTE_ING);
             this.onConnecting && this.onConnecting();
             this.__is_connect_ing__ = true;
-            this.__web_socket__ = new Tape.Box.Socket();
+            this.__web_socket__ = new Laya.Socket();
             this.__web_socket__.connectByUrl(socketUrl);
-            this.__web_socket__.on(Tape.Box.Event.OPEN, this, function () {
-                printLog(" -----WS---" + SocketTAG.SOCKET_CONNECTED);
+            this.__web_socket__.on(Laya.Event.OPEN, this, function () {
+                _this.printLog(" -----WS---" + SocketTAG.SOCKET_CONNECTED);
                 _this.__is_connect__ = true;
                 _this.onConnected && _this.onConnected();
             });
-            this.__web_socket__.on(Tape.Box.Event.CLOSE, this, function (error) {
-                printLog(" -----WS---" + SocketTAG.SOCKET_CONNECT_CLOSDE, error);
+            this.__web_socket__.on(Laya.Event.CLOSE, this, function (error) {
+                _this.printLog(" -----WS---" + SocketTAG.SOCKET_CONNECT_CLOSDE, error);
                 _this.__is_connect__ = false;
                 _this.__is_connect_ing__ = false;
                 _this.onClosed && _this.onClosed(error);
             });
-            this.__web_socket__.on(Tape.Box.Event.ERROR, this, function (error) {
-                printLog(" -----WS---" + SocketTAG.SOCKET_CONNECT_ERROR, error);
+            this.__web_socket__.on(Laya.Event.ERROR, this, function (error) {
+                _this.printLog(" -----WS---" + SocketTAG.SOCKET_CONNECT_ERROR, error);
                 _this.__is_connect__ = false;
                 _this.__is_connect_ing__ = false;
                 _this.onError && _this.onError(error);
             });
-            this.__web_socket__.on(Tape.Box.Event.MESSAGE, this, function (msg) {
-                printLog(" -----WS---" + SocketTAG.SOCKET_MESSAGE_RECEIVED, msg);
+            this.__web_socket__.on(Laya.Event.MESSAGE, this, function (msg) {
+                _this.printLog(" -----WS---" + SocketTAG.SOCKET_MESSAGE_RECEIVED, msg);
                 _this.onMessageReceived && _this.onMessageReceived(msg);
             });
         };
@@ -1175,8 +1233,18 @@ var Tape;
             else if (typeof message === 'string') {
                 messagePayload = message;
             }
-            printLog(" -----WS---" + SocketTAG.EVENT_SOCKET_MESSAGE_PUBLISH, messagePayload);
+            this.printLog(" -----WS---" + SocketTAG.EVENT_SOCKET_MESSAGE_PUBLISH, messagePayload);
             this.__web_socket__.send(messagePayload);
+        };
+        WebSocket.prototype.printLog = function (message) {
+            var optionalParams = [];
+            for (var _i = 1; _i < arguments.length; _i++) {
+                optionalParams[_i - 1] = arguments[_i];
+            }
+            if (this.__debug__) {
+                (_a = Tape.Logger).log.apply(_a, [message].concat(optionalParams));
+            }
+            var _a;
         };
         return WebSocket;
     }());
@@ -1185,8 +1253,10 @@ var Tape;
      *  MQTT Socket
      */
     var MQTTSocket = /** @class */ (function () {
-        function MQTTSocket() {
+        function MQTTSocket(debug) {
+            if (debug === void 0) { debug = false; }
             this.__mqtt_socket__ = null;
+            this.__debug__ = true;
             this.__default_options__ = {
                 timeout: 3,
                 keepAliveInterval: 30,
@@ -1200,6 +1270,7 @@ var Tape;
             this.onError = null;
             this.onMessageReceived = null;
             this.onMessageDelivered = null;
+            this.__debug__ = debug;
         }
         MQTTSocket.prototype.connect = function (host, port, clientId, username, password, options) {
             var _this = this;
@@ -1209,23 +1280,23 @@ var Tape;
             if (this.isConnecting()) {
                 return;
             }
-            printLog(" -----MQTT---" + SocketTAG.SOCKET_CONNECTE_ING);
+            this.printLog(" -----MQTT---" + SocketTAG.SOCKET_CONNECTE_ING);
             this.onConnecting && this.onConnecting();
             this.__is_connect_ing__ = true;
             if (window.hasOwnProperty("Paho")) {
                 this.__mqtt_socket__ = new window['Paho'].MQTT.Client(host, port, clientId);
                 this.__mqtt_socket__.onConnectionLost = function (error) {
-                    printLog(" -----MQTT---" + SocketTAG.SOCKET_CONNECT_CLOSDE, error);
+                    _this.printLog(" -----MQTT---" + SocketTAG.SOCKET_CONNECT_CLOSDE, error);
                     _this.__is_connect__ = false;
                     _this.__is_connect_ing__ = false;
                     _this.onClosed && _this.onClosed(error);
                 };
                 this.__mqtt_socket__.onMessageArrived = function (msg) {
-                    printLog(" -----MQTT---" + SocketTAG.SOCKET_MESSAGE_RECEIVED, _this.formatMessage(msg));
+                    _this.printLog(" -----MQTT---" + SocketTAG.SOCKET_MESSAGE_RECEIVED, _this.formatMessage(msg));
                     _this.onMessageReceived && _this.onMessageReceived(msg);
                 };
                 this.__mqtt_socket__.onMessageDelivered = function (msg) {
-                    printLog(" -----MQTT---" + SocketTAG.SOCKET_MESSAGE_DELIVERED, _this.formatMessage(msg));
+                    _this.printLog(" -----MQTT---" + SocketTAG.SOCKET_MESSAGE_DELIVERED, _this.formatMessage(msg));
                     _this.onMessageDelivered && _this.onMessageDelivered(msg);
                 };
                 ;
@@ -1233,12 +1304,12 @@ var Tape;
                     userName: username,
                     password: password,
                     onSuccess: function () {
-                        printLog(" -----MQTT---" + SocketTAG.SOCKET_CONNECTED);
+                        _this.printLog(" -----MQTT---" + SocketTAG.SOCKET_CONNECTED);
                         _this.__is_connect__ = true;
                         _this.onConnected && _this.onConnected();
                     },
                     onFailure: function (error) {
-                        printLog(" -----MQTT---" + SocketTAG.SOCKET_CONNECT_ERROR, error);
+                        _this.printLog(" -----MQTT---" + SocketTAG.SOCKET_CONNECT_ERROR, error);
                         _this.__is_connect__ = false;
                         _this.__is_connect_ing__ = false;
                         _this.onError && _this.onError(error);
@@ -1247,7 +1318,7 @@ var Tape;
             }
             else {
                 var error = "Cannot find mqtt client support.";
-                printLog(" -----MQTT---" + SocketTAG.SOCKET_CONNECT_ERROR, error);
+                this.printLog(" -----MQTT---" + SocketTAG.SOCKET_CONNECT_ERROR, error);
                 this.onError && this.onError(error);
             }
         };
@@ -1282,12 +1353,22 @@ var Tape;
                 mqttMessage.destinationName = topic;
                 mqttMessage.qos = qos;
                 mqttMessage.retained = retained;
-                printLog(" -----MQTT---" + SocketTAG.EVENT_SOCKET_MESSAGE_PUBLISH, this.formatMessage(mqttMessage));
+                this.printLog(" -----MQTT---" + SocketTAG.EVENT_SOCKET_MESSAGE_PUBLISH, this.formatMessage(mqttMessage));
                 this.__mqtt_socket__.send(mqttMessage);
             }
         };
         MQTTSocket.prototype.formatMessage = function (message) {
             return message.topic + " " + message.payloadString;
+        };
+        MQTTSocket.prototype.printLog = function (message) {
+            var optionalParams = [];
+            for (var _i = 1; _i < arguments.length; _i++) {
+                optionalParams[_i - 1] = arguments[_i];
+            }
+            if (this.__debug__) {
+                (_a = Tape.Logger).log.apply(_a, [message].concat(optionalParams));
+            }
+            var _a;
         };
         return MQTTSocket;
     }());

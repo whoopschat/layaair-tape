@@ -12,9 +12,9 @@ var includePath = './source/include/';
 var inputJsPath = './source/bin/js/';
 var outputPath = './dist/';
 
-gulp.task('clean', del.bind(null, [outputPath + '*', inputJsPath + '*']));
+gulp.task('build:clean', del.bind(null, [outputPath + '*', inputJsPath + '*']));
 
-gulp.task("tsc", function () {
+gulp.task("build:tsc", function () {
   var tsProject = ts.createProject("./source/tsconfig.json");
   return tsProject.src()
   .pipe(tsProject())
@@ -22,17 +22,17 @@ gulp.task("tsc", function () {
 });
 
 var packageList = [
-  inputJsPath + moduleName + '/box.js',
+  inputJsPath + moduleName + '/display.js',
   inputJsPath + moduleName + '/utils.js',
-  inputJsPath + moduleName + '/comp.js',
+  inputJsPath + moduleName + '/comps.js',
   inputJsPath + moduleName + '/market.js',
   inputJsPath + moduleName + '/media.js',
-  inputJsPath + moduleName + '/navigator.js',
+  inputJsPath + moduleName + '/navigation.js',
   inputJsPath + moduleName + '/socket.js',
   inputJsPath + moduleName + '/js/**/*.js'
 ];
 
-gulp.task('bundle', function () {
+gulp.task('build:bundle', function () {
 
   var bundleTapeJs = gulp.src(packageList)
   .pipe(concat(moduleName + '.js'))
@@ -53,7 +53,7 @@ gulp.task('bundle', function () {
 
 gulp.task('build',
   gulp.series(
-    'clean',
-    'tsc',
-    'bundle')
+    'build:clean',
+    'build:tsc',
+    'build:bundle')
 );

@@ -3,10 +3,6 @@
 // =========================== //
 module Tape {
 
-    const printLog = function (message?: any, ...optionalParams: any[]) {
-        Tape.Logger.log(message, ...optionalParams);
-    }
-
     /**
      * Socket TAG
      */
@@ -33,8 +29,9 @@ module Tape {
     export class WebSocket {
 
         private __web_socket__ = null;
-        private __is_connect__: Boolean;
-        private __is_connect_ing__: Boolean;
+        private __is_connect__: boolean;
+        private __is_connect_ing__: boolean;
+        private __debug__: boolean = true;
 
         public onConnecting: Function = null;
         public onConnected: Function = null;
@@ -42,37 +39,38 @@ module Tape {
         public onError: Function = null;
         public onMessageReceived: Function = null;
 
-        constructor() {
+        constructor(debug: boolean = false) {
+            this.__debug__ = debug;
         }
 
         public connect(socketUrl) {
             if (this.isConnecting()) {
                 return;
             }
-            printLog(" -----WS---" + SocketTAG.SOCKET_CONNECTE_ING);
+            this.printLog(" -----WS---" + SocketTAG.SOCKET_CONNECTE_ING);
             this.onConnecting && this.onConnecting();
             this.__is_connect_ing__ = true;
-            this.__web_socket__ = new Tape.Box.Socket();
+            this.__web_socket__ = new Laya.Socket();
             this.__web_socket__.connectByUrl(socketUrl);
-            this.__web_socket__.on(Tape.Box.Event.OPEN, this, () => {
-                printLog(" -----WS---" + SocketTAG.SOCKET_CONNECTED);
+            this.__web_socket__.on(Laya.Event.OPEN, this, () => {
+                this.printLog(" -----WS---" + SocketTAG.SOCKET_CONNECTED);
                 this.__is_connect__ = true;
                 this.onConnected && this.onConnected();
             });
-            this.__web_socket__.on(Tape.Box.Event.CLOSE, this, (error) => {
-                printLog(" -----WS---" + SocketTAG.SOCKET_CONNECT_CLOSDE, error);
+            this.__web_socket__.on(Laya.Event.CLOSE, this, (error) => {
+                this.printLog(" -----WS---" + SocketTAG.SOCKET_CONNECT_CLOSDE, error);
                 this.__is_connect__ = false;
                 this.__is_connect_ing__ = false;
                 this.onClosed && this.onClosed(error);
             });
-            this.__web_socket__.on(Tape.Box.Event.ERROR, this, (error) => {
-                printLog(" -----WS---" + SocketTAG.SOCKET_CONNECT_ERROR, error);
+            this.__web_socket__.on(Laya.Event.ERROR, this, (error) => {
+                this.printLog(" -----WS---" + SocketTAG.SOCKET_CONNECT_ERROR, error);
                 this.__is_connect__ = false;
                 this.__is_connect_ing__ = false;
                 this.onError && this.onError(error);
             });
-            this.__web_socket__.on(Tape.Box.Event.MESSAGE, this, (msg) => {
-                printLog(" -----WS---" + SocketTAG.SOCKET_MESSAGE_RECEIVED, msg);
+            this.__web_socket__.on(Laya.Event.MESSAGE, this, (msg) => {
+                this.printLog(" -----WS---" + SocketTAG.SOCKET_MESSAGE_RECEIVED, msg);
                 this.onMessageReceived && this.onMessageReceived(msg);
             });
         }
@@ -103,8 +101,14 @@ module Tape {
             } else if (typeof message === 'string') {
                 messagePayload = message;
             }
-            printLog(" -----WS---" + SocketTAG.EVENT_SOCKET_MESSAGE_PUBLISH, messagePayload);
+            this.printLog(" -----WS---" + SocketTAG.EVENT_SOCKET_MESSAGE_PUBLISH, messagePayload);
             this.__web_socket__.send(messagePayload);
+        }
+
+        private printLog(message?: any, ...optionalParams: any[]) {
+            if (this.__debug__) {
+                Tape.Logger.log(message, ...optionalParams);
+            }
         }
 
     }
@@ -116,8 +120,10 @@ module Tape {
     export class MQTTSocket {
 
         private __mqtt_socket__ = null;
-        private __is_connect__: Boolean;
-        private __is_connect_ing__: Boolean;
+        private __is_connect__: boolean;
+        private __is_connect_ing__: boolean;
+        private __debug__: boolean = true;
+
         private __default_options__ = {
             timeout: 3,
             keepAliveInterval: 30,
@@ -133,42 +139,43 @@ module Tape {
         public onMessageReceived: Function = null;
         public onMessageDelivered: Function = null;
 
-        constructor() {
+        constructor(debug: boolean = false) {
+            this.__debug__ = debug;
         }
 
         connect(host: string, port: number, clientId: string, username: string = '', password: string = '', options: Object = {}) {
             if (this.isConnecting()) {
                 return;
             }
-            printLog(" -----MQTT---" + SocketTAG.SOCKET_CONNECTE_ING);
+            this.printLog(" -----MQTT---" + SocketTAG.SOCKET_CONNECTE_ING);
             this.onConnecting && this.onConnecting();
             this.__is_connect_ing__ = true;
             if (window.hasOwnProperty("Paho")) {
                 this.__mqtt_socket__ = new window['Paho'].MQTT.Client(host, port, clientId);
                 this.__mqtt_socket__.onConnectionLost = (error) => {
-                    printLog(" -----MQTT---" + SocketTAG.SOCKET_CONNECT_CLOSDE, error);
+                    this.printLog(" -----MQTT---" + SocketTAG.SOCKET_CONNECT_CLOSDE, error);
                     this.__is_connect__ = false;
                     this.__is_connect_ing__ = false;
                     this.onClosed && this.onClosed(error);
                 };
                 this.__mqtt_socket__.onMessageArrived = (msg) => {
-                    printLog(" -----MQTT---" + SocketTAG.SOCKET_MESSAGE_RECEIVED, this.formatMessage(msg));
+                    this.printLog(" -----MQTT---" + SocketTAG.SOCKET_MESSAGE_RECEIVED, this.formatMessage(msg));
                     this.onMessageReceived && this.onMessageReceived(msg);
                 };
                 this.__mqtt_socket__.onMessageDelivered = (msg) => {
-                    printLog(" -----MQTT---" + SocketTAG.SOCKET_MESSAGE_DELIVERED, this.formatMessage(msg));
+                    this.printLog(" -----MQTT---" + SocketTAG.SOCKET_MESSAGE_DELIVERED, this.formatMessage(msg));
                     this.onMessageDelivered && this.onMessageDelivered(msg);
                 };;
                 this.__mqtt_socket__.connect((<any>Object).assign({}, this.__default_options__, {
                     userName: username,
                     password: password,
                     onSuccess: () => {
-                        printLog(" -----MQTT---" + SocketTAG.SOCKET_CONNECTED);
+                        this.printLog(" -----MQTT---" + SocketTAG.SOCKET_CONNECTED);
                         this.__is_connect__ = true;
                         this.onConnected && this.onConnected();
                     },
                     onFailure: (error) => {
-                        printLog(" -----MQTT---" + SocketTAG.SOCKET_CONNECT_ERROR, error);
+                        this.printLog(" -----MQTT---" + SocketTAG.SOCKET_CONNECT_ERROR, error);
                         this.__is_connect__ = false;
                         this.__is_connect_ing__ = false;
                         this.onError && this.onError(error);
@@ -176,7 +183,7 @@ module Tape {
                 }, options));
             } else {
                 let error = "Cannot find mqtt client support.";
-                printLog(" -----MQTT---" + SocketTAG.SOCKET_CONNECT_ERROR, error);
+                this.printLog(" -----MQTT---" + SocketTAG.SOCKET_CONNECT_ERROR, error);
                 this.onError && this.onError(error);
             }
         }
@@ -212,13 +219,19 @@ module Tape {
                 mqttMessage.destinationName = topic;
                 mqttMessage.qos = qos;
                 mqttMessage.retained = retained
-                printLog(" -----MQTT---" + SocketTAG.EVENT_SOCKET_MESSAGE_PUBLISH, this.formatMessage(mqttMessage));
+                this.printLog(" -----MQTT---" + SocketTAG.EVENT_SOCKET_MESSAGE_PUBLISH, this.formatMessage(mqttMessage));
                 this.__mqtt_socket__.send(mqttMessage);
             }
         }
 
         private formatMessage(message) {
             return message.topic + " " + message.payloadString;
+        }
+
+        private printLog(message?: any, ...optionalParams: any[]) {
+            if (this.__debug__) {
+                Tape.Logger.log(message, ...optionalParams);
+            }
         }
 
     }

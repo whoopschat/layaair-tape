@@ -40,7 +40,7 @@ module App {
             this.addChild(this.page2);
             this.printDebug("onCreate");
             this.page2.btn.on(Laya.Event.CLICK, this, () => {
-                this.deeplink("http://m.baidu.com/Main?name=你好", () => {
+                this.navigate("Main", { name: "你好" }, () => {
                     this.back();
                 });
             })

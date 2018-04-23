@@ -55,7 +55,7 @@ var App;
             this.addChild(this.page2);
             this.printDebug("onCreate");
             this.page2.btn.on(Laya.Event.CLICK, this, function () {
-                _this.deeplink("http://m.baidu.com/Main?name=你好", function () {
+                _this.navigate("Main", { name: "你好" }, function () {
                     _this.back();
                 });
             });

@@ -42,7 +42,7 @@ module Tape {
                     return;
                 }
                 this.__is_playing__ = true;
-                this.__audio_chancel__ = Laya.SoundManager.playMusic(this.__audio_url__, loops, Tape.Box.Handler.create(this, () => {
+                this.__audio_chancel__ = Laya.SoundManager.playMusic(this.__audio_url__, loops, Laya.Handler.create(this, () => {
                     this.__is_playing__ = false;
                     this.__audio_chancel__ = null;
                     this.__on_complete__ && this.__on_complete__();
@@ -112,7 +112,7 @@ module Tape {
                 }
                 this.__is_playing__ = true;
                 let soundUrl = "";
-                if (Market.isConchApp()) {
+                if (MarketHandler.isConchApp()) {
                     soundUrl = Audio.soundConchDir + this.__audio_url__ + Audio.soundConchFormat;
                     let ext = Laya.Utils.getFileExtension(soundUrl);
                     if (!Audio.showErrorAlert && ext != "wav" && ext != "ogg") {
@@ -121,7 +121,7 @@ module Tape {
                 } else {
                     soundUrl = Audio.soundWebDir + this.__audio_url__ + Audio.soundWebFormat;
                 }
-                this.__audio_chancel__ = Laya.SoundManager.playSound(soundUrl, loops, Tape.Box.Handler.create(this, () => {
+                this.__audio_chancel__ = Laya.SoundManager.playSound(soundUrl, loops, Laya.Handler.create(this, () => {
                     this.__is_playing__ = false;
                     this.__on_complete__ && this.__on_complete__();
                 }));

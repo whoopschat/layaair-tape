@@ -3,10 +3,55 @@
 // =========================== //
 module Tape {
 
-    ///////////////////////////////////////////////////
-    ///// NumUtil
-    ///////////////////////////////////////////////////
+    /**
+     * Timer
+     */
+    export class Timer {
 
+        public static sleep(numberMillis) {
+            var now = new Date();
+            var exitTime = now.getTime() + numberMillis;
+            while (true) {
+                now = new Date();
+                if (now.getTime() > exitTime)
+                    return;
+            }
+        }
+
+        private __loop_runing__: boolean = false;
+        private __loop_callback__: Function = null;
+        private __loop_date__: Date = null;
+
+        constructor() {
+        }
+
+        public loop(callback: Function, delay: number) {
+            this.__loop_callback__ = callback;
+            this.__loop_runing__ = true;
+            this.__loop_date__ = new Date();
+            new Tape.Task((resolve) => {
+                while (this.__loop_runing__) {
+                    var now = new Date();
+                    callback && callback(now.getTime() - this.__loop_date__.getTime());
+                    Timer.sleep(delay);
+                }
+                resolve();
+            }).then(() => {
+                this.__loop_callback__ = null;
+                this.__loop_runing__ = false;
+                this.__loop_date__ = null;
+            });
+        }
+
+        public stop() {
+            this.__loop_runing__ = false;
+        }
+
+    }
+
+    /**
+     * NumUtil
+     */
     export class NumUtil {
 
         public static rangedValue(val: number, min: number, max: number): number {
@@ -24,10 +69,9 @@ module Tape {
 
     }
 
-    ///////////////////////////////////////////////////
-    ///// LinkUtil
-    ///////////////////////////////////////////////////
-
+    /**
+     * LinkUtil
+     */
     export class LinkUtil {
 
         public static openURL(url: string) {
@@ -36,10 +80,9 @@ module Tape {
 
     }
 
-    ///////////////////////////////////////////////////
-    ///// UUID
-    ///////////////////////////////////////////////////
-
+    /**
+     * UUID
+     */
     export class UUID {
 
         private static S4() {
@@ -52,22 +95,30 @@ module Tape {
 
     }
 
-    ///////////////////////////////////////////////////
-    ///// Logger
-    ///////////////////////////////////////////////////
-
+    /**
+     * Logger
+     */
     export class Logger {
 
         private static __is_debug__: Boolean = true;
 
+        /**
+         * setDebug
+         */
         public static setDebug(debug: Boolean): void {
             this.__is_debug__ = debug;
         }
 
+        /**
+         * isDebug
+         */
         public static isDebug(): Boolean {
             return this.__is_debug__;
         }
 
+        /**
+         * log
+         */
         public static log(message?: any, ...optionalParams: any[]): void {
             if (!this.isDebug()) {
                 return;
@@ -75,6 +126,9 @@ module Tape {
             console.log(message, ...optionalParams);
         }
 
+        /**
+         * error
+         */
         public static error(message?: any, ...optionalParams: any[]): void {
             if (!this.isDebug()) {
                 return;
@@ -82,6 +136,9 @@ module Tape {
             console.error(message, ...optionalParams);
         }
 
+        /**
+         * info
+         */
         public static info(message?: any, ...optionalParams: any[]): void {
             if (!this.isDebug()) {
                 return;
@@ -89,6 +146,9 @@ module Tape {
             console.info(message, ...optionalParams);
         }
 
+        /**
+         * warn
+         */
         public static warn(message?: any, ...optionalParams: any[]): void {
             if (!this.isDebug()) {
                 return;
@@ -96,6 +156,9 @@ module Tape {
             console.warn(message, ...optionalParams);
         }
 
+        /**
+         * debug
+         */
         public static debug(message?: any, ...optionalParams: any[]): void {
             if (!this.isDebug()) {
                 return;
@@ -104,56 +167,9 @@ module Tape {
         }
     }
 
-    ///////////////////////////////////////////////////
-    ///// Toast
-    ///////////////////////////////////////////////////
-
     /**
-     * Toast
+     * Task
      */
-    export class Toast {
-
-        private static __toast_object__: Object = {};
-
-        public static show(type: string, view, x: number, y: number, duration: number = 500, pivotX: number = 0.5, pivoxY: number = 0.5): void {
-            if (view && view.parent == null) {
-                if (!this.__toast_object__.hasOwnProperty(type)) {
-                    this.__toast_object__[type] = new Array();
-                }
-                const list = this.__toast_object__[type];
-                view.x = x;
-                view.y = y;
-                view.alpha = 0;
-                view.pivot(view.width * pivotX, view.height * pivoxY);
-                this.fadeIn(view, duration, 0);
-                this.fadeOut(view, duration, duration, () => {
-                    list.splice(list.indexOf(view), 1);
-                    view.removeSelf();
-                });
-                Tape.Box.drawView(view);
-                for (var i in list) {
-                    if (list[i]) {
-                        list[i].y -= list[i].height - 5;
-                    }
-                }
-                list.push(view);
-            }
-        }
-
-        private static fadeIn(view, duration, delay, complete: Function = null) {
-            Tape.Box.tweenTo(view, { alpha: 1 }, duration, Tape.Box.Ease.quintOut, null, delay);
-        }
-
-        private static fadeOut(view, duration, delay, complete: Function = null) {
-            Tape.Box.tweenTo(view, { alpha: 0 }, duration, Tape.Box.Ease.quintOut, complete, delay);
-        }
-
-    }
-
-    ///////////////////////////////////////////////////
-    ///// Task
-    ///////////////////////////////////////////////////
-
     export class Task {
 
         private state = 'pending';
@@ -161,7 +177,8 @@ module Tape {
         private callbacks = [];
 
         /**
-         * fn: args -> resolve,reject
+         * constructor
+         * @param fn args -> resolve,reject
          */
         constructor(fn: Function) {
             var reject = (reason) => {
@@ -192,6 +209,11 @@ module Tape {
             }
         }
 
+        /**
+         * then
+         * @param onFulfilled onFulfilled
+         * @param onRejected onRejected
+         */
         public then(onFulfilled: Function, onRejected: Function = null) {
             return new Task((resolve, reject) => {
                 this.handle({
@@ -203,6 +225,10 @@ module Tape {
             });
         }
 
+        /**
+         * catch
+         * @param onRejected onRejected
+         */
         public catch(onRejected: Function) {
             return new Task((resolve, reject) => {
                 this.handle({
@@ -213,10 +239,6 @@ module Tape {
                 });
             });
         }
-
-        ///////////////////////////////////////
-        ///// Private
-        ///////////////////////////////////////
 
         private handle(callback) {
             if (this.state === 'pending') {
@@ -244,5 +266,6 @@ module Tape {
                 });
             }, 0);
         }
+
     }
 }

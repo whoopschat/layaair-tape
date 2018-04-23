@@ -13,12 +13,12 @@ var __extends = (this && this.__extends) || (function () {
 // =========================== //
 var Tape;
 (function (Tape) {
-    ///////////////////////////////////
-    //// NavigatorLoader
-    ///////////////////////////////////
-    var NavigatorLoader = /** @class */ (function (_super) {
-        __extends(NavigatorLoader, _super);
-        function NavigatorLoader(activity, routeName, routeKey, props, res, loaded, onLoadProgress) {
+    /**
+     * NavigationLoader
+     */
+    var NavigationLoader = /** @class */ (function (_super) {
+        __extends(NavigationLoader, _super);
+        function NavigationLoader(activity, routeName, routeKey, props, res, loaded, onLoadProgress) {
             if (props === void 0) { props = {}; }
             if (res === void 0) { res = []; }
             if (loaded === void 0) { loaded = null; }
@@ -30,17 +30,17 @@ var Tape;
             _this.routeName = routeName;
             _this.routeKey = routeKey;
             if (res != null && res.length > 0) {
-                Tape.Box.load(res, _this, function () {
+                Laya.loader.load(res, Laya.Handler.create(_this, function () {
                     var act = new activity(props);
                     _this.create(act);
                     if (loaded) {
                         loaded(_this);
                     }
-                }, function (progress) {
+                }), Laya.Handler.create(_this, function (progress) {
                     if (onLoadProgress) {
                         onLoadProgress(_this, progress);
                     }
-                });
+                }, null, false));
             }
             else {
                 var act = new activity(props);
@@ -51,33 +51,33 @@ var Tape;
             }
             return _this;
         }
-        NavigatorLoader.prototype.create = function (routeActivity) {
+        NavigationLoader.prototype.create = function (routeActivity) {
             this.routeActivity = routeActivity;
             this.addChild(this.routeActivity);
             this.routeActivity.onCreate();
         };
-        NavigatorLoader.prototype.nextProgress = function (progress) {
+        NavigationLoader.prototype.nextProgress = function (progress) {
             this.routeActivity.onNextProgress(progress);
         };
-        NavigatorLoader.prototype.exit = function () {
+        NavigationLoader.prototype.exit = function () {
             this.removeSelf();
             this.routeActivity.onDestroy();
         };
-        NavigatorLoader.prototype.show = function () {
+        NavigationLoader.prototype.show = function () {
             this.visible = true;
             this.routeActivity.onResume();
         };
-        NavigatorLoader.prototype.hide = function () {
+        NavigationLoader.prototype.hide = function () {
             this.visible = false;
             this.routeActivity.onPause();
         };
-        return NavigatorLoader;
+        return NavigationLoader;
     }(Tape.PropsComponent));
-    ///////////////////////////////////
-    //// NavigatorStack
-    ///////////////////////////////////
-    var NavigatorStack = /** @class */ (function () {
-        function NavigatorStack(navigator) {
+    /**
+     * NavigationStack
+     */
+    var NavigationStack = /** @class */ (function () {
+        function NavigationStack(navigator) {
             this.__navigator__ = null;
             this.__init_name__ = "";
             this.__routes__ = {};
@@ -97,11 +97,11 @@ var Tape;
             this.__uri_prefix__ = navigator.props['navigation']['uriPrefix'] || "://";
             this.__file_version__ = navigator.props['navigation']['fileVersion'];
         }
-        NavigatorStack.prototype.init_page = function () {
+        NavigationStack.prototype.init_page = function () {
             var _this = this;
             if (this.__file_version__) {
-                Tape.Box.ResourceVersion.type = Tape.Box.ResourceVersion.FILENAME_VERSION;
-                Tape.Box.ResourceVersion.enable(this.__file_version__, Tape.Box.Handler.create(this, function () {
+                Laya.ResourceVersion.type = Laya.ResourceVersion.FILENAME_VERSION;
+                Laya.ResourceVersion.enable(this.__file_version__, Laya.Handler.create(this, function () {
                     _this.navigate(_this.__init_name__);
                 }));
             }
@@ -109,10 +109,10 @@ var Tape;
                 this.navigate(this.__init_name__);
             }
         };
-        ///////////////////////////////////////////////////////////
-        //// Open
-        ///////////////////////////////////////////////////////////
-        NavigatorStack.prototype.deeplink = function (url, action) {
+        /**
+         * deeplink
+         */
+        NavigationStack.prototype.deeplink = function (url, action) {
             if (action === void 0) { action = null; }
             var params = {};
             var delimiter = this.__uri_prefix__ || '://';
@@ -139,7 +139,10 @@ var Tape;
             }
             return this.navigate(path, params, action);
         };
-        NavigatorStack.prototype.navigate = function (name, params, action) {
+        /**
+         * navigate
+         */
+        NavigationStack.prototype.navigate = function (name, params, action) {
             var _this = this;
             if (params === void 0) { params = {}; }
             if (action === void 0) { action = null; }
@@ -174,7 +177,7 @@ var Tape;
                 Object.assign(paramsObject, params);
                 this.__loading__ = true;
                 var key = Tape.UUID.randUUID();
-                new NavigatorLoader(activity, name, key, {
+                new NavigationLoader(activity, name, key, {
                     navigation: this,
                     routeName: name,
                     routeKey: key,
@@ -199,39 +202,42 @@ var Tape;
                 return false;
             }
         };
-        ///////////////////////////////////////////////////////////
-        //// finish
-        ///////////////////////////////////////////////////////////
-        NavigatorStack.prototype.finish = function (name, key) {
+        /**
+         * finish
+         */
+        NavigationStack.prototype.finish = function (name, key) {
             if (key === void 0) { key = null; }
             this.finishStack(name, key);
         };
-        NavigatorStack.prototype.popToTop = function () {
+        /**
+         * popToTop
+         */
+        NavigationStack.prototype.popToTop = function () {
             this.pop(this.__stacks__.length);
         };
-        NavigatorStack.prototype.pop = function (number) {
+        /**
+         * pop
+         */
+        NavigationStack.prototype.pop = function (number) {
             if (number === void 0) { number = 1; }
             this.popStack(number);
         };
-        /////////////////////////////////
-        //// private
-        /////////////////////////////////
-        NavigatorStack.prototype.lenStack = function () {
+        NavigationStack.prototype.lenStack = function () {
             return this.__stacks__.length;
         };
-        NavigatorStack.prototype.lastStack = function () {
+        NavigationStack.prototype.lastStack = function () {
             var len = this.lenStack();
             if (len > 0) {
                 return this.__stacks__[len - 1];
             }
             return null;
         };
-        NavigatorStack.prototype.putStack = function (stack) {
+        NavigationStack.prototype.putStack = function (stack) {
             this.hideStack();
             this.__stacks__.push(stack);
             this.showStack();
         };
-        NavigatorStack.prototype.popStack = function (count) {
+        NavigationStack.prototype.popStack = function (count) {
             if (this.lenStack() > 1 && count > 0) {
                 this.hideStack();
                 for (var i = 0; i < count; i++) {
@@ -242,7 +248,7 @@ var Tape;
                 this.showStack();
             }
         };
-        NavigatorStack.prototype.finishStack = function (name, key) {
+        NavigationStack.prototype.finishStack = function (name, key) {
             if (key === void 0) { key = null; }
             var len = this.lenStack();
             if (len > 1) {
@@ -282,31 +288,34 @@ var Tape;
                 }
             }
         };
-        NavigatorStack.prototype.hideStack = function () {
+        NavigationStack.prototype.hideStack = function () {
             var len = this.lenStack();
             if (len > 0) {
                 this.__stacks__[len - 1].hide();
             }
         };
-        NavigatorStack.prototype.showStack = function () {
+        NavigationStack.prototype.showStack = function () {
             var len = this.lenStack();
             if (len > 0) {
                 this.__stacks__[len - 1].show();
             }
         };
-        return NavigatorStack;
+        return NavigationStack;
     }());
-    ///////////////////////////////////
-    //// NavigatorOptions
-    ///////////////////////////////////
-    Tape.createApp = function (routes, initName, options) {
+    /**
+     * createNavigator
+     * @param routes routes
+     * @param initName initName
+     * @param options options
+     */
+    Tape.createNavigator = function (routes, initName, options) {
         if (options === void 0) { options = {}; }
         var StackNavigator = /** @class */ (function (_super) {
             __extends(class_1, _super);
             function class_1(props) {
                 var _this = _super.call(this, props) || this;
                 _this.__navigator__ = null;
-                _this.__navigator__ = new NavigatorStack(_this);
+                _this.__navigator__ = new NavigationStack(_this);
                 _this.__navigator__.init_page();
                 return _this;
             }
@@ -317,7 +326,7 @@ var Tape;
                 routes: routes,
                 initName: initName,
                 staticRes: options['res'],
-                fileVersion: options['fileVersion'],
+                fileVersion: options['fileVersion'] || 'version.json',
                 uriPrefix: options['uriPrefix'],
                 onLoaded: options['onLoaded'],
                 onLoadProgress: options['onLoadProgress']

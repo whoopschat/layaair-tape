@@ -3,9 +3,51 @@
 // =========================== //
 var Tape;
 (function (Tape) {
-    ///////////////////////////////////////////////////
-    ///// NumUtil
-    ///////////////////////////////////////////////////
+    /**
+     * Timer
+     */
+    var Timer = /** @class */ (function () {
+        function Timer() {
+            this.__loop_runing__ = false;
+            this.__loop_callback__ = null;
+            this.__loop_date__ = null;
+        }
+        Timer.sleep = function (numberMillis) {
+            var now = new Date();
+            var exitTime = now.getTime() + numberMillis;
+            while (true) {
+                now = new Date();
+                if (now.getTime() > exitTime)
+                    return;
+            }
+        };
+        Timer.prototype.loop = function (callback, delay) {
+            var _this = this;
+            this.__loop_callback__ = callback;
+            this.__loop_runing__ = true;
+            this.__loop_date__ = new Date();
+            new Tape.Task(function (resolve) {
+                while (_this.__loop_runing__) {
+                    var now = new Date();
+                    callback && callback(now.getTime() - _this.__loop_date__.getTime());
+                    Timer.sleep(delay);
+                }
+                resolve();
+            }).then(function () {
+                _this.__loop_callback__ = null;
+                _this.__loop_runing__ = false;
+                _this.__loop_date__ = null;
+            });
+        };
+        Timer.prototype.stop = function () {
+            this.__loop_runing__ = false;
+        };
+        return Timer;
+    }());
+    Tape.Timer = Timer;
+    /**
+     * NumUtil
+     */
     var NumUtil = /** @class */ (function () {
         function NumUtil() {
         }
@@ -23,9 +65,9 @@ var Tape;
         return NumUtil;
     }());
     Tape.NumUtil = NumUtil;
-    ///////////////////////////////////////////////////
-    ///// LinkUtil
-    ///////////////////////////////////////////////////
+    /**
+     * LinkUtil
+     */
     var LinkUtil = /** @class */ (function () {
         function LinkUtil() {
         }
@@ -35,9 +77,9 @@ var Tape;
         return LinkUtil;
     }());
     Tape.LinkUtil = LinkUtil;
-    ///////////////////////////////////////////////////
-    ///// UUID
-    ///////////////////////////////////////////////////
+    /**
+     * UUID
+     */
     var UUID = /** @class */ (function () {
         function UUID() {
         }
@@ -50,18 +92,27 @@ var Tape;
         return UUID;
     }());
     Tape.UUID = UUID;
-    ///////////////////////////////////////////////////
-    ///// Logger
-    ///////////////////////////////////////////////////
+    /**
+     * Logger
+     */
     var Logger = /** @class */ (function () {
         function Logger() {
         }
+        /**
+         * setDebug
+         */
         Logger.setDebug = function (debug) {
             this.__is_debug__ = debug;
         };
+        /**
+         * isDebug
+         */
         Logger.isDebug = function () {
             return this.__is_debug__;
         };
+        /**
+         * log
+         */
         Logger.log = function (message) {
             var optionalParams = [];
             for (var _i = 1; _i < arguments.length; _i++) {
@@ -72,6 +123,9 @@ var Tape;
             }
             console.log.apply(console, [message].concat(optionalParams));
         };
+        /**
+         * error
+         */
         Logger.error = function (message) {
             var optionalParams = [];
             for (var _i = 1; _i < arguments.length; _i++) {
@@ -82,6 +136,9 @@ var Tape;
             }
             console.error.apply(console, [message].concat(optionalParams));
         };
+        /**
+         * info
+         */
         Logger.info = function (message) {
             var optionalParams = [];
             for (var _i = 1; _i < arguments.length; _i++) {
@@ -92,6 +149,9 @@ var Tape;
             }
             console.info.apply(console, [message].concat(optionalParams));
         };
+        /**
+         * warn
+         */
         Logger.warn = function (message) {
             var optionalParams = [];
             for (var _i = 1; _i < arguments.length; _i++) {
@@ -102,6 +162,9 @@ var Tape;
             }
             console.warn.apply(console, [message].concat(optionalParams));
         };
+        /**
+         * debug
+         */
         Logger.debug = function (message) {
             var optionalParams = [];
             for (var _i = 1; _i < arguments.length; _i++) {
@@ -116,60 +179,13 @@ var Tape;
         return Logger;
     }());
     Tape.Logger = Logger;
-    ///////////////////////////////////////////////////
-    ///// Toast
-    ///////////////////////////////////////////////////
     /**
-     * Toast
+     * Task
      */
-    var Toast = /** @class */ (function () {
-        function Toast() {
-        }
-        Toast.show = function (type, view, x, y, duration, pivotX, pivoxY) {
-            if (duration === void 0) { duration = 500; }
-            if (pivotX === void 0) { pivotX = 0.5; }
-            if (pivoxY === void 0) { pivoxY = 0.5; }
-            if (view && view.parent == null) {
-                if (!this.__toast_object__.hasOwnProperty(type)) {
-                    this.__toast_object__[type] = new Array();
-                }
-                var list_1 = this.__toast_object__[type];
-                view.x = x;
-                view.y = y;
-                view.alpha = 0;
-                view.pivot(view.width * pivotX, view.height * pivoxY);
-                this.fadeIn(view, duration, 0);
-                this.fadeOut(view, duration, duration, function () {
-                    list_1.splice(list_1.indexOf(view), 1);
-                    view.removeSelf();
-                });
-                Tape.Box.drawView(view);
-                for (var i in list_1) {
-                    if (list_1[i]) {
-                        list_1[i].y -= list_1[i].height - 5;
-                    }
-                }
-                list_1.push(view);
-            }
-        };
-        Toast.fadeIn = function (view, duration, delay, complete) {
-            if (complete === void 0) { complete = null; }
-            Tape.Box.tweenTo(view, { alpha: 1 }, duration, Tape.Box.Ease.quintOut, null, delay);
-        };
-        Toast.fadeOut = function (view, duration, delay, complete) {
-            if (complete === void 0) { complete = null; }
-            Tape.Box.tweenTo(view, { alpha: 0 }, duration, Tape.Box.Ease.quintOut, complete, delay);
-        };
-        Toast.__toast_object__ = {};
-        return Toast;
-    }());
-    Tape.Toast = Toast;
-    ///////////////////////////////////////////////////
-    ///// Task
-    ///////////////////////////////////////////////////
     var Task = /** @class */ (function () {
         /**
-         * fn: args -> resolve,reject
+         * constructor
+         * @param fn args -> resolve,reject
          */
         function Task(fn) {
             var _this = this;
@@ -205,6 +221,11 @@ var Tape;
                 reject(error);
             }
         }
+        /**
+         * then
+         * @param onFulfilled onFulfilled
+         * @param onRejected onRejected
+         */
         Task.prototype.then = function (onFulfilled, onRejected) {
             var _this = this;
             if (onRejected === void 0) { onRejected = null; }
@@ -217,6 +238,10 @@ var Tape;
                 });
             });
         };
+        /**
+         * catch
+         * @param onRejected onRejected
+         */
         Task.prototype.catch = function (onRejected) {
             var _this = this;
             return new Task(function (resolve, reject) {
@@ -228,9 +253,6 @@ var Tape;
                 });
             });
         };
-        ///////////////////////////////////////
-        ///// Private
-        ///////////////////////////////////////
         Task.prototype.handle = function (callback) {
             if (this.state === 'pending') {
                 this.callbacks.push(callback);

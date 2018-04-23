@@ -1,44 +1,12 @@
 declare module Tape {
 
-    function createApp(routes, initName, options?: Object);
-
-    ///////////////////////////////////////////////
-    ////// Conch
-    ///////////////////////////////////////////////
-
     /**
-     * Conch
+     * createNavigator
+     * @param routes routes
+     * @param initName initName
+     * @param options options
      */
-    class Market {
-
-        static onAuthorize: Function;
-        static onSendMessage: Function;
-        static onEnterShare: Function;
-        static onGetMarketName: Function;
-        static onGetUserInfo: Function;
-        static onGetFriends: Function;
-        static onLogin: Function;
-        static onLogout: Function;
-
-        static is_conch(): boolean;
-
-        static getMarketName(): string;
-
-        static authorize(jsonParam: string, callback?: Function): void;
-
-        static login(jsonParam: string, callback?: Function): void;
-
-        static logout(jsonParam: string, callback?: Function): void;
-
-        static sendMessage(jsonParam: string, callback?: Function): void;
-
-        static enterShare(jsonParam: string, callback?: Function): void;
-
-        static getUserInfo(jsonParam: string, callback?: Function): void;
-
-        static getFriends(jsonParam: string, callback?: Function);
-
-    }
+    function createNavigator(routes, initName, options?: Object);
 
     ///////////////////////////////////////////////
     ////// Component
@@ -164,11 +132,90 @@ declare module Tape {
     }
 
     ///////////////////////////////////////////////
+    ////// Toast
+    ///////////////////////////////////////////////
+
+    /**
+     * Toast
+     */
+    class Toast {
+        static show(type: string, view, x: number, y: number, duration?: number, pivotX?: number, pivoxY?: number): void
+    }
+
+    ///////////////////////////////////////////////
+    ////// Market
+    ///////////////////////////////////////////////
+
+    /**
+     * MarketHnadler
+     */
+    class MarketHnadler {
+
+        public static onAuthorize: Function;
+        public static onSendMessage: Function;
+        public static onEnterShare: Function;
+        public static onGetMarketName: Function;
+        public static onGetUserInfo: Function;
+        public static onGetFriends: Function;
+        public static onLogin: Function;
+        public static onLogout: Function;
+        public static onRecharge: Function;
+
+        public static isConchApp(): boolean;
+
+        public static conchShowAlertOnJsException(show: boolean): void;
+
+        public static conchSetOnBackPressedFunction(onBackPressed: Function): void;
+
+        public static conchExit(): void;
+    }
+
+    /**
+     * Market
+     */
+    class Market {
+
+        public static getMarketName(): string;
+
+        public static authorize(jsonParam: string, callback: Function): void;
+
+        public static login(jsonParam: string, callback: Function): void;
+
+        public static logout(jsonParam: string, callback: Function): void;
+
+        public static recharge(jsonParam: string, callback: Function): void;
+
+        public static sendMessage(jsonParam: string, callback: Function): void;
+
+        public static enterShare(jsonParam: string, callback: Function): void;
+
+        public static getUserInfo(jsonParam: string, callback: Function): void;
+
+        public static getFriendList(jsonParam: string, callback: Function): void;
+
+    }
+
+    ///////////////////////////////////////////////
     ////// Utils
     ///////////////////////////////////////////////
 
     /**
-     * numUtil
+     * Timer
+     */
+    export class Timer {
+
+        public static sleep(numberMillis): void;
+
+        constructor();
+
+        public loop(callback: Function, delay: number): void;
+
+        public stop(): void;
+
+    }
+
+    /**
+     * NumUtil
      */
     class NumUtil {
 
@@ -185,7 +232,7 @@ declare module Tape {
     }
 
     /**
-     * linkUtil
+     * LinkUtil
      */
     class LinkUtil {
 
@@ -197,7 +244,7 @@ declare module Tape {
     }
 
     /**
-     * uuid
+     * UUID
      */
     class UUID {
 
@@ -209,7 +256,7 @@ declare module Tape {
     }
 
     /**
-     * logger
+     * Logger
      */
     class Logger {
 
@@ -238,13 +285,6 @@ declare module Tape {
          */
         static debug(message?: any, ...optionalParams: any[]): void;
 
-    }
-
-    /**
-     * Toast
-     */
-    class Toast {
-        static show(type: string, view, x: number, y: number, duration?: number, pivotX?: number, pivoxY?: number): void
     }
 
     /**
@@ -329,6 +369,7 @@ declare module Tape {
          * pause audio
          */
         public pause(): void;
+
     }
 
     ///////////////////////////////////////////////
@@ -340,6 +381,8 @@ declare module Tape {
      */
     class WebSocket {
 
+        constructor(debug?: boolean);
+
         onConnecting: Function;
         onConnected: Function;
         onClosed: Function;
@@ -350,18 +393,22 @@ declare module Tape {
          * @param socketUrl	 socket url
          */
         connect(socketUrl: String): void;
+
         /**
          * disconnect
          */
         disconnect(): void;
+
         /**
          * @return is connected
          */
         isConnected(): Boolean;
+
         /**
          * @return is connecting
          */
         isConnecting(): Boolean;
+
         /**
          * @param message socket message
          */
@@ -372,6 +419,8 @@ declare module Tape {
      * MQTTSocket
      */
     class MQTTSocket {
+
+        constructor(debug?: boolean);
 
         onConnecting: Function;
         onConnected: Function;
@@ -389,18 +438,22 @@ declare module Tape {
          * @param options	 mqtt options
          */
         connect(host: string, port: number, clientId: string, username?: string, password?: string, options?: Object): void;
+
         /**
          * disconnect
          */
         disconnect(): void;
+
         /**
          * @return is connected
          */
         isConnected(): Boolean;
+
         /**
          * @return is connecting
          */
         isConnecting(): Boolean;
+
         /**
          * @param topic	 mqtt topic
          * @param message	 mqtt message

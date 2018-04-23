@@ -3,11 +3,10 @@
 // =========================== //
 module Tape {
 
-    ///////////////////////////////////
-    //// NavigatorLoader
-    ///////////////////////////////////
-
-    class NavigatorLoader extends Tape.PropsComponent {
+    /**
+     * NavigationLoader
+     */
+    class NavigationLoader extends Tape.PropsComponent {
 
         public routeName = "";
         public routeKey = "";
@@ -18,17 +17,17 @@ module Tape {
             this.routeName = routeName;
             this.routeKey = routeKey;
             if (res != null && res.length > 0) {
-                Tape.Box.load(res, this, () => {
+                Laya.loader.load(res, Laya.Handler.create(this, () => {
                     let act = new activity(props);
                     this.create(act);
                     if (loaded) {
                         loaded(this);
                     }
-                }, (progress) => {
+                }), Laya.Handler.create(this, (progress) => {
                     if (onLoadProgress) {
                         onLoadProgress(this, progress);
                     }
-                })
+                }, null, false));
             } else {
                 let act = new activity(props);
                 this.create(act);
@@ -65,17 +64,16 @@ module Tape {
 
     }
 
-    ///////////////////////////////////
-    //// NavigatorStack
-    ///////////////////////////////////
-
-    class NavigatorStack {
+    /**
+     * NavigationStack
+     */
+    class NavigationStack {
 
         private __navigator__ = null;
         private __init_name__ = "";
         private __routes__: Object = {};
         private __static_res__: Array<Object> = [];
-        private __stacks__: Array<NavigatorLoader> = [];
+        private __stacks__: Array<NavigationLoader> = [];
         private __loaded_handler__: Function = null;
         private __load_progress_handler__: Function = null;
         private __uri_prefix__ = "://";
@@ -95,9 +93,9 @@ module Tape {
 
         public init_page() {
             if (this.__file_version__) {
-                Tape.Box.ResourceVersion.type = Tape.Box.ResourceVersion.FILENAME_VERSION;
-                Tape.Box.ResourceVersion.enable(this.__file_version__,
-                    Tape.Box.Handler.create(this, () => {
+                Laya.ResourceVersion.type = Laya.ResourceVersion.FILENAME_VERSION;
+                Laya.ResourceVersion.enable(this.__file_version__,
+                    Laya.Handler.create(this, () => {
                         this.navigate(this.__init_name__);
                     }))
             } else {
@@ -105,11 +103,9 @@ module Tape {
             }
         }
 
-
-        ///////////////////////////////////////////////////////////
-        //// Open
-        ///////////////////////////////////////////////////////////
-
+        /**
+         * deeplink
+         */
         public deeplink(url, action: Function = null): boolean {
             const params = {};
             const delimiter = this.__uri_prefix__ || '://';
@@ -135,6 +131,9 @@ module Tape {
             return this.navigate(path, params, action);
         }
 
+        /**
+         * navigate
+         */
         public navigate(name, params = {}, action: Function = null): boolean {
             if (this.__routes__
                 && this.__routes__.hasOwnProperty(name)
@@ -167,7 +166,7 @@ module Tape {
                 (<any>Object).assign(paramsObject, params);
                 this.__loading__ = true;
                 let key = Tape.UUID.randUUID();
-                new NavigatorLoader(activity, name, key, {
+                new NavigationLoader(activity, name, key, {
                     navigation: this,
                     routeName: name,
                     routeKey: key,
@@ -192,25 +191,26 @@ module Tape {
             }
         }
 
-        ///////////////////////////////////////////////////////////
-        //// finish
-        ///////////////////////////////////////////////////////////
-
+        /**
+         * finish
+         */
         public finish(name, key = null) {
             this.finishStack(name, key);
         }
 
+        /**
+         * popToTop
+         */
         public popToTop() {
             this.pop(this.__stacks__.length);
         }
 
+        /**
+         * pop
+         */
         public pop(number: Number = 1) {
             this.popStack(number);
         }
-
-        /////////////////////////////////
-        //// private
-        /////////////////////////////////
 
         private lenStack() {
             return this.__stacks__.length;
@@ -298,16 +298,18 @@ module Tape {
 
     }
 
-    ///////////////////////////////////
-    //// NavigatorOptions
-    ///////////////////////////////////
-
-    export const createApp = function (routes, initName, options = {}): any {
+    /**
+     * createNavigator
+     * @param routes routes
+     * @param initName initName
+     * @param options options
+     */
+    export const createNavigator = function (routes, initName, options = {}): any {
         let StackNavigator = class extends Tape.PropsComponent {
-            private __navigator__: NavigatorStack = null;
+            private __navigator__: NavigationStack = null;
             constructor(props) {
                 super(props);
-                this.__navigator__ = new NavigatorStack(this);
+                this.__navigator__ = new NavigationStack(this);
                 this.__navigator__.init_page();
             }
         };
@@ -316,7 +318,7 @@ module Tape {
                 routes: routes,
                 initName: initName,
                 staticRes: options['res'],
-                fileVersion: options['fileVersion'],
+                fileVersion: options['fileVersion'] || 'version.json',
                 uriPrefix: options['uriPrefix'],
                 onLoaded: options['onLoaded'],
                 onLoadProgress: options['onLoadProgress']

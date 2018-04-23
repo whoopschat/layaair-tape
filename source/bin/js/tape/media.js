@@ -42,7 +42,7 @@ var Tape;
                     return;
                 }
                 _this.__is_playing__ = true;
-                _this.__audio_chancel__ = Laya.SoundManager.playMusic(_this.__audio_url__, loops, Tape.Box.Handler.create(_this, function () {
+                _this.__audio_chancel__ = Laya.SoundManager.playMusic(_this.__audio_url__, loops, Laya.Handler.create(_this, function () {
                     _this.__is_playing__ = false;
                     _this.__audio_chancel__ = null;
                     _this.__on_complete__ && _this.__on_complete__();
@@ -109,7 +109,7 @@ var Tape;
                 }
                 _this.__is_playing__ = true;
                 var soundUrl = "";
-                if (Tape.Market.isConchApp()) {
+                if (Tape.MarketHandler.isConchApp()) {
                     soundUrl = Audio.soundConchDir + _this.__audio_url__ + Audio.soundConchFormat;
                     var ext = Laya.Utils.getFileExtension(soundUrl);
                     if (!Audio.showErrorAlert && ext != "wav" && ext != "ogg") {
@@ -119,7 +119,7 @@ var Tape;
                 else {
                     soundUrl = Audio.soundWebDir + _this.__audio_url__ + Audio.soundWebFormat;
                 }
-                _this.__audio_chancel__ = Laya.SoundManager.playSound(soundUrl, loops, Tape.Box.Handler.create(_this, function () {
+                _this.__audio_chancel__ = Laya.SoundManager.playSound(soundUrl, loops, Laya.Handler.create(_this, function () {
                     _this.__is_playing__ = false;
                     _this.__on_complete__ && _this.__on_complete__();
                 }));
