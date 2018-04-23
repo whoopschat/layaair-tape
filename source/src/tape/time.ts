@@ -4,7 +4,8 @@
 module Tape {
 
     export class Time {
-        
+
+
     }
 
 }

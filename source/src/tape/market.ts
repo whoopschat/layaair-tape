@@ -3,7 +3,7 @@
 // =========================== //
 module Tape {
 
-    export class Market {
+    export class MarketHandler {
 
         public static onAuthorize: Function = null;
         public static onSendMessage: Function = null;
@@ -33,6 +33,14 @@ module Tape {
             }
         }
 
+    }
+
+    export class Market {
+
+        public static isConchApp(): boolean {
+            return MarketHandler.isConchApp();
+        }
+
         public static getDeviceInfo(): Object {
             if (this.isConchApp()) {
                 try {
@@ -47,7 +55,7 @@ module Tape {
             if (this.isConchApp()) {
                 return Laya.conchMarket.getMarketName();
             } else {
-                return this.onGetMarketName && this.onGetMarketName();
+                return MarketHandler.onGetMarketName && MarketHandler.onGetMarketName();
             }
         }
 
@@ -55,7 +63,7 @@ module Tape {
             if (this.isConchApp()) {
                 Laya.conchMarket.authorize(jsonParam, callback);
             } else {
-                this.onAuthorize && this.onAuthorize(jsonParam, callback);
+                MarketHandler.onAuthorize && MarketHandler.onAuthorize(jsonParam, callback);
             }
         }
 
@@ -63,7 +71,7 @@ module Tape {
             if (this.isConchApp()) {
                 Laya.conchMarket.login(jsonParam, callback);
             } else {
-                this.onLogin && this.onLogin(jsonParam, callback);
+                MarketHandler.onLogin && MarketHandler.onLogin(jsonParam, callback);
             }
         }
 
@@ -71,7 +79,7 @@ module Tape {
             if (this.isConchApp()) {
                 Laya.conchMarket.logout(jsonParam, callback);
             } else {
-                this.onLogout && this.onLogout(jsonParam, callback);
+                MarketHandler.onLogout && MarketHandler.onLogout(jsonParam, callback);
             }
         }
 
@@ -79,7 +87,7 @@ module Tape {
             if (this.isConchApp()) {
                 Laya.conchMarket.recharge(jsonParam, callback);
             } else {
-                this.onRecharge && this.onRecharge(jsonParam, callback);
+                MarketHandler.onRecharge && MarketHandler.onRecharge(jsonParam, callback);
             }
         }
 
@@ -87,7 +95,7 @@ module Tape {
             if (this.isConchApp()) {
                 Laya.conchMarket.sendMessageToPlatform(jsonParam, callback);
             } else {
-                this.onSendMessage && this.onSendMessage(jsonParam, callback);
+                MarketHandler.onSendMessage && MarketHandler.onSendMessage(jsonParam, callback);
             }
         }
 
@@ -95,7 +103,7 @@ module Tape {
             if (this.isConchApp()) {
                 Laya.conchMarket.enterShareAndFeed(jsonParam, callback);
             } else {
-                this.onEnterShare && this.onEnterShare(jsonParam, callback);
+                MarketHandler.onEnterShare && MarketHandler.onEnterShare(jsonParam, callback);
             }
         }
 
@@ -103,15 +111,15 @@ module Tape {
             if (this.isConchApp()) {
                 Laya.conchMarket.getUserInfo(jsonParam, callback);
             } else {
-                this.onGetUserInfo && this.onGetUserInfo(jsonParam, callback);
+                MarketHandler.onGetUserInfo && MarketHandler.onGetUserInfo(jsonParam, callback);
             }
         }
 
-        public static getFriends(jsonParam: string, callback: Function = null): void {
+        public static getFriendList(jsonParam: string, callback: Function = null): void {
             if (this.isConchApp()) {
                 Laya.conchMarket.getGameFriends(jsonParam, callback);
             } else {
-                this.onGetFriends && this.onGetFriends(jsonParam, callback);
+                MarketHandler.onGetFriends && MarketHandler.onGetFriends(jsonParam, callback);
             }
         }
 

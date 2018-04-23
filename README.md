@@ -1,6 +1,7 @@
-# laya-tape
+# LayaAir-Tape
+> A LayaAir library for TS
 
 ## Support
-* activity and life cycle
-* activity router
-* socket with `socket` and `mqtt socket`
+* page and life cycle
+* page navigation
+*  with `WebSocket` and `MQTT Socket`
