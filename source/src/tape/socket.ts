@@ -83,11 +83,11 @@ module Tape {
             this.__is_connect_ing__ = false;
         }
 
-        public isConnected(): Boolean {
+        public isConnected(): boolean {
             return this.__is_connect__;
         }
 
-        public isConnecting(): Boolean {
+        public isConnecting(): boolean {
             return this.__is_connect_ing__;
         }
 
@@ -196,11 +196,11 @@ module Tape {
             this.__is_connect_ing__ = false;
         }
 
-        public isConnected(): Boolean {
+        public isConnected(): boolean {
             return this.__is_connect__;
         }
 
-        public isConnecting(): Boolean {
+        public isConnecting(): boolean {
             return this.__is_connect_ing__;
         }
 

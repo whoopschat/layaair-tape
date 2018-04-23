@@ -131,10 +131,6 @@ declare module Tape {
 
     }
 
-    ///////////////////////////////////////////////
-    ////// Toast
-    ///////////////////////////////////////////////
-
     /**
      * Toast
      */
@@ -402,12 +398,12 @@ declare module Tape {
         /**
          * @return is connected
          */
-        isConnected(): Boolean;
+        isConnected(): boolean;
 
         /**
          * @return is connecting
          */
-        isConnecting(): Boolean;
+        isConnecting(): boolean;
 
         /**
          * @param message socket message
@@ -447,12 +443,12 @@ declare module Tape {
         /**
          * @return is connected
          */
-        isConnected(): Boolean;
+        isConnected(): boolean;
 
         /**
          * @return is connecting
          */
-        isConnecting(): Boolean;
+        isConnecting(): boolean;
 
         /**
          * @param topic	 mqtt topic
