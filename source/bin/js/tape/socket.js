@@ -56,10 +56,12 @@ var Tape;
                 _this.onConnected && _this.onConnected();
             });
             this.__web_socket__.on(Laya.Event.CLOSE, this, function (error) {
-                _this.printLog(" -----WS---" + SocketTAG.SOCKET_CONNECT_CLOSDE, error);
-                _this.__is_connect__ = false;
-                _this.__is_connect_ing__ = false;
-                _this.onClosed && _this.onClosed(error);
+                if (_this.isConnecting() || _this.isConnected()) {
+                    _this.printLog(" -----WS---" + SocketTAG.SOCKET_CONNECT_CLOSDE, error);
+                    _this.__is_connect__ = false;
+                    _this.__is_connect_ing__ = false;
+                    _this.onClosed && _this.onClosed(error);
+                }
             });
             this.__web_socket__.on(Laya.Event.ERROR, this, function (error) {
                 _this.printLog(" -----WS---" + SocketTAG.SOCKET_CONNECT_ERROR, error);
@@ -74,10 +76,12 @@ var Tape;
         };
         WebSocket.prototype.disconnect = function () {
             if (this.isConnecting() || this.isConnected()) {
+                this.printLog(" -----WS---" + SocketTAG.SOCKET_CONNECT_CLOSDE);
                 this.__web_socket__.close();
+                this.__is_connect__ = false;
+                this.__is_connect_ing__ = false;
+                this.onClosed && this.onClosed();
             }
-            this.__is_connect__ = false;
-            this.__is_connect_ing__ = false;
         };
         WebSocket.prototype.isConnected = function () {
             return this.__is_connect__;
@@ -150,9 +154,11 @@ var Tape;
                 this.__mqtt_socket__ = new window['Paho'].MQTT.Client(host, port, clientId);
                 this.__mqtt_socket__.onConnectionLost = function (error) {
                     _this.printLog(" -----MQTT---" + SocketTAG.SOCKET_CONNECT_CLOSDE, error);
-                    _this.__is_connect__ = false;
-                    _this.__is_connect_ing__ = false;
-                    _this.onClosed && _this.onClosed(error);
+                    if (_this.isConnecting() || _this.isConnected()) {
+                        _this.__is_connect__ = false;
+                        _this.__is_connect_ing__ = false;
+                        _this.onClosed && _this.onClosed(error);
+                    }
                 };
                 this.__mqtt_socket__.onMessageArrived = function (msg) {
                     _this.printLog(" -----MQTT---" + SocketTAG.SOCKET_MESSAGE_RECEIVED, _this.formatMessage(msg));
@@ -187,10 +193,12 @@ var Tape;
         };
         MQTTSocket.prototype.disconnect = function () {
             if (this.isConnecting() || this.isConnected()) {
+                this.printLog(" -----MQTT---" + SocketTAG.SOCKET_CONNECT_CLOSDE);
                 this.__mqtt_socket__.disconnect();
+                this.__is_connect__ = false;
+                this.__is_connect_ing__ = false;
+                this.onClosed && this.onClosed();
             }
-            this.__is_connect__ = false;
-            this.__is_connect_ing__ = false;
         };
         MQTTSocket.prototype.isConnected = function () {
             return this.__is_connect__;

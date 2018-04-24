@@ -22,13 +22,13 @@ gulp.task("build:tsc", function () {
 });
 
 var packageList = [
-  inputJsPath + moduleName + '/display.js',
-  inputJsPath + moduleName + '/utils.js',
   inputJsPath + moduleName + '/comps.js',
-  inputJsPath + moduleName + '/market.js',
-  inputJsPath + moduleName + '/media.js',
+  inputJsPath + moduleName + '/display.js',
   inputJsPath + moduleName + '/navigation.js',
+  inputJsPath + moduleName + '/media.js',
   inputJsPath + moduleName + '/socket.js',
+  inputJsPath + moduleName + '/market.js',
+  inputJsPath + moduleName + '/utils.js',
   inputJsPath + moduleName + '/js/**/*.js'
 ];
 

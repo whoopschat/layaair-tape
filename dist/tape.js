@@ -1,312 +1,3 @@
-// =========================== //
-// tape box.js
-// =========================== //
-var Tape;
-(function (Tape) {
-    var Display = /** @class */ (function () {
-        function Display() {
-        }
-        Display.addChild = function (view) {
-            Laya.stage.addChild(view);
-        };
-        Display.width = function () {
-            return Laya.stage.width;
-        };
-        Display.height = function () {
-            return Laya.stage.height;
-        };
-        return Display;
-    }());
-    Tape.Display = Display;
-})(Tape || (Tape = {}));
-
-// =========================== //
-// tape utils.js
-// =========================== //
-var Tape;
-(function (Tape) {
-    /**
-     * Timer
-     */
-    var Timer = /** @class */ (function () {
-        function Timer() {
-            this.__loop_runing__ = false;
-            this.__loop_callback__ = null;
-            this.__loop_date__ = null;
-        }
-        Timer.sleep = function (numberMillis) {
-            var now = new Date();
-            var exitTime = now.getTime() + numberMillis;
-            while (true) {
-                now = new Date();
-                if (now.getTime() > exitTime)
-                    return;
-            }
-        };
-        Timer.prototype.loop = function (callback, delay) {
-            var _this = this;
-            this.__loop_callback__ = callback;
-            this.__loop_runing__ = true;
-            this.__loop_date__ = new Date();
-            new Tape.Task(function (resolve) {
-                while (_this.__loop_runing__) {
-                    var now = new Date();
-                    callback && callback(now.getTime() - _this.__loop_date__.getTime());
-                    Timer.sleep(delay);
-                }
-                resolve();
-            }).then(function () {
-                _this.__loop_callback__ = null;
-                _this.__loop_runing__ = false;
-                _this.__loop_date__ = null;
-            });
-        };
-        Timer.prototype.stop = function () {
-            this.__loop_runing__ = false;
-        };
-        return Timer;
-    }());
-    Tape.Timer = Timer;
-    /**
-     * NumUtil
-     */
-    var NumUtil = /** @class */ (function () {
-        function NumUtil() {
-        }
-        NumUtil.rangedValue = function (val, min, max) {
-            if (val < min)
-                return min;
-            else if (val > max)
-                return max;
-            else
-                return val;
-        };
-        NumUtil.rand = function (min, max) {
-            return Math.floor(Math.random() * (max - min)) + min;
-        };
-        return NumUtil;
-    }());
-    Tape.NumUtil = NumUtil;
-    /**
-     * LinkUtil
-     */
-    var LinkUtil = /** @class */ (function () {
-        function LinkUtil() {
-        }
-        LinkUtil.openURL = function (url) {
-            window.location.href = url;
-        };
-        return LinkUtil;
-    }());
-    Tape.LinkUtil = LinkUtil;
-    /**
-     * UUID
-     */
-    var UUID = /** @class */ (function () {
-        function UUID() {
-        }
-        UUID.S4 = function () {
-            return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-        };
-        UUID.randUUID = function () {
-            return (this.S4() + this.S4() + "-" + this.S4() + "-" + this.S4() + "-" + this.S4() + "-" + this.S4() + this.S4() + this.S4());
-        };
-        return UUID;
-    }());
-    Tape.UUID = UUID;
-    /**
-     * Logger
-     */
-    var Logger = /** @class */ (function () {
-        function Logger() {
-        }
-        /**
-         * setDebug
-         */
-        Logger.setDebug = function (debug) {
-            this.__is_debug__ = debug;
-        };
-        /**
-         * isDebug
-         */
-        Logger.isDebug = function () {
-            return this.__is_debug__;
-        };
-        /**
-         * log
-         */
-        Logger.log = function (message) {
-            var optionalParams = [];
-            for (var _i = 1; _i < arguments.length; _i++) {
-                optionalParams[_i - 1] = arguments[_i];
-            }
-            if (!this.isDebug()) {
-                return;
-            }
-            console.log.apply(console, [message].concat(optionalParams));
-        };
-        /**
-         * error
-         */
-        Logger.error = function (message) {
-            var optionalParams = [];
-            for (var _i = 1; _i < arguments.length; _i++) {
-                optionalParams[_i - 1] = arguments[_i];
-            }
-            if (!this.isDebug()) {
-                return;
-            }
-            console.error.apply(console, [message].concat(optionalParams));
-        };
-        /**
-         * info
-         */
-        Logger.info = function (message) {
-            var optionalParams = [];
-            for (var _i = 1; _i < arguments.length; _i++) {
-                optionalParams[_i - 1] = arguments[_i];
-            }
-            if (!this.isDebug()) {
-                return;
-            }
-            console.info.apply(console, [message].concat(optionalParams));
-        };
-        /**
-         * warn
-         */
-        Logger.warn = function (message) {
-            var optionalParams = [];
-            for (var _i = 1; _i < arguments.length; _i++) {
-                optionalParams[_i - 1] = arguments[_i];
-            }
-            if (!this.isDebug()) {
-                return;
-            }
-            console.warn.apply(console, [message].concat(optionalParams));
-        };
-        /**
-         * debug
-         */
-        Logger.debug = function (message) {
-            var optionalParams = [];
-            for (var _i = 1; _i < arguments.length; _i++) {
-                optionalParams[_i - 1] = arguments[_i];
-            }
-            if (!this.isDebug()) {
-                return;
-            }
-            console.debug.apply(console, [message].concat(optionalParams));
-        };
-        Logger.__is_debug__ = true;
-        return Logger;
-    }());
-    Tape.Logger = Logger;
-    /**
-     * Task
-     */
-    var Task = /** @class */ (function () {
-        /**
-         * constructor
-         * @param fn args -> resolve,reject
-         */
-        function Task(fn) {
-            var _this = this;
-            this.state = 'pending';
-            this.value = null;
-            this.callbacks = [];
-            var reject = function (reason) {
-                _this.state = 'rejected';
-                _this.value = reason;
-                _this.execute();
-            };
-            var resolve = function (newValue) {
-                if (newValue && (typeof newValue === 'object' || typeof newValue === 'function')) {
-                    var then = newValue.then;
-                    if (typeof then === 'function') {
-                        try {
-                            then.call(newValue, resolve, reject);
-                        }
-                        catch (error) {
-                            reject(error);
-                        }
-                        return;
-                    }
-                }
-                _this.state = 'fulfilled';
-                _this.value = newValue;
-                _this.execute();
-            };
-            try {
-                fn(resolve, reject);
-            }
-            catch (error) {
-                reject(error);
-            }
-        }
-        /**
-         * then
-         * @param onFulfilled onFulfilled
-         * @param onRejected onRejected
-         */
-        Task.prototype.then = function (onFulfilled, onRejected) {
-            var _this = this;
-            if (onRejected === void 0) { onRejected = null; }
-            return new Task(function (resolve, reject) {
-                _this.handle({
-                    onFulfilled: onFulfilled || null,
-                    onRejected: onRejected || null,
-                    resolve: resolve,
-                    reject: reject
-                });
-            });
-        };
-        /**
-         * catch
-         * @param onRejected onRejected
-         */
-        Task.prototype.catch = function (onRejected) {
-            var _this = this;
-            return new Task(function (resolve, reject) {
-                _this.handle({
-                    onFulfilled: null,
-                    onRejected: onRejected || null,
-                    resolve: resolve,
-                    reject: reject
-                });
-            });
-        };
-        Task.prototype.handle = function (callback) {
-            if (this.state === 'pending') {
-                this.callbacks.push(callback);
-                return;
-            }
-            var cb = this.state === 'fulfilled' ? callback.onFulfilled : callback.onRejected;
-            if (cb === null) {
-                cb = this.state === 'fulfilled' ? callback.resolve : callback.reject;
-                cb(this.value);
-                return;
-            }
-            try {
-                var ret = cb(this.value);
-                callback.resolve(ret);
-            }
-            catch (error) {
-                callback.reject(error);
-            }
-        };
-        Task.prototype.execute = function () {
-            var _this = this;
-            setTimeout(function () {
-                _this.callbacks.forEach(function (callback) {
-                    _this.handle(callback);
-                });
-            }, 0);
-        };
-        return Task;
-    }());
-    Tape.Task = Task;
-})(Tape || (Tape = {}));
-
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -505,297 +196,25 @@ var Tape;
 })(Tape || (Tape = {}));
 
 // =========================== //
-// tape market.js
+// tape box.js
 // =========================== //
 var Tape;
 (function (Tape) {
-    /**
-     * MarketHandler
-     */
-    var MarketHandler = /** @class */ (function () {
-        function MarketHandler() {
+    var Display = /** @class */ (function () {
+        function Display() {
         }
-        MarketHandler.isConchApp = function () {
-            return window.hasOwnProperty('conch');
+        Display.addChild = function (view) {
+            Laya.stage.addChild(view);
         };
-        MarketHandler.conchShowAlertOnJsException = function (show) {
-            if (this.isConchApp() && window.hasOwnProperty("showAlertOnJsException")) {
-                window["showAlertOnJsException"](show);
-            }
+        Display.width = function () {
+            return Laya.stage.width;
         };
-        MarketHandler.conchSetOnBackPressedFunction = function (onBackPressed) {
-            if (this.isConchApp() && window["conch"].hasOwnProperty("setOnBackPressedFunction")) {
-                window["conch"].setOnBackPressedFunction(function () {
-                    onBackPressed && onBackPressed();
-                });
-            }
+        Display.height = function () {
+            return Laya.stage.height;
         };
-        MarketHandler.conchExit = function () {
-            if (this.isConchApp() && window["conch"].hasOwnProperty("exit")) {
-                window["conch"].exit();
-            }
-        };
-        MarketHandler.conchDeviceInfo = function () {
-            if (this.isConchApp()) {
-                try {
-                    return JSON.parse(window["conch"].config.getDeviceInfo());
-                }
-                catch (error) {
-                }
-            }
-            return {};
-        };
-        MarketHandler.onAuthorize = null;
-        MarketHandler.onSendMessage = null;
-        MarketHandler.onEnterShare = null;
-        MarketHandler.onGetMarketName = null;
-        MarketHandler.onGetUserInfo = null;
-        MarketHandler.onGetFriends = null;
-        MarketHandler.onLogin = null;
-        MarketHandler.onLogout = null;
-        MarketHandler.onRecharge = null;
-        return MarketHandler;
+        return Display;
     }());
-    Tape.MarketHandler = MarketHandler;
-    /**
-     * Market
-     */
-    var Market = /** @class */ (function () {
-        function Market() {
-        }
-        Market.getMarketName = function () {
-            if (MarketHandler.isConchApp()) {
-                return Laya.conchMarket.getMarketName();
-            }
-            else {
-                return MarketHandler.onGetMarketName && MarketHandler.onGetMarketName();
-            }
-        };
-        Market.authorize = function (jsonParam, callback) {
-            if (callback === void 0) { callback = null; }
-            if (MarketHandler.isConchApp()) {
-                Laya.conchMarket.authorize(jsonParam, callback);
-            }
-            else {
-                MarketHandler.onAuthorize && MarketHandler.onAuthorize(jsonParam, callback);
-            }
-        };
-        Market.login = function (jsonParam, callback) {
-            if (callback === void 0) { callback = null; }
-            if (MarketHandler.isConchApp()) {
-                Laya.conchMarket.login(jsonParam, callback);
-            }
-            else {
-                MarketHandler.onLogin && MarketHandler.onLogin(jsonParam, callback);
-            }
-        };
-        Market.logout = function (jsonParam, callback) {
-            if (callback === void 0) { callback = null; }
-            if (MarketHandler.isConchApp()) {
-                Laya.conchMarket.logout(jsonParam, callback);
-            }
-            else {
-                MarketHandler.onLogout && MarketHandler.onLogout(jsonParam, callback);
-            }
-        };
-        Market.recharge = function (jsonParam, callback) {
-            if (callback === void 0) { callback = null; }
-            if (MarketHandler.isConchApp()) {
-                Laya.conchMarket.recharge(jsonParam, callback);
-            }
-            else {
-                MarketHandler.onRecharge && MarketHandler.onRecharge(jsonParam, callback);
-            }
-        };
-        Market.sendMessage = function (jsonParam, callback) {
-            if (callback === void 0) { callback = null; }
-            if (MarketHandler.isConchApp()) {
-                Laya.conchMarket.sendMessageToPlatform(jsonParam, callback);
-            }
-            else {
-                MarketHandler.onSendMessage && MarketHandler.onSendMessage(jsonParam, callback);
-            }
-        };
-        Market.enterShare = function (jsonParam, callback) {
-            if (callback === void 0) { callback = null; }
-            if (MarketHandler.isConchApp()) {
-                Laya.conchMarket.enterShareAndFeed(jsonParam, callback);
-            }
-            else {
-                MarketHandler.onEnterShare && MarketHandler.onEnterShare(jsonParam, callback);
-            }
-        };
-        Market.getUserInfo = function (jsonParam, callback) {
-            if (callback === void 0) { callback = null; }
-            if (MarketHandler.isConchApp()) {
-                Laya.conchMarket.getUserInfo(jsonParam, callback);
-            }
-            else {
-                MarketHandler.onGetUserInfo && MarketHandler.onGetUserInfo(jsonParam, callback);
-            }
-        };
-        Market.getFriendList = function (jsonParam, callback) {
-            if (callback === void 0) { callback = null; }
-            if (MarketHandler.isConchApp()) {
-                Laya.conchMarket.getGameFriends(jsonParam, callback);
-            }
-            else {
-                MarketHandler.onGetFriends && MarketHandler.onGetFriends(jsonParam, callback);
-            }
-        };
-        return Market;
-    }());
-    Tape.Market = Market;
-})(Tape || (Tape = {}));
-
-// =========================== //
-// tape media.js
-// =========================== //
-var Tape;
-(function (Tape) {
-    var fuckWXAudioPlay = function (callback) {
-        var wsb = window;
-        if (wsb['WeixinJSBridge']) {
-            try {
-                wsb['WeixinJSBridge'].invoke("getNetworkType", {}, function () {
-                    callback && callback();
-                });
-            }
-            catch (e) {
-                callback && callback();
-            }
-        }
-        else {
-            callback && callback();
-        }
-    };
-    /**
-     * BackgroundMusic
-     */
-    var BackgroundMusic = /** @class */ (function () {
-        function BackgroundMusic() {
-        }
-        BackgroundMusic.play = function (url, loops, complete) {
-            var _this = this;
-            if (loops === void 0) { loops = 1; }
-            if (complete === void 0) { complete = null; }
-            this.__on_complete__ = complete;
-            if (this.__audio_url__ !== url) {
-                this.__audio_url__ = url;
-                this.stop();
-            }
-            fuckWXAudioPlay(function () {
-                if (_this.__audio_chancel__) {
-                    if (!_this.__is_playing__) {
-                        _this.__audio_chancel__.play();
-                    }
-                    return;
-                }
-                _this.__is_playing__ = true;
-                _this.__audio_chancel__ = Laya.SoundManager.playMusic(_this.__audio_url__, loops, Laya.Handler.create(_this, function () {
-                    _this.__is_playing__ = false;
-                    _this.__audio_chancel__ = null;
-                    _this.__on_complete__ && _this.__on_complete__();
-                }));
-            });
-        };
-        BackgroundMusic.stop = function () {
-            if (this.__audio_chancel__) {
-                this.__audio_chancel__.stop();
-                this.__audio_chancel__ = null;
-                this.__is_playing__ = false;
-            }
-        };
-        BackgroundMusic.pause = function () {
-            if (this.__audio_chancel__) {
-                this.__audio_chancel__.pause();
-                this.__is_playing__ = false;
-            }
-        };
-        BackgroundMusic.__audio_url__ = "";
-        BackgroundMusic.__audio_chancel__ = null;
-        BackgroundMusic.__is_playing__ = false;
-        BackgroundMusic.__on_complete__ = null;
-        return BackgroundMusic;
-    }());
-    Tape.BackgroundMusic = BackgroundMusic;
-    /**
-     * Audio
-     */
-    var Audio = /** @class */ (function () {
-        function Audio(url) {
-            this.__audio_url__ = "";
-            this.__audio_chancel__ = null;
-            this.__is_playing__ = false;
-            this.__on_complete__ = null;
-            this.__audio_url__ = url;
-        }
-        Audio.config = function (soundDir, soundFormat, soundConchDir, soundConchFormat, showErrorAlert) {
-            if (showErrorAlert === void 0) { showErrorAlert = false; }
-            this.soundWebDir = soundDir || "";
-            this.soundWebFormat = soundFormat || "";
-            this.soundConchDir = soundConchDir || "";
-            this.soundConchFormat = soundConchFormat || "";
-            this.showErrorAlert = showErrorAlert;
-        };
-        Audio.play = function (url, loops, complete) {
-            if (loops === void 0) { loops = 1; }
-            if (complete === void 0) { complete = null; }
-            var audio = new Audio(url);
-            audio.play(loops, complete);
-            return audio;
-        };
-        Audio.prototype.play = function (loops, complete) {
-            var _this = this;
-            if (loops === void 0) { loops = 1; }
-            if (complete === void 0) { complete = null; }
-            this.__on_complete__ = complete;
-            fuckWXAudioPlay(function () {
-                if (_this.__audio_chancel__) {
-                    if (!_this.__is_playing__) {
-                        _this.__audio_chancel__.play();
-                    }
-                    return;
-                }
-                _this.__is_playing__ = true;
-                var soundUrl = "";
-                if (Tape.MarketHandler.isConchApp()) {
-                    soundUrl = Audio.soundConchDir + _this.__audio_url__ + Audio.soundConchFormat;
-                    var ext = Laya.Utils.getFileExtension(soundUrl);
-                    if (!Audio.showErrorAlert && ext != "wav" && ext != "ogg") {
-                        return;
-                    }
-                }
-                else {
-                    soundUrl = Audio.soundWebDir + _this.__audio_url__ + Audio.soundWebFormat;
-                }
-                _this.__audio_chancel__ = Laya.SoundManager.playSound(soundUrl, loops, Laya.Handler.create(_this, function () {
-                    _this.__is_playing__ = false;
-                    _this.__on_complete__ && _this.__on_complete__();
-                }));
-            });
-        };
-        Audio.prototype.stop = function () {
-            if (this.__audio_chancel__) {
-                this.__audio_chancel__.stop();
-                this.__audio_chancel__ = null;
-                this.__is_playing__ = false;
-            }
-        };
-        Audio.prototype.pause = function () {
-            if (this.__audio_chancel__) {
-                this.__audio_chancel__.pause();
-                this.__is_playing__ = false;
-            }
-        };
-        Audio.showErrorAlert = false;
-        Audio.soundWebDir = "";
-        Audio.soundWebFormat = "";
-        Audio.soundConchDir = "";
-        Audio.soundConchFormat = "";
-        return Audio;
-    }());
-    Tape.Audio = Audio;
+    Tape.Display = Display;
 })(Tape || (Tape = {}));
 
 var __extends = (this && this.__extends) || (function () {
@@ -1136,6 +555,156 @@ var Tape;
 })(Tape || (Tape = {}));
 
 // =========================== //
+// tape media.js
+// =========================== //
+var Tape;
+(function (Tape) {
+    var fuckWXAudioPlay = function (callback) {
+        var wsb = window;
+        if (wsb['WeixinJSBridge']) {
+            try {
+                wsb['WeixinJSBridge'].invoke("getNetworkType", {}, function () {
+                    callback && callback();
+                });
+            }
+            catch (e) {
+                callback && callback();
+            }
+        }
+        else {
+            callback && callback();
+        }
+    };
+    /**
+     * BackgroundMusic
+     */
+    var BackgroundMusic = /** @class */ (function () {
+        function BackgroundMusic() {
+        }
+        BackgroundMusic.play = function (url, loops, complete) {
+            var _this = this;
+            if (loops === void 0) { loops = 1; }
+            if (complete === void 0) { complete = null; }
+            this.__on_complete__ = complete;
+            if (this.__audio_url__ !== url) {
+                this.__audio_url__ = url;
+                this.stop();
+            }
+            fuckWXAudioPlay(function () {
+                if (_this.__audio_chancel__) {
+                    if (!_this.__is_playing__) {
+                        _this.__audio_chancel__.play();
+                    }
+                    return;
+                }
+                _this.__is_playing__ = true;
+                _this.__audio_chancel__ = Laya.SoundManager.playMusic(_this.__audio_url__, loops, Laya.Handler.create(_this, function () {
+                    _this.__is_playing__ = false;
+                    _this.__audio_chancel__ = null;
+                    _this.__on_complete__ && _this.__on_complete__();
+                }));
+            });
+        };
+        BackgroundMusic.stop = function () {
+            if (this.__audio_chancel__) {
+                this.__audio_chancel__.stop();
+                this.__audio_chancel__ = null;
+                this.__is_playing__ = false;
+            }
+        };
+        BackgroundMusic.pause = function () {
+            if (this.__audio_chancel__) {
+                this.__audio_chancel__.pause();
+                this.__is_playing__ = false;
+            }
+        };
+        BackgroundMusic.__audio_url__ = "";
+        BackgroundMusic.__audio_chancel__ = null;
+        BackgroundMusic.__is_playing__ = false;
+        BackgroundMusic.__on_complete__ = null;
+        return BackgroundMusic;
+    }());
+    Tape.BackgroundMusic = BackgroundMusic;
+    /**
+     * Audio
+     */
+    var Audio = /** @class */ (function () {
+        function Audio(url) {
+            this.__audio_url__ = "";
+            this.__audio_chancel__ = null;
+            this.__is_playing__ = false;
+            this.__on_complete__ = null;
+            this.__audio_url__ = url;
+        }
+        Audio.config = function (soundDir, soundFormat, soundConchDir, soundConchFormat, showErrorAlert) {
+            if (showErrorAlert === void 0) { showErrorAlert = false; }
+            this.soundWebDir = soundDir || "";
+            this.soundWebFormat = soundFormat || "";
+            this.soundConchDir = soundConchDir || "";
+            this.soundConchFormat = soundConchFormat || "";
+            this.showErrorAlert = showErrorAlert;
+        };
+        Audio.play = function (url, loops, complete) {
+            if (loops === void 0) { loops = 1; }
+            if (complete === void 0) { complete = null; }
+            var audio = new Audio(url);
+            audio.play(loops, complete);
+            return audio;
+        };
+        Audio.prototype.play = function (loops, complete) {
+            var _this = this;
+            if (loops === void 0) { loops = 1; }
+            if (complete === void 0) { complete = null; }
+            this.__on_complete__ = complete;
+            fuckWXAudioPlay(function () {
+                if (_this.__audio_chancel__) {
+                    if (!_this.__is_playing__) {
+                        _this.__audio_chancel__.play();
+                    }
+                    return;
+                }
+                _this.__is_playing__ = true;
+                var soundUrl = "";
+                if (Tape.MarketHandler.isConchApp()) {
+                    soundUrl = Audio.soundConchDir + _this.__audio_url__ + Audio.soundConchFormat;
+                    var ext = Laya.Utils.getFileExtension(soundUrl);
+                    if (!Audio.showErrorAlert && ext != "wav" && ext != "ogg") {
+                        return;
+                    }
+                }
+                else {
+                    soundUrl = Audio.soundWebDir + _this.__audio_url__ + Audio.soundWebFormat;
+                }
+                _this.__audio_chancel__ = Laya.SoundManager.playSound(soundUrl, loops, Laya.Handler.create(_this, function () {
+                    _this.__is_playing__ = false;
+                    _this.__on_complete__ && _this.__on_complete__();
+                }));
+            });
+        };
+        Audio.prototype.stop = function () {
+            if (this.__audio_chancel__) {
+                this.__audio_chancel__.stop();
+                this.__audio_chancel__ = null;
+                this.__is_playing__ = false;
+            }
+        };
+        Audio.prototype.pause = function () {
+            if (this.__audio_chancel__) {
+                this.__audio_chancel__.pause();
+                this.__is_playing__ = false;
+            }
+        };
+        Audio.showErrorAlert = false;
+        Audio.soundWebDir = "";
+        Audio.soundWebFormat = "";
+        Audio.soundConchDir = "";
+        Audio.soundConchFormat = "";
+        return Audio;
+    }());
+    Tape.Audio = Audio;
+})(Tape || (Tape = {}));
+
+// =========================== //
 // tape socket.js
 // =========================== //
 var Tape;
@@ -1193,10 +762,12 @@ var Tape;
                 _this.onConnected && _this.onConnected();
             });
             this.__web_socket__.on(Laya.Event.CLOSE, this, function (error) {
-                _this.printLog(" -----WS---" + SocketTAG.SOCKET_CONNECT_CLOSDE, error);
-                _this.__is_connect__ = false;
-                _this.__is_connect_ing__ = false;
-                _this.onClosed && _this.onClosed(error);
+                if (_this.isConnecting() || _this.isConnected()) {
+                    _this.printLog(" -----WS---" + SocketTAG.SOCKET_CONNECT_CLOSDE, error);
+                    _this.__is_connect__ = false;
+                    _this.__is_connect_ing__ = false;
+                    _this.onClosed && _this.onClosed(error);
+                }
             });
             this.__web_socket__.on(Laya.Event.ERROR, this, function (error) {
                 _this.printLog(" -----WS---" + SocketTAG.SOCKET_CONNECT_ERROR, error);
@@ -1211,10 +782,12 @@ var Tape;
         };
         WebSocket.prototype.disconnect = function () {
             if (this.isConnecting() || this.isConnected()) {
+                this.printLog(" -----WS---" + SocketTAG.SOCKET_CONNECT_CLOSDE);
                 this.__web_socket__.close();
+                this.__is_connect__ = false;
+                this.__is_connect_ing__ = false;
+                this.onClosed && this.onClosed();
             }
-            this.__is_connect__ = false;
-            this.__is_connect_ing__ = false;
         };
         WebSocket.prototype.isConnected = function () {
             return this.__is_connect__;
@@ -1287,9 +860,11 @@ var Tape;
                 this.__mqtt_socket__ = new window['Paho'].MQTT.Client(host, port, clientId);
                 this.__mqtt_socket__.onConnectionLost = function (error) {
                     _this.printLog(" -----MQTT---" + SocketTAG.SOCKET_CONNECT_CLOSDE, error);
-                    _this.__is_connect__ = false;
-                    _this.__is_connect_ing__ = false;
-                    _this.onClosed && _this.onClosed(error);
+                    if (_this.isConnecting() || _this.isConnected()) {
+                        _this.__is_connect__ = false;
+                        _this.__is_connect_ing__ = false;
+                        _this.onClosed && _this.onClosed(error);
+                    }
                 };
                 this.__mqtt_socket__.onMessageArrived = function (msg) {
                     _this.printLog(" -----MQTT---" + SocketTAG.SOCKET_MESSAGE_RECEIVED, _this.formatMessage(msg));
@@ -1324,10 +899,12 @@ var Tape;
         };
         MQTTSocket.prototype.disconnect = function () {
             if (this.isConnecting() || this.isConnected()) {
+                this.printLog(" -----MQTT---" + SocketTAG.SOCKET_CONNECT_CLOSDE);
                 this.__mqtt_socket__.disconnect();
+                this.__is_connect__ = false;
+                this.__is_connect_ing__ = false;
+                this.onClosed && this.onClosed();
             }
-            this.__is_connect__ = false;
-            this.__is_connect_ing__ = false;
         };
         MQTTSocket.prototype.isConnected = function () {
             return this.__is_connect__;
@@ -1373,6 +950,437 @@ var Tape;
         return MQTTSocket;
     }());
     Tape.MQTTSocket = MQTTSocket;
+})(Tape || (Tape = {}));
+
+// =========================== //
+// tape market.js
+// =========================== //
+var Tape;
+(function (Tape) {
+    /**
+     * MarketHandler
+     */
+    var MarketHandler = /** @class */ (function () {
+        function MarketHandler() {
+        }
+        MarketHandler.isConchApp = function () {
+            return window.hasOwnProperty('conch');
+        };
+        MarketHandler.conchShowAlertOnJsException = function (show) {
+            if (this.isConchApp() && window.hasOwnProperty("showAlertOnJsException")) {
+                window["showAlertOnJsException"](show);
+            }
+        };
+        MarketHandler.conchSetOnBackPressedFunction = function (onBackPressed) {
+            if (this.isConchApp() && window["conch"].hasOwnProperty("setOnBackPressedFunction")) {
+                window["conch"].setOnBackPressedFunction(function () {
+                    onBackPressed && onBackPressed();
+                });
+            }
+        };
+        MarketHandler.conchExit = function () {
+            if (this.isConchApp() && window["conch"].hasOwnProperty("exit")) {
+                window["conch"].exit();
+            }
+        };
+        MarketHandler.conchDeviceInfo = function () {
+            if (this.isConchApp()) {
+                try {
+                    return JSON.parse(window["conch"].config.getDeviceInfo());
+                }
+                catch (error) {
+                }
+            }
+            return {};
+        };
+        MarketHandler.onAuthorize = null;
+        MarketHandler.onSendMessage = null;
+        MarketHandler.onEnterShare = null;
+        MarketHandler.onGetMarketName = null;
+        MarketHandler.onGetUserInfo = null;
+        MarketHandler.onGetFriends = null;
+        MarketHandler.onLogin = null;
+        MarketHandler.onLogout = null;
+        MarketHandler.onRecharge = null;
+        return MarketHandler;
+    }());
+    Tape.MarketHandler = MarketHandler;
+    /**
+     * Market
+     */
+    var Market = /** @class */ (function () {
+        function Market() {
+        }
+        Market.getMarketName = function () {
+            if (MarketHandler.isConchApp()) {
+                return Laya.conchMarket.getMarketName();
+            }
+            else {
+                return MarketHandler.onGetMarketName && MarketHandler.onGetMarketName();
+            }
+        };
+        Market.authorize = function (jsonParam, callback) {
+            if (callback === void 0) { callback = null; }
+            if (MarketHandler.isConchApp()) {
+                Laya.conchMarket.authorize(jsonParam, callback);
+            }
+            else {
+                MarketHandler.onAuthorize && MarketHandler.onAuthorize(jsonParam, callback);
+            }
+        };
+        Market.login = function (jsonParam, callback) {
+            if (callback === void 0) { callback = null; }
+            if (MarketHandler.isConchApp()) {
+                Laya.conchMarket.login(jsonParam, callback);
+            }
+            else {
+                MarketHandler.onLogin && MarketHandler.onLogin(jsonParam, callback);
+            }
+        };
+        Market.logout = function (jsonParam, callback) {
+            if (callback === void 0) { callback = null; }
+            if (MarketHandler.isConchApp()) {
+                Laya.conchMarket.logout(jsonParam, callback);
+            }
+            else {
+                MarketHandler.onLogout && MarketHandler.onLogout(jsonParam, callback);
+            }
+        };
+        Market.recharge = function (jsonParam, callback) {
+            if (callback === void 0) { callback = null; }
+            if (MarketHandler.isConchApp()) {
+                Laya.conchMarket.recharge(jsonParam, callback);
+            }
+            else {
+                MarketHandler.onRecharge && MarketHandler.onRecharge(jsonParam, callback);
+            }
+        };
+        Market.sendMessage = function (jsonParam, callback) {
+            if (callback === void 0) { callback = null; }
+            if (MarketHandler.isConchApp()) {
+                Laya.conchMarket.sendMessageToPlatform(jsonParam, callback);
+            }
+            else {
+                MarketHandler.onSendMessage && MarketHandler.onSendMessage(jsonParam, callback);
+            }
+        };
+        Market.enterShare = function (jsonParam, callback) {
+            if (callback === void 0) { callback = null; }
+            if (MarketHandler.isConchApp()) {
+                Laya.conchMarket.enterShareAndFeed(jsonParam, callback);
+            }
+            else {
+                MarketHandler.onEnterShare && MarketHandler.onEnterShare(jsonParam, callback);
+            }
+        };
+        Market.getUserInfo = function (jsonParam, callback) {
+            if (callback === void 0) { callback = null; }
+            if (MarketHandler.isConchApp()) {
+                Laya.conchMarket.getUserInfo(jsonParam, callback);
+            }
+            else {
+                MarketHandler.onGetUserInfo && MarketHandler.onGetUserInfo(jsonParam, callback);
+            }
+        };
+        Market.getFriendList = function (jsonParam, callback) {
+            if (callback === void 0) { callback = null; }
+            if (MarketHandler.isConchApp()) {
+                Laya.conchMarket.getGameFriends(jsonParam, callback);
+            }
+            else {
+                MarketHandler.onGetFriends && MarketHandler.onGetFriends(jsonParam, callback);
+            }
+        };
+        return Market;
+    }());
+    Tape.Market = Market;
+})(Tape || (Tape = {}));
+
+// =========================== //
+// tape utils.js
+// =========================== //
+var Tape;
+(function (Tape) {
+    /**
+     * Timer
+     */
+    var Timer = /** @class */ (function () {
+        function Timer() {
+            this.__loop_runing__ = false;
+            this.__loop_callback__ = null;
+            this.__loop_date__ = null;
+        }
+        Timer.sleep = function (numberMillis) {
+            var now = new Date();
+            var exitTime = now.getTime() + numberMillis;
+            while (true) {
+                now = new Date();
+                if (now.getTime() > exitTime)
+                    return;
+            }
+        };
+        Timer.prototype.loop = function (callback, delay) {
+            var _this = this;
+            this.__loop_callback__ = callback;
+            this.__loop_runing__ = true;
+            this.__loop_date__ = new Date();
+            new Tape.Task(function (resolve) {
+                while (_this.__loop_runing__) {
+                    var now = new Date();
+                    callback && callback(now.getTime() - _this.__loop_date__.getTime());
+                    Timer.sleep(delay);
+                }
+                resolve();
+            }).then(function () {
+                _this.__loop_callback__ = null;
+                _this.__loop_runing__ = false;
+                _this.__loop_date__ = null;
+            });
+        };
+        Timer.prototype.stop = function () {
+            this.__loop_runing__ = false;
+        };
+        return Timer;
+    }());
+    Tape.Timer = Timer;
+    /**
+     * NumUtil
+     */
+    var NumUtil = /** @class */ (function () {
+        function NumUtil() {
+        }
+        NumUtil.rangedValue = function (val, min, max) {
+            if (val < min)
+                return min;
+            else if (val > max)
+                return max;
+            else
+                return val;
+        };
+        NumUtil.rand = function (min, max) {
+            return Math.floor(Math.random() * (max - min)) + min;
+        };
+        return NumUtil;
+    }());
+    Tape.NumUtil = NumUtil;
+    /**
+     * LinkUtil
+     */
+    var LinkUtil = /** @class */ (function () {
+        function LinkUtil() {
+        }
+        LinkUtil.openURL = function (url) {
+            window.location.href = url;
+        };
+        return LinkUtil;
+    }());
+    Tape.LinkUtil = LinkUtil;
+    /**
+     * UUID
+     */
+    var UUID = /** @class */ (function () {
+        function UUID() {
+        }
+        UUID.S4 = function () {
+            return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+        };
+        UUID.randUUID = function () {
+            return (this.S4() + this.S4() + "-" + this.S4() + "-" + this.S4() + "-" + this.S4() + "-" + this.S4() + this.S4() + this.S4());
+        };
+        return UUID;
+    }());
+    Tape.UUID = UUID;
+    /**
+     * Logger
+     */
+    var Logger = /** @class */ (function () {
+        function Logger() {
+        }
+        /**
+         * setDebug
+         */
+        Logger.setDebug = function (debug) {
+            this.__is_debug__ = debug;
+        };
+        /**
+         * isDebug
+         */
+        Logger.isDebug = function () {
+            return this.__is_debug__;
+        };
+        /**
+         * log
+         */
+        Logger.log = function (message) {
+            var optionalParams = [];
+            for (var _i = 1; _i < arguments.length; _i++) {
+                optionalParams[_i - 1] = arguments[_i];
+            }
+            if (!this.isDebug()) {
+                return;
+            }
+            console.log.apply(console, [message].concat(optionalParams));
+        };
+        /**
+         * error
+         */
+        Logger.error = function (message) {
+            var optionalParams = [];
+            for (var _i = 1; _i < arguments.length; _i++) {
+                optionalParams[_i - 1] = arguments[_i];
+            }
+            if (!this.isDebug()) {
+                return;
+            }
+            console.error.apply(console, [message].concat(optionalParams));
+        };
+        /**
+         * info
+         */
+        Logger.info = function (message) {
+            var optionalParams = [];
+            for (var _i = 1; _i < arguments.length; _i++) {
+                optionalParams[_i - 1] = arguments[_i];
+            }
+            if (!this.isDebug()) {
+                return;
+            }
+            console.info.apply(console, [message].concat(optionalParams));
+        };
+        /**
+         * warn
+         */
+        Logger.warn = function (message) {
+            var optionalParams = [];
+            for (var _i = 1; _i < arguments.length; _i++) {
+                optionalParams[_i - 1] = arguments[_i];
+            }
+            if (!this.isDebug()) {
+                return;
+            }
+            console.warn.apply(console, [message].concat(optionalParams));
+        };
+        /**
+         * debug
+         */
+        Logger.debug = function (message) {
+            var optionalParams = [];
+            for (var _i = 1; _i < arguments.length; _i++) {
+                optionalParams[_i - 1] = arguments[_i];
+            }
+            if (!this.isDebug()) {
+                return;
+            }
+            console.debug.apply(console, [message].concat(optionalParams));
+        };
+        Logger.__is_debug__ = true;
+        return Logger;
+    }());
+    Tape.Logger = Logger;
+    /**
+     * Task
+     */
+    var Task = /** @class */ (function () {
+        /**
+         * constructor
+         * @param fn args -> resolve,reject
+         */
+        function Task(fn) {
+            var _this = this;
+            this.state = 'pending';
+            this.value = null;
+            this.callbacks = [];
+            var reject = function (reason) {
+                _this.state = 'rejected';
+                _this.value = reason;
+                _this.execute();
+            };
+            var resolve = function (newValue) {
+                if (newValue && (typeof newValue === 'object' || typeof newValue === 'function')) {
+                    var then = newValue.then;
+                    if (typeof then === 'function') {
+                        try {
+                            then.call(newValue, resolve, reject);
+                        }
+                        catch (error) {
+                            reject(error);
+                        }
+                        return;
+                    }
+                }
+                _this.state = 'fulfilled';
+                _this.value = newValue;
+                _this.execute();
+            };
+            try {
+                fn(resolve, reject);
+            }
+            catch (error) {
+                reject(error);
+            }
+        }
+        /**
+         * then
+         * @param onFulfilled onFulfilled
+         * @param onRejected onRejected
+         */
+        Task.prototype.then = function (onFulfilled, onRejected) {
+            var _this = this;
+            if (onRejected === void 0) { onRejected = null; }
+            return new Task(function (resolve, reject) {
+                _this.handle({
+                    onFulfilled: onFulfilled || null,
+                    onRejected: onRejected || null,
+                    resolve: resolve,
+                    reject: reject
+                });
+            });
+        };
+        /**
+         * catch
+         * @param onRejected onRejected
+         */
+        Task.prototype.catch = function (onRejected) {
+            var _this = this;
+            return new Task(function (resolve, reject) {
+                _this.handle({
+                    onFulfilled: null,
+                    onRejected: onRejected || null,
+                    resolve: resolve,
+                    reject: reject
+                });
+            });
+        };
+        Task.prototype.handle = function (callback) {
+            if (this.state === 'pending') {
+                this.callbacks.push(callback);
+                return;
+            }
+            var cb = this.state === 'fulfilled' ? callback.onFulfilled : callback.onRejected;
+            if (cb === null) {
+                cb = this.state === 'fulfilled' ? callback.resolve : callback.reject;
+                cb(this.value);
+                return;
+            }
+            try {
+                var ret = cb(this.value);
+                callback.resolve(ret);
+            }
+            catch (error) {
+                callback.reject(error);
+            }
+        };
+        Task.prototype.execute = function () {
+            var _this = this;
+            setTimeout(function () {
+                _this.callbacks.forEach(function (callback) {
+                    _this.handle(callback);
+                });
+            }, 0);
+        };
+        return Task;
+    }());
+    Tape.Task = Task;
 })(Tape || (Tape = {}));
 
 /*******************************************************************************

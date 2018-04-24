@@ -58,10 +58,12 @@ module Tape {
                 this.onConnected && this.onConnected();
             });
             this.__web_socket__.on(Laya.Event.CLOSE, this, (error) => {
-                this.printLog(" -----WS---" + SocketTAG.SOCKET_CONNECT_CLOSDE, error);
-                this.__is_connect__ = false;
-                this.__is_connect_ing__ = false;
-                this.onClosed && this.onClosed(error);
+                if (this.isConnecting() || this.isConnected()) {
+                    this.printLog(" -----WS---" + SocketTAG.SOCKET_CONNECT_CLOSDE, error);
+                    this.__is_connect__ = false;
+                    this.__is_connect_ing__ = false;
+                    this.onClosed && this.onClosed(error);
+                }
             });
             this.__web_socket__.on(Laya.Event.ERROR, this, (error) => {
                 this.printLog(" -----WS---" + SocketTAG.SOCKET_CONNECT_ERROR, error);
@@ -77,10 +79,12 @@ module Tape {
 
         public disconnect() {
             if (this.isConnecting() || this.isConnected()) {
+                this.printLog(" -----WS---" + SocketTAG.SOCKET_CONNECT_CLOSDE);
                 this.__web_socket__.close();
+                this.__is_connect__ = false;
+                this.__is_connect_ing__ = false;
+                this.onClosed && this.onClosed();
             }
-            this.__is_connect__ = false;
-            this.__is_connect_ing__ = false;
         }
 
         public isConnected(): boolean {
@@ -154,9 +158,11 @@ module Tape {
                 this.__mqtt_socket__ = new window['Paho'].MQTT.Client(host, port, clientId);
                 this.__mqtt_socket__.onConnectionLost = (error) => {
                     this.printLog(" -----MQTT---" + SocketTAG.SOCKET_CONNECT_CLOSDE, error);
-                    this.__is_connect__ = false;
-                    this.__is_connect_ing__ = false;
-                    this.onClosed && this.onClosed(error);
+                    if (this.isConnecting() || this.isConnected()) {
+                        this.__is_connect__ = false;
+                        this.__is_connect_ing__ = false;
+                        this.onClosed && this.onClosed(error);
+                    }
                 };
                 this.__mqtt_socket__.onMessageArrived = (msg) => {
                     this.printLog(" -----MQTT---" + SocketTAG.SOCKET_MESSAGE_RECEIVED, this.formatMessage(msg));
@@ -190,10 +196,12 @@ module Tape {
 
         public disconnect() {
             if (this.isConnecting() || this.isConnected()) {
+                this.printLog(" -----MQTT---" + SocketTAG.SOCKET_CONNECT_CLOSDE);
                 this.__mqtt_socket__.disconnect();
+                this.__is_connect__ = false;
+                this.__is_connect_ing__ = false;
+                this.onClosed && this.onClosed();
             }
-            this.__is_connect__ = false;
-            this.__is_connect_ing__ = false;
         }
 
         public isConnected(): boolean {
