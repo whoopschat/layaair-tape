@@ -1,7 +1,7 @@
-# LayaAir-Tape
-> A LayaAir navigation library for TS
+# layaair-tape
+> A layaair navigation library for ts
 
-## Support
+## support
 * activity and life cycle
 * activity navigation
 *  with `WebSocket` and `MQTT Socket`
