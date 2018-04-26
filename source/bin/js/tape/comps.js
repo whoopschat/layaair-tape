@@ -36,6 +36,7 @@ var Tape;
         function Activity(props) {
             if (props === void 0) { props = {}; }
             var _this = _super.call(this, props) || this;
+            _this.__dialog_manager__ = new Laya.DialogManager();
             _this.routeName = "";
             _this.routeKey = "";
             _this.params = {};
@@ -63,6 +64,15 @@ var Tape;
         Activity.prototype.onDestroy = function () {
         };
         Activity.prototype.onNextProgress = function (progress) {
+        };
+        ///////////////////////
+        /// Dialog
+        ///////////////////////
+        Activity.prototype.showDialog = function (dialog) {
+            this.__dialog_manager__.open(new ui.DialogViewUI(), true, true);
+        };
+        Activity.prototype.closeAllDialog = function () {
+            this.__dialog_manager__.closeAll();
         };
         ///////////////////////
         /// Navigator
@@ -170,7 +180,6 @@ var Tape;
                     view.removeSelf();
                 });
                 Laya.stage.addChild(view);
-                Tape.Display.addChild(view);
                 for (var i in list_1) {
                     if (list_1[i]) {
                         list_1[i].y -= list_1[i].height - 5;

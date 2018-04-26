@@ -23,7 +23,6 @@ gulp.task("build:tsc", function () {
 
 var packageList = [
   inputJsPath + moduleName + '/comps.js',
-  inputJsPath + moduleName + '/display.js',
   inputJsPath + moduleName + '/navigation.js',
   inputJsPath + moduleName + '/media.js',
   inputJsPath + moduleName + '/socket.js',

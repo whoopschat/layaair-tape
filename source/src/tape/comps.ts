@@ -25,6 +25,7 @@ module Tape {
             });
         };
 
+        private readonly __dialog_manager__ = new Laya.DialogManager();
         public readonly routeName: string = "";
         public readonly routeKey: string = "";
         public readonly params: Object = {};
@@ -53,6 +54,18 @@ module Tape {
         }
 
         protected onNextProgress(progress) {
+        }
+
+        ///////////////////////
+        /// Dialog
+        ///////////////////////
+
+        protected showDialog(dialog: Laya.Dialog) {
+            this.__dialog_manager__.open(new ui.DialogViewUI(), true, true);
+        }
+
+        protected closeAllDialog() {
+            this.__dialog_manager__.closeAll();
         }
 
         ///////////////////////
@@ -142,7 +155,6 @@ module Tape {
                     view.removeSelf();
                 });
                 Laya.stage.addChild(view);
-                Tape.Display.addChild(view);
                 for (var i in list) {
                     if (list[i]) {
                         list[i].y -= list[i].height - 5;

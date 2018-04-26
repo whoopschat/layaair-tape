@@ -2,6 +2,22 @@
 import View=laya.ui.View;
 import Dialog=laya.ui.Dialog;
 module ui {
+    export class DialogViewUI extends Dialog {
+		public OK:Laya.Button;
+
+        public static  uiView:any ={"type":"Dialog","props":{"width":710,"height":710},"child":[{"type":"Image","props":{"y":258,"x":102,"width":489,"skin":"comp/bg.png","sizeGrid":"29,12,8,10","height":278}},{"type":"Button","props":{"y":459,"x":281,"width":137,"var":"OK","skin":"comp/button.png","label":"label","height":48,"click":"ok"}}]};
+        constructor(){ super()}
+        createChildren():void {
+        
+            super.createChildren();
+            this.createView(ui.DialogViewUI.uiView);
+
+        }
+
+    }
+}
+
+module ui {
     export class MessageToastUI extends View {
 		public text:Laya.Label;
 

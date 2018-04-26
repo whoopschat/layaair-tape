@@ -12,6 +12,21 @@ var View = laya.ui.View;
 var Dialog = laya.ui.Dialog;
 var ui;
 (function (ui) {
+    var DialogViewUI = /** @class */ (function (_super) {
+        __extends(DialogViewUI, _super);
+        function DialogViewUI() {
+            return _super.call(this) || this;
+        }
+        DialogViewUI.prototype.createChildren = function () {
+            _super.prototype.createChildren.call(this);
+            this.createView(ui.DialogViewUI.uiView);
+        };
+        DialogViewUI.uiView = { "type": "Dialog", "props": { "width": 710, "height": 710 }, "child": [{ "type": "Image", "props": { "y": 258, "x": 102, "width": 489, "skin": "comp/bg.png", "sizeGrid": "29,12,8,10", "height": 278 } }, { "type": "Button", "props": { "y": 459, "x": 281, "width": 137, "var": "OK", "skin": "comp/button.png", "label": "label", "height": 48, "click": "ok" } }] };
+        return DialogViewUI;
+    }(Dialog));
+    ui.DialogViewUI = DialogViewUI;
+})(ui || (ui = {}));
+(function (ui) {
     var MessageToastUI = /** @class */ (function (_super) {
         __extends(MessageToastUI, _super);
         function MessageToastUI() {
