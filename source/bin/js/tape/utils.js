@@ -4,6 +4,25 @@
 var Tape;
 (function (Tape) {
     /**
+     * Build
+     */
+    var Build = /** @class */ (function () {
+        function Build() {
+        }
+        /**
+         * get build env
+         * @return env mode : development or production
+         */
+        Build.getEnv = function () {
+            if (window.hasOwnProperty('__build_process_env__')) {
+                return window['__build_process_env__']['MODE'] || 'development';
+            }
+            return 'development';
+        };
+        return Build;
+    }());
+    Tape.Build = Build;
+    /**
      * Timer
      */
     var Timer = /** @class */ (function () {

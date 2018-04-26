@@ -62,6 +62,7 @@ var App;
             this.page2.btnBack.on(Laya.Event.CLICK, this, function () {
                 _this.back();
             });
+            console.log(Tape.Build.getEnv());
         };
         Page2.prototype.onPause = function () {
             this.printDebug("onPause");

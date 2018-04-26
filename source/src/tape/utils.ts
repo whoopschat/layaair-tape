@@ -4,11 +4,29 @@
 module Tape {
 
     /**
+     * Build
+     */
+    export class Build {
+
+        /**
+         * get build env
+         * @return env mode : development or production
+         */
+        public static getEnv(): string {
+            if (window.hasOwnProperty('__build_process_env__')) {
+                return window['__build_process_env__']['MODE'] || 'development'
+            }
+            return 'development'
+        }
+
+    }
+
+    /**
      * Timer
      */
     export class Timer {
 
-        public static sleep(numberMillis) {
+        public static sleep(numberMillis): void {
             var now = new Date();
             var exitTime = now.getTime() + numberMillis;
             while (true) {
@@ -25,7 +43,7 @@ module Tape {
         constructor() {
         }
 
-        public loop(callback: Function, delay: number) {
+        public loop(callback: Function, delay: number): void {
             this.__loop_callback__ = callback;
             this.__loop_runing__ = true;
             this.__loop_date__ = new Date();
@@ -43,7 +61,7 @@ module Tape {
             });
         }
 
-        public stop() {
+        public stop(): void {
             this.__loop_runing__ = false;
         }
 

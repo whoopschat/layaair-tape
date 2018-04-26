@@ -14,7 +14,8 @@ class GameMain {
         };
         let options = {
             res: [
-                { url: 'res/atlas/comp.atlas', type: Laya.Loader.ATLAS }
+                { url: 'res/atlas/comp.atlas', type: Laya.Loader.ATLAS },
+                { url: 'res/config.json', type: Laya.Loader.JSON }
             ]
         };
         var app: any = Tape.createNavigator(routes, "Page2", options);

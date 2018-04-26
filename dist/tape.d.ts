@@ -196,11 +196,24 @@ declare module Tape {
     ///////////////////////////////////////////////
 
     /**
+     * Build
+     */
+    class Build {
+
+        /**
+         * get build env
+         * @return env mode : development or production
+         */
+        static getEnv(): string;
+
+    }
+
+    /**
      * Timer
      */
-    export class Timer {
+    class Timer {
 
-        public static sleep(numberMillis): void;
+        static sleep(numberMillis): void;
 
         constructor();
 

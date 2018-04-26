@@ -47,6 +47,7 @@ module App {
             this.page2.btnBack.on(Laya.Event.CLICK, this, () => {
                 this.back();
             });
+            console.log(Tape.Build.getEnv());
         }
 
         protected onPause() {
