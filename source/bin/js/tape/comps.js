@@ -68,10 +68,11 @@ var Tape;
         ///////////////////////
         /// Dialog
         ///////////////////////
-        Activity.prototype.showDialog = function (dialog) {
+        Activity.prototype.openDialog = function (dialog) {
+            this.closeDialog();
             this.__dialog_manager__.open(new ui.DialogViewUI(), true, true);
         };
-        Activity.prototype.closeAllDialog = function () {
+        Activity.prototype.closeDialog = function () {
             this.__dialog_manager__.closeAll();
         };
         ///////////////////////

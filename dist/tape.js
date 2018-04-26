@@ -36,6 +36,7 @@ var Tape;
         function Activity(props) {
             if (props === void 0) { props = {}; }
             var _this = _super.call(this, props) || this;
+            _this.__dialog_manager__ = new Laya.DialogManager();
             _this.routeName = "";
             _this.routeKey = "";
             _this.params = {};
@@ -63,6 +64,16 @@ var Tape;
         Activity.prototype.onDestroy = function () {
         };
         Activity.prototype.onNextProgress = function (progress) {
+        };
+        ///////////////////////
+        /// Dialog
+        ///////////////////////
+        Activity.prototype.openDialog = function (dialog) {
+            this.closeDialog();
+            this.__dialog_manager__.open(new ui.DialogViewUI(), true, true);
+        };
+        Activity.prototype.closeDialog = function () {
+            this.__dialog_manager__.closeAll();
         };
         ///////////////////////
         /// Navigator
@@ -170,7 +181,6 @@ var Tape;
                     view.removeSelf();
                 });
                 Laya.stage.addChild(view);
-                Tape.Display.addChild(view);
                 for (var i in list_1) {
                     if (list_1[i]) {
                         list_1[i].y -= list_1[i].height - 5;
@@ -193,28 +203,6 @@ var Tape;
         return Toast;
     }());
     Tape.Toast = Toast;
-})(Tape || (Tape = {}));
-
-// =========================== //
-// tape box.js
-// =========================== //
-var Tape;
-(function (Tape) {
-    var Display = /** @class */ (function () {
-        function Display() {
-        }
-        Display.addChild = function (view) {
-            Laya.stage.addChild(view);
-        };
-        Display.width = function () {
-            return Laya.stage.width;
-        };
-        Display.height = function () {
-            return Laya.stage.height;
-        };
-        return Display;
-    }());
-    Tape.Display = Display;
 })(Tape || (Tape = {}));
 
 var __extends = (this && this.__extends) || (function () {

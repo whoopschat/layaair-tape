@@ -58,28 +58,36 @@ declare module Tape {
         /**
          * onCreate
          */
-        protected onCreate();
+        protected onCreate(): void;
 
         /**
          * onResume
          */
-        protected onResume();
+        protected onResume(): void;
 
         /**
          * onPause
          */
-        protected onPause();
+        protected onPause(): void;
 
         /**
          * onDestroy
          */
-        protected onDestroy();
+        protected onDestroy(): void;
 
         /**
          * onNextProgress
          * @param progress progress
          */
-        protected onNextProgress(progress: number);
+        protected onNextProgress(progress: number): void;
+
+        ///////////////////////
+        /// Dialog
+        ///////////////////////
+
+        protected openDialog(dialog): void;
+
+        protected closeDialog(): void;
 
         ///////////////////////
         /// Navigator
@@ -88,32 +96,32 @@ declare module Tape {
         /**
          * navigate
          */
-        protected navigate(name, params?, action?: Function): Boolean;
+        protected navigate(name, params?, action?: Function): boolean;
 
         /**
          * deeplink
          */
-        protected deeplink(url, action?: Function): Boolean;
+        protected deeplink(url, action?: Function): boolean;
 
         /**
          * finish self
          */
-        protected back();
+        protected back(): void;
 
         /**
          * finish activity
          */
-        protected finish(name);
+        protected finish(name): void;
 
         /**
          * pop count , n default 1
          */
-        protected pop(n?: number);
+        protected pop(n?: number): void;
 
         /**
          * pop to top
          */
-        protected popToTop();
+        protected popToTop(): void;
 
         ///////////////////////
         /// Logger

@@ -41,30 +41,31 @@ module Tape {
         /// LifeCycle
         ///////////////////////
 
-        protected onCreate() {
+        protected onCreate(): void {
         }
 
-        protected onResume() {
+        protected onResume(): void {
         }
 
-        protected onPause() {
+        protected onPause(): void {
         }
 
-        protected onDestroy() {
+        protected onDestroy(): void {
         }
 
-        protected onNextProgress(progress) {
+        protected onNextProgress(progress): void {
         }
 
         ///////////////////////
         /// Dialog
         ///////////////////////
 
-        protected showDialog(dialog: Laya.Dialog) {
+        protected openDialog(dialog: Laya.Dialog): void {
+            this.closeDialog();
             this.__dialog_manager__.open(new ui.DialogViewUI(), true, true);
         }
 
-        protected closeAllDialog() {
+        protected closeDialog(): void {
             this.__dialog_manager__.closeAll();
         }
 
@@ -86,25 +87,25 @@ module Tape {
             return false;
         }
 
-        protected back() {
+        protected back(): void {
             if (this.props.hasOwnProperty('navigation')) {
                 this.props['navigation'].finish(this.routeName, this.routeKey);
             }
         }
 
-        protected finish(name) {
+        protected finish(name): void {
             if (this.props.hasOwnProperty('navigation')) {
                 this.props['navigation'].finish(name);
             }
         }
 
-        protected pop(number?: Number) {
+        protected pop(number?: Number): void {
             if (this.props.hasOwnProperty('navigation')) {
                 this.props['navigation'].pop(number);
             }
         }
 
-        protected popToTop() {
+        protected popToTop(): void {
             if (this.props.hasOwnProperty('navigation')) {
                 this.props['navigation'].popToTop();
             }

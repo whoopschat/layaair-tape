@@ -55,8 +55,10 @@ var App;
             this.addChild(this.page2);
             this.printDebug("onCreate");
             this.page2.btn.on(Laya.Event.CLICK, this, function () {
+                _this.openDialog(new ui.DialogViewUI());
                 _this.navigate("Main", { name: "你好" }, function () {
                     _this.back();
+                    _this.closeDialog();
                 });
             });
             this.page2.btnBack.on(Laya.Event.CLICK, this, function () {

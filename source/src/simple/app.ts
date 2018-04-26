@@ -40,8 +40,10 @@ module App {
             this.addChild(this.page2);
             this.printDebug("onCreate");
             this.page2.btn.on(Laya.Event.CLICK, this, () => {
+                this.openDialog(new ui.DialogViewUI());
                 this.navigate("Main", { name: "你好" }, () => {
                     this.back();
+                    this.closeDialog();
                 });
             })
             this.page2.btnBack.on(Laya.Event.CLICK, this, () => {
