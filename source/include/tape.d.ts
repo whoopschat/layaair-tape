@@ -82,14 +82,6 @@ declare module Tape {
         protected onNextProgress(progress: number): void;
 
         ///////////////////////
-        /// Dialog
-        ///////////////////////
-
-        protected openDialog(dialog): void;
-
-        protected closeDialog(): void;
-
-        ///////////////////////
         /// Navigator
         ///////////////////////
 
@@ -140,10 +132,48 @@ declare module Tape {
     }
 
     /**
-     * Toast
+     * DialogManager
      */
-    class Toast {
-        static show(type: string, view, x: number, y: number, duration?: number, pivotX?: number, pivoxY?: number): void
+    class DialogManager {
+
+        /**
+         * showDialog
+         * @param dialog dialog ui
+         * @param onOpened onOpened callback
+         * @param onClosed onClosed callback
+         */
+        static showDialog(dialog, onOpened?: Function, onClosed?: Function): void;
+
+        /**
+         * closeDialog
+         */
+        static closeDialog(): void;
+
+        /**
+         * showLockView
+         * @param lockView lockView
+         */
+        static showLockView(lockView): void;
+
+        /**
+         * closeLockView
+         */
+        static closeLockView(): void;
+    }
+
+    /**
+     * ToastManager
+     */
+    class ToastManager {
+
+        /**
+         * showToast 
+         * @param view show toast view
+         * @param duration duration default 500 ms
+         * @param previousHnadler previous hnadler callback
+         */
+        static showToast(view, duration?: number, previousHnadler?: Function): void;
+
     }
 
     ///////////////////////////////////////////////
@@ -155,23 +185,23 @@ declare module Tape {
      */
     class MarketHnadler {
 
-        public static onAuthorize: Function;
-        public static onSendMessage: Function;
-        public static onEnterShare: Function;
-        public static onGetMarketName: Function;
-        public static onGetUserInfo: Function;
-        public static onGetFriends: Function;
-        public static onLogin: Function;
-        public static onLogout: Function;
-        public static onRecharge: Function;
+        static onAuthorize: Function;
+        static onSendMessage: Function;
+        static onEnterShare: Function;
+        static onGetMarketName: Function;
+        static onGetUserInfo: Function;
+        static onGetFriends: Function;
+        static onLogin: Function;
+        static onLogout: Function;
+        static onRecharge: Function;
 
-        public static isConchApp(): boolean;
+        static isConchApp(): boolean;
 
-        public static conchShowAlertOnJsException(show: boolean): void;
+        static conchShowAlertOnJsException(show: boolean): void;
 
-        public static conchSetOnBackPressedFunction(onBackPressed: Function): void;
+        static conchSetOnBackPressedFunction(onBackPressed: Function): void;
 
-        public static conchExit(): void;
+        static conchExit(): void;
     }
 
     /**
@@ -179,23 +209,23 @@ declare module Tape {
      */
     class Market {
 
-        public static getMarketName(): string;
+        static getMarketName(): string;
 
-        public static authorize(jsonParam: string, callback: Function): void;
+        static authorize(jsonParam: string, callback: Function): void;
 
-        public static login(jsonParam: string, callback: Function): void;
+        static login(jsonParam: string, callback: Function): void;
 
-        public static logout(jsonParam: string, callback: Function): void;
+        static logout(jsonParam: string, callback: Function): void;
 
-        public static recharge(jsonParam: string, callback: Function): void;
+        static recharge(jsonParam: string, callback: Function): void;
 
-        public static sendMessage(jsonParam: string, callback: Function): void;
+        static sendMessage(jsonParam: string, callback: Function): void;
 
-        public static enterShare(jsonParam: string, callback: Function): void;
+        static enterShare(jsonParam: string, callback: Function): void;
 
-        public static getUserInfo(jsonParam: string, callback: Function): void;
+        static getUserInfo(jsonParam: string, callback: Function): void;
 
-        public static getFriendList(jsonParam: string, callback: Function): void;
+        static getFriendList(jsonParam: string, callback: Function): void;
 
     }
 
@@ -209,10 +239,21 @@ declare module Tape {
     class Build {
 
         /**
+         * configEnv
+         * @param env development or production
+         */
+        static configEnv(env: string);
+
+        /**
          * get build env
          * @return env mode : development or production
          */
         static getEnv(): string;
+
+        /**
+         * isDebug
+         */
+        static isDebug(): boolean;
 
     }
 
@@ -310,9 +351,10 @@ declare module Tape {
     class Task {
 
         /**
-         * fn: args -> resolve,reject
+         * new Task()
+         * @param func args[resolve,reject]
          */
-        constructor(fn: Function);
+        constructor(func: Function);
 
         /**
          * then
@@ -337,6 +379,9 @@ declare module Tape {
 
         /**
          * play background music
+         * @param url url
+         * @param loops loops count,default 1
+         * @param complete complete callback
          */
         public static play(url: String, loops?: number, complete?: Function): void;
 
@@ -358,11 +403,17 @@ declare module Tape {
 
         /**
          * config audio
+         * @param dir sound dir for web
+         * @param ext sound ext for web
+         * @param conchDir sound dir for conch
          */
-        public static config(soundDir: string, soundFormat: string, soundConchDir: string, soundConchFormat: string, showErrorAlert?: boolean);
+        public static config(dir: string, ext: string, conchDir: string, conchExt: string);
 
         /**
          * play audio
+         * @param url url
+         * @param loops loops count,default 1
+         * @param complete complete callback
          */
         public static play(url: String, loops?: number, complete?: Function): Audio;
 
@@ -374,6 +425,8 @@ declare module Tape {
 
         /**
          * play audio
+         * @param loops loops count,default 1
+         * @param complete complete callback
          */
         public play(loops?: number, complete?: Function): void;
 

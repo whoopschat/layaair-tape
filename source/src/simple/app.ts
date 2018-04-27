@@ -8,9 +8,7 @@ module App {
             this.addChild(this.page1);
             Tape.BackgroundMusic.play("res/sound/bg_sound.mp3", 0);
             this.page1.btn.on(Laya.Event.CLICK, this, () => {
-                let message = new ui.MessageToastUI();
-                message.text.text = this.routeName + this.routeKey + "\n" + JSON.stringify(this.params);
-                Tape.Toast.show("msg", message, 200, 200, 500);
+                Tape.ToastManager.showToast(new ui.MessageToastUI());
                 this.navigate("Page2");
             });
             this.page1.btnBack.on(Laya.Event.CLICK, this, () => {
@@ -40,10 +38,10 @@ module App {
             this.addChild(this.page2);
             this.printDebug("onCreate");
             this.page2.btn.on(Laya.Event.CLICK, this, () => {
-                this.openDialog(new ui.DialogViewUI());
+                Tape.ToastManager.showToast(new ui.MessageToastUI());
+                Tape.DialogManager.showDialog(new ui.DialogViewUI());
                 this.navigate("Main", { name: "你好" }, () => {
                     this.back();
-                    this.closeDialog();
                 });
             })
             this.page2.btnBack.on(Laya.Event.CLICK, this, () => {

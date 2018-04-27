@@ -10,6 +10,13 @@ var Tape;
         function Build() {
         }
         /**
+         * configEnv
+         * @param env development or production
+         */
+        Build.configEnv = function (env) {
+            this.__default_env__ = env;
+        };
+        /**
          * get build env
          * @return env mode : development or production
          */
@@ -17,8 +24,15 @@ var Tape;
             if (window.hasOwnProperty('__build_process_env__')) {
                 return window['__build_process_env__']['MODE'] || 'development';
             }
-            return 'development';
+            return this.__default_env__;
         };
+        /**
+         * isDebug
+         */
+        Build.isDebug = function () {
+            return this.getEnv() !== 'production';
+        };
+        Build.__default_env__ = 'development';
         return Build;
     }());
     Tape.Build = Build;
@@ -102,11 +116,11 @@ var Tape;
     var UUID = /** @class */ (function () {
         function UUID() {
         }
-        UUID.S4 = function () {
+        UUID._s4 = function () {
             return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
         };
         UUID.randUUID = function () {
-            return (this.S4() + this.S4() + "-" + this.S4() + "-" + this.S4() + "-" + this.S4() + "-" + this.S4() + this.S4() + this.S4());
+            return (this._s4() + this._s4() + "-" + this._s4() + "-" + this._s4() + "-" + this._s4() + "-" + this._s4() + this._s4() + this._s4());
         };
         return UUID;
     }());
@@ -194,7 +208,7 @@ var Tape;
             }
             console.debug.apply(console, [message].concat(optionalParams));
         };
-        Logger.__is_debug__ = true;
+        Logger.__is_debug__ = Build.isDebug();
         return Logger;
     }());
     Tape.Logger = Logger;
@@ -203,18 +217,18 @@ var Tape;
      */
     var Task = /** @class */ (function () {
         /**
-         * constructor
-         * @param fn args -> resolve,reject
+         * new Task()
+         * @param func args[resolve,reject]
          */
-        function Task(fn) {
+        function Task(func) {
             var _this = this;
-            this.state = 'pending';
-            this.value = null;
-            this.callbacks = [];
+            this.__state__ = 'pending';
+            this.__value__ = null;
+            this.__callbacks__ = [];
             var reject = function (reason) {
-                _this.state = 'rejected';
-                _this.value = reason;
-                _this.execute();
+                _this.__state__ = 'rejected';
+                _this.__value__ = reason;
+                _this._execute();
             };
             var resolve = function (newValue) {
                 if (newValue && (typeof newValue === 'object' || typeof newValue === 'function')) {
@@ -229,12 +243,12 @@ var Tape;
                         return;
                     }
                 }
-                _this.state = 'fulfilled';
-                _this.value = newValue;
-                _this.execute();
+                _this.__state__ = 'fulfilled';
+                _this.__value__ = newValue;
+                _this._execute();
             };
             try {
-                fn(resolve, reject);
+                func(resolve, reject);
             }
             catch (error) {
                 reject(error);
@@ -249,7 +263,7 @@ var Tape;
             var _this = this;
             if (onRejected === void 0) { onRejected = null; }
             return new Task(function (resolve, reject) {
-                _this.handle({
+                _this._handle({
                     onFulfilled: onFulfilled || null,
                     onRejected: onRejected || null,
                     resolve: resolve,
@@ -264,7 +278,7 @@ var Tape;
         Task.prototype.catch = function (onRejected) {
             var _this = this;
             return new Task(function (resolve, reject) {
-                _this.handle({
+                _this._handle({
                     onFulfilled: null,
                     onRejected: onRejected || null,
                     resolve: resolve,
@@ -272,30 +286,30 @@ var Tape;
                 });
             });
         };
-        Task.prototype.handle = function (callback) {
-            if (this.state === 'pending') {
-                this.callbacks.push(callback);
+        Task.prototype._handle = function (callback) {
+            if (this.__state__ === 'pending') {
+                this.__callbacks__.push(callback);
                 return;
             }
-            var cb = this.state === 'fulfilled' ? callback.onFulfilled : callback.onRejected;
+            var cb = this.__state__ === 'fulfilled' ? callback.onFulfilled : callback.onRejected;
             if (cb === null) {
-                cb = this.state === 'fulfilled' ? callback.resolve : callback.reject;
-                cb(this.value);
+                cb = this.__state__ === 'fulfilled' ? callback.resolve : callback.reject;
+                cb(this.__value__);
                 return;
             }
             try {
-                var ret = cb(this.value);
+                var ret = cb(this.__value__);
                 callback.resolve(ret);
             }
             catch (error) {
                 callback.reject(error);
             }
         };
-        Task.prototype.execute = function () {
+        Task.prototype._execute = function () {
             var _this = this;
             setTimeout(function () {
-                _this.callbacks.forEach(function (callback) {
-                    _this.handle(callback);
+                _this.__callbacks__.forEach(function (callback) {
+                    _this._handle(callback);
                 });
             }, 0);
         };

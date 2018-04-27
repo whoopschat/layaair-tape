@@ -1,6 +1,7 @@
 // 程序入口
 var GameMain = /** @class */ (function () {
     function GameMain() {
+        Config.isAntialias = true;
         Laya.init(600, 400, Laya.WebGL);
         var routes = {
             "Main": App.Main.ROUTE({

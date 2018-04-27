@@ -23,9 +23,9 @@ module Tape {
      */
     export class BackgroundMusic {
 
-        private static __audio_url__ = "";
+        private static __audio_url__: string = "";
         private static __audio_chancel__: Laya.SoundChannel = null;
-        private static __is_playing__ = false;
+        private static __is_playing__: boolean = false;
         private static __on_complete__: Function = null;
 
         public static play(url, loops: number = 1, complete: Function = null) {
@@ -72,18 +72,17 @@ module Tape {
      */
     export class Audio {
 
-        private static showErrorAlert = false;
+        private static showErrorAlert = Build.isDebug();
         private static soundWebDir = "";
-        private static soundWebFormat = "";
+        private static soundWebExt = "";
         private static soundConchDir = "";
-        private static soundConchFormat = "";
+        private static soundConchExt = "";
 
-        public static config(soundDir: string, soundFormat: string, soundConchDir: string, soundConchFormat: string, showErrorAlert: boolean = false) {
-            this.soundWebDir = soundDir || "";
-            this.soundWebFormat = soundFormat || "";
-            this.soundConchDir = soundConchDir || "";
-            this.soundConchFormat = soundConchFormat || "";
-            this.showErrorAlert = showErrorAlert;
+        public static config(dir: string, ext: string, conchDir: string, conchExt: string) {
+            this.soundWebDir = dir || "";
+            this.soundWebExt = ext || "";
+            this.soundConchDir = conchDir || "";
+            this.soundConchExt = conchExt || "";
         }
 
         public static play(url, loops: number = 1, complete: Function = null): Audio {
@@ -92,12 +91,12 @@ module Tape {
             return audio;
         }
 
-        private __audio_url__ = "";
+        private __audio_url__: string = "";
         private __audio_chancel__: Laya.SoundChannel = null;
-        private __is_playing__ = false;
+        private __is_playing__: boolean = false;
         private __on_complete__: Function = null;
 
-        constructor(url) {
+        constructor(url: string) {
             this.__audio_url__ = url;
         }
 
@@ -113,13 +112,13 @@ module Tape {
                 this.__is_playing__ = true;
                 let soundUrl = "";
                 if (MarketHandler.isConchApp()) {
-                    soundUrl = Audio.soundConchDir + this.__audio_url__ + Audio.soundConchFormat;
+                    soundUrl = Audio.soundConchDir + this.__audio_url__ + Audio.soundConchExt;
                     let ext = Laya.Utils.getFileExtension(soundUrl);
                     if (!Audio.showErrorAlert && ext != "wav" && ext != "ogg") {
                         return;
                     }
                 } else {
-                    soundUrl = Audio.soundWebDir + this.__audio_url__ + Audio.soundWebFormat;
+                    soundUrl = Audio.soundWebDir + this.__audio_url__ + Audio.soundWebExt;
                 }
                 this.__audio_chancel__ = Laya.SoundManager.playSound(soundUrl, loops, Laya.Handler.create(this, () => {
                     this.__is_playing__ = false;

@@ -8,6 +8,16 @@ module Tape {
      */
     export class Build {
 
+        private static __default_env__: string = 'development';
+
+        /**
+         * configEnv
+         * @param env development or production
+         */
+        public static configEnv(env: string) {
+            this.__default_env__ = env;
+        }
+
         /**
          * get build env
          * @return env mode : development or production
@@ -16,7 +26,14 @@ module Tape {
             if (window.hasOwnProperty('__build_process_env__')) {
                 return window['__build_process_env__']['MODE'] || 'development'
             }
-            return 'development'
+            return this.__default_env__;
+        }
+
+        /**
+         * isDebug
+         */
+        public static isDebug(): boolean {
+            return this.getEnv() !== 'production';
         }
 
     }
@@ -103,12 +120,12 @@ module Tape {
      */
     export class UUID {
 
-        private static S4() {
+        private static _s4() {
             return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
         }
 
         public static randUUID() {
-            return (this.S4() + this.S4() + "-" + this.S4() + "-" + this.S4() + "-" + this.S4() + "-" + this.S4() + this.S4() + this.S4());
+            return (this._s4() + this._s4() + "-" + this._s4() + "-" + this._s4() + "-" + this._s4() + "-" + this._s4() + this._s4() + this._s4());
         }
 
     }
@@ -118,7 +135,7 @@ module Tape {
      */
     export class Logger {
 
-        private static __is_debug__: Boolean = true;
+        private static __is_debug__: Boolean = Build.isDebug();
 
         /**
          * setDebug
@@ -190,19 +207,19 @@ module Tape {
      */
     export class Task {
 
-        private state = 'pending';
-        private value = null;
-        private callbacks = [];
+        private __state__ = 'pending';
+        private __value__ = null;
+        private __callbacks__ = [];
 
         /**
-         * constructor
-         * @param fn args -> resolve,reject
+         * new Task()
+         * @param func args[resolve,reject]
          */
-        constructor(fn: Function) {
+        constructor(func: Function) {
             var reject = (reason) => {
-                this.state = 'rejected';
-                this.value = reason;
-                this.execute();
+                this.__state__ = 'rejected';
+                this.__value__ = reason;
+                this._execute();
             }
             var resolve = (newValue) => {
                 if (newValue && (typeof newValue === 'object' || typeof newValue === 'function')) {
@@ -216,12 +233,12 @@ module Tape {
                         return;
                     }
                 }
-                this.state = 'fulfilled';
-                this.value = newValue;
-                this.execute();
+                this.__state__ = 'fulfilled';
+                this.__value__ = newValue;
+                this._execute();
             }
             try {
-                fn(resolve, reject);
+                func(resolve, reject);
             } catch (error) {
                 reject(error);
             }
@@ -234,7 +251,7 @@ module Tape {
          */
         public then(onFulfilled: Function, onRejected: Function = null) {
             return new Task((resolve, reject) => {
-                this.handle({
+                this._handle({
                     onFulfilled: onFulfilled || null,
                     onRejected: onRejected || null,
                     resolve: resolve,
@@ -249,7 +266,7 @@ module Tape {
          */
         public catch(onRejected: Function) {
             return new Task((resolve, reject) => {
-                this.handle({
+                this._handle({
                     onFulfilled: null,
                     onRejected: onRejected || null,
                     resolve: resolve,
@@ -258,29 +275,29 @@ module Tape {
             });
         }
 
-        private handle(callback) {
-            if (this.state === 'pending') {
-                this.callbacks.push(callback);
+        private _handle(callback) {
+            if (this.__state__ === 'pending') {
+                this.__callbacks__.push(callback);
                 return;
             }
-            var cb = this.state === 'fulfilled' ? callback.onFulfilled : callback.onRejected;
+            var cb = this.__state__ === 'fulfilled' ? callback.onFulfilled : callback.onRejected;
             if (cb === null) {
-                cb = this.state === 'fulfilled' ? callback.resolve : callback.reject;
-                cb(this.value);
+                cb = this.__state__ === 'fulfilled' ? callback.resolve : callback.reject;
+                cb(this.__value__);
                 return;
             }
             try {
-                var ret = cb(this.value);
+                var ret = cb(this.__value__);
                 callback.resolve(ret);
             } catch (error) {
                 callback.reject(error);
             }
         }
 
-        private execute() {
+        private _execute() {
             setTimeout(() => {
-                this.callbacks.forEach((callback) => {
-                    this.handle(callback);
+                this.__callbacks__.forEach((callback) => {
+                    this._handle(callback);
                 });
             }, 0);
         }

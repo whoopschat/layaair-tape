@@ -2,10 +2,24 @@
 import View=laya.ui.View;
 import Dialog=laya.ui.Dialog;
 module ui {
-    export class DialogViewUI extends Dialog {
-		public OK:Laya.Button;
+    export class DemoUI extends View {
 
-        public static  uiView:any ={"type":"Dialog","props":{"width":710,"height":710},"child":[{"type":"Image","props":{"y":258,"x":102,"width":489,"skin":"comp/bg.png","sizeGrid":"29,12,8,10","height":278}},{"type":"Button","props":{"y":459,"x":281,"width":137,"var":"OK","skin":"comp/button.png","label":"label","height":48,"click":"ok"}}]};
+        public static  uiView:any ={"type":"View","props":{"width":60,"height":60},"child":[{"type":"Pie","props":{"y":50,"x":10,"startAngle":90,"radius":10,"lineWidth":1,"fillColor":"#ff0000","endAngle":180}},{"type":"Pie","props":{"y":50,"x":50,"startAngle":0,"radius":10,"lineWidth":1,"fillColor":"#ff0000","endAngle":90}},{"type":"Pie","props":{"y":10,"x":50,"startAngle":-90,"radius":10,"lineWidth":1,"fillColor":"#ff0000","endAngle":0}},{"type":"Pie","props":{"y":10,"x":10,"startAngle":-180,"radius":10,"lineWidth":1,"fillColor":"#ff0000","endAngle":-90}},{"type":"Rect","props":{"x":10,"width":40,"lineWidth":1,"height":60,"fillColor":"#ff0000"}},{"type":"Rect","props":{"y":10,"width":20,"lineWidth":1,"height":40,"fillColor":"#ff0000"}},{"type":"Rect","props":{"y":10,"x":40,"width":20,"lineWidth":1,"height":40,"fillColor":"#ff0000"}}]};
+        constructor(){ super()}
+        createChildren():void {
+        
+            super.createChildren();
+            this.createView(ui.DemoUI.uiView);
+
+        }
+
+    }
+}
+
+module ui {
+    export class DialogViewUI extends Dialog {
+
+        public static  uiView:any ={"type":"Dialog","props":{"width":710,"height":310},"child":[{"type":"Image","props":{"y":18,"x":118,"width":489,"skin":"comp/bg.png","sizeGrid":"29,12,8,10","height":278}},{"type":"Button","props":{"y":223,"x":292,"width":137,"skin":"comp/button.png","name":"ok","label":"label","height":48}}]};
         constructor(){ super()}
         createChildren():void {
         
@@ -21,7 +35,7 @@ module ui {
     export class MessageToastUI extends View {
 		public text:Laya.Label;
 
-        public static  uiView:any ={"type":"View","props":{"width":200,"height":30},"child":[{"type":"Label","props":{"y":16,"x":101,"var":"text","text":"Content","pivotY":0.5,"pivotX":0.5,"fontSize":20,"color":"#ff1410","centerY":0.5,"centerX":0.5}}]};
+        public static  uiView:any ={"type":"View","props":{"width":640,"height":400},"child":[{"type":"Label","props":{"y":16,"x":101,"var":"text","text":"Content","pivotY":0.5,"pivotX":0.5,"fontSize":20,"color":"#ff1410","centerY":0.5,"centerX":0.5}}]};
         constructor(){ super()}
         createChildren():void {
         

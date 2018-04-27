@@ -80,13 +80,11 @@ var Tape;
             this.__on_complete__ = null;
             this.__audio_url__ = url;
         }
-        Audio.config = function (soundDir, soundFormat, soundConchDir, soundConchFormat, showErrorAlert) {
-            if (showErrorAlert === void 0) { showErrorAlert = false; }
-            this.soundWebDir = soundDir || "";
-            this.soundWebFormat = soundFormat || "";
-            this.soundConchDir = soundConchDir || "";
-            this.soundConchFormat = soundConchFormat || "";
-            this.showErrorAlert = showErrorAlert;
+        Audio.config = function (dir, ext, conchDir, conchExt) {
+            this.soundWebDir = dir || "";
+            this.soundWebExt = ext || "";
+            this.soundConchDir = conchDir || "";
+            this.soundConchExt = conchExt || "";
         };
         Audio.play = function (url, loops, complete) {
             if (loops === void 0) { loops = 1; }
@@ -110,14 +108,14 @@ var Tape;
                 _this.__is_playing__ = true;
                 var soundUrl = "";
                 if (Tape.MarketHandler.isConchApp()) {
-                    soundUrl = Audio.soundConchDir + _this.__audio_url__ + Audio.soundConchFormat;
+                    soundUrl = Audio.soundConchDir + _this.__audio_url__ + Audio.soundConchExt;
                     var ext = Laya.Utils.getFileExtension(soundUrl);
                     if (!Audio.showErrorAlert && ext != "wav" && ext != "ogg") {
                         return;
                     }
                 }
                 else {
-                    soundUrl = Audio.soundWebDir + _this.__audio_url__ + Audio.soundWebFormat;
+                    soundUrl = Audio.soundWebDir + _this.__audio_url__ + Audio.soundWebExt;
                 }
                 _this.__audio_chancel__ = Laya.SoundManager.playSound(soundUrl, loops, Laya.Handler.create(_this, function () {
                     _this.__is_playing__ = false;
@@ -138,11 +136,11 @@ var Tape;
                 this.__is_playing__ = false;
             }
         };
-        Audio.showErrorAlert = false;
+        Audio.showErrorAlert = Tape.Build.isDebug();
         Audio.soundWebDir = "";
-        Audio.soundWebFormat = "";
+        Audio.soundWebExt = "";
         Audio.soundConchDir = "";
-        Audio.soundConchFormat = "";
+        Audio.soundConchExt = "";
         return Audio;
     }());
     Tape.Audio = Audio;

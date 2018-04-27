@@ -14,6 +14,84 @@ var __extends = (this && this.__extends) || (function () {
 var Tape;
 (function (Tape) {
     /**
+     * DialogManager
+     */
+    var DialogManager = /** @class */ (function () {
+        function DialogManager() {
+        }
+        DialogManager.instance = function () {
+            if (!this.__dialog_manager_instance__) {
+                this.__dialog_manager_instance__ = new Laya.DialogManager();
+            }
+            return this.__dialog_manager_instance__;
+        };
+        DialogManager.showDialog = function (dialog, onOpened, onClosed) {
+            if (onOpened === void 0) { onOpened = null; }
+            if (onClosed === void 0) { onClosed = null; }
+            this.closeDialog();
+            dialog.onClosed = function (type) {
+                onClosed && onClosed(type);
+            };
+            dialog.onOpened = function () {
+                onOpened && onOpened();
+            };
+            this.instance().open(new ui.DialogViewUI(), true, true);
+        };
+        DialogManager.closeDialog = function () {
+            this.instance().closeAll();
+        };
+        DialogManager.showLockView = function (lockView) {
+            this.instance().setLockView(lockView);
+            this.instance().lock(true);
+        };
+        DialogManager.closeLockView = function () {
+            this.instance().lock(false);
+        };
+        DialogManager.__dialog_manager_instance__ = null;
+        return DialogManager;
+    }());
+    Tape.DialogManager = DialogManager;
+    /**
+     * ToastManager
+     */
+    var ToastManager = /** @class */ (function () {
+        function ToastManager() {
+        }
+        ToastManager.showToast = function (view, duration, previousHnadler) {
+            if (duration === void 0) { duration = 500; }
+            if (previousHnadler === void 0) { previousHnadler = null; }
+            if (view && !view.parent) {
+                var type = view.name || '_default_toast';
+                if (!this.__toast_group__.hasOwnProperty(type)) {
+                    this.__toast_group__[type] = new Array();
+                }
+                var list_1 = this.__toast_group__[type];
+                view.alpha = 0;
+                view.zOrder = 99999;
+                Laya.Tween.to(view, { alpha: 1 }, duration, Laya.Ease.quintOut, null, 0);
+                Laya.Tween.to(view, { alpha: 0 }, duration, Laya.Ease.quintOut, Laya.Handler.create(this, function () {
+                    list_1.splice(list_1.indexOf(view), 1);
+                    view.removeSelf();
+                }), duration);
+                Laya.stage.addChild(view);
+                for (var i in list_1) {
+                    if (list_1[i]) {
+                        if (previousHnadler) {
+                            previousHnadler(list_1[i]);
+                        }
+                        else {
+                            list_1[i].visible = false;
+                        }
+                    }
+                }
+                list_1.push(view);
+            }
+        };
+        ToastManager.__toast_group__ = {};
+        return ToastManager;
+    }());
+    Tape.ToastManager = ToastManager;
+    /**
      * PropsComponent
      */
     var PropsComponent = /** @class */ (function (_super) {
@@ -36,7 +114,6 @@ var Tape;
         function Activity(props) {
             if (props === void 0) { props = {}; }
             var _this = _super.call(this, props) || this;
-            _this.__dialog_manager__ = new Laya.DialogManager();
             _this.routeName = "";
             _this.routeKey = "";
             _this.params = {};
@@ -64,16 +141,6 @@ var Tape;
         Activity.prototype.onDestroy = function () {
         };
         Activity.prototype.onNextProgress = function (progress) {
-        };
-        ///////////////////////
-        /// Dialog
-        ///////////////////////
-        Activity.prototype.openDialog = function (dialog) {
-            this.closeDialog();
-            this.__dialog_manager__.open(new ui.DialogViewUI(), true, true);
-        };
-        Activity.prototype.closeDialog = function () {
-            this.__dialog_manager__.closeAll();
         };
         ///////////////////////
         /// Navigator
@@ -156,51 +223,4 @@ var Tape;
         return Activity;
     }(PropsComponent));
     Tape.Activity = Activity;
-    /**
-     * Toast
-     */
-    var Toast = /** @class */ (function () {
-        function Toast() {
-        }
-        Toast.show = function (type, view, x, y, duration, pivotX, pivoxY) {
-            if (duration === void 0) { duration = 500; }
-            if (pivotX === void 0) { pivotX = 0.5; }
-            if (pivoxY === void 0) { pivoxY = 0.5; }
-            if (view && view.parent == null) {
-                if (!this.__toast_object__.hasOwnProperty(type)) {
-                    this.__toast_object__[type] = new Array();
-                }
-                var list_1 = this.__toast_object__[type];
-                view.x = x;
-                view.y = y;
-                view.alpha = 0;
-                view.pivot(view.width * pivotX, view.height * pivoxY);
-                this.fadeIn(view, duration, 0);
-                this.fadeOut(view, duration, duration, function () {
-                    list_1.splice(list_1.indexOf(view), 1);
-                    view.removeSelf();
-                });
-                Laya.stage.addChild(view);
-                for (var i in list_1) {
-                    if (list_1[i]) {
-                        list_1[i].y -= list_1[i].height - 5;
-                    }
-                }
-                list_1.push(view);
-            }
-        };
-        Toast.fadeIn = function (view, duration, delay, complete) {
-            if (complete === void 0) { complete = null; }
-            Laya.Tween.to(view, { alpha: 1 }, duration, Laya.Ease.quintOut, null, delay);
-        };
-        Toast.fadeOut = function (view, duration, delay, complete) {
-            if (complete === void 0) { complete = null; }
-            Laya.Tween.to(view, { alpha: 0 }, duration, Laya.Ease.quintOut, Laya.Handler.create(this, function () {
-                complete && complete();
-            }), delay);
-        };
-        Toast.__toast_object__ = {};
-        return Toast;
-    }());
-    Tape.Toast = Toast;
 })(Tape || (Tape = {}));

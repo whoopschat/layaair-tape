@@ -14,6 +14,84 @@ var __extends = (this && this.__extends) || (function () {
 var Tape;
 (function (Tape) {
     /**
+     * DialogManager
+     */
+    var DialogManager = /** @class */ (function () {
+        function DialogManager() {
+        }
+        DialogManager.instance = function () {
+            if (!this.__dialog_manager_instance__) {
+                this.__dialog_manager_instance__ = new Laya.DialogManager();
+            }
+            return this.__dialog_manager_instance__;
+        };
+        DialogManager.showDialog = function (dialog, onOpened, onClosed) {
+            if (onOpened === void 0) { onOpened = null; }
+            if (onClosed === void 0) { onClosed = null; }
+            this.closeDialog();
+            dialog.onClosed = function (type) {
+                onClosed && onClosed(type);
+            };
+            dialog.onOpened = function () {
+                onOpened && onOpened();
+            };
+            this.instance().open(new ui.DialogViewUI(), true, true);
+        };
+        DialogManager.closeDialog = function () {
+            this.instance().closeAll();
+        };
+        DialogManager.showLockView = function (lockView) {
+            this.instance().setLockView(lockView);
+            this.instance().lock(true);
+        };
+        DialogManager.closeLockView = function () {
+            this.instance().lock(false);
+        };
+        DialogManager.__dialog_manager_instance__ = null;
+        return DialogManager;
+    }());
+    Tape.DialogManager = DialogManager;
+    /**
+     * ToastManager
+     */
+    var ToastManager = /** @class */ (function () {
+        function ToastManager() {
+        }
+        ToastManager.showToast = function (view, duration, previousHnadler) {
+            if (duration === void 0) { duration = 500; }
+            if (previousHnadler === void 0) { previousHnadler = null; }
+            if (view && !view.parent) {
+                var type = view.name || '_default_toast';
+                if (!this.__toast_group__.hasOwnProperty(type)) {
+                    this.__toast_group__[type] = new Array();
+                }
+                var list_1 = this.__toast_group__[type];
+                view.alpha = 0;
+                view.zOrder = 99999;
+                Laya.Tween.to(view, { alpha: 1 }, duration, Laya.Ease.quintOut, null, 0);
+                Laya.Tween.to(view, { alpha: 0 }, duration, Laya.Ease.quintOut, Laya.Handler.create(this, function () {
+                    list_1.splice(list_1.indexOf(view), 1);
+                    view.removeSelf();
+                }), duration);
+                Laya.stage.addChild(view);
+                for (var i in list_1) {
+                    if (list_1[i]) {
+                        if (previousHnadler) {
+                            previousHnadler(list_1[i]);
+                        }
+                        else {
+                            list_1[i].visible = false;
+                        }
+                    }
+                }
+                list_1.push(view);
+            }
+        };
+        ToastManager.__toast_group__ = {};
+        return ToastManager;
+    }());
+    Tape.ToastManager = ToastManager;
+    /**
      * PropsComponent
      */
     var PropsComponent = /** @class */ (function (_super) {
@@ -36,7 +114,6 @@ var Tape;
         function Activity(props) {
             if (props === void 0) { props = {}; }
             var _this = _super.call(this, props) || this;
-            _this.__dialog_manager__ = new Laya.DialogManager();
             _this.routeName = "";
             _this.routeKey = "";
             _this.params = {};
@@ -64,16 +141,6 @@ var Tape;
         Activity.prototype.onDestroy = function () {
         };
         Activity.prototype.onNextProgress = function (progress) {
-        };
-        ///////////////////////
-        /// Dialog
-        ///////////////////////
-        Activity.prototype.openDialog = function (dialog) {
-            this.closeDialog();
-            this.__dialog_manager__.open(new ui.DialogViewUI(), true, true);
-        };
-        Activity.prototype.closeDialog = function () {
-            this.__dialog_manager__.closeAll();
         };
         ///////////////////////
         /// Navigator
@@ -156,53 +223,6 @@ var Tape;
         return Activity;
     }(PropsComponent));
     Tape.Activity = Activity;
-    /**
-     * Toast
-     */
-    var Toast = /** @class */ (function () {
-        function Toast() {
-        }
-        Toast.show = function (type, view, x, y, duration, pivotX, pivoxY) {
-            if (duration === void 0) { duration = 500; }
-            if (pivotX === void 0) { pivotX = 0.5; }
-            if (pivoxY === void 0) { pivoxY = 0.5; }
-            if (view && view.parent == null) {
-                if (!this.__toast_object__.hasOwnProperty(type)) {
-                    this.__toast_object__[type] = new Array();
-                }
-                var list_1 = this.__toast_object__[type];
-                view.x = x;
-                view.y = y;
-                view.alpha = 0;
-                view.pivot(view.width * pivotX, view.height * pivoxY);
-                this.fadeIn(view, duration, 0);
-                this.fadeOut(view, duration, duration, function () {
-                    list_1.splice(list_1.indexOf(view), 1);
-                    view.removeSelf();
-                });
-                Laya.stage.addChild(view);
-                for (var i in list_1) {
-                    if (list_1[i]) {
-                        list_1[i].y -= list_1[i].height - 5;
-                    }
-                }
-                list_1.push(view);
-            }
-        };
-        Toast.fadeIn = function (view, duration, delay, complete) {
-            if (complete === void 0) { complete = null; }
-            Laya.Tween.to(view, { alpha: 1 }, duration, Laya.Ease.quintOut, null, delay);
-        };
-        Toast.fadeOut = function (view, duration, delay, complete) {
-            if (complete === void 0) { complete = null; }
-            Laya.Tween.to(view, { alpha: 0 }, duration, Laya.Ease.quintOut, Laya.Handler.create(this, function () {
-                complete && complete();
-            }), delay);
-        };
-        Toast.__toast_object__ = {};
-        return Toast;
-    }());
-    Tape.Toast = Toast;
 })(Tape || (Tape = {}));
 
 var __extends = (this && this.__extends) || (function () {
@@ -624,13 +644,11 @@ var Tape;
             this.__on_complete__ = null;
             this.__audio_url__ = url;
         }
-        Audio.config = function (soundDir, soundFormat, soundConchDir, soundConchFormat, showErrorAlert) {
-            if (showErrorAlert === void 0) { showErrorAlert = false; }
-            this.soundWebDir = soundDir || "";
-            this.soundWebFormat = soundFormat || "";
-            this.soundConchDir = soundConchDir || "";
-            this.soundConchFormat = soundConchFormat || "";
-            this.showErrorAlert = showErrorAlert;
+        Audio.config = function (dir, ext, conchDir, conchExt) {
+            this.soundWebDir = dir || "";
+            this.soundWebExt = ext || "";
+            this.soundConchDir = conchDir || "";
+            this.soundConchExt = conchExt || "";
         };
         Audio.play = function (url, loops, complete) {
             if (loops === void 0) { loops = 1; }
@@ -654,14 +672,14 @@ var Tape;
                 _this.__is_playing__ = true;
                 var soundUrl = "";
                 if (Tape.MarketHandler.isConchApp()) {
-                    soundUrl = Audio.soundConchDir + _this.__audio_url__ + Audio.soundConchFormat;
+                    soundUrl = Audio.soundConchDir + _this.__audio_url__ + Audio.soundConchExt;
                     var ext = Laya.Utils.getFileExtension(soundUrl);
                     if (!Audio.showErrorAlert && ext != "wav" && ext != "ogg") {
                         return;
                     }
                 }
                 else {
-                    soundUrl = Audio.soundWebDir + _this.__audio_url__ + Audio.soundWebFormat;
+                    soundUrl = Audio.soundWebDir + _this.__audio_url__ + Audio.soundWebExt;
                 }
                 _this.__audio_chancel__ = Laya.SoundManager.playSound(soundUrl, loops, Laya.Handler.create(_this, function () {
                     _this.__is_playing__ = false;
@@ -682,11 +700,11 @@ var Tape;
                 this.__is_playing__ = false;
             }
         };
-        Audio.showErrorAlert = false;
+        Audio.showErrorAlert = Tape.Build.isDebug();
         Audio.soundWebDir = "";
-        Audio.soundWebFormat = "";
+        Audio.soundWebExt = "";
         Audio.soundConchDir = "";
-        Audio.soundConchFormat = "";
+        Audio.soundConchExt = "";
         return Audio;
     }());
     Tape.Audio = Audio;
@@ -1096,6 +1114,13 @@ var Tape;
         function Build() {
         }
         /**
+         * configEnv
+         * @param env development or production
+         */
+        Build.configEnv = function (env) {
+            this.__default_env__ = env;
+        };
+        /**
          * get build env
          * @return env mode : development or production
          */
@@ -1103,8 +1128,15 @@ var Tape;
             if (window.hasOwnProperty('__build_process_env__')) {
                 return window['__build_process_env__']['MODE'] || 'development';
             }
-            return 'development';
+            return this.__default_env__;
         };
+        /**
+         * isDebug
+         */
+        Build.isDebug = function () {
+            return this.getEnv() !== 'production';
+        };
+        Build.__default_env__ = 'development';
         return Build;
     }());
     Tape.Build = Build;
@@ -1188,11 +1220,11 @@ var Tape;
     var UUID = /** @class */ (function () {
         function UUID() {
         }
-        UUID.S4 = function () {
+        UUID._s4 = function () {
             return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
         };
         UUID.randUUID = function () {
-            return (this.S4() + this.S4() + "-" + this.S4() + "-" + this.S4() + "-" + this.S4() + "-" + this.S4() + this.S4() + this.S4());
+            return (this._s4() + this._s4() + "-" + this._s4() + "-" + this._s4() + "-" + this._s4() + "-" + this._s4() + this._s4() + this._s4());
         };
         return UUID;
     }());
@@ -1280,7 +1312,7 @@ var Tape;
             }
             console.debug.apply(console, [message].concat(optionalParams));
         };
-        Logger.__is_debug__ = true;
+        Logger.__is_debug__ = Build.isDebug();
         return Logger;
     }());
     Tape.Logger = Logger;
@@ -1289,18 +1321,18 @@ var Tape;
      */
     var Task = /** @class */ (function () {
         /**
-         * constructor
-         * @param fn args -> resolve,reject
+         * new Task()
+         * @param func args[resolve,reject]
          */
-        function Task(fn) {
+        function Task(func) {
             var _this = this;
-            this.state = 'pending';
-            this.value = null;
-            this.callbacks = [];
+            this.__state__ = 'pending';
+            this.__value__ = null;
+            this.__callbacks__ = [];
             var reject = function (reason) {
-                _this.state = 'rejected';
-                _this.value = reason;
-                _this.execute();
+                _this.__state__ = 'rejected';
+                _this.__value__ = reason;
+                _this._execute();
             };
             var resolve = function (newValue) {
                 if (newValue && (typeof newValue === 'object' || typeof newValue === 'function')) {
@@ -1315,12 +1347,12 @@ var Tape;
                         return;
                     }
                 }
-                _this.state = 'fulfilled';
-                _this.value = newValue;
-                _this.execute();
+                _this.__state__ = 'fulfilled';
+                _this.__value__ = newValue;
+                _this._execute();
             };
             try {
-                fn(resolve, reject);
+                func(resolve, reject);
             }
             catch (error) {
                 reject(error);
@@ -1335,7 +1367,7 @@ var Tape;
             var _this = this;
             if (onRejected === void 0) { onRejected = null; }
             return new Task(function (resolve, reject) {
-                _this.handle({
+                _this._handle({
                     onFulfilled: onFulfilled || null,
                     onRejected: onRejected || null,
                     resolve: resolve,
@@ -1350,7 +1382,7 @@ var Tape;
         Task.prototype.catch = function (onRejected) {
             var _this = this;
             return new Task(function (resolve, reject) {
-                _this.handle({
+                _this._handle({
                     onFulfilled: null,
                     onRejected: onRejected || null,
                     resolve: resolve,
@@ -1358,30 +1390,30 @@ var Tape;
                 });
             });
         };
-        Task.prototype.handle = function (callback) {
-            if (this.state === 'pending') {
-                this.callbacks.push(callback);
+        Task.prototype._handle = function (callback) {
+            if (this.__state__ === 'pending') {
+                this.__callbacks__.push(callback);
                 return;
             }
-            var cb = this.state === 'fulfilled' ? callback.onFulfilled : callback.onRejected;
+            var cb = this.__state__ === 'fulfilled' ? callback.onFulfilled : callback.onRejected;
             if (cb === null) {
-                cb = this.state === 'fulfilled' ? callback.resolve : callback.reject;
-                cb(this.value);
+                cb = this.__state__ === 'fulfilled' ? callback.resolve : callback.reject;
+                cb(this.__value__);
                 return;
             }
             try {
-                var ret = cb(this.value);
+                var ret = cb(this.__value__);
                 callback.resolve(ret);
             }
             catch (error) {
                 callback.reject(error);
             }
         };
-        Task.prototype.execute = function () {
+        Task.prototype._execute = function () {
             var _this = this;
             setTimeout(function () {
-                _this.callbacks.forEach(function (callback) {
-                    _this.handle(callback);
+                _this.__callbacks__.forEach(function (callback) {
+                    _this._handle(callback);
                 });
             }, 0);
         };
