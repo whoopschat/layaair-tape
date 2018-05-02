@@ -298,6 +298,33 @@ declare module Tape {
     }
 
     /**
+     * EventBus
+     */
+    class EventBus {
+
+        /**
+         * post
+         * @param event event
+         * @param data data
+         */
+        static post(event: string, data: any): void;
+
+        /**
+         * register
+         * @param event event
+         * @param callback callback
+         */
+        static register(event: string, callback: Function): void;
+
+        /**
+         * unregister
+         * @param event event
+         * @param callback callback
+         */
+        static unregister(event: string, callback: Function): void;
+    }
+
+    /**
      * NumUtil
      */
     class NumUtil {

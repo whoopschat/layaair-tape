@@ -111,6 +111,48 @@ var Tape;
     }());
     Tape.TimerInterval = TimerInterval;
     /**
+     * EventBus
+     */
+    var EventBus = /** @class */ (function () {
+        function EventBus() {
+        }
+        EventBus.post = function (event, data) {
+            if (!event) {
+                return;
+            }
+            if (this.__event_group__.hasOwnProperty(event)) {
+                var list = this.__event_group__[event];
+                if (list.length > 0) {
+                    list.forEach(function (value) {
+                        value && value(data);
+                    });
+                }
+            }
+        };
+        EventBus.register = function (event, callback) {
+            if (!event || !callback) {
+                return;
+            }
+            if (!this.__event_group__.hasOwnProperty(event)) {
+                this.__event_group__[event] = new Array();
+            }
+            var list = this.__event_group__[event];
+            list.push(callback);
+        };
+        EventBus.unregister = function (event, callback) {
+            if (!event || !callback) {
+                return;
+            }
+            if (this.__event_group__.hasOwnProperty(event)) {
+                var list = this.__event_group__[event];
+                list.splice(list.indexOf(callback), 1);
+            }
+        };
+        EventBus.__event_group__ = {};
+        return EventBus;
+    }());
+    Tape.EventBus = EventBus;
+    /**
      * NumUtil
      */
     var NumUtil = /** @class */ (function () {

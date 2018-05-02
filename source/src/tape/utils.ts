@@ -49,9 +49,6 @@ module Tape {
      */
     export class FrameInterval {
 
-        constructor() {
-        }
-
         private __callback__: Function = null;
         private __start_date__: Date = null;
         private __offset__: number = 0;
@@ -62,14 +59,14 @@ module Tape {
          * @param callback callback:time
          * @param offset time offset
          */
-        public start(delay: number, callback: Function, offset: number = 0) {
+        public start(delay: number, callback: Function, offset: number = 0): void {
             this.__callback__ = callback;
             this.__start_date__ = new Date();
             this.__offset__ = offset;
             Laya.timer.loop(delay, this, this.loop);
         }
 
-        private loop() {
+        private loop(): void {
             var now = new Date();
             this.__callback__ && this.__callback__(now.getTime() - this.__start_date__.getTime() + this.__offset__);
         }
@@ -92,16 +89,13 @@ module Tape {
         private __start_date__: Date = null;
         private __offset__: number = 0;
 
-        constructor() {
-        }
-
         /**
          * start
          * @param delay millis
          * @param callback callback:time
          * @param offset time offset
          */
-        public start(delay: number, callback: Function, offset: number = 0) {
+        public start(delay: number, callback: Function, offset: number = 0): void {
             this.__start_date__ = new Date();
             this.__offset__ = offset;
             this.__interval__ = setInterval(() => {
@@ -117,6 +111,49 @@ module Tape {
             clearInterval(this.__interval__);
         }
 
+    }
+
+    /**
+     * EventBus
+     */
+    export class EventBus {
+
+        private static __event_group__: Object = {};
+
+        public static post(event: string, data: any): void {
+            if (!event) {
+                return;
+            }
+            if (this.__event_group__.hasOwnProperty(event)) {
+                const list: Array<Function> = this.__event_group__[event];
+                if (list.length > 0) {
+                    list.forEach(value => {
+                        value && value(data);
+                    })
+                }
+            }
+        }
+
+        public static register(event: string, callback: Function): void {
+            if (!event || !callback) {
+                return;
+            }
+            if (!this.__event_group__.hasOwnProperty(event)) {
+                this.__event_group__[event] = new Array();
+            }
+            const list = this.__event_group__[event];
+            list.push(callback);
+        }
+
+        public static unregister(event: string, callback: Function): void {
+            if (!event || !callback) {
+                return;
+            }
+            if (this.__event_group__.hasOwnProperty(event)) {
+                const list = this.__event_group__[event];
+                list.splice(list.indexOf(callback), 1);
+            }
+        }
     }
 
     /**

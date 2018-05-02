@@ -3,7 +3,7 @@ class GameMain {
     constructor() {
         Laya.init(600, 400, Laya.WebGL);
         Laya.stage.scaleMode = Laya.Stage.SCALE_EXACTFIT
-        // Laya.DebugPanel.init();
+        Laya.Stat.show(0,0);
         let routes = {
             "Main": App.Main.ROUTE({
                 res: [

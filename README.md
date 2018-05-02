@@ -2,6 +2,21 @@
 > A layaair navigation library for ts
 
 ## support
-* activity and life cycle
-* activity navigation
-*  with `WebSocket` and `MQTT Socket`
+* createNavigator
+* Activity
+* Dialog
+* Toast
+* MarketHnadler
+* Market
+* Build
+* FrameInterval
+* TimerInterval
+* EventBus
+* NumUtil
+* LinkUtil
+* UUID
+* Task
+* BackgroundMusic
+* Audio
+* WebSocket
+* MQTTSocket

@@ -181,9 +181,9 @@ declare module Tape {
     ///////////////////////////////////////////////
 
     /**
-     * MarketHnadler
+     * MarketHandler
      */
-    class MarketHnadler {
+    class MarketHandler {
 
         static onAuthorize: Function;
         static onSendMessage: Function;
@@ -295,6 +295,33 @@ declare module Tape {
          */
         public stop(): void;
 
+    }
+
+    /**
+     * EventBus
+     */
+    class EventBus {
+
+        /**
+         * post
+         * @param event event
+         * @param data data
+         */
+        static post(event: string, data: any): void;
+
+        /**
+         * register
+         * @param event event
+         * @param callback callback
+         */
+        static register(event: string, callback: Function): void;
+
+        /**
+         * unregister
+         * @param event event
+         * @param callback callback
+         */
+        static unregister(event: string, callback: Function): void;
     }
 
     /**
