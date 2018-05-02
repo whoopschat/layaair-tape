@@ -132,9 +132,9 @@ declare module Tape {
     }
 
     /**
-     * DialogManager
+     * Dialog
      */
-    class DialogManager {
+    class Dialog {
 
         /**
          * showDialog
@@ -162,9 +162,9 @@ declare module Tape {
     }
 
     /**
-     * ToastManager
+     * Toast
      */
-    class ToastManager {
+    class Toast {
 
         /**
          * showToast 
@@ -258,16 +258,41 @@ declare module Tape {
     }
 
     /**
-     * Timer
+     * FrameInterval
      */
-    class Timer {
+    class FrameInterval {
 
-        static sleep(numberMillis): void;
+        /**
+         * start
+         * @param delay frame
+         * @param callback callback:time
+         * @param offset time offset
+         */
+        public start(delay: number, callback: Function, offset?: number): void;
 
-        constructor();
+        /**
+         * stop
+         */
+        public stop(): void;
 
-        public loop(callback: Function, delay: number): void;
+    }
 
+    /**
+     * TimerInterval
+     */
+    class TimerInterval {
+
+        /**
+         * start
+         * @param delay millis
+         * @param callback callback:time
+         * @param offset time offset
+         */
+        public start(delay: number, callback: Function, offset?: number): void;
+
+        /**
+         * stop
+         */
         public stop(): void;
 
     }
@@ -279,11 +304,16 @@ declare module Tape {
 
         /**
          * rangedValue
+         * @param val curr number
+         * @param min min number
+         * @param max max number
          */
         static rangedValue(val: number, min: number, max: number): number;
 
         /**
          * rand
+         * @param min min number
+         * @param max max number
          */
         static rand(min: number, max: number): number;
 
@@ -296,6 +326,7 @@ declare module Tape {
 
         /**
          * openURL
+         * @param url url
          */
         static openURL(url: string): void;
 

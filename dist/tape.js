@@ -14,18 +14,18 @@ var __extends = (this && this.__extends) || (function () {
 var Tape;
 (function (Tape) {
     /**
-     * DialogManager
+     * Dialog
      */
-    var DialogManager = /** @class */ (function () {
-        function DialogManager() {
+    var Dialog = /** @class */ (function () {
+        function Dialog() {
         }
-        DialogManager.instance = function () {
+        Dialog.instance = function () {
             if (!this.__dialog_manager_instance__) {
                 this.__dialog_manager_instance__ = new Laya.DialogManager();
             }
             return this.__dialog_manager_instance__;
         };
-        DialogManager.showDialog = function (dialog, onOpened, onClosed) {
+        Dialog.showDialog = function (dialog, onOpened, onClosed) {
             if (onOpened === void 0) { onOpened = null; }
             if (onClosed === void 0) { onClosed = null; }
             this.closeDialog();
@@ -37,27 +37,27 @@ var Tape;
             };
             this.instance().open(new ui.DialogViewUI(), true, true);
         };
-        DialogManager.closeDialog = function () {
+        Dialog.closeDialog = function () {
             this.instance().closeAll();
         };
-        DialogManager.showLockView = function (lockView) {
+        Dialog.showLockView = function (lockView) {
             this.instance().setLockView(lockView);
             this.instance().lock(true);
         };
-        DialogManager.closeLockView = function () {
+        Dialog.closeLockView = function () {
             this.instance().lock(false);
         };
-        DialogManager.__dialog_manager_instance__ = null;
-        return DialogManager;
+        Dialog.__dialog_manager_instance__ = null;
+        return Dialog;
     }());
-    Tape.DialogManager = DialogManager;
+    Tape.Dialog = Dialog;
     /**
-     * ToastManager
+     * Toast
      */
-    var ToastManager = /** @class */ (function () {
-        function ToastManager() {
+    var Toast = /** @class */ (function () {
+        function Toast() {
         }
-        ToastManager.showToast = function (view, duration, previousHnadler) {
+        Toast.showToast = function (view, duration, previousHnadler) {
             if (duration === void 0) { duration = 500; }
             if (previousHnadler === void 0) { previousHnadler = null; }
             if (view && !view.parent) {
@@ -87,10 +87,10 @@ var Tape;
                 list_1.push(view);
             }
         };
-        ToastManager.__toast_group__ = {};
-        return ToastManager;
+        Toast.__toast_group__ = {};
+        return Toast;
     }());
-    Tape.ToastManager = ToastManager;
+    Tape.Toast = Toast;
     /**
      * PropsComponent
      */
@@ -530,6 +530,20 @@ var Tape;
         return NavigationStack;
     }());
     /**
+     * StackNavigator
+     */
+    var StackNavigator = /** @class */ (function (_super) {
+        __extends(StackNavigator, _super);
+        function StackNavigator(props) {
+            var _this = _super.call(this, props) || this;
+            _this.__navigator__ = null;
+            _this.__navigator__ = new NavigationStack(_this);
+            _this.__navigator__.init_page();
+            return _this;
+        }
+        return StackNavigator;
+    }(Tape.PropsComponent));
+    /**
      * createNavigator
      * @param routes routes
      * @param initName initName
@@ -537,17 +551,7 @@ var Tape;
      */
     Tape.createNavigator = function (routes, initName, options) {
         if (options === void 0) { options = {}; }
-        var StackNavigator = /** @class */ (function (_super) {
-            __extends(class_1, _super);
-            function class_1(props) {
-                var _this = _super.call(this, props) || this;
-                _this.__navigator__ = null;
-                _this.__navigator__ = new NavigationStack(_this);
-                _this.__navigator__.init_page();
-                return _this;
-            }
-            return class_1;
-        }(Tape.PropsComponent));
+        console.log('init Navigator, Env: ' + Tape.Build.getEnv());
         return new StackNavigator({
             navigation: {
                 routes: routes,
@@ -1128,6 +1132,11 @@ var Tape;
             if (window.hasOwnProperty('__build_process_env__')) {
                 return window['__build_process_env__']['MODE'] || 'development';
             }
+            if (window.hasOwnProperty('process')
+                && window['process'].hasOwnProperty('env')
+                && window['process']['env'].hasOwnProperty('NODE_ENV')) {
+                return window['process']['env']['NODE_ENV'] || 'development';
+            }
             return this.__default_env__;
         };
         /**
@@ -1141,53 +1150,86 @@ var Tape;
     }());
     Tape.Build = Build;
     /**
-     * Timer
+     * FrameInterval
      */
-    var Timer = /** @class */ (function () {
-        function Timer() {
-            this.__loop_runing__ = false;
-            this.__loop_callback__ = null;
-            this.__loop_date__ = null;
+    var FrameInterval = /** @class */ (function () {
+        function FrameInterval() {
+            this.__callback__ = null;
+            this.__start_date__ = null;
+            this.__offset__ = 0;
         }
-        Timer.sleep = function (numberMillis) {
+        /**
+         * start
+         * @param delay frame
+         * @param callback callback:time
+         * @param offset time offset
+         */
+        FrameInterval.prototype.start = function (delay, callback, offset) {
+            if (offset === void 0) { offset = 0; }
+            this.__callback__ = callback;
+            this.__start_date__ = new Date();
+            this.__offset__ = offset;
+            Laya.timer.loop(delay, this, this.loop);
+        };
+        FrameInterval.prototype.loop = function () {
             var now = new Date();
-            var exitTime = now.getTime() + numberMillis;
-            while (true) {
-                now = new Date();
-                if (now.getTime() > exitTime)
-                    return;
-            }
+            this.__callback__ && this.__callback__(now.getTime() - this.__start_date__.getTime() + this.__offset__);
         };
-        Timer.prototype.loop = function (callback, delay) {
-            var _this = this;
-            this.__loop_callback__ = callback;
-            this.__loop_runing__ = true;
-            this.__loop_date__ = new Date();
-            new Tape.Task(function (resolve) {
-                while (_this.__loop_runing__) {
-                    var now = new Date();
-                    callback && callback(now.getTime() - _this.__loop_date__.getTime());
-                    Timer.sleep(delay);
-                }
-                resolve();
-            }).then(function () {
-                _this.__loop_callback__ = null;
-                _this.__loop_runing__ = false;
-                _this.__loop_date__ = null;
-            });
+        /**
+         * stop
+         */
+        FrameInterval.prototype.stop = function () {
+            Laya.timer.clear(this, this.loop);
         };
-        Timer.prototype.stop = function () {
-            this.__loop_runing__ = false;
-        };
-        return Timer;
+        return FrameInterval;
     }());
-    Tape.Timer = Timer;
+    Tape.FrameInterval = FrameInterval;
+    /**
+     * TimerInterval
+     */
+    var TimerInterval = /** @class */ (function () {
+        function TimerInterval() {
+            this.__interval__ = 0;
+            this.__start_date__ = null;
+            this.__offset__ = 0;
+        }
+        /**
+         * start
+         * @param delay millis
+         * @param callback callback:time
+         * @param offset time offset
+         */
+        TimerInterval.prototype.start = function (delay, callback, offset) {
+            var _this = this;
+            if (offset === void 0) { offset = 0; }
+            this.__start_date__ = new Date();
+            this.__offset__ = offset;
+            this.__interval__ = setInterval(function () {
+                var now = new Date();
+                callback && callback(now.getTime() - _this.__start_date__.getTime() + _this.__offset__);
+            }, delay);
+        };
+        /**
+         * stop
+         */
+        TimerInterval.prototype.stop = function () {
+            clearInterval(this.__interval__);
+        };
+        return TimerInterval;
+    }());
+    Tape.TimerInterval = TimerInterval;
     /**
      * NumUtil
      */
     var NumUtil = /** @class */ (function () {
         function NumUtil() {
         }
+        /**
+         * rangedValue
+         * @param val curr number
+         * @param min min number
+         * @param max max number
+         */
         NumUtil.rangedValue = function (val, min, max) {
             if (val < min)
                 return min;
@@ -1196,6 +1238,11 @@ var Tape;
             else
                 return val;
         };
+        /**
+         * rand
+         * @param min min number
+         * @param max max number
+         */
         NumUtil.rand = function (min, max) {
             return Math.floor(Math.random() * (max - min)) + min;
         };
@@ -1208,6 +1255,10 @@ var Tape;
     var LinkUtil = /** @class */ (function () {
         function LinkUtil() {
         }
+        /**
+         * openURL
+         * @param url url
+         */
         LinkUtil.openURL = function (url) {
             window.location.href = url;
         };

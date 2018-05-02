@@ -22,7 +22,7 @@ var App;
             this.addChild(this.page1);
             Tape.BackgroundMusic.play("res/sound/bg_sound.mp3", 0);
             this.page1.btn.on(Laya.Event.CLICK, this, function () {
-                Tape.ToastManager.showToast(new ui.MessageToastUI());
+                Tape.Toast.showToast(new ui.MessageToastUI());
                 _this.navigate("Page2");
             });
             this.page1.btnBack.on(Laya.Event.CLICK, this, function () {
@@ -53,8 +53,8 @@ var App;
             this.addChild(this.page2);
             this.printDebug("onCreate");
             this.page2.btn.on(Laya.Event.CLICK, this, function () {
-                Tape.ToastManager.showToast(new ui.MessageToastUI());
-                Tape.DialogManager.showDialog(new ui.DialogViewUI());
+                Tape.Toast.showToast(new ui.MessageToastUI());
+                Tape.Dialog.showDialog(new ui.DialogViewUI());
                 _this.navigate("Main", { name: "你好" }, function () {
                     _this.back();
                 });
@@ -62,7 +62,6 @@ var App;
             this.page2.btnBack.on(Laya.Event.CLICK, this, function () {
                 _this.back();
             });
-            console.log(Tape.Build.getEnv());
         };
         Page2.prototype.onPause = function () {
             this.printDebug("onPause");

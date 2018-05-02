@@ -14,18 +14,18 @@ var __extends = (this && this.__extends) || (function () {
 var Tape;
 (function (Tape) {
     /**
-     * DialogManager
+     * Dialog
      */
-    var DialogManager = /** @class */ (function () {
-        function DialogManager() {
+    var Dialog = /** @class */ (function () {
+        function Dialog() {
         }
-        DialogManager.instance = function () {
+        Dialog.instance = function () {
             if (!this.__dialog_manager_instance__) {
                 this.__dialog_manager_instance__ = new Laya.DialogManager();
             }
             return this.__dialog_manager_instance__;
         };
-        DialogManager.showDialog = function (dialog, onOpened, onClosed) {
+        Dialog.showDialog = function (dialog, onOpened, onClosed) {
             if (onOpened === void 0) { onOpened = null; }
             if (onClosed === void 0) { onClosed = null; }
             this.closeDialog();
@@ -37,27 +37,27 @@ var Tape;
             };
             this.instance().open(new ui.DialogViewUI(), true, true);
         };
-        DialogManager.closeDialog = function () {
+        Dialog.closeDialog = function () {
             this.instance().closeAll();
         };
-        DialogManager.showLockView = function (lockView) {
+        Dialog.showLockView = function (lockView) {
             this.instance().setLockView(lockView);
             this.instance().lock(true);
         };
-        DialogManager.closeLockView = function () {
+        Dialog.closeLockView = function () {
             this.instance().lock(false);
         };
-        DialogManager.__dialog_manager_instance__ = null;
-        return DialogManager;
+        Dialog.__dialog_manager_instance__ = null;
+        return Dialog;
     }());
-    Tape.DialogManager = DialogManager;
+    Tape.Dialog = Dialog;
     /**
-     * ToastManager
+     * Toast
      */
-    var ToastManager = /** @class */ (function () {
-        function ToastManager() {
+    var Toast = /** @class */ (function () {
+        function Toast() {
         }
-        ToastManager.showToast = function (view, duration, previousHnadler) {
+        Toast.showToast = function (view, duration, previousHnadler) {
             if (duration === void 0) { duration = 500; }
             if (previousHnadler === void 0) { previousHnadler = null; }
             if (view && !view.parent) {
@@ -87,10 +87,10 @@ var Tape;
                 list_1.push(view);
             }
         };
-        ToastManager.__toast_group__ = {};
-        return ToastManager;
+        Toast.__toast_group__ = {};
+        return Toast;
     }());
-    Tape.ToastManager = ToastManager;
+    Tape.Toast = Toast;
     /**
      * PropsComponent
      */

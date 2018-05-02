@@ -299,20 +299,25 @@ module Tape {
     }
 
     /**
+     * StackNavigator
+     */
+    class StackNavigator extends Tape.PropsComponent {
+        private __navigator__: NavigationStack = null;
+        constructor(props) {
+            super(props);
+            this.__navigator__ = new NavigationStack(this);
+            this.__navigator__.init_page();
+        }
+    }
+
+    /**
      * createNavigator
      * @param routes routes
      * @param initName initName
      * @param options options
      */
     export const createNavigator = function (routes, initName, options = {}): any {
-        let StackNavigator = class extends Tape.PropsComponent {
-            private __navigator__: NavigationStack = null;
-            constructor(props) {
-                super(props);
-                this.__navigator__ = new NavigationStack(this);
-                this.__navigator__.init_page();
-            }
-        };
+        console.log('init Navigator, Env: ' + Tape.Build.getEnv());
         return new StackNavigator({
             navigation: {
                 routes: routes,

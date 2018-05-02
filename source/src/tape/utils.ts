@@ -24,7 +24,12 @@ module Tape {
          */
         public static getEnv(): string {
             if (window.hasOwnProperty('__build_process_env__')) {
-                return window['__build_process_env__']['MODE'] || 'development'
+                return window['__build_process_env__']['MODE'] || 'development';
+            }
+            if (window.hasOwnProperty('process')
+                && window['process'].hasOwnProperty('env')
+                && window['process']['env'].hasOwnProperty('NODE_ENV')) {
+                return window['process']['env']['NODE_ENV'] || 'development';
             }
             return this.__default_env__;
         }
@@ -38,48 +43,78 @@ module Tape {
 
     }
 
+
     /**
-     * Timer
+     * FrameInterval
      */
-    export class Timer {
-
-        public static sleep(numberMillis): void {
-            var now = new Date();
-            var exitTime = now.getTime() + numberMillis;
-            while (true) {
-                now = new Date();
-                if (now.getTime() > exitTime)
-                    return;
-            }
-        }
-
-        private __loop_runing__: boolean = false;
-        private __loop_callback__: Function = null;
-        private __loop_date__: Date = null;
+    export class FrameInterval {
 
         constructor() {
         }
 
-        public loop(callback: Function, delay: number): void {
-            this.__loop_callback__ = callback;
-            this.__loop_runing__ = true;
-            this.__loop_date__ = new Date();
-            new Tape.Task((resolve) => {
-                while (this.__loop_runing__) {
-                    var now = new Date();
-                    callback && callback(now.getTime() - this.__loop_date__.getTime());
-                    Timer.sleep(delay);
-                }
-                resolve();
-            }).then(() => {
-                this.__loop_callback__ = null;
-                this.__loop_runing__ = false;
-                this.__loop_date__ = null;
-            });
+        private __callback__: Function = null;
+        private __start_date__: Date = null;
+        private __offset__: number = 0;
+
+        /**
+         * start
+         * @param delay frame
+         * @param callback callback:time
+         * @param offset time offset
+         */
+        public start(delay: number, callback: Function, offset: number = 0) {
+            this.__callback__ = callback;
+            this.__start_date__ = new Date();
+            this.__offset__ = offset;
+            Laya.timer.loop(delay, this, this.loop);
         }
 
+        private loop() {
+            var now = new Date();
+            this.__callback__ && this.__callback__(now.getTime() - this.__start_date__.getTime() + this.__offset__);
+        }
+
+        /**
+         * stop
+         */
         public stop(): void {
-            this.__loop_runing__ = false;
+            Laya.timer.clear(this, this.loop)
+        }
+
+    }
+
+    /**
+     * TimerInterval
+     */
+    export class TimerInterval {
+
+        private __interval__: number = 0;
+        private __start_date__: Date = null;
+        private __offset__: number = 0;
+
+        constructor() {
+        }
+
+        /**
+         * start
+         * @param delay millis
+         * @param callback callback:time
+         * @param offset time offset
+         */
+        public start(delay: number, callback: Function, offset: number = 0) {
+            this.__start_date__ = new Date();
+            this.__offset__ = offset;
+            this.__interval__ = setInterval(() => {
+                var now = new Date();
+                callback && callback(now.getTime() - this.__start_date__.getTime() + this.__offset__);
+            }, delay);
+        }
+
+        /**
+         * stop
+         */
+        public stop(): void {
+            clearInterval(this.__interval__);
         }
 
     }
@@ -89,6 +124,12 @@ module Tape {
      */
     export class NumUtil {
 
+        /**
+         * rangedValue
+         * @param val curr number
+         * @param min min number
+         * @param max max number
+         */
         public static rangedValue(val: number, min: number, max: number): number {
             if (val < min)
                 return min;
@@ -98,6 +139,11 @@ module Tape {
                 return val;
         }
 
+        /**
+         * rand
+         * @param min min number
+         * @param max max number
+         */
         public static rand(min: number, max: number): number {
             return Math.floor(Math.random() * (max - min)) + min;
         }
@@ -109,6 +155,10 @@ module Tape {
      */
     export class LinkUtil {
 
+        /**
+         * openURL
+         * @param url url
+         */
         public static openURL(url: string) {
             window.location.href = url;
         }

@@ -1,12 +1,13 @@
 // 程序入口
 var GameMain = /** @class */ (function () {
     function GameMain() {
-        Config.isAntialias = true;
         Laya.init(600, 400, Laya.WebGL);
+        Laya.stage.scaleMode = Laya.Stage.SCALE_EXACTFIT;
+        // Laya.DebugPanel.init();
         var routes = {
             "Main": App.Main.ROUTE({
                 res: [
-                    { url: 'res/sound/bg_sound.mp3', type: Laya.Loader.SOUND }
+                // { url: 'res/sound/bg_sound.mp3', type: Laya.Loader.SOUND }
                 ]
             }),
             "Page2": {
@@ -24,4 +25,7 @@ var GameMain = /** @class */ (function () {
     }
     return GameMain;
 }());
+window.onerror = function (error) {
+    alert(error);
+};
 new GameMain();

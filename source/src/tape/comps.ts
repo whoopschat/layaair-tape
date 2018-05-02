@@ -4,9 +4,9 @@
 module Tape {
 
     /**
-     * DialogManager
+     * Dialog
      */
-    export class DialogManager {
+    export class Dialog {
 
         private static __dialog_manager_instance__ = null;
 
@@ -16,7 +16,6 @@ module Tape {
             }
             return this.__dialog_manager_instance__;
         }
-
 
         public static showDialog(dialog: Laya.Dialog, onOpened: Function = null, onClosed: Function = null): void {
             this.closeDialog();
@@ -44,9 +43,9 @@ module Tape {
     }
 
     /**
-     * ToastManager
+     * Toast
      */
-    export class ToastManager {
+    export class Toast {
 
         private static __toast_group__: Object = {};
 

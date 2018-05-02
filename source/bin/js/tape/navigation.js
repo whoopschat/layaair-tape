@@ -303,6 +303,20 @@ var Tape;
         return NavigationStack;
     }());
     /**
+     * StackNavigator
+     */
+    var StackNavigator = /** @class */ (function (_super) {
+        __extends(StackNavigator, _super);
+        function StackNavigator(props) {
+            var _this = _super.call(this, props) || this;
+            _this.__navigator__ = null;
+            _this.__navigator__ = new NavigationStack(_this);
+            _this.__navigator__.init_page();
+            return _this;
+        }
+        return StackNavigator;
+    }(Tape.PropsComponent));
+    /**
      * createNavigator
      * @param routes routes
      * @param initName initName
@@ -310,17 +324,7 @@ var Tape;
      */
     Tape.createNavigator = function (routes, initName, options) {
         if (options === void 0) { options = {}; }
-        var StackNavigator = /** @class */ (function (_super) {
-            __extends(class_1, _super);
-            function class_1(props) {
-                var _this = _super.call(this, props) || this;
-                _this.__navigator__ = null;
-                _this.__navigator__ = new NavigationStack(_this);
-                _this.__navigator__.init_page();
-                return _this;
-            }
-            return class_1;
-        }(Tape.PropsComponent));
+        console.log('init Navigator, Env: ' + Tape.Build.getEnv());
         return new StackNavigator({
             navigation: {
                 routes: routes,
