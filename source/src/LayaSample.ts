@@ -1,8 +1,9 @@
 // 程序入口
 class GameMain {
     constructor() {
+        Laya.MiniAdpter.init();
         Laya.init(600, 400, Laya.WebGL);
-        Laya.stage.scaleMode = Laya.Stage.SCALE_EXACTFIT
+        Laya.stage.scaleMode = Laya.Stage.SCALE_EXACTFIT;
         Laya.Stat.show(0,0);
         let routes = {
             "Main": App.Main.ROUTE({

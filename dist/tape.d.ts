@@ -181,9 +181,9 @@ declare module Tape {
     ///////////////////////////////////////////////
 
     /**
-     * MarketHnadler
+     * MarketHandler
      */
-    class MarketHnadler {
+    class MarketHandler {
 
         static onAuthorize: Function;
         static onSendMessage: Function;
