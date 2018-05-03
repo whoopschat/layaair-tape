@@ -8,7 +8,7 @@ module Tape {
      */
     export class Build {
 
-        private static __default_env__: string = 'development';
+        private static __default_env__: string = '${env}';
 
         /**
          * configEnv
@@ -23,13 +23,8 @@ module Tape {
          * @return env mode : development or production
          */
         public static getEnv(): string {
-            if (window.hasOwnProperty('__build_process_env__')) {
-                return window['__build_process_env__']['MODE'] || 'development';
-            }
-            if (window.hasOwnProperty('process')
-                && window['process'].hasOwnProperty('env')
-                && window['process']['env'].hasOwnProperty('NODE_ENV')) {
-                return window['process']['env']['NODE_ENV'] || 'development';
+            if (this.__default_env__.indexOf('${') >= 0){
+                return 'development';
             }
             return this.__default_env__;
         }

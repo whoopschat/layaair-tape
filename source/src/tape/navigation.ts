@@ -323,7 +323,7 @@ module Tape {
                 routes: routes,
                 initName: initName,
                 staticRes: options['res'],
-                fileVersion: options['fileVersion'] || 'version.json',
+                fileVersion: options['fileVersion'],
                 uriPrefix: options['uriPrefix'],
                 onLoaded: options['onLoaded'],
                 onLoadProgress: options['onLoadProgress']

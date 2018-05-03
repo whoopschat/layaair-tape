@@ -21,13 +21,8 @@ var Tape;
          * @return env mode : development or production
          */
         Build.getEnv = function () {
-            if (window.hasOwnProperty('__build_process_env__')) {
-                return window['__build_process_env__']['MODE'] || 'development';
-            }
-            if (window.hasOwnProperty('process')
-                && window['process'].hasOwnProperty('env')
-                && window['process']['env'].hasOwnProperty('NODE_ENV')) {
-                return window['process']['env']['NODE_ENV'] || 'development';
+            if (this.__default_env__.indexOf('${') >= 0) {
+                return 'development';
             }
             return this.__default_env__;
         };
@@ -37,7 +32,7 @@ var Tape;
         Build.isDebug = function () {
             return this.getEnv() !== 'production';
         };
-        Build.__default_env__ = 'development';
+        Build.__default_env__ = '${env}';
         return Build;
     }());
     Tape.Build = Build;

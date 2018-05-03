@@ -6,7 +6,8 @@ module App {
 
         protected onCreate() {
             this.addChild(this.page1);
-            Tape.BackgroundMusic.play("res/sound/bg_sound.mp3", 0);
+            // Tape.BackgroundMusic.play("res/sound/bg_sound.mp3", 0);
+            Tape.Audio.play("res/sound/readygo.mp3");
             this.page1.btn.on(Laya.Event.CLICK, this, () => {
                 Tape.Toast.showToast(new ui.MessageToastUI());
                 this.navigate("Page2");

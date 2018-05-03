@@ -20,7 +20,8 @@ var App;
         Main.prototype.onCreate = function () {
             var _this = this;
             this.addChild(this.page1);
-            Tape.BackgroundMusic.play("res/sound/bg_sound.mp3", 0);
+            // Tape.BackgroundMusic.play("res/sound/bg_sound.mp3", 0);
+            Tape.Audio.play("res/sound/readygo.mp3");
             this.page1.btn.on(Laya.Event.CLICK, this, function () {
                 Tape.Toast.showToast(new ui.MessageToastUI());
                 _this.navigate("Page2");
