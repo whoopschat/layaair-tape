@@ -624,13 +624,21 @@ declare module Tape {
 
         /**
          * 显示转发菜单按钮
-         * @param withShareTicket 是否使用带 shareTicket 的转发详情,
-         * @param onShareMessage 转发回调
+         * @param options 分享的信息，title，imageUrl，query
          * @param success 成功回调
          * @param fail 失败回调
          * @param complete 完成回调，失败成功都会回调
          */
-        public static showShareMenu(withShareTicket: boolean, onShareMessage?: Function, success?: Function, fail?: Function, complete?: Function): void;
+        public static showShareMenu(options: Object, success?: Function, fail?: Function, complete?: Function): void;
+
+        /**
+         * 更新转发菜单按钮
+         * @param options 分享的信息，title，imageUrl，query
+         * @param success 成功回调
+         * @param fail 失败回调
+         * @param complete 完成回调，失败成功都会回调
+         */
+        public static updateShareMenu(options: Object, success?: Function, fail?: Function, complete?: Function): void;
 
         /**
          * 隐藏转发菜单按钮
@@ -641,25 +649,13 @@ declare module Tape {
         public static hideShareMenu(success?: Function, fail?: Function, complete?: Function): void;
 
         /**
-         * 更新转发菜单按钮
-         * @param withShareTicket 是否使用带 shareTicket 的转发详情
-         * @param onShareMessage 转发回调
-         * @param success 成功回调
-         * @param fail 失败回调
-         * @param complete 完成回调，失败成功都会回调
-         */
-        public static updateShareMenu(withShareTicket: boolean, onShareMessage?: Function, success?: Function, fail?: Function, complete?: Function): void;
-
-        /**
          * 主动转发
-         * @param title 是否使用带 shareTicket 的转发详情
-         * @param imageUrl 是否使用带 shareTicket 的转发详情
-         * @param query 是否使用带 shareTicket 的转发详情
+         * @param options 分享的信息，title，imageUrl，query
          * @param success 成功回调
          * @param fail 失败回调
          * @param complete 完成回调，失败成功都会回调
          */
-        public static shareAppMessage(title: string, imageUrl: string, query: string, success?: Function, fail?: Function, complete?: Function): void;
+        public static shareAppMessage(options: Object, success?: Function, fail?: Function, complete?: Function): void;
 
         /**
          * 获取转发详细信息
@@ -752,6 +748,7 @@ declare module Tape {
 
         /**
          * 弹出对话框
+         * @param options 分享的信息，title，content，showCancel, cancelText, confirmText
          * @param success 成功回调
          * @param fail 失败回调
          * @param complete 接口调用结束的回调函数（调用成功、失败都会执行）
@@ -782,6 +779,7 @@ declare module Tape {
          * @param complete 接口调用结束的回调函数（调用成功、失败都会执行）
          */
         public static getClipboardData(success?: Function, fail?: Function, complete?: Function): void;
+        
     }
 
 }

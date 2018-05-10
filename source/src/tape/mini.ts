@@ -8,6 +8,7 @@ module Tape {
      */
     class MiniState {
 
+        public static __wx_main_share_data__ = null;
         public static __wx_main_show_data__ = null;
         public static __wx_main_user_login_data__ = null;
         public static __wx_main_user_logging__ = false;
@@ -125,6 +126,9 @@ module Tape {
             if (Tape.Build.isDebug()) {
                 Laya.Stat.show(0, 0);
             }
+            MiniUtils.getMiniFunction('onShareAppMessage')(() => {
+                return MiniState.__wx_main_share_data__;
+            });
             MiniUtils.getMiniFunction('onShow')((res) => {
                 MiniState.__wx_main_show_data__ = res;
             });
@@ -202,99 +206,96 @@ module Tape {
             }
         }
         MiniLogin.hideLoginPage();
-        MiniUtils.callMiniFunction('login', {}, (loginData) => {
-            MiniState.__wx_main_user_login_data__ = loginData;
-            MiniUtils.callMiniFunction('getSystemInfo', {}, (systemInfo) => {
-                var version = systemInfo.SDKVersion || '0.0.0';
-                var windowWidth = systemInfo.windowWidth || Laya.stage.width;
-                var windowHeight = systemInfo.windowHeight || Laya.stage.height;
-                if (MiniUtils.compareVersion(version, '2.0.1') >= 0) {
-                    var userLoginButton: any = MiniUtils.callMiniFunction('createUserInfoButton', {
-                        type: type,
-                        text: text,
-                        image: image,
-                        style: {
-                            left: left * windowWidth / Laya.stage.width,
-                            top: top * windowHeight / Laya.stage.height,
-                            width: width * windowWidth / Laya.stage.width,
-                            height: height * windowHeight / Laya.stage.height,
-                            lineHeight: height * windowHeight / Laya.stage.height,
-                            backgroundColor: backgroundColor,
-                            color: textColor,
-                            textAlign: textAlign,
-                            fontSize: fontSize,
-                            borderRadius: borderRadius
-                        }
-                    });
-                    if (userLoginButton) {
-                        userLoginButton['removeSelf'] = () => {
-                            try {
-                                userLoginButton.hide();
-                                userLoginButton.destroy();
-                            } catch (error) {
-                            }
+        MiniUtils.callMiniFunction('getSystemInfo', {}, (systemInfo) => {
+            var version = systemInfo.SDKVersion || '0.0.0';
+            var windowWidth = systemInfo.windowWidth || Laya.stage.width;
+            var windowHeight = systemInfo.windowHeight || Laya.stage.height;
+            if (MiniUtils.compareVersion(version, '2.0.1') >= 0) {
+                var userLoginButton: any = MiniUtils.callMiniFunction('createUserInfoButton', {
+                    type: type,
+                    text: text,
+                    image: image,
+                    style: {
+                        left: left * windowWidth / Laya.stage.width,
+                        top: top * windowHeight / Laya.stage.height,
+                        width: width * windowWidth / Laya.stage.width,
+                        height: height * windowHeight / Laya.stage.height,
+                        lineHeight: height * windowHeight / Laya.stage.height,
+                        backgroundColor: backgroundColor,
+                        color: textColor,
+                        textAlign: textAlign,
+                        fontSize: fontSize,
+                        borderRadius: borderRadius
+                    }
+                });
+                if (userLoginButton) {
+                    userLoginButton['removeSelf'] = () => {
+                        try {
+                            userLoginButton.hide();
+                            userLoginButton.destroy();
+                        } catch (error) {
                         }
                     }
-                    userLoginButton.onTap((res) => {
+                }
+                userLoginButton.onTap((res) => {
+                    MiniLogin.hideLoginPage();
+                    successCallback && successCallback(res);
+                });
+                userLoginButton.show();
+                if (bgPage) {
+                    Laya.stage.addChild(bgPage);
+                }
+                MiniState.__wx_main_user_login_button__ = userLoginButton;
+                MiniState.__wx_main_user_login_bg_page__ = bgPage;
+            } else {
+                MiniUtils.debugLog('-------MiniSDK-------对微信基础库小于【2.0.1】的版本兼容');
+                var userLoginButton: any = new Laya.Sprite();
+                userLoginButton.x = left;
+                userLoginButton.y = top;
+                userLoginButton.width = width;
+                userLoginButton.height = height;
+                if (type === 'image') {
+                    var img = new Laya.Image();
+                    img.width = width;
+                    img.height = height;
+                    img.skin = image;
+                    userLoginButton.addChild(img);
+                } else {
+                    userLoginButton.graphics.drawRect(0, 0, width, height, backgroundColor);
+                    var tx = new Laya.Text();
+                    tx.color = textColor;
+                    tx.text = text;
+                    tx.fontSize = fontSize;
+                    tx.align = textAlign;
+                    tx.pos(userLoginButton.width / 2, userLoginButton.height / 2);
+                    tx.pivot(tx.width / 2, tx.height / 2);
+                    userLoginButton.addChild(tx);
+                }
+                userLoginButton.on(Laya.Event.CLICK, null, () => {
+                    registerUserCallback((res) => {
                         MiniLogin.hideLoginPage();
                         successCallback && successCallback(res);
-                    });
-                    userLoginButton.show();
-                    if (bgPage) {
-                        Laya.stage.addChild(bgPage);
-                    }
-                    MiniState.__wx_main_user_login_button__ = userLoginButton;
-                    MiniState.__wx_main_user_login_bg_page__ = bgPage;
-                } else {
-                    MiniUtils.debugLog('-------MiniSDK-------对微信基础库小于【2.0.1】的版本兼容');
-                    var userLoginButton: any = new Laya.Sprite();
-                    userLoginButton.x = left;
-                    userLoginButton.y = top;
-                    userLoginButton.width = width;
-                    userLoginButton.height = height;
-                    if (type === 'image') {
-                        var img = new Laya.Image();
-                        img.width = width;
-                        img.height = height;
-                        img.skin = image;
-                        userLoginButton.addChild(img);
-                    } else {
-                        userLoginButton.graphics.drawRect(0, 0, width, height, backgroundColor);
-                        var tx = new Laya.Text();
-                        tx.color = textColor;
-                        tx.text = text;
-                        tx.fontSize = fontSize;
-                        tx.align = textAlign;
-                        tx.pos(userLoginButton.width / 2, userLoginButton.height / 2);
-                        tx.pivot(tx.width / 2, tx.height / 2);
-                        userLoginButton.addChild(tx);
-                    }
-                    userLoginButton.on(Laya.Event.CLICK, null, () => {
-                        registerUserCallback((res) => {
+                    }, () => {
+                        registerSettingCallback(options, settingCallback, (res) => {
                             MiniLogin.hideLoginPage();
                             successCallback && successCallback(res);
-                        }, () => {
-                            registerSettingCallback(options, settingCallback, (res) => {
-                                MiniLogin.hideLoginPage();
-                                successCallback && successCallback(res);
-                            }, failCallback);
-                        });
+                        }, failCallback);
                     });
-                    userLoginButton.on(Laya.Event.MOUSE_MOVE, null, () => {
-                        userLoginButton.alpha = 0.8;
-                    });
-                    userLoginButton.on(Laya.Event.MOUSE_UP, null, () => {
-                        userLoginButton.alpha = 1;
-                    });
-                    userLoginButton.zOrder = 99999;
-                    if (bgPage) {
-                        Laya.stage.addChild(bgPage);
-                    }
-                    Laya.stage.addChild(userLoginButton);
-                    MiniState.__wx_main_user_login_button__ = userLoginButton;
-                    MiniState.__wx_main_user_login_bg_page__ = bgPage;
+                });
+                userLoginButton.on(Laya.Event.MOUSE_MOVE, null, () => {
+                    userLoginButton.alpha = 0.8;
+                });
+                userLoginButton.on(Laya.Event.MOUSE_UP, null, () => {
+                    userLoginButton.alpha = 1;
+                });
+                userLoginButton.zOrder = 99999;
+                if (bgPage) {
+                    Laya.stage.addChild(bgPage);
                 }
-            }, failCallback);
+                Laya.stage.addChild(userLoginButton);
+                MiniState.__wx_main_user_login_button__ = userLoginButton;
+                MiniState.__wx_main_user_login_bg_page__ = bgPage;
+            }
         }, failCallback);
     }
 
@@ -310,6 +311,7 @@ module Tape {
     }
 
     export class MiniLogin {
+        
         /**
          * 显示登录界面
          * @param options 按钮位置信息bgPage,type,text,image,x,y,width,height
@@ -353,18 +355,21 @@ module Tape {
                 });
             }
             MiniState.__wx_main_user_logging__ = true;
-            MiniUtils.callMiniFunction('getSetting', {}, (res) => {
-                var authSetting = res.authSetting;
-                if (authSetting['scope.userInfo'] === true) {
-                    MiniUtils.debugLog('-------MiniSDK-------用户已授权【获取用户信息】');
-                    registerUserCallback(_success_callback_, _fail_callback_);
-                } else if (authSetting['scope.userInfo'] === false) {
-                    MiniUtils.debugLog('-------MiniSDK-------用户已拒绝授权【获取用户信息】');
-                    registerSettingCallback(options, _setting_callback_, _success_callback_, _fail_callback_);
-                } else {
-                    MiniUtils.debugLog('-------MiniSDK-------用户未曾授权，显示授权按钮');
-                    registerUserLoginBotton(options, _setting_callback_, _success_callback_, _fail_callback_);
-                }
+            MiniUtils.callMiniFunction('login', {}, (loginData) => {
+                MiniState.__wx_main_user_login_data__ = loginData;
+                MiniUtils.callMiniFunction('getSetting', {}, (res) => {
+                    var authSetting = res.authSetting;
+                    if (authSetting['scope.userInfo'] === true) {
+                        MiniUtils.debugLog('-------MiniSDK-------用户已授权【获取用户信息】');
+                        registerUserCallback(_success_callback_, _fail_callback_);
+                    } else if (authSetting['scope.userInfo'] === false) {
+                        MiniUtils.debugLog('-------MiniSDK-------用户已拒绝授权【获取用户信息】');
+                        registerSettingCallback(options, _setting_callback_, _success_callback_, _fail_callback_);
+                    } else {
+                        MiniUtils.debugLog('-------MiniSDK-------用户未曾授权，显示授权按钮');
+                        registerUserLoginBotton(options, _setting_callback_, _success_callback_, _fail_callback_);
+                    }
+                }, _fail_callback_);
             }, _fail_callback_);
         }
 
@@ -627,21 +632,18 @@ module Tape {
 
         /**
          * 显示转发菜单按钮
-         * @param withShareTicket 是否使用带 shareTicket 的转发详情
-         * @param onShareMessage 转发回调
+         * @param options 分享的信息，title，imageUrl，query
          * @param success 成功回调
          * @param fail 失败回调
          * @param complete 完成回调，失败成功都会回调
          */
-        public static showShareMenu = (withShareTicket: boolean, onShareMessage: Function = null, success: Function = null, fail: Function = null, complete: Function = null) => {
-            MiniUtils.getMiniFunction('onShareAppMessage')(onShareMessage);
-            MiniUtils.callMiniFunction('showShareMenu', { withShareTicket }, success, fail, complete);
+        public static showShareMenu = (options: Object, onShareMessage: Function = null, success: Function = null, fail: Function = null, complete: Function = null) => {
+            MiniState.__wx_main_share_data__ = options;
+            MiniUtils.callMiniFunction('showShareMenu', { withShareTicket: true }, success, fail, complete);
         }
 
         /**
          * 隐藏转发菜单按钮
-         * @param withShareTicket 是否使用带 shareTicket 的转发详情
-         * @param onShareMessage 转发回调
          * @param success 成功回调
          * @param fail 失败回调
          * @param complete 完成回调，失败成功都会回调
@@ -652,28 +654,25 @@ module Tape {
 
         /**
          * 更新转发菜单按钮
-         * @param withShareTicket 是否使用带 shareTicket 的转发详情
-         * @param onShareMessage 转发回调
+         * @param options 分享的信息，title，imageUrl，query
          * @param success 成功回调
          * @param fail 失败回调
          * @param complete 完成回调，失败成功都会回调
          */
-        public static updateShareMenu = (withShareTicket: boolean = true, onShareMessage: Function = null, success: Function = null, fail: Function = null, complete: Function = null) => {
-            MiniUtils.getMiniFunction('onShareAppMessage')(onShareMessage);
-            MiniUtils.callMiniFunction('updateShareMenu', { withShareTicket }, success, fail, complete);
+        public static updateShareMenu = (options: Object, success: Function = null, fail: Function = null, complete: Function = null) => {
+            MiniState.__wx_main_share_data__ = options;
+            MiniUtils.callMiniFunction('updateShareMenu', { withShareTicket: true }, success, fail, complete);
         }
 
         /**
          * 主动转发
-         * @param title 是否使用带 shareTicket 的转发详情
-         * @param imageUrl 是否使用带 shareTicket 的转发详情
-         * @param query 是否使用带 shareTicket 的转发详情
+         * @param options 分享的信息，title，imageUrl，query
          * @param success 成功回调
          * @param fail 失败回调
          * @param complete 完成回调，失败成功都会回调
          */
-        public static shareAppMessage = (title: string, imageUrl: string, query: string, success: Function = null, fail: Function = null, complete: Function = null) => {
-            MiniUtils.callMiniFunction('shareAppMessage', { title, imageUrl, query }, success, fail, complete);
+        public static shareAppMessage = (options: Object, success: Function = null, fail: Function = null, complete: Function = null) => {
+            MiniUtils.callMiniFunction('shareAppMessage', options, success, fail, complete);
         }
 
         /**
@@ -686,6 +685,7 @@ module Tape {
         public static getShareInfo = (shareTicket: string, success: Function = null, fail: Function = null, complete: Function = null) => {
             MiniUtils.callMiniFunction('getShareInfo', { shareTicket }, success, fail, complete);
         }
+
     }
 
     /**
@@ -837,6 +837,7 @@ module Tape {
 
         /**
          * 弹出对话框
+         * @param options 分享的信息，title，content，showCancel, cancelText, confirmText
          * @param success 成功回调
          * @param fail 失败回调
          * @param complete 接口调用结束的回调函数（调用成功、失败都会执行）

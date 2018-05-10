@@ -402,6 +402,42 @@ var Tape;
     Tape.Task = Task;
 })(Tape || (Tape = {}));
 
+var Tape;
+(function (Tape) {
+    /**
+     * 初始化，使用该方法替代Laya.MiniAdapter.init 和 Laya.init
+     * @param width 宽度
+     * @param height 高度
+     * @param options 其他拓展
+     */
+    Tape.init = function (width, height) {
+        var options = [];
+        for (var _i = 2; _i < arguments.length; _i++) {
+            options[_i - 2] = arguments[_i];
+        }
+        if (Tape.isMiniGame()) {
+            Tape.MiniHandler.init.apply(Tape.MiniHandler, [width, height].concat(options));
+        }
+        else {
+            Tape.ConchHandler.init.apply(Tape.ConchHandler, [width, height].concat(options));
+        }
+    };
+    /**
+     * 退出小程序
+     * @param success 成功回调
+     * @param fail 失败回调
+     * @param complete 完成回调，失败成功都会回调
+     */
+    Tape.exit = function () {
+        if (Tape.isMiniGame()) {
+            Tape.MiniHandler.exit();
+        }
+        else if (Tape.isConchApp()) {
+            Tape.ConchHandler.exit();
+        }
+    };
+})(Tape || (Tape = {}));
+
 // =========================== //
 // tape mini.js
 // =========================== //
@@ -413,6 +449,7 @@ var Tape;
     var MiniState = /** @class */ (function () {
         function MiniState() {
         }
+        MiniState.__wx_main_share_data__ = null;
         MiniState.__wx_main_show_data__ = null;
         MiniState.__wx_main_user_login_data__ = null;
         MiniState.__wx_main_user_logging__ = false;
@@ -521,40 +558,43 @@ var Tape;
     Tape.isMiniGame = function () {
         return window.hasOwnProperty("wx");
     };
-    /**
-     * 初始化，使用该方法替代Laya.MiniAdapter.init 和 Laya.init
-     * @param width 宽度
-     * @param height 高度
-     * @param options 其他拓展
-     */
-    Tape.init = function (width, height) {
-        var options = [];
-        for (var _i = 2; _i < arguments.length; _i++) {
-            options[_i - 2] = arguments[_i];
+    var MiniHandler = /** @class */ (function () {
+        function MiniHandler() {
         }
-        Laya.MiniAdpter.init(true);
-        Laya.init.apply(Laya, [width, height].concat(options));
-        Laya.stage.scaleMode = Laya.Stage.SCALE_EXACTFIT;
-        if (Tape.Build.isDebug()) {
-            Laya.Stat.show(0, 0);
-        }
-        MiniUtils.getMiniFunction('onShow')(function (res) {
-            MiniState.__wx_main_show_data__ = res;
-        });
-        initOpenDataPage();
-    };
-    /**
-     * 退出小程序
-     * @param success 成功回调
-     * @param fail 失败回调
-     * @param complete 完成回调，失败成功都会回调
-     */
-    Tape.exit = function (success, fail, complete) {
-        if (success === void 0) { success = null; }
-        if (fail === void 0) { fail = null; }
-        if (complete === void 0) { complete = null; }
-        MiniUtils.callMiniFunction('exitMiniProgram', {}, success, fail, complete);
-    };
+        /**
+         * 初始化
+         * @param width 宽度
+         * @param height 高度
+         * @param options 其他拓展
+         */
+        MiniHandler.init = function (width, height) {
+            var options = [];
+            for (var _i = 2; _i < arguments.length; _i++) {
+                options[_i - 2] = arguments[_i];
+            }
+            Laya.MiniAdpter.init(true);
+            Laya.init.apply(Laya, [width, height].concat(options));
+            Laya.stage.scaleMode = Laya.Stage.SCALE_EXACTFIT;
+            if (Tape.Build.isDebug()) {
+                Laya.Stat.show(0, 0);
+            }
+            MiniUtils.getMiniFunction('onShareAppMessage')(function () {
+                return MiniState.__wx_main_share_data__;
+            });
+            MiniUtils.getMiniFunction('onShow')(function (res) {
+                MiniState.__wx_main_show_data__ = res;
+            });
+            initOpenDataPage();
+        };
+        /**
+         * 退出小游戏
+         */
+        MiniHandler.exit = function () {
+            MiniUtils.callMiniFunction('exitMiniProgram');
+        };
+        return MiniHandler;
+    }());
+    Tape.MiniHandler = MiniHandler;
     //-------------------------------------------------------
     //-- LoginPage
     //-------------------------------------------------------
@@ -617,102 +657,99 @@ var Tape;
             }
         }
         MiniLogin.hideLoginPage();
-        MiniUtils.callMiniFunction('login', {}, function (loginData) {
-            MiniState.__wx_main_user_login_data__ = loginData;
-            MiniUtils.callMiniFunction('getSystemInfo', {}, function (systemInfo) {
-                var version = systemInfo.SDKVersion || '0.0.0';
-                var windowWidth = systemInfo.windowWidth || Laya.stage.width;
-                var windowHeight = systemInfo.windowHeight || Laya.stage.height;
-                if (MiniUtils.compareVersion(version, '2.0.1') >= 0) {
-                    var userLoginButton = MiniUtils.callMiniFunction('createUserInfoButton', {
-                        type: type,
-                        text: text,
-                        image: image,
-                        style: {
-                            left: left * windowWidth / Laya.stage.width,
-                            top: top * windowHeight / Laya.stage.height,
-                            width: width * windowWidth / Laya.stage.width,
-                            height: height * windowHeight / Laya.stage.height,
-                            lineHeight: height * windowHeight / Laya.stage.height,
-                            backgroundColor: backgroundColor,
-                            color: textColor,
-                            textAlign: textAlign,
-                            fontSize: fontSize,
-                            borderRadius: borderRadius
+        MiniUtils.callMiniFunction('getSystemInfo', {}, function (systemInfo) {
+            var version = systemInfo.SDKVersion || '0.0.0';
+            var windowWidth = systemInfo.windowWidth || Laya.stage.width;
+            var windowHeight = systemInfo.windowHeight || Laya.stage.height;
+            if (MiniUtils.compareVersion(version, '2.0.1') >= 0) {
+                var userLoginButton = MiniUtils.callMiniFunction('createUserInfoButton', {
+                    type: type,
+                    text: text,
+                    image: image,
+                    style: {
+                        left: left * windowWidth / Laya.stage.width,
+                        top: top * windowHeight / Laya.stage.height,
+                        width: width * windowWidth / Laya.stage.width,
+                        height: height * windowHeight / Laya.stage.height,
+                        lineHeight: height * windowHeight / Laya.stage.height,
+                        backgroundColor: backgroundColor,
+                        color: textColor,
+                        textAlign: textAlign,
+                        fontSize: fontSize,
+                        borderRadius: borderRadius
+                    }
+                });
+                if (userLoginButton) {
+                    userLoginButton['removeSelf'] = function () {
+                        try {
+                            userLoginButton.hide();
+                            userLoginButton.destroy();
                         }
-                    });
-                    if (userLoginButton) {
-                        userLoginButton['removeSelf'] = function () {
-                            try {
-                                userLoginButton.hide();
-                                userLoginButton.destroy();
-                            }
-                            catch (error) {
-                            }
-                        };
-                    }
-                    userLoginButton.onTap(function (res) {
-                        MiniLogin.hideLoginPage();
-                        successCallback && successCallback(res);
-                    });
-                    userLoginButton.show();
-                    if (bgPage) {
-                        Laya.stage.addChild(bgPage);
-                    }
-                    MiniState.__wx_main_user_login_button__ = userLoginButton;
-                    MiniState.__wx_main_user_login_bg_page__ = bgPage;
+                        catch (error) {
+                        }
+                    };
+                }
+                userLoginButton.onTap(function (res) {
+                    MiniLogin.hideLoginPage();
+                    successCallback && successCallback(res);
+                });
+                userLoginButton.show();
+                if (bgPage) {
+                    Laya.stage.addChild(bgPage);
+                }
+                MiniState.__wx_main_user_login_button__ = userLoginButton;
+                MiniState.__wx_main_user_login_bg_page__ = bgPage;
+            }
+            else {
+                MiniUtils.debugLog('-------MiniSDK-------对微信基础库小于【2.0.1】的版本兼容');
+                var userLoginButton = new Laya.Sprite();
+                userLoginButton.x = left;
+                userLoginButton.y = top;
+                userLoginButton.width = width;
+                userLoginButton.height = height;
+                if (type === 'image') {
+                    var img = new Laya.Image();
+                    img.width = width;
+                    img.height = height;
+                    img.skin = image;
+                    userLoginButton.addChild(img);
                 }
                 else {
-                    MiniUtils.debugLog('-------MiniSDK-------对微信基础库小于【2.0.1】的版本兼容');
-                    var userLoginButton = new Laya.Sprite();
-                    userLoginButton.x = left;
-                    userLoginButton.y = top;
-                    userLoginButton.width = width;
-                    userLoginButton.height = height;
-                    if (type === 'image') {
-                        var img = new Laya.Image();
-                        img.width = width;
-                        img.height = height;
-                        img.skin = image;
-                        userLoginButton.addChild(img);
-                    }
-                    else {
-                        userLoginButton.graphics.drawRect(0, 0, width, height, backgroundColor);
-                        var tx = new Laya.Text();
-                        tx.color = textColor;
-                        tx.text = text;
-                        tx.fontSize = fontSize;
-                        tx.align = textAlign;
-                        tx.pos(userLoginButton.width / 2, userLoginButton.height / 2);
-                        tx.pivot(tx.width / 2, tx.height / 2);
-                        userLoginButton.addChild(tx);
-                    }
-                    userLoginButton.on(Laya.Event.CLICK, null, function () {
-                        registerUserCallback(function (res) {
+                    userLoginButton.graphics.drawRect(0, 0, width, height, backgroundColor);
+                    var tx = new Laya.Text();
+                    tx.color = textColor;
+                    tx.text = text;
+                    tx.fontSize = fontSize;
+                    tx.align = textAlign;
+                    tx.pos(userLoginButton.width / 2, userLoginButton.height / 2);
+                    tx.pivot(tx.width / 2, tx.height / 2);
+                    userLoginButton.addChild(tx);
+                }
+                userLoginButton.on(Laya.Event.CLICK, null, function () {
+                    registerUserCallback(function (res) {
+                        MiniLogin.hideLoginPage();
+                        successCallback && successCallback(res);
+                    }, function () {
+                        registerSettingCallback(options, settingCallback, function (res) {
                             MiniLogin.hideLoginPage();
                             successCallback && successCallback(res);
-                        }, function () {
-                            registerSettingCallback(options, settingCallback, function (res) {
-                                MiniLogin.hideLoginPage();
-                                successCallback && successCallback(res);
-                            }, failCallback);
-                        });
+                        }, failCallback);
                     });
-                    userLoginButton.on(Laya.Event.MOUSE_MOVE, null, function () {
-                        userLoginButton.alpha = 0.8;
-                    });
-                    userLoginButton.on(Laya.Event.MOUSE_UP, null, function () {
-                        userLoginButton.alpha = 1;
-                    });
-                    userLoginButton.zOrder = 99999;
-                    if (bgPage) {
-                        Laya.stage.addChild(bgPage);
-                    }
-                    Laya.stage.addChild(userLoginButton);
-                    MiniState.__wx_main_user_login_button__ = userLoginButton;
-                    MiniState.__wx_main_user_login_bg_page__ = bgPage;
+                });
+                userLoginButton.on(Laya.Event.MOUSE_MOVE, null, function () {
+                    userLoginButton.alpha = 0.8;
+                });
+                userLoginButton.on(Laya.Event.MOUSE_UP, null, function () {
+                    userLoginButton.alpha = 1;
+                });
+                userLoginButton.zOrder = 99999;
+                if (bgPage) {
+                    Laya.stage.addChild(bgPage);
                 }
-            }, failCallback);
+                Laya.stage.addChild(userLoginButton);
+                MiniState.__wx_main_user_login_button__ = userLoginButton;
+                MiniState.__wx_main_user_login_bg_page__ = bgPage;
+            }
         }, failCallback);
     };
     /**
@@ -774,20 +811,23 @@ var Tape;
                 });
             };
             MiniState.__wx_main_user_logging__ = true;
-            MiniUtils.callMiniFunction('getSetting', {}, function (res) {
-                var authSetting = res.authSetting;
-                if (authSetting['scope.userInfo'] === true) {
-                    MiniUtils.debugLog('-------MiniSDK-------用户已授权【获取用户信息】');
-                    registerUserCallback(_success_callback_, _fail_callback_);
-                }
-                else if (authSetting['scope.userInfo'] === false) {
-                    MiniUtils.debugLog('-------MiniSDK-------用户已拒绝授权【获取用户信息】');
-                    registerSettingCallback(options, _setting_callback_, _success_callback_, _fail_callback_);
-                }
-                else {
-                    MiniUtils.debugLog('-------MiniSDK-------用户未曾授权，显示授权按钮');
-                    registerUserLoginBotton(options, _setting_callback_, _success_callback_, _fail_callback_);
-                }
+            MiniUtils.callMiniFunction('login', {}, function (loginData) {
+                MiniState.__wx_main_user_login_data__ = loginData;
+                MiniUtils.callMiniFunction('getSetting', {}, function (res) {
+                    var authSetting = res.authSetting;
+                    if (authSetting['scope.userInfo'] === true) {
+                        MiniUtils.debugLog('-------MiniSDK-------用户已授权【获取用户信息】');
+                        registerUserCallback(_success_callback_, _fail_callback_);
+                    }
+                    else if (authSetting['scope.userInfo'] === false) {
+                        MiniUtils.debugLog('-------MiniSDK-------用户已拒绝授权【获取用户信息】');
+                        registerSettingCallback(options, _setting_callback_, _success_callback_, _fail_callback_);
+                    }
+                    else {
+                        MiniUtils.debugLog('-------MiniSDK-------用户未曾授权，显示授权按钮');
+                        registerUserLoginBotton(options, _setting_callback_, _success_callback_, _fail_callback_);
+                    }
+                }, _fail_callback_);
             }, _fail_callback_);
         };
         /**
@@ -1056,24 +1096,21 @@ var Tape;
         }
         /**
          * 显示转发菜单按钮
-         * @param withShareTicket 是否使用带 shareTicket 的转发详情
-         * @param onShareMessage 转发回调
+         * @param options 分享的信息，title，imageUrl，query
          * @param success 成功回调
          * @param fail 失败回调
          * @param complete 完成回调，失败成功都会回调
          */
-        MiniShare.showShareMenu = function (withShareTicket, onShareMessage, success, fail, complete) {
+        MiniShare.showShareMenu = function (options, onShareMessage, success, fail, complete) {
             if (onShareMessage === void 0) { onShareMessage = null; }
             if (success === void 0) { success = null; }
             if (fail === void 0) { fail = null; }
             if (complete === void 0) { complete = null; }
-            MiniUtils.getMiniFunction('onShareAppMessage')(onShareMessage);
-            MiniUtils.callMiniFunction('showShareMenu', { withShareTicket: withShareTicket }, success, fail, complete);
+            MiniState.__wx_main_share_data__ = options;
+            MiniUtils.callMiniFunction('showShareMenu', { withShareTicket: true }, success, fail, complete);
         };
         /**
          * 隐藏转发菜单按钮
-         * @param withShareTicket 是否使用带 shareTicket 的转发详情
-         * @param onShareMessage 转发回调
          * @param success 成功回调
          * @param fail 失败回调
          * @param complete 完成回调，失败成功都会回调
@@ -1086,35 +1123,30 @@ var Tape;
         };
         /**
          * 更新转发菜单按钮
-         * @param withShareTicket 是否使用带 shareTicket 的转发详情
-         * @param onShareMessage 转发回调
+         * @param options 分享的信息，title，imageUrl，query
          * @param success 成功回调
          * @param fail 失败回调
          * @param complete 完成回调，失败成功都会回调
          */
-        MiniShare.updateShareMenu = function (withShareTicket, onShareMessage, success, fail, complete) {
-            if (withShareTicket === void 0) { withShareTicket = true; }
-            if (onShareMessage === void 0) { onShareMessage = null; }
+        MiniShare.updateShareMenu = function (options, success, fail, complete) {
             if (success === void 0) { success = null; }
             if (fail === void 0) { fail = null; }
             if (complete === void 0) { complete = null; }
-            MiniUtils.getMiniFunction('onShareAppMessage')(onShareMessage);
-            MiniUtils.callMiniFunction('updateShareMenu', { withShareTicket: withShareTicket }, success, fail, complete);
+            MiniState.__wx_main_share_data__ = options;
+            MiniUtils.callMiniFunction('updateShareMenu', { withShareTicket: true }, success, fail, complete);
         };
         /**
          * 主动转发
-         * @param title 是否使用带 shareTicket 的转发详情
-         * @param imageUrl 是否使用带 shareTicket 的转发详情
-         * @param query 是否使用带 shareTicket 的转发详情
+         * @param options 分享的信息，title，imageUrl，query
          * @param success 成功回调
          * @param fail 失败回调
          * @param complete 完成回调，失败成功都会回调
          */
-        MiniShare.shareAppMessage = function (title, imageUrl, query, success, fail, complete) {
+        MiniShare.shareAppMessage = function (options, success, fail, complete) {
             if (success === void 0) { success = null; }
             if (fail === void 0) { fail = null; }
             if (complete === void 0) { complete = null; }
-            MiniUtils.callMiniFunction('shareAppMessage', { title: title, imageUrl: imageUrl, query: query }, success, fail, complete);
+            MiniUtils.callMiniFunction('shareAppMessage', options, success, fail, complete);
         };
         /**
          * 获取转发详细信息
@@ -1299,6 +1331,7 @@ var Tape;
         };
         /**
          * 弹出对话框
+         * @param options 分享的信息，title，content，showCancel, cancelText, confirmText
          * @param success 成功回调
          * @param fail 失败回调
          * @param complete 接口调用结束的回调函数（调用成功、失败都会执行）
@@ -1349,6 +1382,47 @@ var Tape;
         return MiniDisplay;
     }());
     Tape.MiniDisplay = MiniDisplay;
+})(Tape || (Tape = {}));
+
+// =========================== //
+// tape market.js
+// =========================== //
+var Tape;
+(function (Tape) {
+    Tape.isConchApp = function () {
+        return window.hasOwnProperty('conch');
+    };
+    /**
+     * ConchHandler
+     */
+    var ConchHandler = /** @class */ (function () {
+        function ConchHandler() {
+        }
+        ConchHandler.exit = function () {
+            if (Tape.isConchApp() && window["conch"].hasOwnProperty("exit")) {
+                window["conch"].exit();
+            }
+        };
+        /**
+         * 初始化
+         * @param width 宽度
+         * @param height 高度
+         * @param options 其他拓展
+         */
+        ConchHandler.init = function (width, height) {
+            var options = [];
+            for (var _i = 2; _i < arguments.length; _i++) {
+                options[_i - 2] = arguments[_i];
+            }
+            Laya.init.apply(Laya, [width, height].concat(options));
+            Laya.stage.scaleMode = Laya.Stage.SCALE_EXACTFIT;
+            if (Tape.Build.isDebug()) {
+                Laya.Stat.show(0, 0);
+            }
+        };
+        return ConchHandler;
+    }());
+    Tape.ConchHandler = ConchHandler;
 })(Tape || (Tape = {}));
 
 var __extends = (this && this.__extends) || (function () {
@@ -1589,7 +1663,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 // =========================== //
-// tape navigator.js
+// tape navigation.js
 // =========================== //
 var Tape;
 (function (Tape) {
@@ -2028,7 +2102,7 @@ var Tape;
                 }
                 _this.__is_playing__ = true;
                 var soundUrl = "";
-                if (Tape.MarketHandler.isConchApp()) {
+                if (Tape.isConchApp()) {
                     soundUrl = Audio.soundConchDir + _this.__audio_url__ + Audio.soundConchExt;
                     var ext = Laya.Utils.getFileExtension(soundUrl);
                     if (!Audio.showErrorAlert && ext != "wav" && ext != "ogg") {
@@ -2185,148 +2259,4 @@ var Tape;
         return WebSocket;
     }());
     Tape.WebSocket = WebSocket;
-})(Tape || (Tape = {}));
-
-// =========================== //
-// tape market.js
-// =========================== //
-var Tape;
-(function (Tape) {
-    /**
-     * MarketHandler
-     */
-    var MarketHandler = /** @class */ (function () {
-        function MarketHandler() {
-        }
-        MarketHandler.isConchApp = function () {
-            return window.hasOwnProperty('conch');
-        };
-        MarketHandler.conchShowAlertOnJsException = function (show) {
-            if (this.isConchApp() && window.hasOwnProperty("showAlertOnJsException")) {
-                window["showAlertOnJsException"](show);
-            }
-        };
-        MarketHandler.conchSetOnBackPressedFunction = function (onBackPressed) {
-            if (this.isConchApp() && window["conch"].hasOwnProperty("setOnBackPressedFunction")) {
-                window["conch"].setOnBackPressedFunction(function () {
-                    onBackPressed && onBackPressed();
-                });
-            }
-        };
-        MarketHandler.conchExit = function () {
-            if (this.isConchApp() && window["conch"].hasOwnProperty("exit")) {
-                window["conch"].exit();
-            }
-        };
-        MarketHandler.conchDeviceInfo = function () {
-            if (this.isConchApp()) {
-                try {
-                    return JSON.parse(window["conch"].config.getDeviceInfo());
-                }
-                catch (error) {
-                }
-            }
-            return {};
-        };
-        MarketHandler.onAuthorize = null;
-        MarketHandler.onSendMessage = null;
-        MarketHandler.onEnterShare = null;
-        MarketHandler.onGetMarketName = null;
-        MarketHandler.onGetUserInfo = null;
-        MarketHandler.onGetFriends = null;
-        MarketHandler.onLogin = null;
-        MarketHandler.onLogout = null;
-        MarketHandler.onRecharge = null;
-        return MarketHandler;
-    }());
-    Tape.MarketHandler = MarketHandler;
-    /**
-     * Market
-     */
-    var Market = /** @class */ (function () {
-        function Market() {
-        }
-        Market.getMarketName = function () {
-            if (MarketHandler.isConchApp()) {
-                return Laya.conchMarket.getMarketName();
-            }
-            else {
-                return MarketHandler.onGetMarketName && MarketHandler.onGetMarketName();
-            }
-        };
-        Market.authorize = function (jsonParam, callback) {
-            if (callback === void 0) { callback = null; }
-            if (MarketHandler.isConchApp()) {
-                Laya.conchMarket.authorize(jsonParam, callback);
-            }
-            else {
-                MarketHandler.onAuthorize && MarketHandler.onAuthorize(jsonParam, callback);
-            }
-        };
-        Market.login = function (jsonParam, callback) {
-            if (callback === void 0) { callback = null; }
-            if (MarketHandler.isConchApp()) {
-                Laya.conchMarket.login(jsonParam, callback);
-            }
-            else {
-                MarketHandler.onLogin && MarketHandler.onLogin(jsonParam, callback);
-            }
-        };
-        Market.logout = function (jsonParam, callback) {
-            if (callback === void 0) { callback = null; }
-            if (MarketHandler.isConchApp()) {
-                Laya.conchMarket.logout(jsonParam, callback);
-            }
-            else {
-                MarketHandler.onLogout && MarketHandler.onLogout(jsonParam, callback);
-            }
-        };
-        Market.recharge = function (jsonParam, callback) {
-            if (callback === void 0) { callback = null; }
-            if (MarketHandler.isConchApp()) {
-                Laya.conchMarket.recharge(jsonParam, callback);
-            }
-            else {
-                MarketHandler.onRecharge && MarketHandler.onRecharge(jsonParam, callback);
-            }
-        };
-        Market.sendMessage = function (jsonParam, callback) {
-            if (callback === void 0) { callback = null; }
-            if (MarketHandler.isConchApp()) {
-                Laya.conchMarket.sendMessageToPlatform(jsonParam, callback);
-            }
-            else {
-                MarketHandler.onSendMessage && MarketHandler.onSendMessage(jsonParam, callback);
-            }
-        };
-        Market.enterShare = function (jsonParam, callback) {
-            if (callback === void 0) { callback = null; }
-            if (MarketHandler.isConchApp()) {
-                Laya.conchMarket.enterShareAndFeed(jsonParam, callback);
-            }
-            else {
-                MarketHandler.onEnterShare && MarketHandler.onEnterShare(jsonParam, callback);
-            }
-        };
-        Market.getUserInfo = function (jsonParam, callback) {
-            if (callback === void 0) { callback = null; }
-            if (MarketHandler.isConchApp()) {
-                Laya.conchMarket.getUserInfo(jsonParam, callback);
-            }
-            else {
-                MarketHandler.onGetUserInfo && MarketHandler.onGetUserInfo(jsonParam, callback);
-            }
-        };
-        Market.getFriendList = function (jsonParam, callback) {
-            if (callback === void 0) { callback = null; }
-            if (MarketHandler.isConchApp()) {
-                Laya.conchMarket.getGameFriends(jsonParam, callback);
-            }
-            else {
-                MarketHandler.onGetFriends && MarketHandler.onGetFriends(jsonParam, callback);
-            }
-        };
-        return Market;
-    }());
-    Tape.Market = Market;
 })(Tape || (Tape = {}));

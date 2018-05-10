@@ -1,6 +1,29 @@
 declare module Tape {
 
     /**
+     * 是否为小程序/小游戏
+     */
+    function isMiniGame(): boolean;
+
+    /**
+     * 是否为LayaRuntime
+     */
+    function isConchApp(): boolean;
+
+    /**
+     * 初始化，使用该方法替代Laya.MiniAdapter.init 和 Laya.init
+     * @param width 宽度
+     * @param height 高度
+     * @param options 其他拓展
+     */
+    function init(width: number, height: number, ...options): void;
+
+    /**
+     * 退出，小程序小游戏有效
+     */
+    function exit(): void;
+
+    /**
      * createNavigator
      * @param routes routes
      * @param initName initName
@@ -173,59 +196,6 @@ declare module Tape {
          * @param previousHnadler previous hnadler callback
          */
         static showToast(view, duration?: number, previousHnadler?: Function): void;
-
-    }
-
-    ///////////////////////////////////////////////
-    ////// Market
-    ///////////////////////////////////////////////
-
-    /**
-     * MarketHandler
-     */
-    class MarketHandler {
-
-        static onAuthorize: Function;
-        static onSendMessage: Function;
-        static onEnterShare: Function;
-        static onGetMarketName: Function;
-        static onGetUserInfo: Function;
-        static onGetFriends: Function;
-        static onLogin: Function;
-        static onLogout: Function;
-        static onRecharge: Function;
-
-        static isConchApp(): boolean;
-
-        static conchShowAlertOnJsException(show: boolean): void;
-
-        static conchSetOnBackPressedFunction(onBackPressed: Function): void;
-
-        static conchExit(): void;
-    }
-
-    /**
-     * Market
-     */
-    class Market {
-
-        static getMarketName(): string;
-
-        static authorize(jsonParam: string, callback: Function): void;
-
-        static login(jsonParam: string, callback: Function): void;
-
-        static logout(jsonParam: string, callback: Function): void;
-
-        static recharge(jsonParam: string, callback: Function): void;
-
-        static sendMessage(jsonParam: string, callback: Function): void;
-
-        static enterShare(jsonParam: string, callback: Function): void;
-
-        static getUserInfo(jsonParam: string, callback: Function): void;
-
-        static getFriendList(jsonParam: string, callback: Function): void;
 
     }
 
@@ -541,6 +511,275 @@ declare module Tape {
          * @param message socket message
          */
         publishMessage(message: any): void;
+    }
+
+    ///////////////////////////////////////////////
+    ////// Mini
+    ///////////////////////////////////////////////
+
+    /**
+     * LoginPage
+     */
+    class MiniLogin {
+
+        /**
+         * 显示登录界面
+         * @param options 按钮位置信息bgPage,type,text,image,x,y,width,height
+         * @param successCallback 获取用户信息成功回调
+         * @param failCallback 失败回调
+         * @param completeCallback 完成回调，失败成功都会回调
+         */
+        public static showLoginPage(options, successCallback: Function, failCallback?: Function, completeCallback?: Function): void;
+
+        /**
+         * 隐藏登录界面
+         */
+        public static hideLoginPage(): void;
+
+    }
+
+    /**
+     * MiniGameClub
+     */
+    class MiniGameClub {
+
+        /**
+         * 显示游戏圈按钮
+         * @param options 按钮位置信息icon,top,left,width,height
+         * @param onTap 点击回调
+         */
+        public static showGameClubButton(options, onTap: Function): void;
+
+        /**
+         * 隐藏游戏圈按钮
+         */
+        public static hideGameClubButton(): void;
+
+    }
+
+    /**
+     * MiniOpenData
+     */
+    class MiniOpenData {
+
+        /**
+         * 是否支持开放数据域Canvas
+         */
+        public static isSupportSharedCanvasView(): boolean;
+
+        /**
+         * 显示开放数据域Canvas
+         */
+        public static showSharedCanvasView(bgPage, data?: Object): void;
+
+        /**
+         * 隐藏开放数据域Canvas
+         */
+        public static hideSharedCanvasView(): void;
+
+        /**
+         * 设置用户游戏数据到开放数据域
+         */
+        public static setUserCloudStorage(dataList): void;
+
+        /**
+         * 删除用户托管数据当中对应 key 的数据。
+         */
+        public static removeUserCloudStorage(keyList: string[]): void;
+    }
+
+    /**
+     * MiniNavigator
+     */
+    class MiniNavigator {
+
+        /**
+         * 打开同一公众号下关联的另一个小程序。（注：必须是同一公众号下，而非同个 open 账号下）
+         * @param appId 要打开的小程序 appId
+         * @param path 打开的页面路径，如果为空则打开首页
+         * @param extraData 需要传递给目标小程序的数据，目标小程序可在 App.onLaunch()，App.onShow() 中获取到这份数据。
+         * @param envVersion 要打开的小程序版本，有效值 develop（开发版），trial（体验版），release（正式版） ，仅在当前小程序为开发版或体验版时此参数有效；如果当前小程序是体验版或正式版，则打开的小程序必定是正式版。默认值 release
+         * @param success 成功回调
+         * @param fail 失败回调
+         * @param complete 完成回调，失败成功都会回调
+         */
+        public static navigateToMiniProgram(appId: string, path: string, extraData: Object, envVersion: string, success?: Function, fail?: Function, complete?: Function): void;
+
+
+        /**
+         * 返回到上一个小程序，只有在当前小程序是被其他小程序打开时可以调用成功
+         * @param extraData 需要返回给上一个小程序的数据，上一个小程序可在 App.onShow() 中获取到这份数据。
+         * @param success 成功回调
+         * @param fail 失败回调
+         * @param complete 完成回调，失败成功都会回调
+         */
+        public static navigateBackMiniProgram(extraData: Object, success?: Function, fail?: Function, complete?: Function): void;
+
+    }
+
+    /**
+     * MiniShare
+     */
+    class MiniShare {
+
+        /**
+         * 显示转发菜单按钮
+         * @param options 分享的信息，title，imageUrl，query
+         * @param success 成功回调
+         * @param fail 失败回调
+         * @param complete 完成回调，失败成功都会回调
+         */
+        public static showShareMenu(options: Object, success?: Function, fail?: Function, complete?: Function): void;
+
+        /**
+         * 更新转发菜单按钮
+         * @param options 分享的信息，title，imageUrl，query
+         * @param success 成功回调
+         * @param fail 失败回调
+         * @param complete 完成回调，失败成功都会回调
+         */
+        public static updateShareMenu(options: Object, success?: Function, fail?: Function, complete?: Function): void;
+
+        /**
+         * 隐藏转发菜单按钮
+         * @param success 成功回调
+         * @param fail 失败回调
+         * @param complete 完成回调，失败成功都会回调
+         */
+        public static hideShareMenu(success?: Function, fail?: Function, complete?: Function): void;
+
+        /**
+         * 主动转发
+         * @param options 分享的信息，title，imageUrl，query
+         * @param success 成功回调
+         * @param fail 失败回调
+         * @param complete 完成回调，失败成功都会回调
+         */
+        public static shareAppMessage(options: Object, success?: Function, fail?: Function, complete?: Function): void;
+
+        /**
+         * 获取转发详细信息
+         * @param shareTicket shareTicket
+         * @param success 成功回调
+         * @param fail 失败回调
+         * @param complete 完成回调，失败成功都会回调
+         */
+        public static getShareInfo(shareTicket: string, success?: Function, fail?: Function, complete?: Function): void;
+    }
+
+    /**
+     * MiniAd
+     */
+    class MiniAd {
+
+        /**
+         * 显示激励型视频广告
+         * @param adUnitId 广告单元ID
+         * @param onRewarded 完成回调，发放奖励
+         * @param onError 错误回调
+         */
+        public static showRewardedVideoAd(adUnitId: string, onRewarded?: Function, onError?: Function): void;
+
+        /**
+         * 显示Banner广告
+         * @param adUnitId 广告单元ID
+         * @param options Banner位置信息top,left,width,height
+         **/
+        public static showBannerAd(adUnitId: string, options: Object): void;
+
+    }
+
+    /**
+     * MiniDisplay
+     */
+    class MiniDisplay {
+
+        /**
+         * 根据用户当天游戏时间判断用户是否需要休息
+         * @param todayPlayedTime 今天已经玩游戏的时间，单位：秒
+         * @param success 成功回调 result
+         * @param fail 失败回调
+         * @param complete 完成回调，失败成功都会回调
+         */
+        public static checkIsUserAdvisedToRest(todayPlayedTime, success?: Function, fail?: Function, complete?: Function): void;
+
+        /**
+         * 根据用户当天游戏时间判断用户是否需要休息
+         * @param type wgs84 返回 gps 坐标，gcj02 返回可用于 wx.openLocation 的坐标	
+         * @param success 成功回调 result
+         * @param fail 失败回调
+         * @param complete 完成回调，失败成功都会回调
+         */
+        public static getLocation(type?: string, success?: Function, fail?: Function, complete?: Function): void;
+
+        /**
+         * 使手机发生较短时间的振动（15 ms）
+         * @param success 成功回调
+         * @param fail 失败回调
+         * @param complete 接口调用结束的回调函数（调用成功、失败都会执行）
+         */
+        public static vibrateShort(success?: Function, fail?: Function, complete?: Function): void;
+
+        /**
+         * 使手机发生较长时间的振动（400 ms)
+         * @param success 成功回调
+         * @param fail 失败回调
+         * @param complete 接口调用结束的回调函数（调用成功、失败都会执行）
+         */
+        public static vibrateLong(success?: Function, fail?: Function, complete?: Function): void;
+
+        /**
+         * 显示Loading
+         * @param title 提示的内容
+         * @param mask 是否显示透明蒙层
+         * @param success 成功回调
+         * @param fail 失败回调
+         * @param complete 接口调用结束的回调函数（调用成功、失败都会执行）
+         */
+        public static showLoading(title: string, mask: boolean, success?: Function, fail?: Function, complete?: Function): void;
+
+        /**
+         * 隐藏Loading
+         * @param success 成功回调
+         * @param fail 失败回调
+         * @param complete 接口调用结束的回调函数（调用成功、失败都会执行）
+         */
+        public static hideLoading(success?: Function, fail?: Function, complete?: Function): void;
+
+        /**
+         * 弹出对话框
+         * @param options 分享的信息，title，content，showCancel, cancelText, confirmText
+         * @param success 成功回调
+         * @param fail 失败回调
+         * @param complete 接口调用结束的回调函数（调用成功、失败都会执行）
+         */
+        public static showModal(options, success?: Function, fail?: Function, complete?: Function): void;
+
+        /**
+         * 获取设备电量
+         * @param success 成功回调
+         * @param fail 失败回调
+         * @param complete 接口调用结束的回调函数（调用成功、失败都会执行）
+         */
+        public static getBatteryInfo(success?: Function, fail?: Function, complete?: Function): void;
+
+        /**
+         * 设置系统剪贴板的内容
+         * @param data 剪贴板的内容
+         * @param success 成功回调
+         * @param fail 失败回调
+         * @param complete 接口调用结束的回调函数（调用成功、失败都会执行）
+         */
+        public static setClipboardData(data: string, success?: Function, fail?: Function, complete?: Function): void;
+
+        /**
+         * 获取系统剪贴板的内容
+         * @param success 成功回调
+         * @param fail 失败回调
+         * @param complete 接口调用结束的回调函数（调用成功、失败都会执行）
+         */
+        public static getClipboardData(success?: Function, fail?: Function, complete?: Function): void;
+        
     }
 
 }
