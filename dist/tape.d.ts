@@ -1,17 +1,17 @@
 declare module Tape {
 
     /**
-     * 是否为小程序/小游戏
+     * isMiniGame
      */
     function isMiniGame(): boolean;
 
     /**
-     * 是否为LayaRuntime
+     * isConchApp
      */
     function isConchApp(): boolean;
 
     /**
-     * 初始化，使用该方法替代Laya.MiniAdapter.init 和 Laya.init
+     * init
      * @param width 宽度
      * @param height 高度
      * @param options 其他拓展
@@ -19,7 +19,7 @@ declare module Tape {
     function init(width: number, height: number, ...options): void;
 
     /**
-     * 退出，小程序小游戏有效
+     * exit
      */
     function exit(): void;
 
@@ -779,7 +779,7 @@ declare module Tape {
          * @param complete 接口调用结束的回调函数（调用成功、失败都会执行）
          */
         public static getClipboardData(success?: Function, fail?: Function, complete?: Function): void;
-        
+
     }
 
 }

@@ -1,13 +1,16 @@
 # layaair-tape
-> A layaair navigation library for ts
+> A layaair game library for ts
 
-## support
+## Func
+* isMiniGame
+* isConchApp
+* init
+* exit
 * createNavigator
+## Class
 * Activity
 * Dialog
 * Toast
-* MarketHnadler
-* Market
 * Build
 * FrameInterval
 * TimerInterval
@@ -19,4 +22,4 @@
 * BackgroundMusic
 * Audio
 * WebSocket
-* MQTTSocket
+* MiniProgram
