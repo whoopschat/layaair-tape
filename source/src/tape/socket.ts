@@ -31,17 +31,12 @@ module Tape {
         private __web_socket__ = null;
         private __is_connect__: boolean;
         private __is_connect_ing__: boolean;
-        private __debug__: boolean = true;
 
         public onConnecting: Function = null;
         public onConnected: Function = null;
         public onClosed: Function = null;
         public onError: Function = null;
         public onMessageReceived: Function = null;
-
-        constructor(debug: boolean = false) {
-            this.__debug__ = debug;
-        }
 
         public connect(socketUrl) {
             if (this.isConnecting()) {
@@ -110,9 +105,126 @@ module Tape {
         }
 
         private printLog(message?: any, ...optionalParams: any[]) {
-            if (this.__debug__) {
-                Tape.Logger.log(message, ...optionalParams);
+            Tape.Logger.log(message, ...optionalParams);
+        }
+
+    }
+
+    /**
+     *  MQTT Socket
+     */
+    export class MQTTSocket {
+
+        private __mq_socket__ = null;
+        private __is_connect__: boolean;
+        private __is_connect_ing__: boolean;
+
+        private __default_options__ = {
+            timeout: 3,
+            keepAliveInterval: 30,
+            cleanSession: true,
+            useSSL: false,
+            reconnect: false
+        };
+
+        public onConnecting: Function = null;
+        public onConnected: Function = null;
+        public onClosed: Function = null;
+        public onError: Function = null;
+        public onMessageReceived: Function = null;
+        public onMessageDelivered: Function = null;
+
+        connect(host: string, port: number, clientId: string, username: string = '', password: string = '', options: Object = {}) {
+            if (this.isConnecting()) {
+                return;
             }
+            this.printLog(" -----MQ---" + SocketTAG.SOCKET_CONNECTE_ING);
+            this.onConnecting && this.onConnecting();
+            this.__is_connect_ing__ = true;
+            if (window.hasOwnProperty("Paho")) {
+                this.__mq_socket__ = new window['Paho'].MQTT.Client(host, port, clientId);
+                this.__mq_socket__.onConnectionLost = (error) => {
+                    this.printLog(" -----MQ---" + SocketTAG.SOCKET_CONNECT_CLOSDE, error);
+                    if (this.isConnecting() || this.isConnected()) {
+                        this.__is_connect__ = false;
+                        this.__is_connect_ing__ = false;
+                        this.onClosed && this.onClosed(error);
+                    }
+                };
+                this.__mq_socket__.onMessageArrived = (msg) => {
+                    this.printLog(" -----MQ---" + SocketTAG.SOCKET_MESSAGE_RECEIVED, this.formatMessage(msg));
+                    this.onMessageReceived && this.onMessageReceived(msg);
+                };
+                this.__mq_socket__.onMessageDelivered = (msg) => {
+                    this.printLog(" -----MQ---" + SocketTAG.SOCKET_MESSAGE_DELIVERED, this.formatMessage(msg));
+                    this.onMessageDelivered && this.onMessageDelivered(msg);
+                };;
+                this.__mq_socket__.connect((<any>Object).assign({}, this.__default_options__, {
+                    userName: username,
+                    password: password,
+                    onSuccess: () => {
+                        this.printLog(" -----MQ---" + SocketTAG.SOCKET_CONNECTED);
+                        this.__is_connect__ = true;
+                        this.onConnected && this.onConnected();
+                    },
+                    onFailure: (error) => {
+                        this.printLog(" -----MQ---" + SocketTAG.SOCKET_CONNECT_ERROR, error);
+                        this.__is_connect__ = false;
+                        this.__is_connect_ing__ = false;
+                        this.onError && this.onError(error);
+                    }
+                }, options));
+            } else {
+                let error = "Cannot find mqtt client support.";
+                this.printLog(" -----MQ---" + SocketTAG.SOCKET_CONNECT_ERROR, error);
+                this.onError && this.onError(error);
+            }
+        }
+
+        public disconnect() {
+            if (this.isConnecting() || this.isConnected()) {
+                this.printLog(" -----MQ---" + SocketTAG.SOCKET_CONNECT_CLOSDE);
+                this.__mq_socket__.disconnect();
+                this.__is_connect__ = false;
+                this.__is_connect_ing__ = false;
+                this.onClosed && this.onClosed();
+            }
+        }
+
+        public isConnected(): boolean {
+            return this.__is_connect__;
+        }
+
+        public isConnecting(): boolean {
+            return this.__is_connect_ing__;
+        }
+
+        public publishMessage(topic: string, message: any, qos: number = 1, retained: boolean = false): void {
+            if (!this.isConnected()) {
+                return;
+            }
+            if (window.hasOwnProperty('Paho')) {
+                let messagePayload = "";
+                if (typeof message === 'object') {
+                    messagePayload = JSON.stringify(message);
+                } else if (typeof message === 'string') {
+                    messagePayload = message;
+                }
+                let mqttMessage = new window['Paho'].MQTT.Message(messagePayload);
+                mqttMessage.destinationName = topic;
+                mqttMessage.qos = qos;
+                mqttMessage.retained = retained
+                this.printLog(" -----MQTT---" + SocketTAG.EVENT_SOCKET_MESSAGE_PUBLISH, this.formatMessage(mqttMessage));
+                this.__mq_socket__.send(mqttMessage);
+            }
+        }
+
+        private formatMessage(message) {
+            return message.topic + " " + message.payloadString;
+        }
+
+        private printLog(message?: any, ...optionalParams: any[]) {
+            Tape.Logger.log(message, ...optionalParams);
         }
 
     }

@@ -66,6 +66,7 @@ declare module Tape {
         width: number;
         readonly displayWidth: number;
         layoutEnabled: boolean;
+
         protected addChild(clild: any);
 
         ///////////////////////
@@ -190,7 +191,7 @@ declare module Tape {
     class Toast {
 
         /**
-         * showToast 
+         * showToast
          * @param view show toast view
          * @param duration duration default 500 ms
          * @param previousHnadler previous hnadler callback
@@ -479,8 +480,6 @@ declare module Tape {
      */
     class WebSocket {
 
-        constructor(debug?: boolean);
-
         onConnecting: Function;
         onConnected: Function;
         onClosed: Function;
@@ -488,7 +487,7 @@ declare module Tape {
         onMessageReceived: Function;
 
         /**
-         * @param socketUrl	 socket url
+         * @param socketUrl     socket url
          */
         connect(socketUrl: String): void;
 
@@ -511,6 +510,54 @@ declare module Tape {
          * @param message socket message
          */
         publishMessage(message: any): void;
+
+    }
+
+    /**
+     * MQTTSocket
+     */
+    class MQTTSocket {
+
+        onConnecting: Function;
+        onConnected: Function;
+        onClosed: Function;
+        onError: Function;
+        onMessageReceived: Function;
+        onMessageDelivered: Function;
+
+        /**
+         * @param host     mqtt host
+         * @param port     mqtt port
+         * @param clientId     mqtt clientId
+         * @param username     mqtt username
+         * @param password     mqtt password
+         * @param options     mqtt options
+         */
+        connect(host: string, port: number, clientId: string, username?: string, password?: string, options?: Object): void;
+
+        /**
+         * disconnect
+         */
+        disconnect(): void;
+
+        /**
+         * @return is connected
+         */
+        isConnected(): boolean;
+
+        /**
+         * @return is connecting
+         */
+        isConnecting(): boolean;
+
+        /**
+         * @param topic     mqtt topic
+         * @param message     mqtt message
+         * @param qos     mqtt qos
+         * @param retained     mqtt retained
+         */
+        publishMessage(topic: string, message: any, qos?: number, retained?: boolean): void;
+
     }
 
     ///////////////////////////////////////////////
@@ -690,6 +737,15 @@ declare module Tape {
     }
 
     /**
+     * MiniAnalytics
+     */
+    class MiniAnalytics {
+
+        public static reportAnalytics(eventName: string, data: Object): void;
+
+    }
+
+    /**
      * MiniDisplay
      */
     class MiniDisplay {
@@ -705,7 +761,7 @@ declare module Tape {
 
         /**
          * 根据用户当天游戏时间判断用户是否需要休息
-         * @param type wgs84 返回 gps 坐标，gcj02 返回可用于 wx.openLocation 的坐标	
+         * @param type wgs84 返回 gps 坐标，gcj02 返回可用于 wx.openLocation 的坐标
          * @param success 成功回调 result
          * @param fail 失败回调
          * @param complete 完成回调，失败成功都会回调

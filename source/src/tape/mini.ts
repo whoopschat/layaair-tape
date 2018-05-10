@@ -311,7 +311,7 @@ module Tape {
     }
 
     export class MiniLogin {
-        
+
         /**
          * 显示登录界面
          * @param options 按钮位置信息bgPage,type,text,image,x,y,width,height
@@ -768,7 +768,18 @@ module Tape {
     }
 
     /**
-     * Display 模块
+     * MiniAnalytics
+     */
+    export class MiniAnalytics {
+
+        public static reportAnalytics = (eventName: string, data: Object) => {
+            MiniUtils.getMiniFunction('reportAnalytics')(eventName, data);
+        }
+
+    }
+
+    /**
+     * MiniDisplay
      */
     export class MiniDisplay {
 

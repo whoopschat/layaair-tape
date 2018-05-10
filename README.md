@@ -7,6 +7,7 @@
 * init
 * exit
 * createNavigator
+
 ## Class
 * Activity
 * Dialog
@@ -22,4 +23,5 @@
 * BackgroundMusic
 * Audio
 * WebSocket
+* MQTTSocket
 * MiniProgram
