@@ -1,21 +1,18 @@
-var gulp = require('gulp');
-var concat = require('gulp-concat');
-var rename = require('gulp-rename');
-var uglify = require('gulp-uglify');
-var merge = require('merge-stream');
-var ts = require("gulp-typescript");
-
 var del = require('del');
+var merge = require('merge-stream');
+var gulp = require('gulp');
+var gulpConcat = require('gulp-concat');
+var gulpTypescript = require("gulp-typescript");
 
 var moduleName = 'tape';
 var includePath = './source/include/';
 var inputJsPath = './source/bin/js/';
 var outputPath = './dist/';
 
-gulp.task('build:clean', del.bind(null, [outputPath + '*', inputJsPath + '*']));
+gulp.task('task:clean', del.bind(null, [outputPath + '*', inputJsPath + '*']));
 
-gulp.task("build:tsc", function () {
-  var tsProject = ts.createProject("./source/tsconfig.json");
+gulp.task("task:tsc", function () {
+  var tsProject = gulpTypescript.createProject("./source/tsconfig.json");
   return tsProject.src()
   .pipe(tsProject())
   .js.pipe(gulp.dest(inputJsPath));
@@ -23,6 +20,7 @@ gulp.task("build:tsc", function () {
 
 var packageList = [
   inputJsPath + moduleName + '/utils.js',
+  inputJsPath + moduleName + '/mini.js',
   inputJsPath + moduleName + '/comps.js',
   inputJsPath + moduleName + '/navigation.js',
   inputJsPath + moduleName + '/media.js',
@@ -31,18 +29,12 @@ var packageList = [
   inputJsPath + moduleName + '/js/**/*.js'
 ];
 
-gulp.task('build:bundle', function () {
-
+gulp.task('task:bundle', function () {
   var bundleTapeJs = gulp.src(packageList)
-  .pipe(concat(moduleName + '.js'))
-  .pipe(gulp.dest(outputPath))
-  .pipe(uglify())
-  .pipe(rename(moduleName + '.min.js'))
+  .pipe(gulpConcat(moduleName + '.js'))
   .pipe(gulp.dest(outputPath));
-
   var copyInclude = gulp.src([includePath + "**/*"])
   .pipe(gulp.dest(outputPath));
-
   var tasks = [
     copyInclude,
     bundleTapeJs
@@ -52,7 +44,7 @@ gulp.task('build:bundle', function () {
 
 gulp.task('build',
   gulp.series(
-    'build:clean',
-    'build:tsc',
-    'build:bundle')
+    'task:clean',
+    'task:tsc',
+    'task:bundle')
 );

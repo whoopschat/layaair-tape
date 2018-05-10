@@ -10,16 +10,13 @@
   "license": "UNLICENSED",
   "dependencies": {},
   "devDependencies": {
-    "array-union": "^1.0.2",
-    "concat-with-sourcemaps": "^1.0.5",
-    "del": "^3.0.0",
+    "del": "*",
     "gulp": "^4.0.0",
-    "gulp-concat": "^2.6.1",
-    "gulp-rename": "^1.2.2",
-    "gulp-typescript": "^4.0.2",
-    "gulp-uglify": "^3.0.0",
-    "merge-stream": "^1.0.1",
+    "array-union": "^1.0.2",
     "typescript": "^2.8.1",
+    "gulp-concat": "^2.6.1",
+    "gulp-typescript": "^4.0.2",
+    "merge-stream": "^1.0.1",
     "http-server": "*"
   },
   "description": ""

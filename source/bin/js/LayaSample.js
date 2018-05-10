@@ -1,10 +1,7 @@
 // 程序入口
 var GameMain = /** @class */ (function () {
     function GameMain() {
-        Laya.MiniAdpter.init();
-        Laya.init(600, 400, Laya.WebGL);
-        Laya.stage.scaleMode = Laya.Stage.SCALE_EXACTFIT;
-        Laya.Stat.show(0, 0);
+        Tape.init(600, 400);
         var routes = {
             "Main": App.Main.ROUTE({
                 res: [
