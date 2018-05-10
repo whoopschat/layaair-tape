@@ -9,7 +9,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 // =========================== //
-// tape navigator.js
+// tape navigation.js
 // =========================== //
 var Tape;
 (function (Tape) {

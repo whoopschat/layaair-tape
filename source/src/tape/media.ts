@@ -111,7 +111,7 @@ module Tape {
                 }
                 this.__is_playing__ = true;
                 let soundUrl = "";
-                if (MarketHandler.isConchApp()) {
+                if (Tape.isConchApp()) {
                     soundUrl = Audio.soundConchDir + this.__audio_url__ + Audio.soundConchExt;
                     let ext = Laya.Utils.getFileExtension(soundUrl);
                     if (!Audio.showErrorAlert && ext != "wav" && ext != "ogg") {

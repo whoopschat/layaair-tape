@@ -110,33 +110,34 @@ module Tape {
         return window.hasOwnProperty("wx");
     }
 
-    /**
-     * 初始化，使用该方法替代Laya.MiniAdapter.init 和 Laya.init
-     * @param width 宽度
-     * @param height 高度
-     * @param options 其他拓展
-     */
-    export const init = (width: number, height: number, ...options) => {
-        Laya.MiniAdpter.init(true);
-        Laya.init(width, height, ...options);
-        Laya.stage.scaleMode = Laya.Stage.SCALE_EXACTFIT;
-        if (Tape.Build.isDebug()) {
-            Laya.Stat.show(0, 0);
-        }
-        MiniUtils.getMiniFunction('onShow')((res) => {
-            MiniState.__wx_main_show_data__ = res;
-        });
-        initOpenDataPage();
-    }
+    export class MiniHandler {
 
-    /**
-     * 退出小程序
-     * @param success 成功回调
-     * @param fail 失败回调
-     * @param complete 完成回调，失败成功都会回调
-     */
-    export const exit = (success: Function = null, fail: Function = null, complete: Function = null) => {
-        MiniUtils.callMiniFunction('exitMiniProgram', {}, success, fail, complete);
+        /**
+         * 初始化
+         * @param width 宽度
+         * @param height 高度
+         * @param options 其他拓展
+         */
+        public static init = (width: number, height: number, ...options) => {
+            Laya.MiniAdpter.init(true);
+            Laya.init(width, height, ...options);
+            Laya.stage.scaleMode = Laya.Stage.SCALE_EXACTFIT;
+            if (Tape.Build.isDebug()) {
+                Laya.Stat.show(0, 0);
+            }
+            MiniUtils.getMiniFunction('onShow')((res) => {
+                MiniState.__wx_main_show_data__ = res;
+            });
+            initOpenDataPage();
+        }
+
+        /**
+         * 退出小游戏
+         */
+        public static exit = () => {
+            MiniUtils.callMiniFunction('exitMiniProgram');
+        }
+
     }
 
     //-------------------------------------------------------

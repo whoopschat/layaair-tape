@@ -1,5 +1,5 @@
 // =========================== //
-// tape navigator.js
+// tape navigation.js
 // =========================== //
 module Tape {
 

@@ -20,12 +20,13 @@ gulp.task("task:tsc", function () {
 
 var packageList = [
   inputJsPath + moduleName + '/utils.js',
+  inputJsPath + moduleName + '/common.js',
   inputJsPath + moduleName + '/mini.js',
+  inputJsPath + moduleName + '/conch.js',
   inputJsPath + moduleName + '/comps.js',
   inputJsPath + moduleName + '/navigation.js',
   inputJsPath + moduleName + '/media.js',
   inputJsPath + moduleName + '/socket.js',
-  inputJsPath + moduleName + '/market.js',
   inputJsPath + moduleName + '/js/**/*.js'
 ];
 

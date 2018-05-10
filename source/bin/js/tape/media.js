@@ -107,7 +107,7 @@ var Tape;
                 }
                 _this.__is_playing__ = true;
                 var soundUrl = "";
-                if (Tape.MarketHandler.isConchApp()) {
+                if (Tape.isConchApp()) {
                     soundUrl = Audio.soundConchDir + _this.__audio_url__ + Audio.soundConchExt;
                     var ext = Laya.Utils.getFileExtension(soundUrl);
                     if (!Audio.showErrorAlert && ext != "wav" && ext != "ogg") {
