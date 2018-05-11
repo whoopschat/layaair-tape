@@ -42,6 +42,21 @@ var ui;
     ui.DialogViewUI = DialogViewUI;
 })(ui || (ui = {}));
 (function (ui) {
+    var LoginPageUI = /** @class */ (function (_super) {
+        __extends(LoginPageUI, _super);
+        function LoginPageUI() {
+            return _super.call(this) || this;
+        }
+        LoginPageUI.prototype.createChildren = function () {
+            _super.prototype.createChildren.call(this);
+            this.createView(ui.LoginPageUI.uiView);
+        };
+        LoginPageUI.uiView = { "type": "View", "props": { "width": 600, "height": 400 }, "child": [{ "type": "Image", "props": { "y": 0, "x": 0, "width": 600, "skin": "comp/bg.png", "sizeGrid": "30,6,7,6", "height": 400 } }, { "type": "Button", "props": { "y": 44, "x": 28, "skin": "comp/button.png", "name": "cancel", "label": "label" } }] };
+        return LoginPageUI;
+    }(View));
+    ui.LoginPageUI = LoginPageUI;
+})(ui || (ui = {}));
+(function (ui) {
     var MessageToastUI = /** @class */ (function (_super) {
         __extends(MessageToastUI, _super);
         function MessageToastUI() {

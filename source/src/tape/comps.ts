@@ -173,23 +173,23 @@ module Tape {
             }
         }
 
-        protected printLog(message?: any, ...optionalParams: any[]): void {
+        protected printLog(message: any, ...optionalParams: any[]): void {
             Tape.Logger.log(" ------ " + this.routeName + " ------ :", message, ...optionalParams);
         }
 
-        protected printError(message?: any, ...optionalParams: any[]): void {
+        protected printError(message: any, ...optionalParams: any[]): void {
             Tape.Logger.error(" ------ " + this.routeName + " ------ :", message, ...optionalParams);
         }
 
-        protected printInfo(message?: any, ...optionalParams: any[]): void {
+        protected printInfo(message: any, ...optionalParams: any[]): void {
             Tape.Logger.info(" ------ " + this.routeName + " ------ :", message, ...optionalParams);
         }
 
-        protected printWarn(message?: any, ...optionalParams: any[]): void {
+        protected printWarn(message: any, ...optionalParams: any[]): void {
             Tape.Logger.warn(" ------ " + this.routeName + "  ------ :", message, ...optionalParams);
         }
 
-        protected printDebug(message?: any, ...optionalParams: any[]): void {
+        protected printDebug(message: any, ...optionalParams: any[]): void {
             Tape.Logger.debug(" ------ " + this.routeName + " ------ :", message, ...optionalParams);
         }
 

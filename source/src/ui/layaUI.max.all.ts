@@ -32,6 +32,21 @@ module ui {
 }
 
 module ui {
+    export class LoginPageUI extends View {
+
+        public static  uiView:any ={"type":"View","props":{"width":600,"height":400},"child":[{"type":"Image","props":{"y":0,"x":0,"width":600,"skin":"comp/bg.png","sizeGrid":"30,6,7,6","height":400}},{"type":"Button","props":{"y":44,"x":28,"skin":"comp/button.png","name":"cancel","label":"label"}}]};
+        constructor(){ super()}
+        createChildren():void {
+        
+            super.createChildren();
+            this.createView(ui.LoginPageUI.uiView);
+
+        }
+
+    }
+}
+
+module ui {
     export class MessageToastUI extends View {
 		public text:Laya.Label;
 

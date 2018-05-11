@@ -143,15 +143,15 @@ declare module Tape {
         /// Logger
         ///////////////////////
 
-        protected printLog(message?: any, ...optionalParams: any[]): void;
+        protected printLog(message: any, ...optionalParams: any[]): void;
 
-        protected printError(message?: any, ...optionalParams: any[]): void;
+        protected printError(message: any, ...optionalParams: any[]): void;
 
-        protected printInfo(message?: any, ...optionalParams: any[]): void;
+        protected printInfo(message: any, ...optionalParams: any[]): void;
 
-        protected printWarn(message?: any, ...optionalParams: any[]): void;
+        protected printWarn(message: any, ...optionalParams: any[]): void;
 
-        protected printDebug(message?: any, ...optionalParams: any[]): void;
+        protected printDebug(message: any, ...optionalParams: any[]): void;
 
     }
 

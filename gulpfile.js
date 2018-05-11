@@ -19,6 +19,8 @@ gulp.task("task:tsc", function () {
 });
 
 var packageList = [
+  inputJsPath + moduleName + '/polyfill/**/*.js',
+  inputJsPath + moduleName + '/js/**/*.js',
   inputJsPath + moduleName + '/utils.js',
   inputJsPath + moduleName + '/common.js',
   inputJsPath + moduleName + '/mini.js',
@@ -26,8 +28,7 @@ var packageList = [
   inputJsPath + moduleName + '/comps.js',
   inputJsPath + moduleName + '/navigation.js',
   inputJsPath + moduleName + '/media.js',
-  inputJsPath + moduleName + '/socket.js',
-  inputJsPath + moduleName + '/js/**/*.js'
+  inputJsPath + moduleName + '/socket.js'
 ];
 
 gulp.task('task:bundle', function () {

@@ -59,6 +59,20 @@ module App {
             this.page2.btnBack.on(Laya.Event.CLICK, this, () => {
                 this.back();
             });
+            Tape.MiniLogin.showLoginPage({
+                bgPage: new ui.LoginPageUI(),
+                type: 'text',
+                text: '授权并登录',
+                left: 0,
+                top: 0,
+                width: 200,
+                height: 50
+            }, (res) => {
+                console.log("获取用户信息成功", res);
+                Tape.MiniOpenData.setUserCloudStorage([{ key: 'data', value: '分数520' }]);
+            }, (res) => {
+                console.log("获取用户信息失败", res);
+            });
         }
 
         protected onPause() {

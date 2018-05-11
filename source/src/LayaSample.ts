@@ -1,7 +1,11 @@
 // 程序入口
 class GameMain {
     constructor() {
-        Tape.init(600,400);
+        Tape.init(600, 400);
+        Tape.MiniShare.showShareMenu({
+            title: '这一关太难了，求助',
+            query: 'a=1'
+        });
         let routes = {
             "Main": App.Main.ROUTE({
                 res: [

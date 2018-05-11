@@ -35,3 +35,5 @@ P E466EB1C vslider$bar.png
 P 2BFF7046 vslider.png
 D res
 R 43A48027 config.json
+D res/sound
+R D6B1AA7D readygo.mp3

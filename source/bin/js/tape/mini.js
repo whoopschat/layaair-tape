@@ -191,7 +191,7 @@ var Tape;
         var left = options.left || (Laya.stage.width / 2 - width / 2);
         var top = options.top || (Laya.stage.height / 2 - height / 2);
         var type = options.type || 'text';
-        var text = options.text || '微信登录';
+        var text = options.text || '授权并登录';
         var image = options.image || '';
         var backgroundColor = options.backgroundColor || '#348912';
         var textColor = options.textColor || '#ffffff';
@@ -289,11 +289,13 @@ var Tape;
                     registerUserCallback(function (res) {
                         MiniLogin.hideLoginPage();
                         successCallback && successCallback(res);
-                    }, function () {
+                    }, function (res) {
                         registerSettingCallback(options, settingCallback, function (res) {
                             MiniLogin.hideLoginPage();
                             successCallback && successCallback(res);
-                        }, failCallback);
+                        }, function (res) {
+                            failCallback && failCallback(res);
+                        });
                     });
                 });
                 userLoginButton.on(Laya.Event.MOUSE_MOVE, null, function () {
@@ -316,10 +318,13 @@ var Tape;
      * 注册监听获取用户信息返回
      */
     var registerUserCallback = function (userCallback, failCallback) {
+        MiniDisplay.showLoading("", true);
         MiniUtils.callMiniFunction('getUserInfo', {}, function (res) {
             userCallback && userCallback(res);
-        }, function () {
-            failCallback && failCallback();
+            MiniDisplay.hideLoading();
+        }, function (res) {
+            failCallback && failCallback(res);
+            MiniDisplay.hideLoading();
         });
     };
     var MiniLogin = /** @class */ (function () {
@@ -349,9 +354,11 @@ var Tape;
                 successCallback && successCallback(res);
                 completeCallback && completeCallback();
             };
-            var _fail_callback_ = function () {
+            var _fail_callback_ = function (res) {
                 MiniState.__wx_main_user_logging__ = false;
-                failCallback && failCallback();
+                res['loginData'] = MiniState.__wx_main_user_login_data__;
+                res['showData'] = MiniState.__wx_main_on_show_data__;
+                failCallback && failCallback(res);
                 completeCallback && completeCallback();
             };
             var _setting_callback_ = function (setting) {
@@ -379,12 +386,13 @@ var Tape;
                         MiniUtils.debugLog('-------MiniSDK-------用户已授权【获取用户信息】');
                         registerUserCallback(_success_callback_, _fail_callback_);
                     }
-                    else if (authSetting['scope.userInfo'] === false) {
-                        MiniUtils.debugLog('-------MiniSDK-------用户已拒绝授权【获取用户信息】');
-                        registerSettingCallback(options, _setting_callback_, _success_callback_, _fail_callback_);
-                    }
                     else {
-                        MiniUtils.debugLog('-------MiniSDK-------用户未曾授权，显示授权按钮');
+                        if (authSetting['scope.userInfo'] === false) {
+                            MiniUtils.debugLog('-------MiniSDK-------用户已拒绝授权【获取用户信息】');
+                        }
+                        else {
+                            MiniUtils.debugLog('-------MiniSDK-------用户未曾授权，显示授权按钮');
+                        }
                         registerUserLoginBotton(options, _setting_callback_, _success_callback_, _fail_callback_);
                     }
                 }, _fail_callback_);
