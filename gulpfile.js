@@ -5,14 +5,16 @@ var gulpConcat = require('gulp-concat');
 var gulpTypescript = require("gulp-typescript");
 
 var moduleName = 'tape';
-var includePath = './source/include/';
-var inputJsPath = './source/bin/js/';
+var srcDir = './src/';
+var includePath = srcDir + '/include/';
+var inputJsPath = srcDir + '/bin/js/';
+var typesConfig = srcDir + '/tsconfig.json';
 var outputPath = './dist/';
 
 gulp.task('task:clean', del.bind(null, [outputPath + '*', inputJsPath + '*']));
 
 gulp.task("task:tsc", function () {
-  var tsProject = gulpTypescript.createProject("./source/tsconfig.json");
+  var tsProject = gulpTypescript.createProject(typesConfig);
   return tsProject.src()
   .pipe(tsProject())
   .js.pipe(gulp.dest(inputJsPath));
