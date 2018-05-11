@@ -1,74 +1,90 @@
 // =========================== //
 // tape mini.js
 // =========================== //
-module Tape {
-
+var Tape;
+(function (Tape) {
     /**
      * Mini状态类
      */
-    class MiniState {
-
-        public static __wx_main_share_info__ = null;
-        public static __wx_main_on_show_data__ = null;
-        public static __wx_main_user_login_data__ = null;
-        public static __wx_main_user_logging__ = false;
-        public static __wx_main_user_login_button__ = null;
-        public static __wx_main_user_login_bg_page__ = null;
-        public static __wx_main_open_data_view__ = null;
-        public static __wx_main_open_data_bg_page__ = null;
-        public static __wx_main_game_club_button__ = null;
-
-    }
-
+    var MiniState = /** @class */ (function () {
+        function MiniState() {
+        }
+        MiniState.__wx_main_share_info__ = null;
+        MiniState.__wx_main_on_show_data__ = null;
+        MiniState.__wx_main_user_login_data__ = null;
+        MiniState.__wx_main_user_logging__ = false;
+        MiniState.__wx_main_user_login_button__ = null;
+        MiniState.__wx_main_user_login_bg_page__ = null;
+        MiniState.__wx_main_open_data_view__ = null;
+        MiniState.__wx_main_open_data_bg_page__ = null;
+        MiniState.__wx_main_game_club_button__ = null;
+        return MiniState;
+    }());
     /**
      * Mini工具类
      */
-    class MiniUtils {
-
+    var MiniUtils = /** @class */ (function () {
+        function MiniUtils() {
+        }
         /**
          * 版本号比较
          */
-        public static compareVersion(v1, v2) {
-            v1 = v1.split('.')
-            v2 = v2.split('.')
-            var len = Math.max(v1.length, v2.length)
+        MiniUtils.compareVersion = function (v1, v2) {
+            v1 = v1.split('.');
+            v2 = v2.split('.');
+            var len = Math.max(v1.length, v2.length);
             while (v1.length < len) {
-                v1.push('0')
+                v1.push('0');
             }
             while (v2.length < len) {
-                v2.push('0')
+                v2.push('0');
             }
             for (var i = 0; i < len; i++) {
-                var num1 = parseInt(v1[i])
-                var num2 = parseInt(v2[i])
+                var num1 = parseInt(v1[i]);
+                var num2 = parseInt(v2[i]);
                 if (num1 > num2) {
-                    return 1
-                } else if (num1 < num2) {
-                    return -1
+                    return 1;
+                }
+                else if (num1 < num2) {
+                    return -1;
                 }
             }
-            return 0
-        }
-
+            return 0;
+        };
+        /**
+         * 打印日志
+         */
+        MiniUtils.debugLog = function (message) {
+            var optionalParams = [];
+            for (var _i = 1; _i < arguments.length; _i++) {
+                optionalParams[_i - 1] = arguments[_i];
+            }
+            console.log.apply(console, [message].concat(optionalParams));
+        };
         /**
          * 获取wx模块的方法
          */
-        public static getMiniFunction = (func: string) => {
+        MiniUtils.getMiniFunction = function (func) {
             if (window.hasOwnProperty("wx")) {
                 if (window['wx'].hasOwnProperty(func)) {
                     return window['wx'][func];
-                } else {
-                    return () => { }
                 }
-            } else {
-                return () => { }
+                else {
+                    return function () { };
+                }
             }
-        }
-
+            else {
+                return function () { };
+            }
+        };
         /**
          * 执行wx模块的方法
          */
-        public static callMiniFunction = (func: string, options = {}, success: Function = null, fail: Function = null, complete: Function = null) => {
+        MiniUtils.callMiniFunction = function (func, options, success, fail, complete) {
+            if (options === void 0) { options = {}; }
+            if (success === void 0) { success = null; }
+            if (fail === void 0) { fail = null; }
+            if (complete === void 0) { complete = null; }
             if (window.hasOwnProperty("wx")) {
                 if (window['wx'].hasOwnProperty(func)) {
                     var defOpts = {};
@@ -81,100 +97,95 @@ module Tape {
                     if (complete) {
                         defOpts['complete'] = complete;
                     }
-                    var opts = (<any>Object).assign({}, options || {}, defOpts);
+                    var opts = Object.assign({}, options || {}, defOpts);
                     return window['wx'][func](opts);
                 }
-            } else {
+            }
+            else {
                 fail && fail();
                 complete && complete();
             }
             return null;
-        }
-
-        /**
-         * 打印日志
-         */
-        public static debugLog(message?: any, ...optionalParams: any[]): void {
-            console.log(message, ...optionalParams);
-        }
-
-    }
-
+        };
+        return MiniUtils;
+    }());
     //////////////////////////////////////////////////////////////
     ////// Export
     //////////////////////////////////////////////////////////////
-
     /**
      * 是否为小程序/小游戏
      */
-    export const isMiniGame = () => {
+    Tape.isMiniGame = function () {
         return window.hasOwnProperty("wx");
-    }
-
-    export class MiniHandler {
-
+    };
+    var MiniHandler = /** @class */ (function () {
+        function MiniHandler() {
+        }
         /**
          * 初始化
          * @param width 宽度
          * @param height 高度
          * @param options 其他拓展
          */
-        public static init = (width: number, height: number, ...options) => {
+        MiniHandler.init = function (width, height) {
+            var options = [];
+            for (var _i = 2; _i < arguments.length; _i++) {
+                options[_i - 2] = arguments[_i];
+            }
             Laya.MiniAdpter.init(true);
-            Laya.init(width, height, ...options);
+            Laya.init.apply(Laya, [width, height].concat(options));
             Laya.stage.scaleMode = Laya.Stage.SCALE_EXACTFIT;
             if (Tape.Build.isDebug()) {
                 Laya.Stat.show(0, 0);
             }
-            MiniUtils.getMiniFunction('onShareAppMessage')(() => {
+            MiniUtils.getMiniFunction('onShareAppMessage')(function () {
                 return MiniState.__wx_main_share_info__;
             });
-            MiniUtils.getMiniFunction('onShow')((res) => {
+            MiniUtils.getMiniFunction('onShow')(function (res) {
                 MiniState.__wx_main_on_show_data__ = res;
             });
             initOpenDataPage();
-        }
-
+        };
         /**
          * 退出小游戏
          */
-        public static exit = () => {
+        MiniHandler.exit = function () {
             MiniUtils.callMiniFunction('exitMiniProgram');
-        }
-
-    }
-
+        };
+        return MiniHandler;
+    }());
+    Tape.MiniHandler = MiniHandler;
     //-------------------------------------------------------
     //-- LoginPage
     //-------------------------------------------------------
-
     /**
      * 注册监听设置返回
      */
-    const registerSettingCallback = (options, settingCallback: Function, successCallback: Function, failCallback: Function) => {
-        var cancel = () => {
+    var registerSettingCallback = function (options, settingCallback, successCallback, failCallback) {
+        var cancel = function () {
             failCallback && failCallback();
-        }
-        var open = () => {
-            MiniUtils.callMiniFunction('openSetting', {}, (res) => {
+        };
+        var open = function () {
+            MiniUtils.callMiniFunction('openSetting', {}, function (res) {
                 var authSetting = res.authSetting;
                 if (authSetting['scope.userInfo'] === true) {
                     MiniUtils.debugLog('-------MiniSDK-------用户已授权【获取用户信息】');
                     registerUserCallback(successCallback, failCallback);
-                } else if (authSetting['scope.userInfo'] === false) {
+                }
+                else if (authSetting['scope.userInfo'] === false) {
                     failCallback && failCallback();
-                } else {
+                }
+                else {
                     registerUserLoginBotton(options, settingCallback, successCallback, failCallback);
                 }
-            }, failCallback)
-        }
-        settingCallback && settingCallback({ open, cancel });
-    }
-
+            }, failCallback);
+        };
+        settingCallback && settingCallback({ open: open, cancel: cancel });
+    };
     /**
      * 注册监听登录按钮
      */
-    const registerUserLoginBotton = (options, settingCallback: Function, successCallback: Function, failCallback: Function) => {
+    var registerUserLoginBotton = function (options, settingCallback, successCallback, failCallback) {
         var width = options.width || 200;
         var height = options.height || 40;
         var left = options.left || (Laya.stage.width / 2 - width / 2);
@@ -189,29 +200,29 @@ module Tape {
         var borderRadius = options.borderRadius || 4;
         var bgPage = options.bgPage || null;
         if (bgPage) {
-            bgPage.on(Laya.Event.MOUSE_DOWN, null, () => {
+            bgPage.on(Laya.Event.MOUSE_DOWN, null, function () {
             });
             var cancelButton = bgPage.getChildByName('cancel');
             if (cancelButton) {
-                cancelButton.on(Laya.Event.CLICK, null, () => {
+                cancelButton.on(Laya.Event.CLICK, null, function () {
                     MiniLogin.hideLoginPage();
                     failCallback && failCallback();
                 });
             }
             var exitButton = bgPage.getChildByName('exit');
             if (exitButton) {
-                exitButton.on(Laya.Event.CLICK, null, () => {
-                    exit();
+                exitButton.on(Laya.Event.CLICK, null, function () {
+                    Tape.exit();
                 });
             }
         }
         MiniLogin.hideLoginPage();
-        MiniUtils.callMiniFunction('getSystemInfo', {}, (systemInfo) => {
+        MiniUtils.callMiniFunction('getSystemInfo', {}, function (systemInfo) {
             var version = systemInfo.SDKVersion || '0.0.0';
             var windowWidth = systemInfo.windowWidth || Laya.stage.width;
             var windowHeight = systemInfo.windowHeight || Laya.stage.height;
             if (MiniUtils.compareVersion(version, '2.0.1') >= 0) {
-                var userLoginButton: any = MiniUtils.callMiniFunction('createUserInfoButton', {
+                var userLoginButton = MiniUtils.callMiniFunction('createUserInfoButton', {
                     type: type,
                     text: text,
                     image: image,
@@ -229,15 +240,16 @@ module Tape {
                     }
                 });
                 if (userLoginButton) {
-                    userLoginButton['removeSelf'] = () => {
+                    userLoginButton['removeSelf'] = function () {
                         try {
                             userLoginButton.hide();
                             userLoginButton.destroy();
-                        } catch (error) {
                         }
-                    }
+                        catch (error) {
+                        }
+                    };
                 }
-                userLoginButton.onTap((res) => {
+                userLoginButton.onTap(function (res) {
                     MiniLogin.hideLoginPage();
                     successCallback && successCallback(res);
                 });
@@ -247,9 +259,10 @@ module Tape {
                 }
                 MiniState.__wx_main_user_login_button__ = userLoginButton;
                 MiniState.__wx_main_user_login_bg_page__ = bgPage;
-            } else {
+            }
+            else {
                 MiniUtils.debugLog('-------MiniSDK-------对微信基础库小于【2.0.1】的版本兼容');
-                var userLoginButton: any = new Laya.Sprite();
+                var userLoginButton = new Laya.Sprite();
                 userLoginButton.x = left;
                 userLoginButton.y = top;
                 userLoginButton.width = width;
@@ -260,7 +273,8 @@ module Tape {
                     img.height = height;
                     img.skin = image;
                     userLoginButton.addChild(img);
-                } else {
+                }
+                else {
                     userLoginButton.graphics.drawRect(0, 0, width, height, backgroundColor);
                     var tx = new Laya.Text();
                     tx.color = textColor;
@@ -271,21 +285,21 @@ module Tape {
                     tx.pivot(tx.width / 2, tx.height / 2);
                     userLoginButton.addChild(tx);
                 }
-                userLoginButton.on(Laya.Event.CLICK, null, () => {
-                    registerUserCallback((res) => {
+                userLoginButton.on(Laya.Event.CLICK, null, function () {
+                    registerUserCallback(function (res) {
                         MiniLogin.hideLoginPage();
                         successCallback && successCallback(res);
-                    }, () => {
-                        registerSettingCallback(options, settingCallback, (res) => {
+                    }, function () {
+                        registerSettingCallback(options, settingCallback, function (res) {
                             MiniLogin.hideLoginPage();
                             successCallback && successCallback(res);
                         }, failCallback);
                     });
                 });
-                userLoginButton.on(Laya.Event.MOUSE_MOVE, null, () => {
+                userLoginButton.on(Laya.Event.MOUSE_MOVE, null, function () {
                     userLoginButton.alpha = 0.8;
                 });
-                userLoginButton.on(Laya.Event.MOUSE_UP, null, () => {
+                userLoginButton.on(Laya.Event.MOUSE_UP, null, function () {
                     userLoginButton.alpha = 1;
                 });
                 userLoginButton.zOrder = 99999;
@@ -297,21 +311,20 @@ module Tape {
                 MiniState.__wx_main_user_login_bg_page__ = bgPage;
             }
         }, failCallback);
-    }
-
+    };
     /**
      * 注册监听获取用户信息返回
      */
-    const registerUserCallback = (userCallback: Function, failCallback: Function) => {
-        MiniUtils.callMiniFunction('getUserInfo', {}, (res) => {
+    var registerUserCallback = function (userCallback, failCallback) {
+        MiniUtils.callMiniFunction('getUserInfo', {}, function (res) {
             userCallback && userCallback(res);
-        }, () => {
+        }, function () {
             failCallback && failCallback();
         });
-    }
-
-    export class MiniLogin {
-
+    };
+    var MiniLogin = /** @class */ (function () {
+        function MiniLogin() {
+        }
         /**
          * 显示登录界面
          * @param options 按钮位置信息bgPage,type,text,image,x,y,width,height
@@ -319,7 +332,9 @@ module Tape {
          * @param failCallback 失败回调
          * @param completeCallback 完成回调，失败成功都会回调
          */
-        public static showLoginPage = (options, successCallback: Function, failCallback: Function = null, completeCallback: Function = null) => {
+        MiniLogin.showLoginPage = function (options, successCallback, failCallback, completeCallback) {
+            if (failCallback === void 0) { failCallback = null; }
+            if (completeCallback === void 0) { completeCallback = null; }
             if (MiniState.__wx_main_user_logging__) {
                 MiniUtils.debugLog('-------MiniSDK-------正在操作中，请勿多次调用');
                 return;
@@ -327,56 +342,58 @@ module Tape {
             if (!options) {
                 options = {};
             }
-            var _success_callback_ = (res) => {
+            var _success_callback_ = function (res) {
                 MiniState.__wx_main_user_logging__ = false;
                 res['loginData'] = MiniState.__wx_main_user_login_data__;
                 res['showData'] = MiniState.__wx_main_on_show_data__;
                 successCallback && successCallback(res);
                 completeCallback && completeCallback();
-            }
-            var _fail_callback_ = () => {
+            };
+            var _fail_callback_ = function () {
                 MiniState.__wx_main_user_logging__ = false;
                 failCallback && failCallback();
                 completeCallback && completeCallback();
-            }
-            var _setting_callback_ = (setting) => {
+            };
+            var _setting_callback_ = function (setting) {
                 MiniDisplay.showModal({
                     title: '登录提示',
                     content: '无法获取用户信息，需要到设置页面开启授权',
                     showCancel: true,
                     cancelText: '取消',
                     confirmText: '去设置'
-                }, (res) => {
+                }, function (res) {
                     if (res.confirm) {
                         setting.open();
-                    } else {
+                    }
+                    else {
                         setting.cancel();
                     }
                 });
-            }
+            };
             MiniState.__wx_main_user_logging__ = true;
-            MiniUtils.callMiniFunction('login', {}, (loginData) => {
+            MiniUtils.callMiniFunction('login', {}, function (loginData) {
                 MiniState.__wx_main_user_login_data__ = loginData;
-                MiniUtils.callMiniFunction('getSetting', {}, (res) => {
+                MiniUtils.callMiniFunction('getSetting', {}, function (res) {
                     var authSetting = res.authSetting;
                     if (authSetting['scope.userInfo'] === true) {
                         MiniUtils.debugLog('-------MiniSDK-------用户已授权【获取用户信息】');
                         registerUserCallback(_success_callback_, _fail_callback_);
-                    } else if (authSetting['scope.userInfo'] === false) {
+                    }
+                    else if (authSetting['scope.userInfo'] === false) {
                         MiniUtils.debugLog('-------MiniSDK-------用户已拒绝授权【获取用户信息】');
                         registerSettingCallback(options, _setting_callback_, _success_callback_, _fail_callback_);
-                    } else {
+                    }
+                    else {
                         MiniUtils.debugLog('-------MiniSDK-------用户未曾授权，显示授权按钮');
                         registerUserLoginBotton(options, _setting_callback_, _success_callback_, _fail_callback_);
                     }
                 }, _fail_callback_);
             }, _fail_callback_);
-        }
-
+        };
         /**
          * 隐藏登录界面
          */
-        public static hideLoginPage = () => {
+        MiniLogin.hideLoginPage = function () {
             MiniState.__wx_main_user_logging__ = false;
             if (MiniState.__wx_main_user_login_button__) {
                 MiniState.__wx_main_user_login_button__.removeSelf();
@@ -386,26 +403,27 @@ module Tape {
                 MiniState.__wx_main_user_login_bg_page__.removeSelf();
                 MiniState.__wx_main_user_login_bg_page__ = null;
             }
-        }
-
-    }
-
+        };
+        return MiniLogin;
+    }());
+    Tape.MiniLogin = MiniLogin;
     //-------------------------------------------------------
     //-- GameClubButton
     //-------------------------------------------------------
-
-    export class MiniGameClub {
-
+    var MiniGameClub = /** @class */ (function () {
+        function MiniGameClub() {
+        }
         /**
          * 显示游戏圈按钮
          * @param options 按钮位置信息icon,top,left,width,height
          * @param onTap 点击回调
          */
-        public static showGameClubButton = (options, onTap: Function = null) => {
+        MiniGameClub.showGameClubButton = function (options, onTap) {
+            if (onTap === void 0) { onTap = null; }
             if (!options) {
                 options = {};
             }
-            MiniUtils.callMiniFunction('getSystemInfo', {}, (res) => {
+            MiniUtils.callMiniFunction('getSystemInfo', {}, function (res) {
                 var version = res.SDKVersion || '0.0.0';
                 var windowWidth = res.windowWidth || Laya.stage.width;
                 var windowHeight = res.windowHeight || Laya.stage.height;
@@ -421,47 +439,48 @@ module Tape {
                         }
                     });
                     if (MiniState.__wx_main_game_club_button__) {
-                        MiniState.__wx_main_game_club_button__['removeSelf'] = () => {
+                        MiniState.__wx_main_game_club_button__['removeSelf'] = function () {
                             try {
                                 MiniState.__wx_main_game_club_button__.hide();
                                 MiniState.__wx_main_game_club_button__.destroy();
-                            } catch (error) {
                             }
-                        }
-                        MiniState.__wx_main_game_club_button__.onTap((res) => {
+                            catch (error) {
+                            }
+                        };
+                        MiniState.__wx_main_game_club_button__.onTap(function (res) {
                             onTap && onTap(res);
                         });
                         MiniState.__wx_main_game_club_button__.show();
                     }
                 }
             });
-        }
-
+        };
         /**
          * 隐藏游戏圈按钮
          */
-        public static hideGameClubButton = () => {
+        MiniGameClub.hideGameClubButton = function () {
             if (MiniState.__wx_main_game_club_button__) {
                 MiniState.__wx_main_game_club_button__.removeSelf();
                 MiniState.__wx_main_game_club_button__ = null;
             }
-        }
-
-    }
-
+        };
+        return MiniGameClub;
+    }());
+    Tape.MiniGameClub = MiniGameClub;
     //-------------------------------------------------------
     //-- OpenData
     //-------------------------------------------------------
-
     /**
      * 获取或创建开放数据域View
      */
-    const getOrCreateOpenDataPage = (bgPage = null) => {
+    var getOrCreateOpenDataPage = function (bgPage) {
+        if (bgPage === void 0) { bgPage = null; }
         if (MiniState.__wx_main_open_data_view__) {
             if (MiniState.__wx_main_open_data_bg_page__) {
                 try {
                     MiniState.__wx_main_open_data_bg_page__.removeSelf();
-                } catch (error) {
+                }
+                catch (error) {
                 }
             }
             MiniState.__wx_main_open_data_bg_page__ = bgPage;
@@ -470,19 +489,20 @@ module Tape {
                 if (MiniState.__wx_main_open_data_bg_page__) {
                     var cancelButton = bgPage.getChildByName('cancel');
                     if (cancelButton) {
-                        cancelButton.on(Laya.Event.CLICK, null, () => {
+                        cancelButton.on(Laya.Event.CLICK, null, function () {
                             MiniOpenData.hideSharedCanvasView();
                         });
                     }
                     var exitButton = bgPage.getChildByName('exit');
                     if (exitButton) {
-                        exitButton.on(Laya.Event.CLICK, null, () => {
-                            exit();
+                        exitButton.on(Laya.Event.CLICK, null, function () {
+                            Tape.exit();
                         });
                     }
                     view.addChild(MiniState.__wx_main_open_data_bg_page__);
                     view.visible = true;
-                } else {
+                }
+                else {
                     view.visible = false;
                 }
             }
@@ -496,7 +516,7 @@ module Tape {
         interceptView.pivot(0, 0);
         interceptView.width = Laya.stage.width;
         interceptView.height = Laya.stage.height;
-        interceptView.on(Laya.Event.MOUSE_DOWN, null, () => { });
+        interceptView.on(Laya.Event.MOUSE_DOWN, null, function () { });
         interceptView.name = '__open_data_intercept_view__';
         MiniState.__wx_main_open_data_view__.addChild(interceptView);
         if (window.hasOwnProperty('sharedCanvas')) {
@@ -505,7 +525,7 @@ module Tape {
             sharedCanvas.height = Laya.stage.height;
             sharedCanvas.innerHTML = '';
             if (!sharedCanvas.hasOwnProperty('_addReference')) {
-                sharedCanvas['_addReference'] = () => { };
+                sharedCanvas['_addReference'] = function () { };
             }
             var image = new Laya.Image();
             image.x = 0;
@@ -519,87 +539,83 @@ module Tape {
             MiniState.__wx_main_open_data_view__.addChild(image);
         }
         return MiniState.__wx_main_open_data_view__;
-    }
-
+    };
     /**
      * 发送消息到开放数据域
      */
-    const postMessageToOpenDataContext = (action, data = {}) => {
-        let openDataContext = MiniUtils.callMiniFunction('getOpenDataContext');
+    var postMessageToOpenDataContext = function (action, data) {
+        if (data === void 0) { data = {}; }
+        var openDataContext = MiniUtils.callMiniFunction('getOpenDataContext');
         openDataContext && openDataContext.postMessage({
-            action, data
+            action: action, data: data
         });
-    }
-
+    };
     /**
      * 初始化开放数据域
      */
-    const initOpenDataPage = () => {
+    var initOpenDataPage = function () {
         postMessageToOpenDataContext('initOpenDataPage', {
             width: Laya.stage.width,
             height: Laya.stage.height,
             matrix: Laya.stage._canvasTransform
         });
-        Laya.timer.once(400, null, () => {
+        Laya.timer.once(400, null, function () {
             getOrCreateOpenDataPage();
         });
-    }
-
-    export class MiniOpenData {
-
+    };
+    var MiniOpenData = /** @class */ (function () {
+        function MiniOpenData() {
+        }
         /**
          * 是否支持开放数据域Canvas
          */
-        public static isSupportSharedCanvasView = () => {
+        MiniOpenData.isSupportSharedCanvasView = function () {
             return window.hasOwnProperty('sharedCanvas');
-        }
-
+        };
         /**
          * 显示开放数据域Canvas
          * @param bgPage 背景页面
          * @param data 传递给开放数据域的数据
          */
-        public static showSharedCanvasView = (bgPage, data = {}) => {
+        MiniOpenData.showSharedCanvasView = function (bgPage, data) {
+            if (data === void 0) { data = {}; }
             if (MiniOpenData.isSupportSharedCanvasView()) {
-                postMessageToOpenDataContext('showOpenDataPage', (<any>Object).assign(data, MiniState.__wx_main_on_show_data__));
+                postMessageToOpenDataContext('showOpenDataPage', Object.assign(data, MiniState.__wx_main_on_show_data__));
                 var sharedStage = getOrCreateOpenDataPage(bgPage);
                 Laya.stage.addChild(sharedStage);
             }
-        }
-
+        };
         /**
          * 隐藏开放数据域Canvas
          */
-        public static hideSharedCanvasView = () => {
+        MiniOpenData.hideSharedCanvasView = function () {
             if (MiniOpenData.isSupportSharedCanvasView()) {
                 postMessageToOpenDataContext('hideOpenDataPage', {});
                 var sharedStage = getOrCreateOpenDataPage(null);
                 sharedStage.removeSelf();
             }
-        }
-
+        };
         /**
          * 将用户游戏数据托管到微信服务器
          */
-        public static setUserCloudStorage = (dataList) => {
+        MiniOpenData.setUserCloudStorage = function (dataList) {
             postMessageToOpenDataContext('setUserCloudStorage', dataList);
-        }
-
+        };
         /**
          * 删除用户托管数据当中对应 key 的数据。
          */
-        public static removeUserCloudStorage = (keyList) => {
+        MiniOpenData.removeUserCloudStorage = function (keyList) {
             postMessageToOpenDataContext('removeUserCloudStorage', keyList);
-        }
-
-    }
-
+        };
+        return MiniOpenData;
+    }());
+    Tape.MiniOpenData = MiniOpenData;
     //-------------------------------------------------------
     //-- modules
     //-------------------------------------------------------
-
-    export class MiniNavigator {
-
+    var MiniNavigator = /** @class */ (function () {
+        function MiniNavigator() {
+        }
         /**
          * 打开同一公众号下关联的另一个小程序。（注：必须是同一公众号下，而非同个 open 账号下）
          * @param appId 要打开的小程序 appId
@@ -610,10 +626,12 @@ module Tape {
          * @param fail 失败回调
          * @param complete 完成回调，失败成功都会回调
          */
-        public static navigateToMiniProgram = (appId: string, path: string, extraData: Object, envVersion: string, success: Function = null, fail: Function = null, complete: Function = null) => {
-            MiniUtils.callMiniFunction('navigateToMiniProgram', { appId, path, extraData, envVersion }, success, fail, complete);
-        }
-
+        MiniNavigator.navigateToMiniProgram = function (appId, path, extraData, envVersion, success, fail, complete) {
+            if (success === void 0) { success = null; }
+            if (fail === void 0) { fail = null; }
+            if (complete === void 0) { complete = null; }
+            MiniUtils.callMiniFunction('navigateToMiniProgram', { appId: appId, path: path, extraData: extraData, envVersion: envVersion }, success, fail, complete);
+        };
         /**
          * 返回到上一个小程序，只有在当前小程序是被其他小程序打开时可以调用成功
          * @param extraData 需要返回给上一个小程序的数据，上一个小程序可在 App.onShow() 中获取到这份数据。
@@ -621,17 +639,21 @@ module Tape {
          * @param fail 失败回调
          * @param complete 完成回调，失败成功都会回调
          */
-        public static navigateBackMiniProgram = (extraData: Object, success: Function = null, fail: Function = null, complete: Function = null) => {
-            MiniUtils.callMiniFunction('navigateBackMiniProgram', { extraData }, success, fail, complete);
-        }
-
-    }
-
+        MiniNavigator.navigateBackMiniProgram = function (extraData, success, fail, complete) {
+            if (success === void 0) { success = null; }
+            if (fail === void 0) { fail = null; }
+            if (complete === void 0) { complete = null; }
+            MiniUtils.callMiniFunction('navigateBackMiniProgram', { extraData: extraData }, success, fail, complete);
+        };
+        return MiniNavigator;
+    }());
+    Tape.MiniNavigator = MiniNavigator;
     /**
      * Share 模块
      */
-    export class MiniShare {
-
+    var MiniShare = /** @class */ (function () {
+        function MiniShare() {
+        }
         /**
          * 显示转发菜单按钮
          * @param options 分享的信息，title，imageUrl，query
@@ -639,21 +661,26 @@ module Tape {
          * @param fail 失败回调
          * @param complete 完成回调，失败成功都会回调
          */
-        public static showShareMenu = (options: Object, onShareMessage: Function = null, success: Function = null, fail: Function = null, complete: Function = null) => {
+        MiniShare.showShareMenu = function (options, onShareMessage, success, fail, complete) {
+            if (onShareMessage === void 0) { onShareMessage = null; }
+            if (success === void 0) { success = null; }
+            if (fail === void 0) { fail = null; }
+            if (complete === void 0) { complete = null; }
             MiniState.__wx_main_share_info__ = options;
             MiniUtils.callMiniFunction('showShareMenu', { withShareTicket: true }, success, fail, complete);
-        }
-
+        };
         /**
          * 隐藏转发菜单按钮
          * @param success 成功回调
          * @param fail 失败回调
          * @param complete 完成回调，失败成功都会回调
          */
-        public static hideShareMenu = (success: Function = null, fail: Function = null, complete: Function = null) => {
+        MiniShare.hideShareMenu = function (success, fail, complete) {
+            if (success === void 0) { success = null; }
+            if (fail === void 0) { fail = null; }
+            if (complete === void 0) { complete = null; }
             MiniUtils.callMiniFunction('hideShareMenu', {}, success, fail, complete);
-        }
-
+        };
         /**
          * 更新转发菜单按钮
          * @param options 分享的信息，title，imageUrl，query
@@ -661,11 +688,13 @@ module Tape {
          * @param fail 失败回调
          * @param complete 完成回调，失败成功都会回调
          */
-        public static updateShareMenu = (options: Object, success: Function = null, fail: Function = null, complete: Function = null) => {
+        MiniShare.updateShareMenu = function (options, success, fail, complete) {
+            if (success === void 0) { success = null; }
+            if (fail === void 0) { fail = null; }
+            if (complete === void 0) { complete = null; }
             MiniState.__wx_main_share_info__ = options;
             MiniUtils.callMiniFunction('updateShareMenu', { withShareTicket: true }, success, fail, complete);
-        }
-
+        };
         /**
          * 主动转发
          * @param options 分享的信息，title，imageUrl，query
@@ -673,10 +702,12 @@ module Tape {
          * @param fail 失败回调
          * @param complete 完成回调，失败成功都会回调
          */
-        public static shareAppMessage = (options: Object, success: Function = null, fail: Function = null, complete: Function = null) => {
+        MiniShare.shareAppMessage = function (options, success, fail, complete) {
+            if (success === void 0) { success = null; }
+            if (fail === void 0) { fail = null; }
+            if (complete === void 0) { complete = null; }
             MiniUtils.callMiniFunction('shareAppMessage', options, success, fail, complete);
-        }
-
+        };
         /**
          * 获取转发详细信息
          * @param shareTicket shareTicket
@@ -684,61 +715,66 @@ module Tape {
          * @param fail 失败回调
          * @param complete 完成回调，失败成功都会回调
          */
-        public static getShareInfo = (shareTicket: string, success: Function = null, fail: Function = null, complete: Function = null) => {
-            MiniUtils.callMiniFunction('getShareInfo', { shareTicket }, success, fail, complete);
-        }
-
-    }
-
+        MiniShare.getShareInfo = function (shareTicket, success, fail, complete) {
+            if (success === void 0) { success = null; }
+            if (fail === void 0) { fail = null; }
+            if (complete === void 0) { complete = null; }
+            MiniUtils.callMiniFunction('getShareInfo', { shareTicket: shareTicket }, success, fail, complete);
+        };
+        return MiniShare;
+    }());
+    Tape.MiniShare = MiniShare;
     /**
      * Ad 模块
      */
-    export class MiniAd {
-
-        private static __show_ads__ = {};
-
+    var MiniAd = /** @class */ (function () {
+        function MiniAd() {
+        }
         /**
          * 显示激励型视频广告
          * @param adUnitId 广告单元ID
          * @param onRewarded 完成回调，发放奖励
          * @param onError 错误回调
          */
-        public static showRewardedVideoAd(adUnitId: string, onRewarded: Function = null, onError: Function = null) {
+        MiniAd.showRewardedVideoAd = function (adUnitId, onRewarded, onError) {
+            var _this = this;
+            if (onRewarded === void 0) { onRewarded = null; }
+            if (onError === void 0) { onError = null; }
             var videoAd = this.__show_ads__[adUnitId];
             if (videoAd) {
                 videoAd.hide();
                 videoAd.destroy();
             }
-            MiniUtils.callMiniFunction('getSystemInfo', {}, (res) => {
+            MiniUtils.callMiniFunction('getSystemInfo', {}, function (res) {
                 var version = res.SDKVersion || '0.0.0';
                 if (MiniUtils.compareVersion(version, '2.0.4') >= 0) {
-                    let videoAd = MiniUtils.callMiniFunction('createRewardedVideoAd', { adUnitId });
-                    this.__show_ads__[adUnitId] = videoAd;
-                    videoAd.show();
-                    videoAd.onError(() => {
+                    var videoAd_1 = MiniUtils.callMiniFunction('createRewardedVideoAd', { adUnitId: adUnitId });
+                    _this.__show_ads__[adUnitId] = videoAd_1;
+                    videoAd_1.show();
+                    videoAd_1.onError(function () {
                         onRewarded && onRewarded();
-                        this.__show_ads__[adUnitId] = null;
+                        _this.__show_ads__[adUnitId] = null;
                     });
-                    videoAd.onError((errMsg) => {
+                    videoAd_1.onError(function (errMsg) {
                         onError && onError();
-                        this.__show_ads__[adUnitId] = null;
+                        _this.__show_ads__[adUnitId] = null;
                     });
-                    videoAd.load().then(() => {
-                        videoAd.show();
-                    }).catch(errMsg => {
+                    videoAd_1.load().then(function () {
+                        videoAd_1.show();
+                    }).catch(function (errMsg) {
                         onError && onError(errMsg);
-                        this.__show_ads__[adUnitId] = null;
+                        _this.__show_ads__[adUnitId] = null;
                     });
                 }
             });
-        }
-
+        };
         /**
          * 显示Banner广告
          * @param adUnitId 广告单元ID
          * @param options Banner位置信息top,left,width,height
          **/
-        public static showBannerAd(adUnitId: string, options: Object) {
+        MiniAd.showBannerAd = function (adUnitId, options) {
+            var _this = this;
             var ad = this.__show_ads__[adUnitId];
             if (ad) {
                 ad.hide();
@@ -748,13 +784,13 @@ module Tape {
             if (!options) {
                 options = {};
             }
-            MiniUtils.callMiniFunction('getSystemInfo', {}, (systemInfo) => {
+            MiniUtils.callMiniFunction('getSystemInfo', {}, function (systemInfo) {
                 var version = systemInfo.SDKVersion || '0.0.0';
                 var windowWidth = systemInfo.windowWidth || Laya.stage.width;
                 var windowHeight = systemInfo.windowHeight || Laya.stage.height;
                 if (MiniUtils.compareVersion(version, '2.0.4') >= 0) {
-                    let ad = MiniUtils.callMiniFunction('createBannerAd', {
-                        adUnitId,
+                    var ad_1 = MiniUtils.callMiniFunction('createBannerAd', {
+                        adUnitId: adUnitId,
                         style: {
                             left: (options['left'] || 0) * windowWidth / Laya.stage.width,
                             top: (options['top'] || 0) * windowHeight / Laya.stage.height,
@@ -762,29 +798,33 @@ module Tape {
                             height: (options['height'] || 100) * windowHeight / Laya.stage.height,
                         }
                     });
-                    this.__show_ads__[adUnitId] = ad;
-                    ad.show();
+                    _this.__show_ads__[adUnitId] = ad_1;
+                    ad_1.show();
                 }
             });
-        }
-    }
-
+        };
+        MiniAd.__show_ads__ = {};
+        return MiniAd;
+    }());
+    Tape.MiniAd = MiniAd;
     /**
      * MiniAnalytics
      */
-    export class MiniAnalytics {
-
-        public static reportAnalytics = (eventName: string, data: Object) => {
-            MiniUtils.getMiniFunction('reportAnalytics')(eventName, data);
+    var MiniAnalytics = /** @class */ (function () {
+        function MiniAnalytics() {
         }
-
-    }
-
+        MiniAnalytics.reportAnalytics = function (eventName, data) {
+            MiniUtils.getMiniFunction('reportAnalytics')(eventName, data);
+        };
+        return MiniAnalytics;
+    }());
+    Tape.MiniAnalytics = MiniAnalytics;
     /**
      * MiniDisplay
      */
-    export class MiniDisplay {
-
+    var MiniDisplay = /** @class */ (function () {
+        function MiniDisplay() {
+        }
         /**
          * 根据用户当天游戏时间判断用户是否需要休息
          * @param todayPlayedTime 今天已经玩游戏的时间，单位：秒
@@ -792,40 +832,49 @@ module Tape {
          * @param fail 失败回调
          * @param complete 完成回调，失败成功都会回调
          */
-        public static checkIsUserAdvisedToRest = (todayPlayedTime, success: Function = null, fail: Function = null, complete: Function = null) => {
-            MiniUtils.callMiniFunction('checkIsUserAdvisedToRest', { todayPlayedTime }, success, fail, complete);
-        }
-
+        MiniDisplay.checkIsUserAdvisedToRest = function (todayPlayedTime, success, fail, complete) {
+            if (success === void 0) { success = null; }
+            if (fail === void 0) { fail = null; }
+            if (complete === void 0) { complete = null; }
+            MiniUtils.callMiniFunction('checkIsUserAdvisedToRest', { todayPlayedTime: todayPlayedTime }, success, fail, complete);
+        };
         /**
          * 根据用户当天游戏时间判断用户是否需要休息
-         * @param type wgs84 返回 gps 坐标，gcj02 返回可用于 wx.openLocation 的坐标	
+         * @param type wgs84 返回 gps 坐标，gcj02 返回可用于 wx.openLocation 的坐标
          * @param success 成功回调 result
          * @param fail 失败回调
          * @param complete 完成回调，失败成功都会回调
          */
-        public static getLocation = (type = 'wgs84', success: Function = null, fail: Function = null, complete: Function = null) => {
-            MiniUtils.callMiniFunction('getLocation', { type }, success, fail, complete);
-        }
-
+        MiniDisplay.getLocation = function (type, success, fail, complete) {
+            if (type === void 0) { type = 'wgs84'; }
+            if (success === void 0) { success = null; }
+            if (fail === void 0) { fail = null; }
+            if (complete === void 0) { complete = null; }
+            MiniUtils.callMiniFunction('getLocation', { type: type }, success, fail, complete);
+        };
         /**
             * 使手机发生较短时间的振动（15 ms）
             * @param success 成功回调
             * @param fail 失败回调
             */
-        public static vibrateShort = (success: Function = null, fail: Function = null, complete: Function = null) => {
+        MiniDisplay.vibrateShort = function (success, fail, complete) {
+            if (success === void 0) { success = null; }
+            if (fail === void 0) { fail = null; }
+            if (complete === void 0) { complete = null; }
             MiniUtils.callMiniFunction('vibrateShort', {}, success, fail, complete);
-        }
-
+        };
         /**
          * 使手机发生较长时间的振动（400 ms)
          * @param success 成功回调
          * @param fail 失败回调
          * @param complete 接口调用结束的回调函数（调用成功、失败都会执行）
          */
-        public static vibrateLong = (success: Function = null, fail: Function = null, complete: Function = null) => {
+        MiniDisplay.vibrateLong = function (success, fail, complete) {
+            if (success === void 0) { success = null; }
+            if (fail === void 0) { fail = null; }
+            if (complete === void 0) { complete = null; }
             MiniUtils.callMiniFunction('vibrateLong', {}, success, fail, complete);
-        }
-
+        };
         /**
          * 显示Loading
          * @param title 提示的内容
@@ -834,20 +883,24 @@ module Tape {
          * @param fail 失败回调
          * @param complete 接口调用结束的回调函数（调用成功、失败都会执行）
          */
-        public static showLoading = (title: string, mask: boolean, success: Function = null, fail: Function = null, complete: Function = null) => {
-            MiniUtils.callMiniFunction('showLoading', { title, mask }, success, fail, complete);
-        }
-
+        MiniDisplay.showLoading = function (title, mask, success, fail, complete) {
+            if (success === void 0) { success = null; }
+            if (fail === void 0) { fail = null; }
+            if (complete === void 0) { complete = null; }
+            MiniUtils.callMiniFunction('showLoading', { title: title, mask: mask }, success, fail, complete);
+        };
         /**
          * 隐藏Loading
          * @param success 成功回调
          * @param fail 失败回调
          * @param complete 接口调用结束的回调函数（调用成功、失败都会执行）
          */
-        public static hideLoading = (success: Function = null, fail: Function = null, complete: Function = null) => {
+        MiniDisplay.hideLoading = function (success, fail, complete) {
+            if (success === void 0) { success = null; }
+            if (fail === void 0) { fail = null; }
+            if (complete === void 0) { complete = null; }
             MiniUtils.callMiniFunction('hideLoading', success, fail, complete);
-        }
-
+        };
         /**
          * 弹出对话框
          * @param options 分享的信息，title，content，showCancel, cancelText, confirmText
@@ -855,20 +908,24 @@ module Tape {
          * @param fail 失败回调
          * @param complete 接口调用结束的回调函数（调用成功、失败都会执行）
          */
-        public static showModal = (options, success: Function = null, fail: Function = null, complete: Function = null) => {
+        MiniDisplay.showModal = function (options, success, fail, complete) {
+            if (success === void 0) { success = null; }
+            if (fail === void 0) { fail = null; }
+            if (complete === void 0) { complete = null; }
             MiniUtils.callMiniFunction('showModal', options || {}, success, fail, complete);
-        }
-
+        };
         /**
          * 获取设备电量
          * @param success 成功回调
          * @param fail 失败回调
          * @param complete 接口调用结束的回调函数（调用成功、失败都会执行）
          */
-        public static getBatteryInfo = (success: Function = null, fail: Function = null, complete: Function = null) => {
+        MiniDisplay.getBatteryInfo = function (success, fail, complete) {
+            if (success === void 0) { success = null; }
+            if (fail === void 0) { fail = null; }
+            if (complete === void 0) { complete = null; }
             MiniUtils.callMiniFunction('getBatteryInfo', {}, success, fail, complete);
-        }
-
+        };
         /**
          * 设置系统剪贴板的内容
          * @param data 剪贴板的内容
@@ -876,20 +933,25 @@ module Tape {
          * @param fail 失败回调
          * @param complete 接口调用结束的回调函数（调用成功、失败都会执行）
          */
-        public static setClipboardData = (data: string, success: Function = null, fail: Function = null, complete: Function = null) => {
-            MiniUtils.callMiniFunction('setClipboardData', { data }, success, fail, complete);
-        }
-
+        MiniDisplay.setClipboardData = function (data, success, fail, complete) {
+            if (success === void 0) { success = null; }
+            if (fail === void 0) { fail = null; }
+            if (complete === void 0) { complete = null; }
+            MiniUtils.callMiniFunction('setClipboardData', { data: data }, success, fail, complete);
+        };
         /**
          * 获取系统剪贴板的内容
          * @param success 成功回调
          * @param fail 失败回调
          * @param complete 接口调用结束的回调函数（调用成功、失败都会执行）
          */
-        public static getClipboardData = (success: Function = null, fail: Function = null, complete: Function = null) => {
+        MiniDisplay.getClipboardData = function (success, fail, complete) {
+            if (success === void 0) { success = null; }
+            if (fail === void 0) { fail = null; }
+            if (complete === void 0) { complete = null; }
             MiniUtils.callMiniFunction('getClipboardData', {}, success, fail, complete);
-        }
-    }
-
-
-}
+        };
+        return MiniDisplay;
+    }());
+    Tape.MiniDisplay = MiniDisplay;
+})(Tape || (Tape = {}));

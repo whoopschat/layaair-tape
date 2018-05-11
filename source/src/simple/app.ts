@@ -38,6 +38,17 @@ module App {
         protected onCreate() {
             this.addChild(this.page2);
             this.printDebug("onCreate");
+            var ws = new Tape.MQTTSocket();
+            ws.onConnected = () => {
+                console.log('onConnected');
+            };
+            ws.onClosed = () => {
+                console.log('onClosed');
+            };
+            ws.onError = () => {
+                console.log('onError');
+            };
+            ws.connect('192.168.69.74', 8083, '$client/aaa');
             this.page2.btn.on(Laya.Event.CLICK, this, () => {
                 Tape.Toast.showToast(new ui.MessageToastUI());
                 Tape.Dialog.showDialog(new ui.DialogViewUI());
