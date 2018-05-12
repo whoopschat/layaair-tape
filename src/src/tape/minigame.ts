@@ -344,15 +344,25 @@ module Tape {
             }
             var _success_callback_ = (res) => {
                 MiniState.__wx_main_user_logging__ = false;
-                res['showData'] = MiniState.__wx_main_on_show_data__;
-                res['loginData'] = MiniState.__wx_main_user_login_data__;
+                if (!res) {
+                    res = {
+                        errMsg:'getUserInfo:ok'
+                    };
+                }
+                res['showData'] = MiniState.__wx_main_on_show_data__ || {};
+                res['loginData'] = MiniState.__wx_main_user_login_data__ || {};
                 success && success(res);
                 complete && complete();
             }
             var _fail_callback_ = (res) => {
                 MiniState.__wx_main_user_logging__ = false;
-                res['showData'] = MiniState.__wx_main_on_show_data__;
-                res['loginData'] = MiniState.__wx_main_user_login_data__;
+                if (!res) {
+                    res = {
+                        errMsg:'getUserInfo:fail'
+                    };
+                }
+                res['showData'] = MiniState.__wx_main_on_show_data__ || {};
+                res['loginData'] = MiniState.__wx_main_user_login_data__ || {};
                 fail && fail(res);
                 complete && complete();
             }
@@ -590,8 +600,8 @@ module Tape {
         public static showSharedCanvasView = (bgPage, data = {}) => {
             if (MiniOpenData.isSupportSharedCanvasView()) {
                 postMessageToOpenDataContext('showOpenDataPage', (<any>Object).assign({}, data, {
-                    showData: MiniState.__wx_main_on_show_data__,
-                    shareData: MiniState.__wx_main_share_result_data__
+                    showData: MiniState.__wx_main_on_show_data__ || {},
+                    shareData: MiniState.__wx_main_share_result_data__ || {}
                 }));
                 var sharedStage = getOrCreateOpenDataPage(bgPage);
                 Laya.stage.addChild(sharedStage);

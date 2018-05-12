@@ -330,7 +330,7 @@ var Tape;
                 routes: routes,
                 initName: initName,
                 staticRes: options['res'],
-                fileVersion: options['fileVersion'],
+                fileVersion: options['fileVersion'] || 'version.json',
                 uriPrefix: options['uriPrefix'],
                 onLoaded: options['onLoaded'],
                 onLoadProgress: options['onLoadProgress']
