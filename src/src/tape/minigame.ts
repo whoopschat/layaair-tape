@@ -346,7 +346,7 @@ module Tape {
                 MiniState.__wx_main_user_logging__ = false;
                 if (!res) {
                     res = {
-                        errMsg:'getUserInfo:ok'
+                        errMsg: 'getUserInfo:ok'
                     };
                 }
                 res['showData'] = MiniState.__wx_main_on_show_data__ || {};
@@ -358,7 +358,7 @@ module Tape {
                 MiniState.__wx_main_user_logging__ = false;
                 if (!res) {
                     res = {
-                        errMsg:'getUserInfo:fail'
+                        errMsg: 'getUserInfo:fail'
                     };
                 }
                 res['showData'] = MiniState.__wx_main_on_show_data__ || {};
