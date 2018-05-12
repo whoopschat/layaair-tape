@@ -25,7 +25,7 @@ var packageList = [
   inputJsPath + moduleName + '/js/**/*.js',
   inputJsPath + moduleName + '/utils.js',
   inputJsPath + moduleName + '/common.js',
-  inputJsPath + moduleName + '/mini.js',
+  inputJsPath + moduleName + '/minigame.js',
   inputJsPath + moduleName + '/conch.js',
   inputJsPath + moduleName + '/comps.js',
   inputJsPath + moduleName + '/navigation.js',

@@ -1,5 +1,7 @@
 # layaair-tape
-> A layaair game library for ts
+> A layaair game library for ts 
+
+* github: [layaair-tape](https://github.com/whoopschat/layaair-tape)
 
 ## Func
 * isMiniGame
@@ -25,3 +27,5 @@
 * WebSocket
 * MQTTSocket
 * MiniProgram
+
+## Author

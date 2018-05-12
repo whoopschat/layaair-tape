@@ -2628,7 +2628,8 @@ var Tape;
     var MiniState = /** @class */ (function () {
         function MiniState() {
         }
-        MiniState.__wx_main_share_info__ = null;
+        MiniState.__wx_main_share_options__ = null;
+        MiniState.__wx_main_share_result_data__ = null;
         MiniState.__wx_main_on_show_data__ = null;
         MiniState.__wx_main_user_login_data__ = null;
         MiniState.__wx_main_user_logging__ = false;
@@ -2754,11 +2755,13 @@ var Tape;
             Laya.MiniAdpter.init(true);
             Laya.init.apply(Laya, [width, height].concat(options));
             Laya.stage.scaleMode = Laya.Stage.SCALE_EXACTFIT;
+            Laya.stage.alignV = Laya.Stage.ALIGN_MIDDLE;
+            Laya.stage.alignH = Laya.Stage.ALIGN_CENTER;
             if (Tape.Build.isDebug()) {
                 Laya.Stat.show(0, 0);
             }
             MiniUtils.getMiniFunction('onShareAppMessage')(function () {
-                return MiniState.__wx_main_share_info__;
+                return MiniState.__wx_main_share_options__;
             });
             MiniUtils.getMiniFunction('onShow')(function (res) {
                 MiniState.__wx_main_on_show_data__ = res;
@@ -2946,19 +2949,25 @@ var Tape;
             MiniDisplay.hideLoading();
         });
     };
+    /**
+     * MiniLogin
+     */
     var MiniLogin = /** @class */ (function () {
         function MiniLogin() {
         }
+        MiniLogin.getShowData = function () {
+            return MiniState.__wx_main_on_show_data__;
+        };
         /**
          * 显示登录界面
          * @param options 按钮位置信息bgPage,type,text,image,x,y,width,height
-         * @param successCallback 获取用户信息成功回调
-         * @param failCallback 失败回调
-         * @param completeCallback 完成回调，失败成功都会回调
+         * @param success 获取用户信息成功回调
+         * @param fail 失败回调
+         * @param complete 完成回调，失败成功都会回调
          */
-        MiniLogin.showLoginPage = function (options, successCallback, failCallback, completeCallback) {
-            if (failCallback === void 0) { failCallback = null; }
-            if (completeCallback === void 0) { completeCallback = null; }
+        MiniLogin.showLoginPage = function (options, success, fail, complete) {
+            if (fail === void 0) { fail = null; }
+            if (complete === void 0) { complete = null; }
             if (MiniState.__wx_main_user_logging__) {
                 MiniUtils.debugLog('-------MiniSDK-------正在操作中，请勿多次调用');
                 return;
@@ -2968,25 +2977,29 @@ var Tape;
             }
             var _success_callback_ = function (res) {
                 MiniState.__wx_main_user_logging__ = false;
-                res['loginData'] = MiniState.__wx_main_user_login_data__;
                 res['showData'] = MiniState.__wx_main_on_show_data__;
-                successCallback && successCallback(res);
-                completeCallback && completeCallback();
+                res['loginData'] = MiniState.__wx_main_user_login_data__;
+                success && success(res);
+                complete && complete();
             };
             var _fail_callback_ = function (res) {
                 MiniState.__wx_main_user_logging__ = false;
-                res['loginData'] = MiniState.__wx_main_user_login_data__;
                 res['showData'] = MiniState.__wx_main_on_show_data__;
-                failCallback && failCallback(res);
-                completeCallback && completeCallback();
+                res['loginData'] = MiniState.__wx_main_user_login_data__;
+                fail && fail(res);
+                complete && complete();
             };
+            var settingGuideTitle = options['settingGuideTitle'] || '登录提示';
+            var settingGuideText = options['settingGuideContext'] || '获取用户信息失败，请到到设置页面开启权限。';
+            var settingGuideCancel = options['settingGuideCancel'] || '取消';
+            var settingGuideOpen = options['settingGuideOpen'] || '去设置';
             var _setting_callback_ = function (setting) {
                 MiniDisplay.showModal({
-                    title: '登录提示',
-                    content: '无法获取用户信息，需要到设置页面开启授权',
+                    title: settingGuideTitle,
+                    content: settingGuideText,
                     showCancel: true,
-                    cancelText: '取消',
-                    confirmText: '去设置'
+                    cancelText: settingGuideCancel,
+                    confirmText: settingGuideOpen
                 }, function (res) {
                     if (res.confirm) {
                         setting.open();
@@ -3037,6 +3050,9 @@ var Tape;
     //-------------------------------------------------------
     //-- GameClubButton
     //-------------------------------------------------------
+    /**
+     * MiniGameClub
+     */
     var MiniGameClub = /** @class */ (function () {
         function MiniGameClub() {
         }
@@ -3190,6 +3206,9 @@ var Tape;
             getOrCreateOpenDataPage();
         });
     };
+    /**
+     * MiniOpenData
+     */
     var MiniOpenData = /** @class */ (function () {
         function MiniOpenData() {
         }
@@ -3207,7 +3226,10 @@ var Tape;
         MiniOpenData.showSharedCanvasView = function (bgPage, data) {
             if (data === void 0) { data = {}; }
             if (MiniOpenData.isSupportSharedCanvasView()) {
-                postMessageToOpenDataContext('showOpenDataPage', Object.assign(data, MiniState.__wx_main_on_show_data__));
+                postMessageToOpenDataContext('showOpenDataPage', Object.assign({}, data, {
+                    showData: MiniState.__wx_main_on_show_data__,
+                    shareData: MiniState.__wx_main_share_result_data__
+                }));
                 var sharedStage = getOrCreateOpenDataPage(bgPage);
                 Laya.stage.addChild(sharedStage);
             }
@@ -3240,6 +3262,9 @@ var Tape;
     //-------------------------------------------------------
     //-- modules
     //-------------------------------------------------------
+    /**
+     * MiniNavigator
+     */
     var MiniNavigator = /** @class */ (function () {
         function MiniNavigator() {
         }
@@ -3276,7 +3301,7 @@ var Tape;
     }());
     Tape.MiniNavigator = MiniNavigator;
     /**
-     * Share 模块
+     * MiniShare
      */
     var MiniShare = /** @class */ (function () {
         function MiniShare() {
@@ -3293,7 +3318,7 @@ var Tape;
             if (success === void 0) { success = null; }
             if (fail === void 0) { fail = null; }
             if (complete === void 0) { complete = null; }
-            MiniState.__wx_main_share_info__ = options;
+            MiniState.__wx_main_share_options__ = options;
             MiniUtils.callMiniFunction('showShareMenu', { withShareTicket: true }, success, fail, complete);
         };
         /**
@@ -3319,7 +3344,7 @@ var Tape;
             if (success === void 0) { success = null; }
             if (fail === void 0) { fail = null; }
             if (complete === void 0) { complete = null; }
-            MiniState.__wx_main_share_info__ = options;
+            MiniState.__wx_main_share_options__ = options;
             MiniUtils.callMiniFunction('updateShareMenu', { withShareTicket: true }, success, fail, complete);
         };
         /**
@@ -3333,7 +3358,10 @@ var Tape;
             if (success === void 0) { success = null; }
             if (fail === void 0) { fail = null; }
             if (complete === void 0) { complete = null; }
-            MiniUtils.callMiniFunction('shareAppMessage', options, success, fail, complete);
+            MiniUtils.callMiniFunction('shareAppMessage', options, function (res) {
+                MiniState.__wx_main_share_result_data__ = res;
+                success && success(res);
+            }, fail, complete);
         };
         /**
          * 获取转发详细信息
@@ -3352,7 +3380,7 @@ var Tape;
     }());
     Tape.MiniShare = MiniShare;
     /**
-     * Ad 模块
+     * MiniAd
      */
     var MiniAd = /** @class */ (function () {
         function MiniAd() {
@@ -3466,7 +3494,7 @@ var Tape;
             MiniUtils.callMiniFunction('checkIsUserAdvisedToRest', { todayPlayedTime: todayPlayedTime }, success, fail, complete);
         };
         /**
-         * 根据用户当天游戏时间判断用户是否需要休息
+         * 获取当前的地理位置、速度。当用户离开小程序后，此接口无法调用；当用户点击“显示在聊天顶部”时，此接口可继续调用。
          * @param type wgs84 返回 gps 坐标，gcj02 返回可用于 wx.openLocation 的坐标
          * @param success 成功回调 result
          * @param fail 失败回调
@@ -3480,10 +3508,11 @@ var Tape;
             MiniUtils.callMiniFunction('getLocation', { type: type }, success, fail, complete);
         };
         /**
-            * 使手机发生较短时间的振动（15 ms）
-            * @param success 成功回调
-            * @param fail 失败回调
-            */
+         * 使手机发生较短时间的振动（15 ms）
+         * @param success 成功回调 result
+         * @param fail 失败回调
+         * @param complete 完成回调，失败成功都会回调
+         */
         MiniDisplay.vibrateShort = function (success, fail, complete) {
             if (success === void 0) { success = null; }
             if (fail === void 0) { fail = null; }

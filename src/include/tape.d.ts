@@ -35,6 +35,9 @@ declare module Tape {
     ////// Component
     ///////////////////////////////////////////////
 
+    /**
+     * Activity
+     */
     class Activity {
 
         static ROUTE(options?: Object): Object;
@@ -565,7 +568,7 @@ declare module Tape {
     ///////////////////////////////////////////////
 
     /**
-     * LoginPage
+     * MiniLogin
      */
     class MiniLogin {
 
@@ -760,7 +763,7 @@ declare module Tape {
         public static checkIsUserAdvisedToRest(todayPlayedTime, success?: Function, fail?: Function, complete?: Function): void;
 
         /**
-         * 根据用户当天游戏时间判断用户是否需要休息
+         * 获取当前的地理位置、速度。当用户离开小程序后，此接口无法调用；当用户点击“显示在聊天顶部”时，此接口可继续调用。
          * @param type wgs84 返回 gps 坐标，gcj02 返回可用于 wx.openLocation 的坐标
          * @param success 成功回调 result
          * @param fail 失败回调
