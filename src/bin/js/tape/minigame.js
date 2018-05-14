@@ -140,12 +140,6 @@ var Tape;
             Laya.stage.scaleMode = Laya.Stage.SCALE_EXACTFIT;
             Laya.stage.alignV = Laya.Stage.ALIGN_MIDDLE;
             Laya.stage.alignH = Laya.Stage.ALIGN_CENTER;
-            if (width > height) {
-                Laya.stage.screenMode = Laya.Stage.SCREEN_HORIZONTAL;
-            }
-            else {
-                Laya.stage.screenMode = Laya.Stage.SCREEN_VERTICAL;
-            }
             MiniUtils.getMiniFunction('onShareAppMessage')(function () {
                 return MiniState.__wx_main_share_options__;
             });
@@ -572,21 +566,17 @@ var Tape;
             var sharedCanvas = window['sharedCanvas'];
             sharedCanvas.width = Laya.stage.width;
             sharedCanvas.height = Laya.stage.height;
-            sharedCanvas.innerHTML = '';
             if (!sharedCanvas.hasOwnProperty('_addReference')) {
                 sharedCanvas['_addReference'] = function () {
                 };
             }
-            var image = new Laya.Image();
-            image.x = 0;
-            image.y = 0;
-            image.pos(0, 0);
-            image.pivot(0, 0);
-            image.width = Laya.stage.width;
-            image.height = Laya.stage.height;
-            var texture = new Laya.Texture(sharedCanvas);
-            image.source = texture;
-            MiniState.__wx_main_open_data_view__.addChild(image);
+            var rankTexture = new Laya.Texture(sharedCanvas);
+            rankTexture.bitmap.alwaysChange = true;
+            var rankSprite = new Laya.Sprite();
+            rankSprite.width = Laya.stage.width;
+            rankSprite.height = Laya.stage.height;
+            rankSprite.graphics.drawTexture(rankTexture, 0, 0, rankTexture.width, rankTexture.height);
+            MiniState.__wx_main_open_data_view__.addChild(rankSprite);
         }
         return MiniState.__wx_main_open_data_view__;
     };
