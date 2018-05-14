@@ -11,7 +11,7 @@ var Tape;
         }
         MiniState.__wx_main_share_options__ = null;
         MiniState.__wx_main_share_result_data__ = null;
-        MiniState.__wx_main_on_show_data__ = null;
+        MiniState.__wx_main_app_params_data__ = null;
         MiniState.__wx_main_user_login_data__ = null;
         MiniState.__wx_main_user_logging__ = false;
         MiniState.__wx_main_user_login_button__ = null;
@@ -53,16 +53,6 @@ var Tape;
             return 0;
         };
         /**
-         * 打印日志
-         */
-        MiniUtils.debugLog = function (message) {
-            var optionalParams = [];
-            for (var _i = 1; _i < arguments.length; _i++) {
-                optionalParams[_i - 1] = arguments[_i];
-            }
-            console.log.apply(console, [message].concat(optionalParams));
-        };
-        /**
          * 获取wx模块的方法
          */
         MiniUtils.getMiniFunction = function (func) {
@@ -71,11 +61,13 @@ var Tape;
                     return window['wx'][func];
                 }
                 else {
-                    return function () { };
+                    return function () {
+                    };
                 }
             }
             else {
-                return function () { };
+                return function () {
+                };
             }
         };
         /**
@@ -107,6 +99,16 @@ var Tape;
                 complete && complete();
             }
             return null;
+        };
+        /**
+         * 打印日志
+         */
+        MiniUtils.debugLog = function (message) {
+            var optionalParams = [];
+            for (var _i = 1; _i < arguments.length; _i++) {
+                optionalParams[_i - 1] = arguments[_i];
+            }
+            console.log.apply(console, [message].concat(optionalParams));
         };
         return MiniUtils;
     }());
@@ -148,7 +150,7 @@ var Tape;
                 return MiniState.__wx_main_share_options__;
             });
             MiniUtils.getMiniFunction('onShow')(function (res) {
-                MiniState.__wx_main_on_show_data__ = res;
+                MiniState.__wx_main_app_params_data__ = res;
             });
             initOpenDataPage();
         };
@@ -339,8 +341,17 @@ var Tape;
     var MiniLogin = /** @class */ (function () {
         function MiniLogin() {
         }
-        MiniLogin.getShowData = function () {
-            return MiniState.__wx_main_on_show_data__;
+        /**
+         * 获取应用参数信息
+         */
+        MiniLogin.getParamData = function () {
+            return MiniState.__wx_main_app_params_data__ || {};
+        };
+        /**
+         * 获取登录相关信息
+         */
+        MiniLogin.getLoginData = function () {
+            return MiniState.__wx_main_user_login_data__ || {};
         };
         /**
          * 显示登录界面
@@ -366,7 +377,7 @@ var Tape;
                         errMsg: 'getUserInfo:ok'
                     };
                 }
-                res['showData'] = MiniState.__wx_main_on_show_data__ || {};
+                res['paramData'] = MiniState.__wx_main_app_params_data__ || {};
                 res['loginData'] = MiniState.__wx_main_user_login_data__ || {};
                 success && success(res);
                 complete && complete();
@@ -378,13 +389,13 @@ var Tape;
                         errMsg: 'getUserInfo:fail'
                     };
                 }
-                res['showData'] = MiniState.__wx_main_on_show_data__ || {};
+                res['paramData'] = MiniState.__wx_main_app_params_data__ || {};
                 res['loginData'] = MiniState.__wx_main_user_login_data__ || {};
                 fail && fail(res);
                 complete && complete();
             };
             var settingGuideTitle = options['settingGuideTitle'] || '登录提示';
-            var settingGuideText = options['settingGuideContext'] || '获取用户信息失败，请到到设置页面开启权限。';
+            var settingGuideText = options['settingGuideContext'] || '获取用户信息失败，请到设置页面开启相关权限。';
             var settingGuideCancel = options['settingGuideCancel'] || '取消';
             var settingGuideOpen = options['settingGuideOpen'] || '去设置';
             var _setting_callback_ = function (setting) {
@@ -553,7 +564,8 @@ var Tape;
         interceptView.pivot(0, 0);
         interceptView.width = Laya.stage.width;
         interceptView.height = Laya.stage.height;
-        interceptView.on(Laya.Event.MOUSE_DOWN, null, function () { });
+        interceptView.on(Laya.Event.MOUSE_DOWN, null, function () {
+        });
         interceptView.name = '__open_data_intercept_view__';
         MiniState.__wx_main_open_data_view__.addChild(interceptView);
         if (window.hasOwnProperty('sharedCanvas')) {
@@ -562,7 +574,8 @@ var Tape;
             sharedCanvas.height = Laya.stage.height;
             sharedCanvas.innerHTML = '';
             if (!sharedCanvas.hasOwnProperty('_addReference')) {
-                sharedCanvas['_addReference'] = function () { };
+                sharedCanvas['_addReference'] = function () {
+                };
             }
             var image = new Laya.Image();
             image.x = 0;
@@ -621,7 +634,7 @@ var Tape;
             if (data === void 0) { data = {}; }
             if (MiniOpenData.isSupportSharedCanvasView()) {
                 postMessageToOpenDataContext('showOpenDataPage', Object.assign({}, data, {
-                    showData: MiniState.__wx_main_on_show_data__ || {},
+                    paramData: MiniState.__wx_main_app_params_data__ || {},
                     shareData: MiniState.__wx_main_share_result_data__ || {}
                 }));
                 var sharedStage = getOrCreateOpenDataPage(bgPage);
@@ -676,7 +689,12 @@ var Tape;
             if (success === void 0) { success = null; }
             if (fail === void 0) { fail = null; }
             if (complete === void 0) { complete = null; }
-            MiniUtils.callMiniFunction('navigateToMiniProgram', { appId: appId, path: path, extraData: extraData, envVersion: envVersion }, success, fail, complete);
+            MiniUtils.callMiniFunction('navigateToMiniProgram', {
+                appId: appId,
+                path: path,
+                extraData: extraData,
+                envVersion: envVersion
+            }, success, fail, complete);
         };
         /**
          * 返回到上一个小程序，只有在当前小程序是被其他小程序打开时可以调用成功

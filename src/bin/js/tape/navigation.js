@@ -97,7 +97,7 @@ var Tape;
             this.__uri_prefix__ = navigator.props['navigation']['uriPrefix'] || "://";
             this.__file_version__ = navigator.props['navigation']['fileVersion'];
         }
-        NavigationStack.prototype.init_page = function () {
+        NavigationStack.prototype.initPage = function () {
             var _this = this;
             if (this.__file_version__) {
                 Laya.ResourceVersion.type = Laya.ResourceVersion.FILENAME_VERSION;
@@ -311,7 +311,7 @@ var Tape;
             var _this = _super.call(this, props) || this;
             _this.__navigator__ = null;
             _this.__navigator__ = new NavigationStack(_this);
-            _this.__navigator__.init_page();
+            _this.__navigator__.initPage();
             return _this;
         }
         return StackNavigator;

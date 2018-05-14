@@ -5,7 +5,7 @@ module Tape {
 
     export const isConchApp = (): boolean => {
         return window.hasOwnProperty('conch');
-    }
+    };
 
     /**
      * ConchHandler
@@ -28,13 +28,13 @@ module Tape {
             } else {
                 Laya.stage.screenMode = Laya.Stage.SCREEN_VERTICAL;
             }
-        }
+        };
 
-        public static exit(): void {
+        public static exit = () => {
             if (isConchApp() && window["conch"].hasOwnProperty("exit")) {
                 window["conch"].exit();
             }
-        }
+        };
 
     }
 

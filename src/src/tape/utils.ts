@@ -54,14 +54,14 @@ module Tape {
          * @param callback callback:time
          * @param offset time offset
          */
-        public start(delay: number, callback: Function, offset: number = 0): void {
+        public start(delay: number, callback: Function, offset: number = 0) {
             this.__callback__ = callback;
             this.__start_date__ = new Date();
             this.__offset__ = offset;
             Laya.timer.loop(delay, this, this.loop);
         }
 
-        private loop(): void {
+        private loop() {
             var now = new Date();
             this.__callback__ && this.__callback__(now.getTime() - this.__start_date__.getTime() + this.__offset__);
         }
@@ -69,7 +69,7 @@ module Tape {
         /**
          * stop
          */
-        public stop(): void {
+        public stop() {
             Laya.timer.clear(this, this.loop)
         }
 
@@ -90,7 +90,7 @@ module Tape {
          * @param callback callback:time
          * @param offset time offset
          */
-        public start(delay: number, callback: Function, offset: number = 0): void {
+        public start(delay: number, callback: Function, offset: number = 0) {
             this.__start_date__ = new Date();
             this.__offset__ = offset;
             this.__interval__ = setInterval(() => {
@@ -102,7 +102,7 @@ module Tape {
         /**
          * stop
          */
-        public stop(): void {
+        public stop() {
             clearInterval(this.__interval__);
         }
 
@@ -115,7 +115,7 @@ module Tape {
 
         private static __event_group__: Object = {};
 
-        public static post(event: string, data: any): void {
+        public static post(event: string, data: any) {
             if (!event) {
                 return;
             }
@@ -129,7 +129,7 @@ module Tape {
             }
         }
 
-        public static register(event: string, callback: Function): void {
+        public static register(event: string, callback: Function) {
             if (!event || !callback) {
                 return;
             }
@@ -140,7 +140,7 @@ module Tape {
             list.push(callback);
         }
 
-        public static unregister(event: string, callback: Function): void {
+        public static unregister(event: string, callback: Function) {
             if (!event || !callback) {
                 return;
             }
@@ -222,7 +222,7 @@ module Tape {
         /**
          * setDebug
          */
-        public static setDebug(debug: Boolean): void {
+        public static setDebug(debug: Boolean) {
             this.__is_debug__ = debug;
         }
 
@@ -236,7 +236,7 @@ module Tape {
         /**
          * log
          */
-        public static log(message?: any, ...optionalParams: any[]): void {
+        public static log(message?: any, ...optionalParams: any[]) {
             if (!this.isDebug()) {
                 return;
             }
@@ -246,7 +246,7 @@ module Tape {
         /**
          * error
          */
-        public static error(message?: any, ...optionalParams: any[]): void {
+        public static error(message?: any, ...optionalParams: any[]) {
             if (!this.isDebug()) {
                 return;
             }
@@ -256,7 +256,7 @@ module Tape {
         /**
          * info
          */
-        public static info(message?: any, ...optionalParams: any[]): void {
+        public static info(message?: any, ...optionalParams: any[]) {
             if (!this.isDebug()) {
                 return;
             }
@@ -266,7 +266,7 @@ module Tape {
         /**
          * warn
          */
-        public static warn(message?: any, ...optionalParams: any[]): void {
+        public static warn(message?: any, ...optionalParams: any[]) {
             if (!this.isDebug()) {
                 return;
             }
@@ -276,7 +276,7 @@ module Tape {
         /**
          * debug
          */
-        public static debug(message?: any, ...optionalParams: any[]): void {
+        public static debug(message?: any, ...optionalParams: any[]) {
             if (!this.isDebug()) {
                 return;
             }

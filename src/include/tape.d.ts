@@ -573,6 +573,17 @@ declare module Tape {
     class MiniLogin {
 
         /**
+         * 获取应用参数信息
+         */
+        public static getParamData(): Object;
+
+        /**
+         * 获取登录相关信息
+         */
+        public static getLoginData(): Object;
+
+
+        /**
          * 显示登录界面
          * @param options 按钮位置信息bgPage,type,text,image,x,y,width,height
          * @param successCallback 获取用户信息成功回调

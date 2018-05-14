@@ -10,7 +10,7 @@ module Tape {
 
         public static __wx_main_share_options__ = null;
         public static __wx_main_share_result_data__ = null;
-        public static __wx_main_on_show_data__ = null;
+        public static __wx_main_app_params_data__ = null;
         public static __wx_main_user_login_data__ = null;
         public static __wx_main_user_logging__ = false;
         public static __wx_main_user_login_button__ = null;
@@ -54,22 +54,24 @@ module Tape {
         /**
          * 获取wx模块的方法
          */
-        public static getMiniFunction = (func: string) => {
+        public static getMiniFunction(func: string) {
             if (window.hasOwnProperty("wx")) {
                 if (window['wx'].hasOwnProperty(func)) {
                     return window['wx'][func];
                 } else {
-                    return () => { }
+                    return () => {
+                    }
                 }
             } else {
-                return () => { }
+                return () => {
+                }
             }
         }
 
         /**
          * 执行wx模块的方法
          */
-        public static callMiniFunction = (func: string, options = {}, success: Function = null, fail: Function = null, complete: Function = null) => {
+        public static callMiniFunction(func: string, options = {}, success: Function = null, fail: Function = null, complete: Function = null) {
             if (window.hasOwnProperty("wx")) {
                 if (window['wx'].hasOwnProperty(func)) {
                     var defOpts = {};
@@ -95,7 +97,7 @@ module Tape {
         /**
          * 打印日志
          */
-        public static debugLog(message?: any, ...optionalParams: any[]): void {
+        public static debugLog(message?: any, ...optionalParams: any[]) {
             console.log(message, ...optionalParams);
         }
 
@@ -120,7 +122,7 @@ module Tape {
          * @param height 高度
          * @param options 其他拓展
          */
-        public static init = (width: number, height: number, ...options) => {
+        public static init(width: number, height: number, ...options) {
             Laya.MiniAdpter.init(true);
             Laya.init(width, height, ...options);
             Laya.stage.scaleMode = Laya.Stage.SCALE_EXACTFIT;
@@ -135,7 +137,7 @@ module Tape {
                 return MiniState.__wx_main_share_options__;
             });
             MiniUtils.getMiniFunction('onShow')((res) => {
-                MiniState.__wx_main_on_show_data__ = res;
+                MiniState.__wx_main_app_params_data__ = res;
             });
             initOpenDataPage();
         }
@@ -143,7 +145,7 @@ module Tape {
         /**
          * 退出小游戏
          */
-        public static exit = () => {
+        public static exit() {
             MiniUtils.callMiniFunction('exitMiniProgram');
         }
 
@@ -325,8 +327,18 @@ module Tape {
      */
     export class MiniLogin {
 
-        public static getShowData = () => {
-            return MiniState.__wx_main_on_show_data__;
+        /**
+         * 获取应用参数信息
+         */
+        public static getParamData(): Object {
+            return MiniState.__wx_main_app_params_data__ || {};
+        }
+
+        /**
+         * 获取登录相关信息
+         */
+        public static getLoginData(): Object {
+            return MiniState.__wx_main_user_login_data__ || {};
         }
 
         /**
@@ -336,7 +348,7 @@ module Tape {
          * @param fail 失败回调
          * @param complete 完成回调，失败成功都会回调
          */
-        public static showLoginPage = (options, success: Function, fail: Function = null, complete: Function = null) => {
+        public static showLoginPage(options, success: Function, fail: Function = null, complete: Function = null) {
             if (MiniState.__wx_main_user_logging__) {
                 MiniUtils.debugLog('-------MiniSDK-------正在操作中，请勿多次调用');
                 return;
@@ -351,7 +363,7 @@ module Tape {
                         errMsg: 'getUserInfo:ok'
                     };
                 }
-                res['showData'] = MiniState.__wx_main_on_show_data__ || {};
+                res['paramData'] = MiniState.__wx_main_app_params_data__ || {};
                 res['loginData'] = MiniState.__wx_main_user_login_data__ || {};
                 success && success(res);
                 complete && complete();
@@ -363,13 +375,13 @@ module Tape {
                         errMsg: 'getUserInfo:fail'
                     };
                 }
-                res['showData'] = MiniState.__wx_main_on_show_data__ || {};
+                res['paramData'] = MiniState.__wx_main_app_params_data__ || {};
                 res['loginData'] = MiniState.__wx_main_user_login_data__ || {};
                 fail && fail(res);
                 complete && complete();
             }
             var settingGuideTitle = options['settingGuideTitle'] || '登录提示';
-            var settingGuideText = options['settingGuideContext'] || '获取用户信息失败，请到到设置页面开启权限。';
+            var settingGuideText = options['settingGuideContext'] || '获取用户信息失败，请到设置页面开启相关权限。';
             var settingGuideCancel = options['settingGuideCancel'] || '取消';
             var settingGuideOpen = options['settingGuideOpen'] || '去设置';
             var _setting_callback_ = (setting) => {
@@ -410,7 +422,7 @@ module Tape {
         /**
          * 隐藏登录界面
          */
-        public static hideLoginPage = () => {
+        public static hideLoginPage() {
             MiniState.__wx_main_user_logging__ = false;
             if (MiniState.__wx_main_user_login_button__) {
                 MiniState.__wx_main_user_login_button__.removeSelf();
@@ -438,7 +450,7 @@ module Tape {
          * @param options 按钮位置信息icon,top,left,width,height
          * @param onTap 点击回调
          */
-        public static showGameClubButton = (options, onTap: Function = null) => {
+        public static showGameClubButton(options, onTap: Function = null) {
             if (!options) {
                 options = {};
             }
@@ -477,7 +489,7 @@ module Tape {
         /**
          * 隐藏游戏圈按钮
          */
-        public static hideGameClubButton = () => {
+        public static hideGameClubButton() {
             if (MiniState.__wx_main_game_club_button__) {
                 MiniState.__wx_main_game_club_button__.removeSelf();
                 MiniState.__wx_main_game_club_button__ = null;
@@ -533,7 +545,8 @@ module Tape {
         interceptView.pivot(0, 0);
         interceptView.width = Laya.stage.width;
         interceptView.height = Laya.stage.height;
-        interceptView.on(Laya.Event.MOUSE_DOWN, null, () => { });
+        interceptView.on(Laya.Event.MOUSE_DOWN, null, () => {
+        });
         interceptView.name = '__open_data_intercept_view__';
         MiniState.__wx_main_open_data_view__.addChild(interceptView);
         if (window.hasOwnProperty('sharedCanvas')) {
@@ -542,7 +555,8 @@ module Tape {
             sharedCanvas.height = Laya.stage.height;
             sharedCanvas.innerHTML = '';
             if (!sharedCanvas.hasOwnProperty('_addReference')) {
-                sharedCanvas['_addReference'] = () => { };
+                sharedCanvas['_addReference'] = () => {
+                };
             }
             var image = new Laya.Image();
             image.x = 0;
@@ -590,7 +604,7 @@ module Tape {
         /**
          * 是否支持开放数据域Canvas
          */
-        public static isSupportSharedCanvasView = () => {
+        public static isSupportSharedCanvasView() {
             return window.hasOwnProperty('sharedCanvas');
         }
 
@@ -599,10 +613,10 @@ module Tape {
          * @param bgPage 背景页面
          * @param data 传递给开放数据域的数据
          */
-        public static showSharedCanvasView = (bgPage, data = {}) => {
+        public static showSharedCanvasView(bgPage, data = {}) {
             if (MiniOpenData.isSupportSharedCanvasView()) {
                 postMessageToOpenDataContext('showOpenDataPage', (<any>Object).assign({}, data, {
-                    showData: MiniState.__wx_main_on_show_data__ || {},
+                    paramData: MiniState.__wx_main_app_params_data__ || {},
                     shareData: MiniState.__wx_main_share_result_data__ || {}
                 }));
                 var sharedStage = getOrCreateOpenDataPage(bgPage);
@@ -613,7 +627,7 @@ module Tape {
         /**
          * 隐藏开放数据域Canvas
          */
-        public static hideSharedCanvasView = () => {
+        public static hideSharedCanvasView() {
             if (MiniOpenData.isSupportSharedCanvasView()) {
                 postMessageToOpenDataContext('hideOpenDataPage', {});
                 var sharedStage = getOrCreateOpenDataPage(null);
@@ -624,14 +638,14 @@ module Tape {
         /**
          * 将用户游戏数据托管到微信服务器
          */
-        public static setUserCloudStorage = (dataList) => {
+        public static setUserCloudStorage(dataList) {
             postMessageToOpenDataContext('setUserCloudStorage', dataList);
         }
 
         /**
          * 删除用户托管数据当中对应 key 的数据。
          */
-        public static removeUserCloudStorage = (keyList) => {
+        public static removeUserCloudStorage(keyList) {
             postMessageToOpenDataContext('removeUserCloudStorage', keyList);
         }
 
@@ -656,8 +670,13 @@ module Tape {
          * @param fail 失败回调
          * @param complete 完成回调，失败成功都会回调
          */
-        public static navigateToMiniProgram = (appId: string, path: string, extraData: Object, envVersion: string, success: Function = null, fail: Function = null, complete: Function = null) => {
-            MiniUtils.callMiniFunction('navigateToMiniProgram', { appId, path, extraData, envVersion }, success, fail, complete);
+        public static navigateToMiniProgram(appId: string, path: string, extraData: Object, envVersion: string, success: Function = null, fail: Function = null, complete: Function = null) {
+            MiniUtils.callMiniFunction('navigateToMiniProgram', {
+                appId,
+                path,
+                extraData,
+                envVersion
+            }, success, fail, complete);
         }
 
         /**
@@ -667,7 +686,7 @@ module Tape {
          * @param fail 失败回调
          * @param complete 完成回调，失败成功都会回调
          */
-        public static navigateBackMiniProgram = (extraData: Object, success: Function = null, fail: Function = null, complete: Function = null) => {
+        public static navigateBackMiniProgram(extraData: Object, success: Function = null, fail: Function = null, complete: Function = null) {
             MiniUtils.callMiniFunction('navigateBackMiniProgram', { extraData }, success, fail, complete);
         }
 
@@ -685,7 +704,7 @@ module Tape {
          * @param fail 失败回调
          * @param complete 完成回调，失败成功都会回调
          */
-        public static showShareMenu = (options: Object, onShareMessage: Function = null, success: Function = null, fail: Function = null, complete: Function = null) => {
+        public static showShareMenu(options: Object, onShareMessage: Function = null, success: Function = null, fail: Function = null, complete: Function = null) {
             MiniState.__wx_main_share_options__ = options;
             MiniUtils.callMiniFunction('showShareMenu', { withShareTicket: true }, success, fail, complete);
         }
@@ -696,7 +715,7 @@ module Tape {
          * @param fail 失败回调
          * @param complete 完成回调，失败成功都会回调
          */
-        public static hideShareMenu = (success: Function = null, fail: Function = null, complete: Function = null) => {
+        public static hideShareMenu(success: Function = null, fail: Function = null, complete: Function = null) {
             MiniUtils.callMiniFunction('hideShareMenu', {}, success, fail, complete);
         }
 
@@ -707,7 +726,7 @@ module Tape {
          * @param fail 失败回调
          * @param complete 完成回调，失败成功都会回调
          */
-        public static updateShareMenu = (options: Object, success: Function = null, fail: Function = null, complete: Function = null) => {
+        public static updateShareMenu(options: Object, success: Function = null, fail: Function = null, complete: Function = null) {
             MiniState.__wx_main_share_options__ = options;
             MiniUtils.callMiniFunction('updateShareMenu', { withShareTicket: true }, success, fail, complete);
         }
@@ -719,7 +738,7 @@ module Tape {
          * @param fail 失败回调
          * @param complete 完成回调，失败成功都会回调
          */
-        public static shareAppMessage = (options: Object, success: Function = null, fail: Function = null, complete: Function = null) => {
+        public static shareAppMessage(options: Object, success: Function = null, fail: Function = null, complete: Function = null) {
             MiniUtils.callMiniFunction('shareAppMessage', options, (res) => {
                 MiniState.__wx_main_share_result_data__ = res;
                 success && success(res)
@@ -733,7 +752,7 @@ module Tape {
          * @param fail 失败回调
          * @param complete 完成回调，失败成功都会回调
          */
-        public static getShareInfo = (shareTicket: string, success: Function = null, fail: Function = null, complete: Function = null) => {
+        public static getShareInfo(shareTicket: string, success: Function = null, fail: Function = null, complete: Function = null) {
             MiniUtils.callMiniFunction('getShareInfo', { shareTicket }, success, fail, complete);
         }
 
@@ -823,7 +842,7 @@ module Tape {
      */
     export class MiniAnalytics {
 
-        public static reportAnalytics = (eventName: string, data: Object) => {
+        public static reportAnalytics(eventName: string, data: Object) {
             MiniUtils.getMiniFunction('reportAnalytics')(eventName, data);
         }
 
@@ -841,18 +860,18 @@ module Tape {
          * @param fail 失败回调
          * @param complete 完成回调，失败成功都会回调
          */
-        public static checkIsUserAdvisedToRest = (todayPlayedTime, success: Function = null, fail: Function = null, complete: Function = null) => {
+        public static checkIsUserAdvisedToRest(todayPlayedTime, success: Function = null, fail: Function = null, complete: Function = null) {
             MiniUtils.callMiniFunction('checkIsUserAdvisedToRest', { todayPlayedTime }, success, fail, complete);
         }
 
         /**
          * 获取当前的地理位置、速度。当用户离开小程序后，此接口无法调用；当用户点击“显示在聊天顶部”时，此接口可继续调用。
-         * @param type wgs84 返回 gps 坐标，gcj02 返回可用于 wx.openLocation 的坐标	
+         * @param type wgs84 返回 gps 坐标，gcj02 返回可用于 wx.openLocation 的坐标
          * @param success 成功回调 result
          * @param fail 失败回调
          * @param complete 完成回调，失败成功都会回调
          */
-        public static getLocation = (type = 'wgs84', success: Function = null, fail: Function = null, complete: Function = null) => {
+        public static getLocation(type = 'wgs84', success: Function = null, fail: Function = null, complete: Function = null) {
             MiniUtils.callMiniFunction('getLocation', { type }, success, fail, complete);
         }
 
@@ -862,7 +881,7 @@ module Tape {
          * @param fail 失败回调
          * @param complete 完成回调，失败成功都会回调
          */
-        public static vibrateShort = (success: Function = null, fail: Function = null, complete: Function = null) => {
+        public static vibrateShort(success: Function = null, fail: Function = null, complete: Function = null) {
             MiniUtils.callMiniFunction('vibrateShort', {}, success, fail, complete);
         }
 
@@ -872,7 +891,7 @@ module Tape {
          * @param fail 失败回调
          * @param complete 接口调用结束的回调函数（调用成功、失败都会执行）
          */
-        public static vibrateLong = (success: Function = null, fail: Function = null, complete: Function = null) => {
+        public static vibrateLong(success: Function = null, fail: Function = null, complete: Function = null) {
             MiniUtils.callMiniFunction('vibrateLong', {}, success, fail, complete);
         }
 
@@ -884,7 +903,7 @@ module Tape {
          * @param fail 失败回调
          * @param complete 接口调用结束的回调函数（调用成功、失败都会执行）
          */
-        public static showLoading = (title: string, mask: boolean, success: Function = null, fail: Function = null, complete: Function = null) => {
+        public static showLoading(title: string, mask: boolean, success: Function = null, fail: Function = null, complete: Function = null) {
             MiniUtils.callMiniFunction('showLoading', { title, mask }, success, fail, complete);
         }
 
@@ -894,7 +913,7 @@ module Tape {
          * @param fail 失败回调
          * @param complete 接口调用结束的回调函数（调用成功、失败都会执行）
          */
-        public static hideLoading = (success: Function = null, fail: Function = null, complete: Function = null) => {
+        public static hideLoading(success: Function = null, fail: Function = null, complete: Function = null) {
             MiniUtils.callMiniFunction('hideLoading', success, fail, complete);
         }
 
@@ -905,7 +924,7 @@ module Tape {
          * @param fail 失败回调
          * @param complete 接口调用结束的回调函数（调用成功、失败都会执行）
          */
-        public static showModal = (options, success: Function = null, fail: Function = null, complete: Function = null) => {
+        public static showModal(options, success: Function = null, fail: Function = null, complete: Function = null) {
             MiniUtils.callMiniFunction('showModal', options || {}, success, fail, complete);
         }
 
@@ -915,7 +934,7 @@ module Tape {
          * @param fail 失败回调
          * @param complete 接口调用结束的回调函数（调用成功、失败都会执行）
          */
-        public static getBatteryInfo = (success: Function = null, fail: Function = null, complete: Function = null) => {
+        public static getBatteryInfo(success: Function = null, fail: Function = null, complete: Function = null) {
             MiniUtils.callMiniFunction('getBatteryInfo', {}, success, fail, complete);
         }
 
@@ -926,7 +945,7 @@ module Tape {
          * @param fail 失败回调
          * @param complete 接口调用结束的回调函数（调用成功、失败都会执行）
          */
-        public static setClipboardData = (data: string, success: Function = null, fail: Function = null, complete: Function = null) => {
+        public static setClipboardData(data: string, success: Function = null, fail: Function = null, complete: Function = null) {
             MiniUtils.callMiniFunction('setClipboardData', { data }, success, fail, complete);
         }
 
@@ -936,7 +955,7 @@ module Tape {
          * @param fail 失败回调
          * @param complete 接口调用结束的回调函数（调用成功、失败都会执行）
          */
-        public static getClipboardData = (success: Function = null, fail: Function = null, complete: Function = null) => {
+        public static getClipboardData(success: Function = null, fail: Function = null, complete: Function = null) {
             MiniUtils.callMiniFunction('getClipboardData', {}, success, fail, complete);
         }
     }

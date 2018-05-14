@@ -90,7 +90,7 @@ module Tape {
             return this.__is_connect_ing__;
         }
 
-        public publishMessage(message: any): void {
+        public publishMessage(message: any) {
             if (!this.isConnected()) {
                 return;
             }
@@ -199,7 +199,7 @@ module Tape {
             return this.__is_connect_ing__;
         }
 
-        public publishMessage(topic: string, message: any, qos: number = 1, retained: boolean = false): void {
+        public publishMessage(topic: string, message: any, qos: number = 1, retained: boolean = false) {
             if (!this.isConnected()) {
                 return;
             }

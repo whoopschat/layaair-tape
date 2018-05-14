@@ -17,7 +17,7 @@ module Tape {
             return this.__dialog_manager_instance__;
         }
 
-        public static showDialog(dialog: Laya.Dialog, onOpened: Function = null, onClosed: Function = null): void {
+        public static showDialog(dialog: Laya.Dialog, onOpened: Function = null, onClosed: Function = null) {
             this.closeDialog();
             dialog.onClosed = (type) => {
                 onClosed && onClosed(type);
@@ -28,16 +28,16 @@ module Tape {
             this.instance().open(new ui.DialogViewUI(), true, true);
         }
 
-        public static closeDialog(): void {
+        public static closeDialog() {
             this.instance().closeAll();
         }
 
-        public static showLockView(lockView): void {
+        public static showLockView(lockView) {
             this.instance().setLockView(lockView);
             this.instance().lock(true);
         }
 
-        public static closeLockView(): void {
+        public static closeLockView() {
             this.instance().lock(false);
         }
     }
@@ -49,7 +49,7 @@ module Tape {
 
         private static __toast_group__: Object = {};
 
-        public static showToast(view, duration: number = 500, previousHnadler: Function = null): void {
+        public static showToast(view, duration: number = 500, previousHnadler: Function = null) {
             if (view && !view.parent) {
                 let type = view.name || '_default_toast';
                 if (!this.__toast_group__.hasOwnProperty(type)) {
@@ -116,19 +116,19 @@ module Tape {
         /// LifeCycle
         ///////////////////////
 
-        protected onCreate(): void {
+        protected onCreate() {
         }
 
-        protected onResume(): void {
+        protected onResume() {
         }
 
-        protected onPause(): void {
+        protected onPause() {
         }
 
-        protected onDestroy(): void {
+        protected onDestroy() {
         }
 
-        protected onNextProgress(progress): void {
+        protected onNextProgress(progress) {
         }
 
         ///////////////////////
@@ -149,47 +149,47 @@ module Tape {
             return false;
         }
 
-        protected back(): void {
+        protected back() {
             if (this.props.hasOwnProperty('navigation')) {
                 this.props['navigation'].finish(this.routeName, this.routeKey);
             }
         }
 
-        protected finish(name): void {
+        protected finish(name) {
             if (this.props.hasOwnProperty('navigation')) {
                 this.props['navigation'].finish(name);
             }
         }
 
-        protected pop(number?: Number): void {
+        protected pop(number?: Number) {
             if (this.props.hasOwnProperty('navigation')) {
                 this.props['navigation'].pop(number);
             }
         }
 
-        protected popToTop(): void {
+        protected popToTop() {
             if (this.props.hasOwnProperty('navigation')) {
                 this.props['navigation'].popToTop();
             }
         }
 
-        protected printLog(message: any, ...optionalParams: any[]): void {
+        protected printLog(message: any, ...optionalParams: any[]) {
             Tape.Logger.log(" ------ " + this.routeName + " ------ :", message, ...optionalParams);
         }
 
-        protected printError(message: any, ...optionalParams: any[]): void {
+        protected printError(message: any, ...optionalParams: any[]) {
             Tape.Logger.error(" ------ " + this.routeName + " ------ :", message, ...optionalParams);
         }
 
-        protected printInfo(message: any, ...optionalParams: any[]): void {
+        protected printInfo(message: any, ...optionalParams: any[]) {
             Tape.Logger.info(" ------ " + this.routeName + " ------ :", message, ...optionalParams);
         }
 
-        protected printWarn(message: any, ...optionalParams: any[]): void {
+        protected printWarn(message: any, ...optionalParams: any[]) {
             Tape.Logger.warn(" ------ " + this.routeName + "  ------ :", message, ...optionalParams);
         }
 
-        protected printDebug(message: any, ...optionalParams: any[]): void {
+        protected printDebug(message: any, ...optionalParams: any[]) {
             Tape.Logger.debug(" ------ " + this.routeName + " ------ :", message, ...optionalParams);
         }
 

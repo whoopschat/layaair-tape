@@ -91,7 +91,7 @@ module Tape {
             this.__file_version__ = navigator.props['navigation']['fileVersion'];
         }
 
-        public init_page() {
+        public initPage() {
             if (this.__file_version__) {
                 Laya.ResourceVersion.type = Laya.ResourceVersion.FILENAME_VERSION;
                 Laya.ResourceVersion.enable(this.__file_version__,
@@ -306,7 +306,7 @@ module Tape {
         constructor(props) {
             super(props);
             this.__navigator__ = new NavigationStack(this);
-            this.__navigator__.init_page();
+            this.__navigator__.initPage();
         }
     }
 

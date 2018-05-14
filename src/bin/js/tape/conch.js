@@ -12,11 +12,6 @@ var Tape;
     var ConchHandler = /** @class */ (function () {
         function ConchHandler() {
         }
-        ConchHandler.exit = function () {
-            if (Tape.isConchApp() && window["conch"].hasOwnProperty("exit")) {
-                window["conch"].exit();
-            }
-        };
         /**
          * 初始化
          * @param width 宽度
@@ -37,6 +32,11 @@ var Tape;
             }
             else {
                 Laya.stage.screenMode = Laya.Stage.SCREEN_VERTICAL;
+            }
+        };
+        ConchHandler.exit = function () {
+            if (Tape.isConchApp() && window["conch"].hasOwnProperty("exit")) {
+                window["conch"].exit();
             }
         };
         return ConchHandler;
