@@ -30,8 +30,13 @@ var Tape;
             }
             Laya.init.apply(Laya, [width, height].concat(options));
             Laya.stage.scaleMode = Laya.Stage.SCALE_EXACTFIT;
-            if (Tape.Build.isDebug()) {
-                Laya.Stat.show(0, 0);
+            Laya.stage.alignV = Laya.Stage.ALIGN_MIDDLE;
+            Laya.stage.alignH = Laya.Stage.ALIGN_CENTER;
+            if (width > height) {
+                Laya.stage.screenMode = Laya.Stage.SCREEN_HORIZONTAL;
+            }
+            else {
+                Laya.stage.screenMode = Laya.Stage.SCREEN_VERTICAL;
             }
         };
         return ConchHandler;
