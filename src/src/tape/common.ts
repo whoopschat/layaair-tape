@@ -12,7 +12,7 @@ module Tape {
         } else {
             ConchHandler.init(width, height, ...options);
         }
-    }
+    };
 
     /**
      * 退出
@@ -26,6 +26,6 @@ module Tape {
         } else if (isConchApp()) {
             ConchHandler.exit();
         }
-    }
+    };
 
 }
