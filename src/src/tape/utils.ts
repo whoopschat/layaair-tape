@@ -23,7 +23,7 @@ module Tape {
          * @return env mode : development or production
          */
         public static getEnv(): string {
-            if (this.__default_env__.indexOf('${') >= 0){
+            if (this.__default_env__.indexOf('${') >= 0) {
                 return 'development';
             }
             return this.__default_env__;
@@ -157,12 +157,12 @@ module Tape {
     export class NumUtil {
 
         /**
-         * rangedValue
+         * rangedNum
          * @param val curr number
          * @param min min number
          * @param max max number
          */
-        public static rangedValue(val: number, min: number, max: number): number {
+        public static rangedNum(val: number, min: number, max: number): number {
             if (val < min)
                 return min;
             else if (val > max)
@@ -172,11 +172,11 @@ module Tape {
         }
 
         /**
-         * rand
+         * randomNum
          * @param min min number
          * @param max max number
          */
-        public static rand(min: number, max: number): number {
+        public static randomNum(min: number, max: number): number {
             return Math.floor(Math.random() * (max - min)) + min;
         }
 
@@ -206,7 +206,7 @@ module Tape {
             return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
         }
 
-        public static randUUID() {
+        public static randomUUID() {
             return (this._s4() + this._s4() + "-" + this._s4() + "-" + this._s4() + "-" + this._s4() + "-" + this._s4() + this._s4() + this._s4());
         }
 

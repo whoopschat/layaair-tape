@@ -182,12 +182,12 @@ var Tape;
         function NumUtil() {
         }
         /**
-         * rangedValue
+         * rangedNum
          * @param val curr number
          * @param min min number
          * @param max max number
          */
-        NumUtil.rangedValue = function (val, min, max) {
+        NumUtil.rangedNum = function (val, min, max) {
             if (val < min)
                 return min;
             else if (val > max)
@@ -196,11 +196,11 @@ var Tape;
                 return val;
         };
         /**
-         * rand
+         * randomNum
          * @param min min number
          * @param max max number
          */
-        NumUtil.rand = function (min, max) {
+        NumUtil.randomNum = function (min, max) {
             return Math.floor(Math.random() * (max - min)) + min;
         };
         return NumUtil;
@@ -231,7 +231,7 @@ var Tape;
         UUID._s4 = function () {
             return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
         };
-        UUID.randUUID = function () {
+        UUID.randomUUID = function () {
             return (this._s4() + this._s4() + "-" + this._s4() + "-" + this._s4() + "-" + this._s4() + "-" + this._s4() + this._s4() + this._s4());
         };
         return UUID;
@@ -1933,7 +1933,7 @@ var Tape;
                 }
                 Object.assign(paramsObject, params);
                 this.__loading__ = true;
-                var key = Tape.UUID.randUUID();
+                var key = Tape.UUID.randomUUID();
                 new NavigationLoader(activity, name, key, {
                     navigation: this,
                     routeName: name,

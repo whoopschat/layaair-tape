@@ -176,7 +176,7 @@ var Tape;
                 }
                 Object.assign(paramsObject, params);
                 this.__loading__ = true;
-                var key = Tape.UUID.randUUID();
+                var key = Tape.UUID.randomUUID();
                 new NavigationLoader(activity, name, key, {
                     navigation: this,
                     routeName: name,

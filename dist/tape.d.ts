@@ -304,19 +304,19 @@ declare module Tape {
     class NumUtil {
 
         /**
-         * rangedValue
+         * rangedNum
          * @param val curr number
          * @param min min number
          * @param max max number
          */
-        static rangedValue(val: number, min: number, max: number): number;
+        static rangedNum(val: number, min: number, max: number): number;
 
         /**
-         * rand
+         * randomNum
          * @param min min number
          * @param max max number
          */
-        static rand(min: number, max: number): number;
+        static randomNum(min: number, max: number): number;
 
     }
 
@@ -341,7 +341,7 @@ declare module Tape {
         /**
          * randUUID
          */
-        static randUUID(): string;
+        static randomUUID(): string;
 
     }
 
