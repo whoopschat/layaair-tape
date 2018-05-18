@@ -568,6 +568,13 @@ declare module Tape {
     ///////////////////////////////////////////////
 
     /**
+     * MiniVersion
+     */
+    class MiniVersion {
+        public static checkVersion(onShowLoading: Function, onFailed: Function): void;
+    }
+
+    /**
      * MiniLogin
      */
     class MiniLogin {

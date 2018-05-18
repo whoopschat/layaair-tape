@@ -10,7 +10,7 @@ module Tape {
 
         public static __wx_main_share_options__ = null;
         public static __wx_main_share_result_data__ = null;
-        public static __wx_main_app_params_data__ = null;
+        public static __wx_main_app_launch_data__ = null;
         public static __wx_main_user_login_data__ = null;
         public static __wx_main_user_logging__ = false;
         public static __wx_main_user_login_button__ = null;
@@ -95,7 +95,7 @@ module Tape {
         }
 
         /**
-         * 打印日志
+         * debugLog
          */
         public static debugLog(message?: any, ...optionalParams: any[]) {
             console.log(message, ...optionalParams);
@@ -114,6 +114,31 @@ module Tape {
         return window.hasOwnProperty("wx");
     }
 
+    /**
+     * MiniVersion
+     */
+    export class MiniVersion {
+        public static checkVersion(onShowLoading: Function, onFailed: Function) {
+            const updateManager = MiniUtils.getMiniFunction('getUpdateManager')();
+            if (updateManager) {
+                updateManager.onCheckForUpdate(function (res) {
+                    if (res && res.hasUpdate) {
+                        onShowLoading && onShowLoading();
+                    }
+                });
+                updateManager.onUpdateReady(function () {
+                    updateManager.applyUpdate();
+                });
+                updateManager.onUpdateFailed(function () {
+                    onFailed && onFailed();
+                });
+            }
+        }
+    }
+
+    /**
+     * MiniHandler
+     */
     export class MiniHandler {
 
         /**
@@ -132,7 +157,7 @@ module Tape {
                 return MiniState.__wx_main_share_options__;
             });
             MiniUtils.getMiniFunction('onShow')((res) => {
-                MiniState.__wx_main_app_params_data__ = res;
+                MiniState.__wx_main_app_launch_data__ = res;
             });
             initOpenDataPage();
         }
@@ -326,7 +351,7 @@ module Tape {
          * 获取应用参数信息
          */
         public static getParamData(): Object {
-            return MiniState.__wx_main_app_params_data__ || {};
+            return MiniState.__wx_main_app_launch_data__ || {};
         }
 
         /**
@@ -358,7 +383,7 @@ module Tape {
                         errMsg: 'getUserInfo:ok'
                     };
                 }
-                res['paramData'] = MiniState.__wx_main_app_params_data__ || {};
+                res['launchData'] = MiniState.__wx_main_app_launch_data__ || {};
                 res['loginData'] = MiniState.__wx_main_user_login_data__ || {};
                 success && success(res);
                 complete && complete();
@@ -370,7 +395,7 @@ module Tape {
                         errMsg: 'getUserInfo:fail'
                     };
                 }
-                res['paramData'] = MiniState.__wx_main_app_params_data__ || {};
+                res['launchData'] = MiniState.__wx_main_app_launch_data__ || {};
                 res['loginData'] = MiniState.__wx_main_user_login_data__ || {};
                 fail && fail(res);
                 complete && complete();
@@ -607,7 +632,7 @@ module Tape {
         public static showSharedCanvasView(bgPage, data = {}) {
             if (MiniOpenData.isSupportSharedCanvasView()) {
                 postMessageToOpenDataContext('showOpenDataPage', (<any>Object).assign({}, data, {
-                    paramData: MiniState.__wx_main_app_params_data__ || {},
+                    launchData: MiniState.__wx_main_app_launch_data__ || {},
                     shareData: MiniState.__wx_main_share_result_data__ || {}
                 }));
                 var sharedStage = getOrCreateOpenDataPage(bgPage);
