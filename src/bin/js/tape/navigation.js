@@ -63,9 +63,21 @@ var Tape;
             this.removeSelf();
             this.routeActivity.onDestroy();
         };
-        NavigationLoader.prototype.show = function () {
-            this.visible = true;
-            this.routeActivity.onResume();
+        NavigationLoader.prototype.show = function (anim, callback) {
+            var _this = this;
+            if (anim) {
+                this.alpha = 0;
+                this.visible = true;
+                Laya.Tween.to(this, { alpha: 1 }, 300, Laya.Ease.backOut, Laya.Handler.create(this, function () {
+                    _this.routeActivity.onResume();
+                    callback && callback();
+                }));
+            }
+            else {
+                this.visible = true;
+                this.routeActivity.onResume();
+                callback && callback();
+            }
         };
         NavigationLoader.prototype.hide = function () {
             this.visible = false;
@@ -233,19 +245,21 @@ var Tape;
             return null;
         };
         NavigationStack.prototype.putStack = function (stack) {
-            this.hideStack();
+            var _this = this;
             this.__stacks__.push(stack);
-            this.showStack();
+            this.showStack(true, function () {
+                _this.hideStack(1);
+            });
         };
         NavigationStack.prototype.popStack = function (count) {
             if (this.lenStack() > 1 && count > 0) {
-                this.hideStack();
+                this.hideStack(0);
                 for (var i = 0; i < count; i++) {
                     if (this.lenStack() > 1) {
                         this.__stacks__.pop().exit();
                     }
                 }
-                this.showStack();
+                this.showStack(false, null);
             }
         };
         NavigationStack.prototype.finishStack = function (name, key) {
@@ -269,7 +283,7 @@ var Tape;
                     var first = targetIndexs.pop();
                     var flag_1 = first === len - 1;
                     if (flag_1) {
-                        this.hideStack();
+                        this.hideStack(0);
                     }
                     var slice = this.__stacks__.splice(first, 1);
                     slice.forEach(function (stack) {
@@ -283,21 +297,21 @@ var Tape;
                         });
                     }
                     if (flag_1) {
-                        this.showStack();
+                        this.showStack(false, null);
                     }
                 }
             }
         };
-        NavigationStack.prototype.hideStack = function () {
+        NavigationStack.prototype.hideStack = function (index) {
             var len = this.lenStack();
-            if (len > 0) {
-                this.__stacks__[len - 1].hide();
+            if (len - index > 0) {
+                this.__stacks__[len - 1 - index].hide();
             }
         };
-        NavigationStack.prototype.showStack = function () {
+        NavigationStack.prototype.showStack = function (anim, callback) {
             var len = this.lenStack();
             if (len > 0) {
-                this.__stacks__[len - 1].show();
+                this.__stacks__[len - 1].show(anim, callback);
             }
         };
         return NavigationStack;

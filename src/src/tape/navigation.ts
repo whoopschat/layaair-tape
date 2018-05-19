@@ -52,9 +52,19 @@ module Tape {
             this.routeActivity.onDestroy();
         }
 
-        public show() {
-            this.visible = true;
-            this.routeActivity.onResume();
+        public show(anim: boolean, callback: Function) {
+            if (anim) {
+                this.alpha = 0;
+                this.visible = true;
+                Laya.Tween.to(this, { alpha: 1 }, 300, Laya.Ease.backOut, Laya.Handler.create(this, () => {
+                    this.routeActivity.onResume();
+                    callback && callback();
+                }));
+            } else {
+                this.visible = true;
+                this.routeActivity.onResume();
+                callback && callback();
+            }
         }
 
         public hide() {
@@ -225,20 +235,21 @@ module Tape {
         }
 
         private putStack(stack) {
-            this.hideStack();
             this.__stacks__.push(stack);
-            this.showStack();
+            this.showStack(true, () => {
+                this.hideStack(1);
+            });
         }
 
         private popStack(count) {
             if (this.lenStack() > 1 && count > 0) {
-                this.hideStack();
+                this.hideStack(0);
                 for (var i = 0; i < count; i++) {
                     if (this.lenStack() > 1) {
                         this.__stacks__.pop().exit();
                     }
                 }
-                this.showStack();
+                this.showStack(false, null);
             }
         }
 
@@ -262,7 +273,7 @@ module Tape {
                     let first = targetIndexs.pop();
                     let flag = first === len - 1;
                     if (flag) {
-                        this.hideStack();
+                        this.hideStack(0);
                     }
                     let slice = this.__stacks__.splice(first, 1);
                     slice.forEach(stack => {
@@ -276,23 +287,23 @@ module Tape {
                         });
                     }
                     if (flag) {
-                        this.showStack();
+                        this.showStack(false, null);
                     }
                 }
             }
         }
 
-        private hideStack() {
+        private hideStack(index) {
             var len = this.lenStack();
-            if (len > 0) {
-                this.__stacks__[len - 1].hide();
+            if (len - index > 0) {
+                this.__stacks__[len - 1 - index].hide();
             }
         }
 
-        private showStack() {
+        private showStack(anim: boolean, callback: Function) {
             var len = this.lenStack();
             if (len > 0) {
-                this.__stacks__[len - 1].show();
+                this.__stacks__[len - 1].show(anim, callback);
             }
         }
 

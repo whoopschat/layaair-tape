@@ -479,7 +479,7 @@ var Tape;
         }
         MiniState.__wx_main_share_options__ = null;
         MiniState.__wx_main_share_result_data__ = null;
-        MiniState.__wx_main_app_params_data__ = null;
+        MiniState.__wx_main_app_launch_data__ = null;
         MiniState.__wx_main_user_login_data__ = null;
         MiniState.__wx_main_user_logging__ = false;
         MiniState.__wx_main_user_login_button__ = null;
@@ -569,7 +569,7 @@ var Tape;
             return null;
         };
         /**
-         * 打印日志
+         * debugLog
          */
         MiniUtils.debugLog = function (message) {
             var optionalParams = [];
@@ -589,6 +589,34 @@ var Tape;
     Tape.isMiniGame = function () {
         return window.hasOwnProperty("wx");
     };
+    /**
+     * MiniVersion
+     */
+    var MiniVersion = /** @class */ (function () {
+        function MiniVersion() {
+        }
+        MiniVersion.checkVersion = function (onShowLoading, onFailed) {
+            var updateManager = MiniUtils.getMiniFunction('getUpdateManager')();
+            if (updateManager) {
+                updateManager.onCheckForUpdate(function (res) {
+                    if (res && res.hasUpdate) {
+                        onShowLoading && onShowLoading();
+                    }
+                });
+                updateManager.onUpdateReady(function () {
+                    updateManager.applyUpdate();
+                });
+                updateManager.onUpdateFailed(function () {
+                    onFailed && onFailed();
+                });
+            }
+        };
+        return MiniVersion;
+    }());
+    Tape.MiniVersion = MiniVersion;
+    /**
+     * MiniHandler
+     */
     var MiniHandler = /** @class */ (function () {
         function MiniHandler() {
         }
@@ -612,7 +640,7 @@ var Tape;
                 return MiniState.__wx_main_share_options__;
             });
             MiniUtils.getMiniFunction('onShow')(function (res) {
-                MiniState.__wx_main_app_params_data__ = res;
+                MiniState.__wx_main_app_launch_data__ = res;
             });
             initOpenDataPage();
         };
@@ -807,7 +835,7 @@ var Tape;
          * 获取应用参数信息
          */
         MiniLogin.getParamData = function () {
-            return MiniState.__wx_main_app_params_data__ || {};
+            return MiniState.__wx_main_app_launch_data__ || {};
         };
         /**
          * 获取登录相关信息
@@ -839,7 +867,7 @@ var Tape;
                         errMsg: 'getUserInfo:ok'
                     };
                 }
-                res['paramData'] = MiniState.__wx_main_app_params_data__ || {};
+                res['launchData'] = MiniState.__wx_main_app_launch_data__ || {};
                 res['loginData'] = MiniState.__wx_main_user_login_data__ || {};
                 success && success(res);
                 complete && complete();
@@ -851,7 +879,7 @@ var Tape;
                         errMsg: 'getUserInfo:fail'
                     };
                 }
-                res['paramData'] = MiniState.__wx_main_app_params_data__ || {};
+                res['launchData'] = MiniState.__wx_main_app_launch_data__ || {};
                 res['loginData'] = MiniState.__wx_main_user_login_data__ || {};
                 fail && fail(res);
                 complete && complete();
@@ -1071,6 +1099,25 @@ var Tape;
             getOrCreateOpenDataPage();
         });
     };
+    var MiniKefu = /** @class */ (function () {
+        function MiniKefu() {
+        }
+        /**
+         * 进入客服会话。后台接入方式与小程序一致
+         * @param options 分享的信息，sessionFrom,showMessageCard,sendMessageTitle,sendMessagePath,sendMessageImg
+         * @param success 成功回调
+         * @param fail 失败回调
+         * @param complete 完成回调，失败成功都会回调
+         */
+        MiniKefu.openCustomerServiceConversation = function (options, success, fail, complete) {
+            if (success === void 0) { success = null; }
+            if (fail === void 0) { fail = null; }
+            if (complete === void 0) { complete = null; }
+            MiniUtils.callMiniFunction('openCustomerServiceConversation', options, success, fail, complete);
+        };
+        return MiniKefu;
+    }());
+    Tape.MiniKefu = MiniKefu;
     /**
      * MiniOpenData
      */
@@ -1092,7 +1139,7 @@ var Tape;
             if (data === void 0) { data = {}; }
             if (MiniOpenData.isSupportSharedCanvasView()) {
                 postMessageToOpenDataContext('showOpenDataPage', Object.assign({}, data, {
-                    paramData: MiniState.__wx_main_app_params_data__ || {},
+                    launchData: MiniState.__wx_main_app_launch_data__ || {},
                     shareData: MiniState.__wx_main_share_result_data__ || {}
                 }));
                 var sharedStage = getOrCreateOpenDataPage(bgPage);
@@ -1511,12 +1558,6 @@ var Tape;
             Laya.stage.scaleMode = Laya.Stage.SCALE_EXACTFIT;
             Laya.stage.alignV = Laya.Stage.ALIGN_MIDDLE;
             Laya.stage.alignH = Laya.Stage.ALIGN_CENTER;
-            if (width > height) {
-                Laya.stage.screenMode = Laya.Stage.SCREEN_HORIZONTAL;
-            }
-            else {
-                Laya.stage.screenMode = Laya.Stage.SCREEN_VERTICAL;
-            }
         };
         ConchHandler.exit = function () {
             if (Tape.isConchApp() && window["conch"].hasOwnProperty("exit")) {
@@ -1820,9 +1861,21 @@ var Tape;
             this.removeSelf();
             this.routeActivity.onDestroy();
         };
-        NavigationLoader.prototype.show = function () {
-            this.visible = true;
-            this.routeActivity.onResume();
+        NavigationLoader.prototype.show = function (anim, callback) {
+            var _this = this;
+            if (anim) {
+                this.alpha = 0;
+                this.visible = true;
+                Laya.Tween.to(this, { alpha: 1 }, 300, Laya.Ease.backOut, Laya.Handler.create(this, function () {
+                    _this.routeActivity.onResume();
+                    callback && callback();
+                }));
+            }
+            else {
+                this.visible = true;
+                this.routeActivity.onResume();
+                callback && callback();
+            }
         };
         NavigationLoader.prototype.hide = function () {
             this.visible = false;
@@ -1990,19 +2043,21 @@ var Tape;
             return null;
         };
         NavigationStack.prototype.putStack = function (stack) {
-            this.hideStack();
+            var _this = this;
             this.__stacks__.push(stack);
-            this.showStack();
+            this.showStack(true, function () {
+                _this.hideStack(1);
+            });
         };
         NavigationStack.prototype.popStack = function (count) {
             if (this.lenStack() > 1 && count > 0) {
-                this.hideStack();
+                this.hideStack(0);
                 for (var i = 0; i < count; i++) {
                     if (this.lenStack() > 1) {
                         this.__stacks__.pop().exit();
                     }
                 }
-                this.showStack();
+                this.showStack(false, null);
             }
         };
         NavigationStack.prototype.finishStack = function (name, key) {
@@ -2026,7 +2081,7 @@ var Tape;
                     var first = targetIndexs.pop();
                     var flag_1 = first === len - 1;
                     if (flag_1) {
-                        this.hideStack();
+                        this.hideStack(0);
                     }
                     var slice = this.__stacks__.splice(first, 1);
                     slice.forEach(function (stack) {
@@ -2040,21 +2095,21 @@ var Tape;
                         });
                     }
                     if (flag_1) {
-                        this.showStack();
+                        this.showStack(false, null);
                     }
                 }
             }
         };
-        NavigationStack.prototype.hideStack = function () {
+        NavigationStack.prototype.hideStack = function (index) {
             var len = this.lenStack();
-            if (len > 0) {
-                this.__stacks__[len - 1].hide();
+            if (len - index > 0) {
+                this.__stacks__[len - 1 - index].hide();
             }
         };
-        NavigationStack.prototype.showStack = function () {
+        NavigationStack.prototype.showStack = function (anim, callback) {
             var len = this.lenStack();
             if (len > 0) {
-                this.__stacks__[len - 1].show();
+                this.__stacks__[len - 1].show(anim, callback);
             }
         };
         return NavigationStack;

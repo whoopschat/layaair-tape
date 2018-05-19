@@ -626,6 +626,22 @@ declare module Tape {
     }
 
     /**
+     * MiniKefu
+     */
+    class MiniKefu {
+
+        /**
+         * 进入客服会话。后台接入方式与小程序一致
+         * @param options 分享的信息，sessionFrom,showMessageCard,sendMessageTitle,sendMessagePath,sendMessageImg
+         * @param success 成功回调
+         * @param fail 失败回调
+         * @param complete 完成回调，失败成功都会回调
+         */
+        public static openCustomerServiceConversation(options: Object, success?: Function, fail?: Function, complete?: Function): void;
+
+    }
+
+    /**
      * MiniOpenData
      */
     class MiniOpenData {

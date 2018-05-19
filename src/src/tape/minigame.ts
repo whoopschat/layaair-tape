@@ -612,6 +612,22 @@ module Tape {
         });
     }
 
+    export class MiniKefu {
+
+
+        /**
+         * 进入客服会话。后台接入方式与小程序一致
+         * @param options 分享的信息，sessionFrom,showMessageCard,sendMessageTitle,sendMessagePath,sendMessageImg
+         * @param success 成功回调
+         * @param fail 失败回调
+         * @param complete 完成回调，失败成功都会回调
+         */
+        public static openCustomerServiceConversation(options: Object, success: Function = null, fail: Function = null, complete: Function = null) {
+            MiniUtils.callMiniFunction('openCustomerServiceConversation', options, success, fail, complete);
+        }
+
+    }
+
     /**
      * MiniOpenData
      */

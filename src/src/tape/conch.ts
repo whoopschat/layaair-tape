@@ -23,11 +23,6 @@ module Tape {
             Laya.stage.scaleMode = Laya.Stage.SCALE_EXACTFIT;
             Laya.stage.alignV = Laya.Stage.ALIGN_MIDDLE;
             Laya.stage.alignH = Laya.Stage.ALIGN_CENTER;
-            if (width > height) {
-                Laya.stage.screenMode = Laya.Stage.SCREEN_HORIZONTAL;
-            } else {
-                Laya.stage.screenMode = Laya.Stage.SCREEN_VERTICAL;
-            }
         };
 
         public static exit = () => {

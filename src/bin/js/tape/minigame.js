@@ -11,7 +11,7 @@ var Tape;
         }
         MiniState.__wx_main_share_options__ = null;
         MiniState.__wx_main_share_result_data__ = null;
-        MiniState.__wx_main_app_params_data__ = null;
+        MiniState.__wx_main_app_launch_data__ = null;
         MiniState.__wx_main_user_login_data__ = null;
         MiniState.__wx_main_user_logging__ = false;
         MiniState.__wx_main_user_login_button__ = null;
@@ -101,7 +101,7 @@ var Tape;
             return null;
         };
         /**
-         * 打印日志
+         * debugLog
          */
         MiniUtils.debugLog = function (message) {
             var optionalParams = [];
@@ -121,6 +121,34 @@ var Tape;
     Tape.isMiniGame = function () {
         return window.hasOwnProperty("wx");
     };
+    /**
+     * MiniVersion
+     */
+    var MiniVersion = /** @class */ (function () {
+        function MiniVersion() {
+        }
+        MiniVersion.checkVersion = function (onShowLoading, onFailed) {
+            var updateManager = MiniUtils.getMiniFunction('getUpdateManager')();
+            if (updateManager) {
+                updateManager.onCheckForUpdate(function (res) {
+                    if (res && res.hasUpdate) {
+                        onShowLoading && onShowLoading();
+                    }
+                });
+                updateManager.onUpdateReady(function () {
+                    updateManager.applyUpdate();
+                });
+                updateManager.onUpdateFailed(function () {
+                    onFailed && onFailed();
+                });
+            }
+        };
+        return MiniVersion;
+    }());
+    Tape.MiniVersion = MiniVersion;
+    /**
+     * MiniHandler
+     */
     var MiniHandler = /** @class */ (function () {
         function MiniHandler() {
         }
@@ -144,7 +172,7 @@ var Tape;
                 return MiniState.__wx_main_share_options__;
             });
             MiniUtils.getMiniFunction('onShow')(function (res) {
-                MiniState.__wx_main_app_params_data__ = res;
+                MiniState.__wx_main_app_launch_data__ = res;
             });
             initOpenDataPage();
         };
@@ -339,7 +367,7 @@ var Tape;
          * 获取应用参数信息
          */
         MiniLogin.getParamData = function () {
-            return MiniState.__wx_main_app_params_data__ || {};
+            return MiniState.__wx_main_app_launch_data__ || {};
         };
         /**
          * 获取登录相关信息
@@ -371,7 +399,7 @@ var Tape;
                         errMsg: 'getUserInfo:ok'
                     };
                 }
-                res['paramData'] = MiniState.__wx_main_app_params_data__ || {};
+                res['launchData'] = MiniState.__wx_main_app_launch_data__ || {};
                 res['loginData'] = MiniState.__wx_main_user_login_data__ || {};
                 success && success(res);
                 complete && complete();
@@ -383,7 +411,7 @@ var Tape;
                         errMsg: 'getUserInfo:fail'
                     };
                 }
-                res['paramData'] = MiniState.__wx_main_app_params_data__ || {};
+                res['launchData'] = MiniState.__wx_main_app_launch_data__ || {};
                 res['loginData'] = MiniState.__wx_main_user_login_data__ || {};
                 fail && fail(res);
                 complete && complete();
@@ -603,6 +631,25 @@ var Tape;
             getOrCreateOpenDataPage();
         });
     };
+    var MiniKefu = /** @class */ (function () {
+        function MiniKefu() {
+        }
+        /**
+         * 进入客服会话。后台接入方式与小程序一致
+         * @param options 分享的信息，sessionFrom,showMessageCard,sendMessageTitle,sendMessagePath,sendMessageImg
+         * @param success 成功回调
+         * @param fail 失败回调
+         * @param complete 完成回调，失败成功都会回调
+         */
+        MiniKefu.openCustomerServiceConversation = function (options, success, fail, complete) {
+            if (success === void 0) { success = null; }
+            if (fail === void 0) { fail = null; }
+            if (complete === void 0) { complete = null; }
+            MiniUtils.callMiniFunction('openCustomerServiceConversation', options, success, fail, complete);
+        };
+        return MiniKefu;
+    }());
+    Tape.MiniKefu = MiniKefu;
     /**
      * MiniOpenData
      */
@@ -624,7 +671,7 @@ var Tape;
             if (data === void 0) { data = {}; }
             if (MiniOpenData.isSupportSharedCanvasView()) {
                 postMessageToOpenDataContext('showOpenDataPage', Object.assign({}, data, {
-                    paramData: MiniState.__wx_main_app_params_data__ || {},
+                    launchData: MiniState.__wx_main_app_launch_data__ || {},
                     shareData: MiniState.__wx_main_share_result_data__ || {}
                 }));
                 var sharedStage = getOrCreateOpenDataPage(bgPage);
