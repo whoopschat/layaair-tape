@@ -40,36 +40,38 @@ module Tape {
         public create(routeActivity) {
             this.routeActivity = routeActivity;
             this.addChild(this.routeActivity);
-            this.routeActivity.onCreate();
+            this.routeActivity.onCreate && this.routeActivity.onCreate();
         }
 
         public nextProgress(progress) {
-            this.routeActivity.onNextProgress(progress);
+            this.routeActivity.onNextProgress && this.routeActivity.onNextProgress(progress);
         }
 
         public exit() {
             this.removeSelf();
-            this.routeActivity.onDestroy();
+            this.routeActivity.onDestroy && this.routeActivity.onDestroy();
         }
 
         public show(anim: boolean, callback: Function) {
-            if (anim) {
+            var ease = this.routeActivity.inEase;
+            var duration = this.routeActivity.inEaseDuration;
+            if (anim && ease) {
                 this.alpha = 0;
                 this.visible = true;
-                Laya.Tween.to(this, { alpha: 1 }, 300, Laya.Ease.backOut, Laya.Handler.create(this, () => {
-                    this.routeActivity.onResume();
+                this.routeActivity.onResume && this.routeActivity.onResume();
+                Laya.Tween.to(this, { alpha: 1 }, duration, ease, Laya.Handler.create(this, () => {
                     callback && callback();
                 }));
             } else {
                 this.visible = true;
-                this.routeActivity.onResume();
+                this.routeActivity.onResume && this.routeActivity.onResume();
                 callback && callback();
             }
         }
 
         public hide() {
             this.visible = false;
-            this.routeActivity.onPause();
+            this.routeActivity.onPause && this.routeActivity.onPause();
         }
 
     }
@@ -303,7 +305,7 @@ module Tape {
         private showStack(anim: boolean, callback: Function) {
             var len = this.lenStack();
             if (len > 0) {
-                this.__stacks__[len - 1].show(anim, callback);
+                this.__stacks__[len - 1].show(anim && len > 1, callback);
             }
         }
 

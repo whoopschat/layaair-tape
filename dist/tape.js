@@ -1688,6 +1688,8 @@ var Tape;
             _this.routeName = "";
             _this.routeKey = "";
             _this.params = {};
+            _this.inEase = Laya.Ease.linearIn;
+            _this.inEaseDuration = 300;
             _this.params = Object.assign({}, props['params']);
             _this.routeName = props['routeName'] || "";
             _this.routeKey = props['routeKey'] || "";
@@ -1852,34 +1854,35 @@ var Tape;
         NavigationLoader.prototype.create = function (routeActivity) {
             this.routeActivity = routeActivity;
             this.addChild(this.routeActivity);
-            this.routeActivity.onCreate();
+            this.routeActivity.onCreate && this.routeActivity.onCreate();
         };
         NavigationLoader.prototype.nextProgress = function (progress) {
-            this.routeActivity.onNextProgress(progress);
+            this.routeActivity.onNextProgress && this.routeActivity.onNextProgress(progress);
         };
         NavigationLoader.prototype.exit = function () {
             this.removeSelf();
-            this.routeActivity.onDestroy();
+            this.routeActivity.onDestroy && this.routeActivity.onDestroy();
         };
         NavigationLoader.prototype.show = function (anim, callback) {
-            var _this = this;
-            if (anim) {
+            var ease = this.routeActivity.inEase;
+            var duration = this.routeActivity.inEaseDuration;
+            if (anim && ease) {
                 this.alpha = 0;
                 this.visible = true;
-                Laya.Tween.to(this, { alpha: 1 }, 300, Laya.Ease.backOut, Laya.Handler.create(this, function () {
-                    _this.routeActivity.onResume();
+                this.routeActivity.onResume && this.routeActivity.onResume();
+                Laya.Tween.to(this, { alpha: 1 }, duration, ease, Laya.Handler.create(this, function () {
                     callback && callback();
                 }));
             }
             else {
                 this.visible = true;
-                this.routeActivity.onResume();
+                this.routeActivity.onResume && this.routeActivity.onResume();
                 callback && callback();
             }
         };
         NavigationLoader.prototype.hide = function () {
             this.visible = false;
-            this.routeActivity.onPause();
+            this.routeActivity.onPause && this.routeActivity.onPause();
         };
         return NavigationLoader;
     }(Tape.PropsComponent));
@@ -2109,7 +2112,7 @@ var Tape;
         NavigationStack.prototype.showStack = function (anim, callback) {
             var len = this.lenStack();
             if (len > 0) {
-                this.__stacks__[len - 1].show(anim, callback);
+                this.__stacks__[len - 1].show(anim && len > 1, callback);
             }
         };
         return NavigationStack;

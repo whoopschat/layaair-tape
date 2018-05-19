@@ -117,6 +117,8 @@ var Tape;
             _this.routeName = "";
             _this.routeKey = "";
             _this.params = {};
+            _this.inEase = Laya.Ease.linearIn;
+            _this.inEaseDuration = 300;
             _this.params = Object.assign({}, props['params']);
             _this.routeName = props['routeName'] || "";
             _this.routeKey = props['routeKey'] || "";
