@@ -101,6 +101,10 @@ module Tape {
             });
         };
 
+        private __mapLayer__: PropsComponent = null;
+        private __contentLayer__: PropsComponent = null;
+        private __effectLayer__: PropsComponent = null;
+
         public readonly routeName: string = "";
         public readonly routeKey: string = "";
         public readonly params: Object = {};
@@ -118,6 +122,24 @@ module Tape {
             this.params = (<any>Object).assign({}, props['params']);
             this.routeName = props['routeName'] || "";
             this.routeKey = props['routeKey'] || "";
+            this.__mapLayer__ = new PropsComponent();
+            this.__contentLayer__ = new PropsComponent();
+            this.__effectLayer__ = new PropsComponent();
+            this.addChild(this.__mapLayer__);
+            this.addChild(this.__contentLayer__);
+            this.addChild(this.__effectLayer__);
+        }
+
+        protected addMapChild(clild) {
+            this.__mapLayer__.addChild(clild);
+        }
+
+        protected addContentChild(clild) {
+            this.__contentLayer__.addChild(clild);
+        }
+
+        protected addEffectChild(clild) {
+            this.__effectLayer__.addChild(clild);
         }
 
         ///////////////////////

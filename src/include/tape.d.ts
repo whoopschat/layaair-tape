@@ -96,6 +96,12 @@ declare module Tape {
         /// LifeCycle
         ///////////////////////
 
+        protected addMapChild(clild: any);
+
+        protected addContentChild(clild: any);
+
+        protected addEffectChild(clild: any);
+
         /**
          * onCreate
          */

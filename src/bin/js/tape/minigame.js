@@ -807,10 +807,7 @@ var Tape;
             if (success === void 0) { success = null; }
             if (fail === void 0) { fail = null; }
             if (complete === void 0) { complete = null; }
-            MiniUtils.callMiniFunction('shareAppMessage', options, function (res) {
-                MiniState.__wx_main_share_result_data__ = res;
-                success && success(res);
-            }, fail, complete);
+            MiniUtils.callMiniFunction('shareAppMessage', options, success, fail, complete);
         };
         /**
          * 获取转发详细信息

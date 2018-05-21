@@ -771,10 +771,7 @@ module Tape {
          * @param complete 完成回调，失败成功都会回调
          */
         public static shareAppMessage(options: Object, success: Function = null, fail: Function = null, complete: Function = null) {
-            MiniUtils.callMiniFunction('shareAppMessage', options, (res) => {
-                MiniState.__wx_main_share_result_data__ = res;
-                success && success(res)
-            }, fail, complete);
+            MiniUtils.callMiniFunction('shareAppMessage', options, success, fail, complete);
         }
 
         /**

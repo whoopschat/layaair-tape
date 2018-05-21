@@ -51,7 +51,7 @@ var App;
         }
         Page2.prototype.onCreate = function () {
             var _this = this;
-            this.addChild(this.page2);
+            this.addMapChild(this.page2);
             this.printDebug("onCreate");
             var ws = new Tape.MQTTSocket();
             ws.onConnected = function () {

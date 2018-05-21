@@ -36,7 +36,7 @@ module App {
         private page2 = new ui.Page2UI();
 
         protected onCreate() {
-            this.addChild(this.page2);
+            this.addMapChild(this.page2);
             this.printDebug("onCreate");
             var ws = new Tape.MQTTSocket();
             ws.onConnected = () => {
