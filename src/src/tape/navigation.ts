@@ -47,19 +47,35 @@ module Tape {
             this.routeActivity.onNextProgress && this.routeActivity.onNextProgress(progress);
         }
 
-        public exit() {
-            this.removeSelf();
-            this.routeActivity.onDestroy && this.routeActivity.onDestroy();
+        public exit(anim: boolean, callback: Function) {
+            var ease = this.routeActivity.outEase || Laya.Ease.linearIn;
+            var duration = this.routeActivity.outEaseDuration || 300;
+            var fromProps = this.routeActivity.outEaseFromProps || { alpha: 1 };
+            var toProps = this.routeActivity.outEaseToProps || { alpha: 0 };
+            if (anim && ease) {
+                (<any>Object).assign(this, fromProps);
+                this.routeActivity.onDestroy && this.routeActivity.onDestroy();
+                Laya.Tween.to(this, toProps, duration, ease, Laya.Handler.create(this, () => {
+                    this.removeSelf();
+                    callback && callback();
+                }));
+            } else {
+                this.removeSelf();
+                this.routeActivity.onDestroy && this.routeActivity.onDestroy();
+                callback && callback();
+            }
         }
 
         public show(anim: boolean, callback: Function) {
-            var ease = this.routeActivity.inEase;
-            var duration = this.routeActivity.inEaseDuration;
+            var ease = this.routeActivity.inEase || Laya.Ease.linearIn;
+            var duration = this.routeActivity.inEaseDuration || 300;
+            var fromProps = this.routeActivity.inEaseFromProps || { alpha: 0 };
+            var toProps = this.routeActivity.inEaseToProps || { alpha: 1 };
             if (anim && ease) {
-                this.alpha = 0;
+                (<any>Object).assign(this, fromProps);
                 this.visible = true;
                 this.routeActivity.onResume && this.routeActivity.onResume();
-                Laya.Tween.to(this, { alpha: 1 }, duration, ease, Laya.Handler.create(this, () => {
+                Laya.Tween.to(this, toProps, duration, ease, Laya.Handler.create(this, () => {
                     callback && callback();
                 }));
             } else {
@@ -186,8 +202,9 @@ module Tape {
                 }, resArray, (loader) => {
                     this.__loading__ = false;
                     this.__navigator__.addChild(loader);
-                    this.putStack(loader);
-                    action && action(true);
+                    this.putStack(loader, () => {
+                        action && action(true);
+                    });
                     this.__loaded_handler__ && this.__loaded_handler__(loader);
                 }, (loader, progress) => {
                     if (this.__loading__) {
@@ -236,10 +253,11 @@ module Tape {
             return null;
         }
 
-        private putStack(stack) {
+        private putStack(stack, callback: Function) {
             this.__stacks__.push(stack);
             this.showStack(true, () => {
                 this.hideStack(1);
+                callback && callback();
             });
         }
 
@@ -248,7 +266,7 @@ module Tape {
                 this.hideStack(0);
                 for (var i = 0; i < count; i++) {
                     if (this.lenStack() > 1) {
-                        this.__stacks__.pop().exit();
+                        this.__stacks__.pop().exit(false, null);
                     }
                 }
                 this.showStack(false, null);
@@ -275,22 +293,23 @@ module Tape {
                     let first = targetIndexs.pop();
                     let flag = first === len - 1;
                     if (flag) {
-                        this.hideStack(0);
+                        this.showStack(false, null, 1);
                     }
                     let slice = this.__stacks__.splice(first, 1);
                     slice.forEach(stack => {
-                        stack.exit();
-                    });
-                    while (targetIndexs.length > 0) {
-                        first = targetIndexs.pop();
-                        let slice = this.__stacks__.splice(first, 1);
-                        slice.forEach(stack => {
-                            stack.exit();
+                        stack.exit(true, () => {
+                            while (targetIndexs.length > 0) {
+                                first = targetIndexs.pop();
+                                let slice = this.__stacks__.splice(first, 1);
+                                slice.forEach(stack => {
+                                    stack.exit(targetIndexs.length === 1, null);
+                                });
+                            }
+                            if (flag) {
+                                this.showStack(false, null);
+                            }
                         });
-                    }
-                    if (flag) {
-                        this.showStack(false, null);
-                    }
+                    });
                 }
             }
         }
@@ -302,10 +321,10 @@ module Tape {
             }
         }
 
-        private showStack(anim: boolean, callback: Function) {
+        private showStack(anim: boolean, callback: Function, index = 0) {
             var len = this.lenStack();
-            if (len > 0) {
-                this.__stacks__[len - 1].show(anim && len > 1, callback);
+            if (len - index > 0) {
+                this.__stacks__[len - 1 - index].show(anim && len > 1, callback);
             }
         }
 

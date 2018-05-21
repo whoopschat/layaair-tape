@@ -59,18 +59,36 @@ var Tape;
         NavigationLoader.prototype.nextProgress = function (progress) {
             this.routeActivity.onNextProgress && this.routeActivity.onNextProgress(progress);
         };
-        NavigationLoader.prototype.exit = function () {
-            this.removeSelf();
-            this.routeActivity.onDestroy && this.routeActivity.onDestroy();
+        NavigationLoader.prototype.exit = function (anim, callback) {
+            var _this = this;
+            var ease = this.routeActivity.outEase || Laya.Ease.linearIn;
+            var duration = this.routeActivity.outEaseDuration || 300;
+            var fromProps = this.routeActivity.outEaseFromProps || { alpha: 1 };
+            var toProps = this.routeActivity.outEaseToProps || { alpha: 0 };
+            if (anim && ease) {
+                Object.assign(this, fromProps);
+                this.routeActivity.onDestroy && this.routeActivity.onDestroy();
+                Laya.Tween.to(this, toProps, duration, ease, Laya.Handler.create(this, function () {
+                    _this.removeSelf();
+                    callback && callback();
+                }));
+            }
+            else {
+                this.removeSelf();
+                this.routeActivity.onDestroy && this.routeActivity.onDestroy();
+                callback && callback();
+            }
         };
         NavigationLoader.prototype.show = function (anim, callback) {
-            var ease = this.routeActivity.inEase;
-            var duration = this.routeActivity.inEaseDuration;
+            var ease = this.routeActivity.inEase || Laya.Ease.linearIn;
+            var duration = this.routeActivity.inEaseDuration || 300;
+            var fromProps = this.routeActivity.inEaseFromProps || { alpha: 0 };
+            var toProps = this.routeActivity.inEaseToProps || { alpha: 1 };
             if (anim && ease) {
-                this.alpha = 0;
+                Object.assign(this, fromProps);
                 this.visible = true;
                 this.routeActivity.onResume && this.routeActivity.onResume();
-                Laya.Tween.to(this, { alpha: 1 }, duration, ease, Laya.Handler.create(this, function () {
+                Laya.Tween.to(this, toProps, duration, ease, Laya.Handler.create(this, function () {
                     callback && callback();
                 }));
             }
@@ -198,8 +216,9 @@ var Tape;
                 }, resArray_1, function (loader) {
                     _this.__loading__ = false;
                     _this.__navigator__.addChild(loader);
-                    _this.putStack(loader);
-                    action && action(true);
+                    _this.putStack(loader, function () {
+                        action && action(true);
+                    });
                     _this.__loaded_handler__ && _this.__loaded_handler__(loader);
                 }, function (loader, progress) {
                     if (_this.__loading__) {
@@ -245,11 +264,12 @@ var Tape;
             }
             return null;
         };
-        NavigationStack.prototype.putStack = function (stack) {
+        NavigationStack.prototype.putStack = function (stack, callback) {
             var _this = this;
             this.__stacks__.push(stack);
             this.showStack(true, function () {
                 _this.hideStack(1);
+                callback && callback();
             });
         };
         NavigationStack.prototype.popStack = function (count) {
@@ -257,17 +277,18 @@ var Tape;
                 this.hideStack(0);
                 for (var i = 0; i < count; i++) {
                     if (this.lenStack() > 1) {
-                        this.__stacks__.pop().exit();
+                        this.__stacks__.pop().exit(false, null);
                     }
                 }
                 this.showStack(false, null);
             }
         };
         NavigationStack.prototype.finishStack = function (name, key) {
+            var _this = this;
             if (key === void 0) { key = null; }
             var len = this.lenStack();
             if (len > 1) {
-                var targetIndexs = [];
+                var targetIndexs_1 = [];
                 for (var i = 0; i < len; i++) {
                     var stack = this.__stacks__[i];
                     if (stack.routeName === name) {
@@ -275,31 +296,32 @@ var Tape;
                         if (key) {
                             flag = stack.routeKey === key;
                         }
-                        if (flag && targetIndexs.length < len - 1) {
-                            targetIndexs.push(i);
+                        if (flag && targetIndexs_1.length < len - 1) {
+                            targetIndexs_1.push(i);
                         }
                     }
                 }
-                if (targetIndexs.length > 0) {
-                    var first = targetIndexs.pop();
-                    var flag_1 = first === len - 1;
+                if (targetIndexs_1.length > 0) {
+                    var first_1 = targetIndexs_1.pop();
+                    var flag_1 = first_1 === len - 1;
                     if (flag_1) {
-                        this.hideStack(0);
+                        this.showStack(false, null, 1);
                     }
-                    var slice = this.__stacks__.splice(first, 1);
+                    var slice = this.__stacks__.splice(first_1, 1);
                     slice.forEach(function (stack) {
-                        stack.exit();
-                    });
-                    while (targetIndexs.length > 0) {
-                        first = targetIndexs.pop();
-                        var slice_1 = this.__stacks__.splice(first, 1);
-                        slice_1.forEach(function (stack) {
-                            stack.exit();
+                        stack.exit(true, function () {
+                            while (targetIndexs_1.length > 0) {
+                                first_1 = targetIndexs_1.pop();
+                                var slice_1 = _this.__stacks__.splice(first_1, 1);
+                                slice_1.forEach(function (stack) {
+                                    stack.exit(targetIndexs_1.length === 1, null);
+                                });
+                            }
+                            if (flag_1) {
+                                _this.showStack(false, null);
+                            }
                         });
-                    }
-                    if (flag_1) {
-                        this.showStack(false, null);
-                    }
+                    });
                 }
             }
         };
@@ -309,10 +331,11 @@ var Tape;
                 this.__stacks__[len - 1 - index].hide();
             }
         };
-        NavigationStack.prototype.showStack = function (anim, callback) {
+        NavigationStack.prototype.showStack = function (anim, callback, index) {
+            if (index === void 0) { index = 0; }
             var len = this.lenStack();
-            if (len > 0) {
-                this.__stacks__[len - 1].show(anim && len > 1, callback);
+            if (len - index > 0) {
+                this.__stacks__[len - 1 - index].show(anim && len > 1, callback);
             }
         };
         return NavigationStack;

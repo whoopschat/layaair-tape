@@ -46,8 +46,20 @@ declare module Tape {
         public readonly params: Object;
         public readonly routeName: string;
         public readonly routeKey: string;
+        /**
+         * in anim
+         */
         protected inEase: Function;
         protected inEaseDuration: number;
+        protected inEaseFromProps: Object;
+        protected inEaseToProps: Object;
+        /**
+         * out anim
+         */
+        protected outEaseDuration: number;
+        protected outEase: Function;
+        protected outEaseFromProps: Object;
+        protected outEaseToProps: Object;
 
         ///////////////////////
         //// Extends component props

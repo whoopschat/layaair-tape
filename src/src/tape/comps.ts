@@ -104,8 +104,14 @@ module Tape {
         public readonly routeName: string = "";
         public readonly routeKey: string = "";
         public readonly params: Object = {};
-        protected inEase: Function = Laya.Ease.linearIn;
         protected inEaseDuration: number = 300;
+        protected inEase: Function = null;
+        protected inEaseFromProps: Object = null;
+        protected inEaseToProps: Object = null;
+        protected outEaseDuration: number = 300;
+        protected outEase: Function = null;
+        protected outEaseFromProps: Object = null;
+        protected outEaseToProps: Object = null;
 
         constructor(props: Object = {}) {
             super(props);
