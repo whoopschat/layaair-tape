@@ -882,20 +882,6 @@ var Tape;
             MiniUtils.callMiniFunction('checkIsUserAdvisedToRest', { todayPlayedTime: todayPlayedTime }, success, fail, complete);
         };
         /**
-         * 获取当前的地理位置、速度。当用户离开小程序后，此接口无法调用；当用户点击“显示在聊天顶部”时，此接口可继续调用。
-         * @param type wgs84 返回 gps 坐标，gcj02 返回可用于 wx.openLocation 的坐标
-         * @param success 成功回调 result
-         * @param fail 失败回调
-         * @param complete 完成回调，失败成功都会回调
-         */
-        MiniDisplay.getLocation = function (type, success, fail, complete) {
-            if (type === void 0) { type = 'wgs84'; }
-            if (success === void 0) { success = null; }
-            if (fail === void 0) { fail = null; }
-            if (complete === void 0) { complete = null; }
-            MiniUtils.callMiniFunction('getLocation', { type: type }, success, fail, complete);
-        };
-        /**
          * 使手机发生较短时间的振动（15 ms）
          * @param success 成功回调 result
          * @param fail 失败回调

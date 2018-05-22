@@ -196,6 +196,39 @@ var Tape;
     }());
     Tape.Logger = Logger;
     /**
+     * Bus
+     */
+    var Bus = /** @class */ (function () {
+        function Bus() {
+        }
+        Bus.post = function (event, data) {
+            if (!event) {
+                return;
+            }
+            if (this.__event_group__.hasOwnProperty(event)) {
+                var list = this.__event_group__[event];
+                if (list.length > 0) {
+                    list.forEach(function (value) {
+                        value && value(data);
+                    });
+                }
+            }
+        };
+        Bus.on = function (event, callback) {
+            if (!event || !callback) {
+                return;
+            }
+            if (!this.__event_group__.hasOwnProperty(event)) {
+                this.__event_group__[event] = new Array();
+            }
+            var list = this.__event_group__[event];
+            list.push(callback);
+        };
+        Bus.__event_group__ = {};
+        return Bus;
+    }());
+    Tape.Bus = Bus;
+    /**
      * Task
      */
     var Task = /** @class */ (function () {

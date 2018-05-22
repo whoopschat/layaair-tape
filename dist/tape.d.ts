@@ -156,20 +156,6 @@ declare module Tape {
          */
         protected popToTop(): void;
 
-        ///////////////////////
-        /// Logger
-        ///////////////////////
-
-        protected printLog(message: any, ...optionalParams: any[]): void;
-
-        protected printError(message: any, ...optionalParams: any[]): void;
-
-        protected printInfo(message: any, ...optionalParams: any[]): void;
-
-        protected printWarn(message: any, ...optionalParams: any[]): void;
-
-        protected printDebug(message: any, ...optionalParams: any[]): void;
-
     }
 
     /**
@@ -316,6 +302,16 @@ declare module Tape {
          */
         static debug(message?: any, ...optionalParams: any[]): void;
 
+    }
+
+    /**
+     * Bus
+     */
+    class Bus {
+
+        static post(event: string, data: any): void;
+
+        static on(event: string, callback: Function): void;
     }
 
     /**

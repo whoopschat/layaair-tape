@@ -245,14 +245,6 @@ var Tape;
             this.finishStack(name, key);
         };
         /**
-         * postEvent
-         */
-        NavigationStack.prototype.postEvent = function (eventName, data) {
-            this.__stacks__.forEach(function (stack) {
-                stack.postEvent(eventName, data);
-            });
-        };
-        /**
          * popToTop
          */
         NavigationStack.prototype.popToTop = function () {

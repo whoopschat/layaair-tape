@@ -144,12 +144,6 @@ module Tape {
         /// Navigator
         ///////////////////////
 
-        protected postEvent(name, data) {
-            if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].postEvent(name, data);
-            }
-        }
-
         protected navigate(name, params: Object = {}, action: Function = null): boolean {
             if (this.props.hasOwnProperty('navigation')) {
                 return this.props['navigation'].navigate(name, params, action);
@@ -186,26 +180,6 @@ module Tape {
             if (this.props.hasOwnProperty('navigation')) {
                 this.props['navigation'].popToTop();
             }
-        }
-
-        protected printLog(message: any, ...optionalParams: any[]) {
-            Tape.Logger.log(" ------ " + this.routeName + " ------ :", message, ...optionalParams);
-        }
-
-        protected printError(message: any, ...optionalParams: any[]) {
-            Tape.Logger.error(" ------ " + this.routeName + " ------ :", message, ...optionalParams);
-        }
-
-        protected printInfo(message: any, ...optionalParams: any[]) {
-            Tape.Logger.info(" ------ " + this.routeName + " ------ :", message, ...optionalParams);
-        }
-
-        protected printWarn(message: any, ...optionalParams: any[]) {
-            Tape.Logger.warn(" ------ " + this.routeName + "  ------ :", message, ...optionalParams);
-        }
-
-        protected printDebug(message: any, ...optionalParams: any[]) {
-            Tape.Logger.debug(" ------ " + this.routeName + " ------ :", message, ...optionalParams);
         }
 
     }

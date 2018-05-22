@@ -155,11 +155,6 @@ var Tape;
         ///////////////////////
         /// Navigator
         ///////////////////////
-        Activity.prototype.postEvent = function (name, data) {
-            if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].postEvent(name, data);
-            }
-        };
         Activity.prototype.navigate = function (name, params, action) {
             if (params === void 0) { params = {}; }
             if (action === void 0) { action = null; }
@@ -194,46 +189,6 @@ var Tape;
             if (this.props.hasOwnProperty('navigation')) {
                 this.props['navigation'].popToTop();
             }
-        };
-        Activity.prototype.printLog = function (message) {
-            var optionalParams = [];
-            for (var _i = 1; _i < arguments.length; _i++) {
-                optionalParams[_i - 1] = arguments[_i];
-            }
-            (_a = Tape.Logger).log.apply(_a, [" ------ " + this.routeName + " ------ :", message].concat(optionalParams));
-            var _a;
-        };
-        Activity.prototype.printError = function (message) {
-            var optionalParams = [];
-            for (var _i = 1; _i < arguments.length; _i++) {
-                optionalParams[_i - 1] = arguments[_i];
-            }
-            (_a = Tape.Logger).error.apply(_a, [" ------ " + this.routeName + " ------ :", message].concat(optionalParams));
-            var _a;
-        };
-        Activity.prototype.printInfo = function (message) {
-            var optionalParams = [];
-            for (var _i = 1; _i < arguments.length; _i++) {
-                optionalParams[_i - 1] = arguments[_i];
-            }
-            (_a = Tape.Logger).info.apply(_a, [" ------ " + this.routeName + " ------ :", message].concat(optionalParams));
-            var _a;
-        };
-        Activity.prototype.printWarn = function (message) {
-            var optionalParams = [];
-            for (var _i = 1; _i < arguments.length; _i++) {
-                optionalParams[_i - 1] = arguments[_i];
-            }
-            (_a = Tape.Logger).warn.apply(_a, [" ------ " + this.routeName + "  ------ :", message].concat(optionalParams));
-            var _a;
-        };
-        Activity.prototype.printDebug = function (message) {
-            var optionalParams = [];
-            for (var _i = 1; _i < arguments.length; _i++) {
-                optionalParams[_i - 1] = arguments[_i];
-            }
-            (_a = Tape.Logger).debug.apply(_a, [" ------ " + this.routeName + " ------ :", message].concat(optionalParams));
-            var _a;
         };
         return Activity;
     }(PropsComponent));

@@ -11,21 +11,16 @@
 * createNavigator
 
 ## Class
-* Activity
 * Dialog
 * Toast
+* Activity
 * Build
-* FrameInterval
-* TimerInterval
-* EventBus
-* NumUtil
-* LinkUtil
+* Bus
 * UUID
 * Task
 * BackgroundMusic
 * Audio
 * WebSocket
 * MQTTSocket
-* MiniProgram
 
 ## Author

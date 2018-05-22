@@ -34,15 +34,12 @@ module App {
         }
 
         protected onPause() {
-            this.printDebug("onPause");
         }
 
         protected onResume() {
-            this.printDebug("onResume");
         }
 
         protected onDestroy() {
-            this.printDebug("onDestroy");
         }
     }
 
@@ -52,8 +49,11 @@ module App {
         private page2 = new ui.Page2UI();
 
         protected onCreate() {
+            Tape.Bus.on('ABC', (data) => {
+                Tape.Logger.log(data);
+            });
+            Tape.Bus.post('ABC', '11111111111111');
             this.addChild(this.page2);
-            this.printDebug("onCreate");
             var ws = new Tape.MQTTSocket();
             ws.onConnected = () => {
                 console.log('onConnected');
@@ -92,15 +92,12 @@ module App {
         }
 
         protected onPause() {
-            this.printDebug("onPause");
         }
 
         protected onResume() {
-            this.printDebug("onResume");
         }
 
         protected onDestroy() {
-            this.printDebug("onDestroy");
         }
 
         protected onNextProgress(progress) {

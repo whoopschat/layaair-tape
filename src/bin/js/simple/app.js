@@ -47,13 +47,10 @@ var App;
             });
         };
         Main.prototype.onPause = function () {
-            this.printDebug("onPause");
         };
         Main.prototype.onResume = function () {
-            this.printDebug("onResume");
         };
         Main.prototype.onDestroy = function () {
-            this.printDebug("onDestroy");
         };
         return Main;
     }(Tape.Activity));
@@ -67,8 +64,11 @@ var App;
         }
         Page2.prototype.onCreate = function () {
             var _this = this;
+            Tape.Bus.on('ABC', function (data) {
+                Tape.Logger.log(data);
+            });
+            Tape.Bus.post('ABC', '11111111111111');
             this.addChild(this.page2);
-            this.printDebug("onCreate");
             var ws = new Tape.MQTTSocket();
             ws.onConnected = function () {
                 console.log('onConnected');
@@ -106,13 +106,10 @@ var App;
             });
         };
         Page2.prototype.onPause = function () {
-            this.printDebug("onPause");
         };
         Page2.prototype.onResume = function () {
-            this.printDebug("onResume");
         };
         Page2.prototype.onDestroy = function () {
-            this.printDebug("onDestroy");
         };
         Page2.prototype.onNextProgress = function (progress) {
         };

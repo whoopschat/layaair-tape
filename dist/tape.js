@@ -224,6 +224,39 @@ var Tape;
     }());
     Tape.Logger = Logger;
     /**
+     * Bus
+     */
+    var Bus = /** @class */ (function () {
+        function Bus() {
+        }
+        Bus.post = function (event, data) {
+            if (!event) {
+                return;
+            }
+            if (this.__event_group__.hasOwnProperty(event)) {
+                var list = this.__event_group__[event];
+                if (list.length > 0) {
+                    list.forEach(function (value) {
+                        value && value(data);
+                    });
+                }
+            }
+        };
+        Bus.on = function (event, callback) {
+            if (!event || !callback) {
+                return;
+            }
+            if (!this.__event_group__.hasOwnProperty(event)) {
+                this.__event_group__[event] = new Array();
+            }
+            var list = this.__event_group__[event];
+            list.push(callback);
+        };
+        Bus.__event_group__ = {};
+        return Bus;
+    }());
+    Tape.Bus = Bus;
+    /**
      * Task
      */
     var Task = /** @class */ (function () {
@@ -1249,20 +1282,6 @@ var Tape;
             MiniUtils.callMiniFunction('checkIsUserAdvisedToRest', { todayPlayedTime: todayPlayedTime }, success, fail, complete);
         };
         /**
-         * 获取当前的地理位置、速度。当用户离开小程序后，此接口无法调用；当用户点击“显示在聊天顶部”时，此接口可继续调用。
-         * @param type wgs84 返回 gps 坐标，gcj02 返回可用于 wx.openLocation 的坐标
-         * @param success 成功回调 result
-         * @param fail 失败回调
-         * @param complete 完成回调，失败成功都会回调
-         */
-        MiniDisplay.getLocation = function (type, success, fail, complete) {
-            if (type === void 0) { type = 'wgs84'; }
-            if (success === void 0) { success = null; }
-            if (fail === void 0) { fail = null; }
-            if (complete === void 0) { complete = null; }
-            MiniUtils.callMiniFunction('getLocation', { type: type }, success, fail, complete);
-        };
-        /**
          * 使手机发生较短时间的振动（15 ms）
          * @param success 成功回调 result
          * @param fail 失败回调
@@ -1564,11 +1583,6 @@ var Tape;
         ///////////////////////
         /// Navigator
         ///////////////////////
-        Activity.prototype.postEvent = function (name, data) {
-            if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].postEvent(name, data);
-            }
-        };
         Activity.prototype.navigate = function (name, params, action) {
             if (params === void 0) { params = {}; }
             if (action === void 0) { action = null; }
@@ -1603,46 +1617,6 @@ var Tape;
             if (this.props.hasOwnProperty('navigation')) {
                 this.props['navigation'].popToTop();
             }
-        };
-        Activity.prototype.printLog = function (message) {
-            var optionalParams = [];
-            for (var _i = 1; _i < arguments.length; _i++) {
-                optionalParams[_i - 1] = arguments[_i];
-            }
-            (_a = Tape.Logger).log.apply(_a, [" ------ " + this.routeName + " ------ :", message].concat(optionalParams));
-            var _a;
-        };
-        Activity.prototype.printError = function (message) {
-            var optionalParams = [];
-            for (var _i = 1; _i < arguments.length; _i++) {
-                optionalParams[_i - 1] = arguments[_i];
-            }
-            (_a = Tape.Logger).error.apply(_a, [" ------ " + this.routeName + " ------ :", message].concat(optionalParams));
-            var _a;
-        };
-        Activity.prototype.printInfo = function (message) {
-            var optionalParams = [];
-            for (var _i = 1; _i < arguments.length; _i++) {
-                optionalParams[_i - 1] = arguments[_i];
-            }
-            (_a = Tape.Logger).info.apply(_a, [" ------ " + this.routeName + " ------ :", message].concat(optionalParams));
-            var _a;
-        };
-        Activity.prototype.printWarn = function (message) {
-            var optionalParams = [];
-            for (var _i = 1; _i < arguments.length; _i++) {
-                optionalParams[_i - 1] = arguments[_i];
-            }
-            (_a = Tape.Logger).warn.apply(_a, [" ------ " + this.routeName + "  ------ :", message].concat(optionalParams));
-            var _a;
-        };
-        Activity.prototype.printDebug = function (message) {
-            var optionalParams = [];
-            for (var _i = 1; _i < arguments.length; _i++) {
-                optionalParams[_i - 1] = arguments[_i];
-            }
-            (_a = Tape.Logger).debug.apply(_a, [" ------ " + this.routeName + " ------ :", message].concat(optionalParams));
-            var _a;
         };
         return Activity;
     }(PropsComponent));
@@ -1894,14 +1868,6 @@ var Tape;
         NavigationStack.prototype.finish = function (name, key) {
             if (key === void 0) { key = null; }
             this.finishStack(name, key);
-        };
-        /**
-         * postEvent
-         */
-        NavigationStack.prototype.postEvent = function (eventName, data) {
-            this.__stacks__.forEach(function (stack) {
-                stack.postEvent(eventName, data);
-            });
         };
         /**
          * popToTop

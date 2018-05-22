@@ -232,15 +232,6 @@ module Tape {
         }
 
         /**
-         * postEvent
-         */
-        public postEvent(eventName: string, data: any) {
-            this.__stacks__.forEach(stack => {
-                stack.postEvent(eventName, data);
-            });
-        }
-
-        /**
          * popToTop
          */
         public popToTop() {
