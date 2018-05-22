@@ -38,119 +38,6 @@ module Tape {
 
     }
 
-
-    /**
-     * FrameInterval
-     */
-    export class FrameInterval {
-
-        private __callback__: Function = null;
-        private __start_date__: Date = null;
-        private __offset__: number = 0;
-
-        /**
-         * start
-         * @param delay frame
-         * @param callback callback:time
-         * @param offset time offset
-         */
-        public start(delay: number, callback: Function, offset: number = 0) {
-            this.__callback__ = callback;
-            this.__start_date__ = new Date();
-            this.__offset__ = offset;
-            Laya.timer.loop(delay, this, this.loop);
-        }
-
-        private loop() {
-            var now = new Date();
-            this.__callback__ && this.__callback__(now.getTime() - this.__start_date__.getTime() + this.__offset__);
-        }
-
-        /**
-         * stop
-         */
-        public stop() {
-            Laya.timer.clear(this, this.loop)
-        }
-
-    }
-
-    /**
-     * TimerInterval
-     */
-    export class TimerInterval {
-
-        private __interval__: number = 0;
-        private __start_date__: Date = null;
-        private __offset__: number = 0;
-
-        /**
-         * start
-         * @param delay millis
-         * @param callback callback:time
-         * @param offset time offset
-         */
-        public start(delay: number, callback: Function, offset: number = 0) {
-            this.__start_date__ = new Date();
-            this.__offset__ = offset;
-            this.__interval__ = setInterval(() => {
-                var now = new Date();
-                callback && callback(now.getTime() - this.__start_date__.getTime() + this.__offset__);
-            }, delay);
-        }
-
-        /**
-         * stop
-         */
-        public stop() {
-            clearInterval(this.__interval__);
-        }
-
-    }
-
-    /**
-     * EventBus
-     */
-    export class EventBus {
-
-        private static __event_group__: Object = {};
-
-        public static post(event: string, data: any) {
-            if (!event) {
-                return;
-            }
-            if (this.__event_group__.hasOwnProperty(event)) {
-                const list: Array<Function> = this.__event_group__[event];
-                if (list.length > 0) {
-                    list.forEach(value => {
-                        value && value(data);
-                    })
-                }
-            }
-        }
-
-        public static register(event: string, callback: Function) {
-            if (!event || !callback) {
-                return;
-            }
-            if (!this.__event_group__.hasOwnProperty(event)) {
-                this.__event_group__[event] = new Array();
-            }
-            const list = this.__event_group__[event];
-            list.push(callback);
-        }
-
-        public static unregister(event: string, callback: Function) {
-            if (!event || !callback) {
-                return;
-            }
-            if (this.__event_group__.hasOwnProperty(event)) {
-                const list = this.__event_group__[event];
-                list.splice(list.indexOf(callback), 1);
-            }
-        }
-    }
-
     /**
      * NumUtil
      */
@@ -172,12 +59,21 @@ module Tape {
         }
 
         /**
-         * randomNum
+         * randomFloat
+         * @param min min number default 0
+         * @param max max number default 1
+         */
+        public static randomFloat(min: number = 0, max: number = 1): number {
+            return Math.random() * (max - min) + min;
+        }
+
+        /**
+         * randomInteger
          * @param min min number
          * @param max max number
          */
-        public static randomNum(min: number, max: number): number {
-            return Math.floor(Math.random() * (max - min)) + min;
+        public static randomInteger(min: number, max: number): number {
+            return Math.floor(Math.random() * (max - min) + min);
         }
 
     }

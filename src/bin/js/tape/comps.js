@@ -114,12 +114,11 @@ var Tape;
         function Activity(props) {
             if (props === void 0) { props = {}; }
             var _this = _super.call(this, props) || this;
-            _this.__mapLayer__ = null;
-            _this.__contentLayer__ = null;
-            _this.__effectLayer__ = null;
+            // navigation
             _this.routeName = "";
             _this.routeKey = "";
             _this.params = {};
+            // in or out
             _this.inEaseDuration = 300;
             _this.inEase = null;
             _this.inEaseFromProps = null;
@@ -131,12 +130,6 @@ var Tape;
             _this.params = Object.assign({}, props['params']);
             _this.routeName = props['routeName'] || "";
             _this.routeKey = props['routeKey'] || "";
-            _this.__mapLayer__ = new PropsComponent();
-            _this.__contentLayer__ = new PropsComponent();
-            _this.__effectLayer__ = new PropsComponent();
-            _this.addChild(_this.__mapLayer__);
-            _this.addChild(_this.__contentLayer__);
-            _this.addChild(_this.__effectLayer__);
             return _this;
         }
         Activity.ROUTE = function (options) {
@@ -146,15 +139,6 @@ var Tape;
             });
         };
         ;
-        Activity.prototype.addMapChild = function (clild) {
-            this.__mapLayer__.addChild(clild);
-        };
-        Activity.prototype.addContentChild = function (clild) {
-            this.__contentLayer__.addChild(clild);
-        };
-        Activity.prototype.addEffectChild = function (clild) {
-            this.__effectLayer__.addChild(clild);
-        };
         ///////////////////////
         /// LifeCycle
         ///////////////////////
@@ -171,6 +155,11 @@ var Tape;
         ///////////////////////
         /// Navigator
         ///////////////////////
+        Activity.prototype.postEvent = function (name, data) {
+            if (this.props.hasOwnProperty('navigation')) {
+                this.props['navigation'].postEvent(name, data);
+            }
+        };
         Activity.prototype.navigate = function (name, params, action) {
             if (params === void 0) { params = {}; }
             if (action === void 0) { action = null; }

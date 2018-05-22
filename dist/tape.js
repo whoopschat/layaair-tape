@@ -65,117 +65,6 @@ var Tape;
     }());
     Tape.Build = Build;
     /**
-     * FrameInterval
-     */
-    var FrameInterval = /** @class */ (function () {
-        function FrameInterval() {
-            this.__callback__ = null;
-            this.__start_date__ = null;
-            this.__offset__ = 0;
-        }
-        /**
-         * start
-         * @param delay frame
-         * @param callback callback:time
-         * @param offset time offset
-         */
-        FrameInterval.prototype.start = function (delay, callback, offset) {
-            if (offset === void 0) { offset = 0; }
-            this.__callback__ = callback;
-            this.__start_date__ = new Date();
-            this.__offset__ = offset;
-            Laya.timer.loop(delay, this, this.loop);
-        };
-        FrameInterval.prototype.loop = function () {
-            var now = new Date();
-            this.__callback__ && this.__callback__(now.getTime() - this.__start_date__.getTime() + this.__offset__);
-        };
-        /**
-         * stop
-         */
-        FrameInterval.prototype.stop = function () {
-            Laya.timer.clear(this, this.loop);
-        };
-        return FrameInterval;
-    }());
-    Tape.FrameInterval = FrameInterval;
-    /**
-     * TimerInterval
-     */
-    var TimerInterval = /** @class */ (function () {
-        function TimerInterval() {
-            this.__interval__ = 0;
-            this.__start_date__ = null;
-            this.__offset__ = 0;
-        }
-        /**
-         * start
-         * @param delay millis
-         * @param callback callback:time
-         * @param offset time offset
-         */
-        TimerInterval.prototype.start = function (delay, callback, offset) {
-            var _this = this;
-            if (offset === void 0) { offset = 0; }
-            this.__start_date__ = new Date();
-            this.__offset__ = offset;
-            this.__interval__ = setInterval(function () {
-                var now = new Date();
-                callback && callback(now.getTime() - _this.__start_date__.getTime() + _this.__offset__);
-            }, delay);
-        };
-        /**
-         * stop
-         */
-        TimerInterval.prototype.stop = function () {
-            clearInterval(this.__interval__);
-        };
-        return TimerInterval;
-    }());
-    Tape.TimerInterval = TimerInterval;
-    /**
-     * EventBus
-     */
-    var EventBus = /** @class */ (function () {
-        function EventBus() {
-        }
-        EventBus.post = function (event, data) {
-            if (!event) {
-                return;
-            }
-            if (this.__event_group__.hasOwnProperty(event)) {
-                var list = this.__event_group__[event];
-                if (list.length > 0) {
-                    list.forEach(function (value) {
-                        value && value(data);
-                    });
-                }
-            }
-        };
-        EventBus.register = function (event, callback) {
-            if (!event || !callback) {
-                return;
-            }
-            if (!this.__event_group__.hasOwnProperty(event)) {
-                this.__event_group__[event] = new Array();
-            }
-            var list = this.__event_group__[event];
-            list.push(callback);
-        };
-        EventBus.unregister = function (event, callback) {
-            if (!event || !callback) {
-                return;
-            }
-            if (this.__event_group__.hasOwnProperty(event)) {
-                var list = this.__event_group__[event];
-                list.splice(list.indexOf(callback), 1);
-            }
-        };
-        EventBus.__event_group__ = {};
-        return EventBus;
-    }());
-    Tape.EventBus = EventBus;
-    /**
      * NumUtil
      */
     var NumUtil = /** @class */ (function () {
@@ -196,12 +85,22 @@ var Tape;
                 return val;
         };
         /**
-         * randomNum
+         * randomFloat
+         * @param min min number default 0
+         * @param max max number default 1
+         */
+        NumUtil.randomFloat = function (min, max) {
+            if (min === void 0) { min = 0; }
+            if (max === void 0) { max = 1; }
+            return Math.random() * (max - min) + min;
+        };
+        /**
+         * randomInteger
          * @param min min number
          * @param max max number
          */
-        NumUtil.randomNum = function (min, max) {
-            return Math.floor(Math.random() * (max - min)) + min;
+        NumUtil.randomInteger = function (min, max) {
+            return Math.floor(Math.random() * (max - min) + min);
         };
         return NumUtil;
     }());
@@ -1171,52 +1070,6 @@ var Tape;
         return MiniOpenData;
     }());
     Tape.MiniOpenData = MiniOpenData;
-    //-------------------------------------------------------
-    //-- modules
-    //-------------------------------------------------------
-    /**
-     * MiniNavigator
-     */
-    var MiniNavigator = /** @class */ (function () {
-        function MiniNavigator() {
-        }
-        /**
-         * 打开同一公众号下关联的另一个小程序。（注：必须是同一公众号下，而非同个 open 账号下）
-         * @param appId 要打开的小程序 appId
-         * @param path 打开的页面路径，如果为空则打开首页
-         * @param extraData 需要传递给目标小程序的数据，目标小程序可在 App.onLaunch()，App.onShow() 中获取到这份数据。
-         * @param envVersion 要打开的小程序版本，有效值 develop（开发版），trial（体验版），release（正式版） ，仅在当前小程序为开发版或体验版时此参数有效；如果当前小程序是体验版或正式版，则打开的小程序必定是正式版。默认值 release
-         * @param success 成功回调
-         * @param fail 失败回调
-         * @param complete 完成回调，失败成功都会回调
-         */
-        MiniNavigator.navigateToMiniProgram = function (appId, path, extraData, envVersion, success, fail, complete) {
-            if (success === void 0) { success = null; }
-            if (fail === void 0) { fail = null; }
-            if (complete === void 0) { complete = null; }
-            MiniUtils.callMiniFunction('navigateToMiniProgram', {
-                appId: appId,
-                path: path,
-                extraData: extraData,
-                envVersion: envVersion
-            }, success, fail, complete);
-        };
-        /**
-         * 返回到上一个小程序，只有在当前小程序是被其他小程序打开时可以调用成功
-         * @param extraData 需要返回给上一个小程序的数据，上一个小程序可在 App.onShow() 中获取到这份数据。
-         * @param success 成功回调
-         * @param fail 失败回调
-         * @param complete 完成回调，失败成功都会回调
-         */
-        MiniNavigator.navigateBackMiniProgram = function (extraData, success, fail, complete) {
-            if (success === void 0) { success = null; }
-            if (fail === void 0) { fail = null; }
-            if (complete === void 0) { complete = null; }
-            MiniUtils.callMiniFunction('navigateBackMiniProgram', { extraData: extraData }, success, fail, complete);
-        };
-        return MiniNavigator;
-    }());
-    Tape.MiniNavigator = MiniNavigator;
     /**
      * MiniShare
      */
@@ -1376,18 +1229,6 @@ var Tape;
         return MiniAd;
     }());
     Tape.MiniAd = MiniAd;
-    /**
-     * MiniAnalytics
-     */
-    var MiniAnalytics = /** @class */ (function () {
-        function MiniAnalytics() {
-        }
-        MiniAnalytics.reportAnalytics = function (eventName, data) {
-            MiniUtils.getMiniFunction('reportAnalytics')(eventName, data);
-        };
-        return MiniAnalytics;
-    }());
-    Tape.MiniAnalytics = MiniAnalytics;
     /**
      * MiniDisplay
      */
@@ -1682,12 +1523,11 @@ var Tape;
         function Activity(props) {
             if (props === void 0) { props = {}; }
             var _this = _super.call(this, props) || this;
-            _this.__mapLayer__ = null;
-            _this.__contentLayer__ = null;
-            _this.__effectLayer__ = null;
+            // navigation
             _this.routeName = "";
             _this.routeKey = "";
             _this.params = {};
+            // in or out
             _this.inEaseDuration = 300;
             _this.inEase = null;
             _this.inEaseFromProps = null;
@@ -1699,12 +1539,6 @@ var Tape;
             _this.params = Object.assign({}, props['params']);
             _this.routeName = props['routeName'] || "";
             _this.routeKey = props['routeKey'] || "";
-            _this.__mapLayer__ = new PropsComponent();
-            _this.__contentLayer__ = new PropsComponent();
-            _this.__effectLayer__ = new PropsComponent();
-            _this.addChild(_this.__mapLayer__);
-            _this.addChild(_this.__contentLayer__);
-            _this.addChild(_this.__effectLayer__);
             return _this;
         }
         Activity.ROUTE = function (options) {
@@ -1714,15 +1548,6 @@ var Tape;
             });
         };
         ;
-        Activity.prototype.addMapChild = function (clild) {
-            this.__mapLayer__.addChild(clild);
-        };
-        Activity.prototype.addContentChild = function (clild) {
-            this.__contentLayer__.addChild(clild);
-        };
-        Activity.prototype.addEffectChild = function (clild) {
-            this.__effectLayer__.addChild(clild);
-        };
         ///////////////////////
         /// LifeCycle
         ///////////////////////
@@ -1739,6 +1564,11 @@ var Tape;
         ///////////////////////
         /// Navigator
         ///////////////////////
+        Activity.prototype.postEvent = function (name, data) {
+            if (this.props.hasOwnProperty('navigation')) {
+                this.props['navigation'].postEvent(name, data);
+            }
+        };
         Activity.prototype.navigate = function (name, params, action) {
             if (params === void 0) { params = {}; }
             if (action === void 0) { action = null; }
@@ -1879,6 +1709,9 @@ var Tape;
         };
         NavigationLoader.prototype.nextProgress = function (progress) {
             this.routeActivity.onNextProgress && this.routeActivity.onNextProgress(progress);
+        };
+        NavigationLoader.prototype.postEvent = function (eventName, data) {
+            this.event(eventName, data);
         };
         NavigationLoader.prototype.exit = function (anim, callback) {
             var _this = this;
@@ -2061,6 +1894,14 @@ var Tape;
         NavigationStack.prototype.finish = function (name, key) {
             if (key === void 0) { key = null; }
             this.finishStack(name, key);
+        };
+        /**
+         * postEvent
+         */
+        NavigationStack.prototype.postEvent = function (eventName, data) {
+            this.__stacks__.forEach(function (stack) {
+                stack.postEvent(eventName, data);
+            });
         };
         /**
          * popToTop

@@ -96,12 +96,6 @@ declare module Tape {
         /// LifeCycle
         ///////////////////////
 
-        protected addMapChild(clild: any);
-
-        protected addContentChild(clild: any);
-
-        protected addEffectChild(clild: any);
-
         /**
          * onCreate
          */
@@ -252,73 +246,6 @@ declare module Tape {
     }
 
     /**
-     * FrameInterval
-     */
-    class FrameInterval {
-
-        /**
-         * start
-         * @param delay frame
-         * @param callback callback:time
-         * @param offset time offset
-         */
-        public start(delay: number, callback: Function, offset?: number): void;
-
-        /**
-         * stop
-         */
-        public stop(): void;
-
-    }
-
-    /**
-     * TimerInterval
-     */
-    class TimerInterval {
-
-        /**
-         * start
-         * @param delay millis
-         * @param callback callback:time
-         * @param offset time offset
-         */
-        public start(delay: number, callback: Function, offset?: number): void;
-
-        /**
-         * stop
-         */
-        public stop(): void;
-
-    }
-
-    /**
-     * EventBus
-     */
-    class EventBus {
-
-        /**
-         * post
-         * @param event event
-         * @param data data
-         */
-        static post(event: string, data: any): void;
-
-        /**
-         * register
-         * @param event event
-         * @param callback callback
-         */
-        static register(event: string, callback: Function): void;
-
-        /**
-         * unregister
-         * @param event event
-         * @param callback callback
-         */
-        static unregister(event: string, callback: Function): void;
-    }
-
-    /**
      * NumUtil
      */
     class NumUtil {
@@ -332,24 +259,18 @@ declare module Tape {
         static rangedNum(val: number, min: number, max: number): number;
 
         /**
-         * randomNum
+         * randomFloat
+         * @param min min number default 0
+         * @param max max number default 1
+         */
+        static randomFloat(min?: number, max?: number): number;
+
+        /**
+         * randomInteger
          * @param min min number
          * @param max max number
          */
-        static randomNum(min: number, max: number): number;
-
-    }
-
-    /**
-     * LinkUtil
-     */
-    class LinkUtil {
-
-        /**
-         * openURL
-         * @param url url
-         */
-        static openURL(url: string): void;
+        static randomInteger(min: number, max: number): number;
 
     }
 
@@ -693,35 +614,6 @@ declare module Tape {
     }
 
     /**
-     * MiniNavigator
-     */
-    class MiniNavigator {
-
-        /**
-         * 打开同一公众号下关联的另一个小程序。（注：必须是同一公众号下，而非同个 open 账号下）
-         * @param appId 要打开的小程序 appId
-         * @param path 打开的页面路径，如果为空则打开首页
-         * @param extraData 需要传递给目标小程序的数据，目标小程序可在 App.onLaunch()，App.onShow() 中获取到这份数据。
-         * @param envVersion 要打开的小程序版本，有效值 develop（开发版），trial（体验版），release（正式版） ，仅在当前小程序为开发版或体验版时此参数有效；如果当前小程序是体验版或正式版，则打开的小程序必定是正式版。默认值 release
-         * @param success 成功回调
-         * @param fail 失败回调
-         * @param complete 完成回调，失败成功都会回调
-         */
-        public static navigateToMiniProgram(appId: string, path: string, extraData: Object, envVersion: string, success?: Function, fail?: Function, complete?: Function): void;
-
-
-        /**
-         * 返回到上一个小程序，只有在当前小程序是被其他小程序打开时可以调用成功
-         * @param extraData 需要返回给上一个小程序的数据，上一个小程序可在 App.onShow() 中获取到这份数据。
-         * @param success 成功回调
-         * @param fail 失败回调
-         * @param complete 完成回调，失败成功都会回调
-         */
-        public static navigateBackMiniProgram(extraData: Object, success?: Function, fail?: Function, complete?: Function): void;
-
-    }
-
-    /**
      * MiniShare
      */
     class MiniShare {
@@ -790,15 +682,6 @@ declare module Tape {
          * @param options Banner位置信息top,left,width,height
          **/
         public static showBannerAd(adUnitId: string, options: Object): void;
-
-    }
-
-    /**
-     * MiniAnalytics
-     */
-    class MiniAnalytics {
-
-        public static reportAnalytics(eventName: string, data: Object): void;
 
     }
 

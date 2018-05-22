@@ -37,117 +37,6 @@ var Tape;
     }());
     Tape.Build = Build;
     /**
-     * FrameInterval
-     */
-    var FrameInterval = /** @class */ (function () {
-        function FrameInterval() {
-            this.__callback__ = null;
-            this.__start_date__ = null;
-            this.__offset__ = 0;
-        }
-        /**
-         * start
-         * @param delay frame
-         * @param callback callback:time
-         * @param offset time offset
-         */
-        FrameInterval.prototype.start = function (delay, callback, offset) {
-            if (offset === void 0) { offset = 0; }
-            this.__callback__ = callback;
-            this.__start_date__ = new Date();
-            this.__offset__ = offset;
-            Laya.timer.loop(delay, this, this.loop);
-        };
-        FrameInterval.prototype.loop = function () {
-            var now = new Date();
-            this.__callback__ && this.__callback__(now.getTime() - this.__start_date__.getTime() + this.__offset__);
-        };
-        /**
-         * stop
-         */
-        FrameInterval.prototype.stop = function () {
-            Laya.timer.clear(this, this.loop);
-        };
-        return FrameInterval;
-    }());
-    Tape.FrameInterval = FrameInterval;
-    /**
-     * TimerInterval
-     */
-    var TimerInterval = /** @class */ (function () {
-        function TimerInterval() {
-            this.__interval__ = 0;
-            this.__start_date__ = null;
-            this.__offset__ = 0;
-        }
-        /**
-         * start
-         * @param delay millis
-         * @param callback callback:time
-         * @param offset time offset
-         */
-        TimerInterval.prototype.start = function (delay, callback, offset) {
-            var _this = this;
-            if (offset === void 0) { offset = 0; }
-            this.__start_date__ = new Date();
-            this.__offset__ = offset;
-            this.__interval__ = setInterval(function () {
-                var now = new Date();
-                callback && callback(now.getTime() - _this.__start_date__.getTime() + _this.__offset__);
-            }, delay);
-        };
-        /**
-         * stop
-         */
-        TimerInterval.prototype.stop = function () {
-            clearInterval(this.__interval__);
-        };
-        return TimerInterval;
-    }());
-    Tape.TimerInterval = TimerInterval;
-    /**
-     * EventBus
-     */
-    var EventBus = /** @class */ (function () {
-        function EventBus() {
-        }
-        EventBus.post = function (event, data) {
-            if (!event) {
-                return;
-            }
-            if (this.__event_group__.hasOwnProperty(event)) {
-                var list = this.__event_group__[event];
-                if (list.length > 0) {
-                    list.forEach(function (value) {
-                        value && value(data);
-                    });
-                }
-            }
-        };
-        EventBus.register = function (event, callback) {
-            if (!event || !callback) {
-                return;
-            }
-            if (!this.__event_group__.hasOwnProperty(event)) {
-                this.__event_group__[event] = new Array();
-            }
-            var list = this.__event_group__[event];
-            list.push(callback);
-        };
-        EventBus.unregister = function (event, callback) {
-            if (!event || !callback) {
-                return;
-            }
-            if (this.__event_group__.hasOwnProperty(event)) {
-                var list = this.__event_group__[event];
-                list.splice(list.indexOf(callback), 1);
-            }
-        };
-        EventBus.__event_group__ = {};
-        return EventBus;
-    }());
-    Tape.EventBus = EventBus;
-    /**
      * NumUtil
      */
     var NumUtil = /** @class */ (function () {
@@ -168,12 +57,22 @@ var Tape;
                 return val;
         };
         /**
-         * randomNum
+         * randomFloat
+         * @param min min number default 0
+         * @param max max number default 1
+         */
+        NumUtil.randomFloat = function (min, max) {
+            if (min === void 0) { min = 0; }
+            if (max === void 0) { max = 1; }
+            return Math.random() * (max - min) + min;
+        };
+        /**
+         * randomInteger
          * @param min min number
          * @param max max number
          */
-        NumUtil.randomNum = function (min, max) {
-            return Math.floor(Math.random() * (max - min)) + min;
+        NumUtil.randomInteger = function (min, max) {
+            return Math.floor(Math.random() * (max - min) + min);
         };
         return NumUtil;
     }());

@@ -6,6 +6,22 @@ module App {
 
         protected onCreate() {
             this.addChild(this.page1);
+            this.inEase = Laya.Ease.linearIn;
+            this.inEaseDuration = 300;
+            this.inEaseFromProps = {
+                y: this.height
+            }
+            this.inEaseToProps = {
+                y: 0
+            }
+            this.outEase = Laya.Ease.linearIn;
+            this.outEaseDuration = 300;
+            this.outEaseFromProps = {
+                y: 0
+            }
+            this.outEaseToProps = {
+                y: this.height
+            }
             // Tape.BackgroundMusic.play("res/sound/bg_sound.mp3", 0);
             Tape.Audio.play("res/sound/readygo.mp3");
             this.page1.btn.on(Laya.Event.CLICK, this, () => {
@@ -36,7 +52,7 @@ module App {
         private page2 = new ui.Page2UI();
 
         protected onCreate() {
-            this.addMapChild(this.page2);
+            this.addChild(this.page2);
             this.printDebug("onCreate");
             var ws = new Tape.MQTTSocket();
             ws.onConnected = () => {

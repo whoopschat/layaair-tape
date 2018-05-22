@@ -59,6 +59,9 @@ var Tape;
         NavigationLoader.prototype.nextProgress = function (progress) {
             this.routeActivity.onNextProgress && this.routeActivity.onNextProgress(progress);
         };
+        NavigationLoader.prototype.postEvent = function (eventName, data) {
+            this.event(eventName, data);
+        };
         NavigationLoader.prototype.exit = function (anim, callback) {
             var _this = this;
             var ease = this.routeActivity.outEase || Laya.Ease.linearIn;
@@ -240,6 +243,14 @@ var Tape;
         NavigationStack.prototype.finish = function (name, key) {
             if (key === void 0) { key = null; }
             this.finishStack(name, key);
+        };
+        /**
+         * postEvent
+         */
+        NavigationStack.prototype.postEvent = function (eventName, data) {
+            this.__stacks__.forEach(function (stack) {
+                stack.postEvent(eventName, data);
+            });
         };
         /**
          * popToTop

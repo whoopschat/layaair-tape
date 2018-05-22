@@ -47,6 +47,10 @@ module Tape {
             this.routeActivity.onNextProgress && this.routeActivity.onNextProgress(progress);
         }
 
+        public postEvent(eventName, data) {
+            this.event(eventName, data);
+        }
+
         public exit(anim: boolean, callback: Function) {
             var ease = this.routeActivity.outEase || Laya.Ease.linearIn;
             var duration = this.routeActivity.outEaseDuration || 300;
@@ -225,6 +229,15 @@ module Tape {
          */
         public finish(name, key = null) {
             this.finishStack(name, key);
+        }
+
+        /**
+         * postEvent
+         */
+        public postEvent(eventName: string, data: any) {
+            this.__stacks__.forEach(stack => {
+                stack.postEvent(eventName, data);
+            });
         }
 
         /**

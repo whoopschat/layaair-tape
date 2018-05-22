@@ -683,47 +683,6 @@ module Tape {
 
     }
 
-    //-------------------------------------------------------
-    //-- modules
-    //-------------------------------------------------------
-
-    /**
-     * MiniNavigator
-     */
-    export class MiniNavigator {
-
-        /**
-         * 打开同一公众号下关联的另一个小程序。（注：必须是同一公众号下，而非同个 open 账号下）
-         * @param appId 要打开的小程序 appId
-         * @param path 打开的页面路径，如果为空则打开首页
-         * @param extraData 需要传递给目标小程序的数据，目标小程序可在 App.onLaunch()，App.onShow() 中获取到这份数据。
-         * @param envVersion 要打开的小程序版本，有效值 develop（开发版），trial（体验版），release（正式版） ，仅在当前小程序为开发版或体验版时此参数有效；如果当前小程序是体验版或正式版，则打开的小程序必定是正式版。默认值 release
-         * @param success 成功回调
-         * @param fail 失败回调
-         * @param complete 完成回调，失败成功都会回调
-         */
-        public static navigateToMiniProgram(appId: string, path: string, extraData: Object, envVersion: string, success: Function = null, fail: Function = null, complete: Function = null) {
-            MiniUtils.callMiniFunction('navigateToMiniProgram', {
-                appId,
-                path,
-                extraData,
-                envVersion
-            }, success, fail, complete);
-        }
-
-        /**
-         * 返回到上一个小程序，只有在当前小程序是被其他小程序打开时可以调用成功
-         * @param extraData 需要返回给上一个小程序的数据，上一个小程序可在 App.onShow() 中获取到这份数据。
-         * @param success 成功回调
-         * @param fail 失败回调
-         * @param complete 完成回调，失败成功都会回调
-         */
-        public static navigateBackMiniProgram(extraData: Object, success: Function = null, fail: Function = null, complete: Function = null) {
-            MiniUtils.callMiniFunction('navigateBackMiniProgram', { extraData }, success, fail, complete);
-        }
-
-    }
-
     /**
      * MiniShare
      */
@@ -864,17 +823,6 @@ module Tape {
                 }
             });
         }
-    }
-
-    /**
-     * MiniAnalytics
-     */
-    export class MiniAnalytics {
-
-        public static reportAnalytics(eventName: string, data: Object) {
-            MiniUtils.getMiniFunction('reportAnalytics')(eventName, data);
-        }
-
     }
 
     /**
