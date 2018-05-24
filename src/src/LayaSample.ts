@@ -9,12 +9,16 @@ class GameMain {
         let routes = {
             "Main": App.Main.ROUTE({
                 res: [
-                    // { url: 'res/sound/bg_sound.mp3', type: Laya.Loader.SOUND }
+                    { url: 'res/atlas/comp.atlas', type: Laya.Loader.ATLAS },
+                    { url: 'res/config.json', type: Laya.Loader.JSON }
                 ]
             }),
-            "Page2": {
-                activity: App.Page2
-            }
+            "Page2": App.Page2.ROUTE({
+                res: [
+                    { url: 'res/atlas/comp.atlas', type: Laya.Loader.ATLAS },
+                    { url: 'res/config.json', type: Laya.Loader.JSON }
+                ]
+            }),
         };
         let options = {
             res: [

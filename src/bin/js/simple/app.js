@@ -64,6 +64,7 @@ var App;
         }
         Page2.prototype.onCreate = function () {
             var _this = this;
+            console.log('Page2.onCreate');
             Tape.Bus.on('ABC', function (data) {
                 Tape.Logger.log(data);
             });

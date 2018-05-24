@@ -26,12 +26,16 @@ var Tape;
             var _this = _super.call(this) || this;
             _this.routeName = "";
             _this.routeKey = "";
+            _this.routeRes = [];
             _this.routeActivity = null;
             _this.routeName = routeName;
             _this.routeKey = routeKey;
+            _this.routeRes = res;
             if (res != null && res.length > 0) {
                 Laya.loader.load(res, Laya.Handler.create(_this, function () {
-                    var act = new activity(props);
+                    var act = Laya.Pool.getItemByCreateFun(_this.routeName, function () {
+                        return new activity(props);
+                    });
                     _this.create(act);
                     if (loaded) {
                         loaded(_this);
@@ -43,7 +47,9 @@ var Tape;
                 }, null, false));
             }
             else {
-                var act = new activity(props);
+                var act = Laya.Pool.getItemByCreateFun(_this.routeName, function () {
+                    return new activity(props);
+                });
                 _this.create(act);
                 if (loaded) {
                     loaded(_this);
@@ -70,16 +76,18 @@ var Tape;
             var toProps = this.routeActivity.outEaseToProps || { alpha: 0 };
             if (anim && ease) {
                 Object.assign(this, fromProps);
-                this.routeActivity.onDestroy && this.routeActivity.onDestroy();
                 Laya.Tween.to(this, toProps, duration, ease, Laya.Handler.create(this, function () {
                     _this.removeSelf();
+                    _this.routeActivity.onDestroy && _this.routeActivity.onDestroy();
                     callback && callback();
+                    Laya.Pool.clearBySign(_this.routeName);
                 }));
             }
             else {
                 this.removeSelf();
                 this.routeActivity.onDestroy && this.routeActivity.onDestroy();
                 callback && callback();
+                Laya.Pool.clearBySign(this.routeName);
             }
         };
         NavigationLoader.prototype.show = function (anim, callback) {

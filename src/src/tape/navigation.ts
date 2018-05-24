@@ -10,15 +10,19 @@ module Tape {
 
         public routeName = "";
         public routeKey = "";
+        public routeRes = [];
         public routeActivity = null;
 
         constructor(activity, routeName, routeKey, props = {}, res = [], loaded: Function = null, onLoadProgress: Function = null) {
             super();
             this.routeName = routeName;
             this.routeKey = routeKey;
+            this.routeRes = res;
             if (res != null && res.length > 0) {
                 Laya.loader.load(res, Laya.Handler.create(this, () => {
-                    let act = new activity(props);
+                    let act = Laya.Pool.getItemByCreateFun(this.routeName, () => {
+                        return new activity(props);
+                    });
                     this.create(act);
                     if (loaded) {
                         loaded(this);
@@ -29,7 +33,9 @@ module Tape {
                     }
                 }, null, false));
             } else {
-                let act = new activity(props);
+                let act = Laya.Pool.getItemByCreateFun(this.routeName, () => {
+                    return new activity(props);
+                });
                 this.create(act);
                 if (loaded) {
                     loaded(this);
@@ -58,15 +64,17 @@ module Tape {
             var toProps = this.routeActivity.outEaseToProps || { alpha: 0 };
             if (anim && ease) {
                 (<any>Object).assign(this, fromProps);
-                this.routeActivity.onDestroy && this.routeActivity.onDestroy();
                 Laya.Tween.to(this, toProps, duration, ease, Laya.Handler.create(this, () => {
                     this.removeSelf();
+                    this.routeActivity.onDestroy && this.routeActivity.onDestroy();
                     callback && callback();
+                    Laya.Pool.clearBySign(this.routeName);
                 }));
             } else {
                 this.removeSelf();
                 this.routeActivity.onDestroy && this.routeActivity.onDestroy();
                 callback && callback();
+                Laya.Pool.clearBySign(this.routeName);
             }
         }
 

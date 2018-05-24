@@ -49,6 +49,7 @@ module App {
         private page2 = new ui.Page2UI();
 
         protected onCreate() {
+            console.log('Page2.onCreate');
             Tape.Bus.on('ABC', (data) => {
                 Tape.Logger.log(data);
             });
