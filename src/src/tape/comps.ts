@@ -25,7 +25,7 @@ module Tape {
             dialog.onOpened = () => {
                 onOpened && onOpened();
             };
-            this.instance().open(new ui.DialogViewUI(), true, true);
+            this.instance().open(dialog, true, true);
         }
 
         public static closeDialog() {

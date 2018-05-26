@@ -35,7 +35,7 @@ var Tape;
             dialog.onOpened = function () {
                 onOpened && onOpened();
             };
-            this.instance().open(new ui.DialogViewUI(), true, true);
+            this.instance().open(dialog, true, true);
         };
         Dialog.closeDialog = function () {
             this.instance().closeAll();
