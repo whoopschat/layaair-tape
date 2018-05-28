@@ -155,6 +155,13 @@ var Tape;
         ///////////////////////
         /// Navigator
         ///////////////////////
+        Activity.prototype.redirectTo = function (name, params) {
+            var _this = this;
+            if (params === void 0) { params = {}; }
+            return this.navigate(name, params, function () {
+                _this.back();
+            });
+        };
         Activity.prototype.navigate = function (name, params, action) {
             if (params === void 0) { params = {}; }
             if (action === void 0) { action = null; }

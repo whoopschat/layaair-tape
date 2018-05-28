@@ -144,6 +144,12 @@ module Tape {
         /// Navigator
         ///////////////////////
 
+        protected redirectTo(name, params: Object = {}): boolean {
+            return this.navigate(name, params, () => {
+                this.back();
+            });
+        }
+
         protected navigate(name, params: Object = {}, action: Function = null): boolean {
             if (this.props.hasOwnProperty('navigation')) {
                 return this.props['navigation'].navigate(name, params, action);

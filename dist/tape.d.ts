@@ -127,6 +127,11 @@ declare module Tape {
         ///////////////////////
 
         /**
+         * redirectTo
+         */
+        protected redirectTo(name, params?): boolean;
+
+        /**
          * navigate
          */
         protected navigate(name, params?, action?: Function): boolean;
@@ -312,29 +317,6 @@ declare module Tape {
         static post(event: string, data: any): void;
 
         static on(event: string, callback: Function): void;
-    }
-
-    /**
-     * Task
-     */
-    class Task {
-
-        /**
-         * new Task()
-         * @param func args[resolve,reject]
-         */
-        constructor(func: Function);
-
-        /**
-         * then
-         */
-        public then(onFulfilled: Function, onRejected?: Function);
-
-        /**
-         * catch
-         */
-        public catch(onRejected: Function);
-
     }
 
     ///////////////////////////////////////////////
