@@ -24,12 +24,13 @@ var packageList = [
     inputJsPath + moduleName + '/polyfill/**/*.js',
     inputJsPath + moduleName + '/utils.js',
     inputJsPath + moduleName + '/common.js',
-    inputJsPath + moduleName + '/minigame.js',
     inputJsPath + moduleName + '/conch.js',
     inputJsPath + moduleName + '/comps.js',
+    inputJsPath + moduleName + '/effect.js',
     inputJsPath + moduleName + '/navigation.js',
     inputJsPath + moduleName + '/media.js',
     inputJsPath + moduleName + '/socket.js',
+    inputJsPath + moduleName + '/minigame.js',
     inputJsPath + moduleName + '/js/**/*.js'
 ];
 

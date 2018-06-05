@@ -83,10 +83,11 @@ module ui {
 
 module ui {
     export class Page2UI extends View {
+		public ani1:Laya.FrameAnimation;
 		public btnBack:Laya.Button;
 		public btn:Laya.Button;
 
-        public static  uiView:any ={"type":"View","props":{"width":600,"height":400},"child":[{"type":"Image","props":{"y":0,"x":0,"width":600,"skin":"comp/bg.png","sizeGrid":"28,7,7,6","height":400}},{"type":"Button","props":{"y":309,"x":210,"width":179,"var":"btnBack","skin":"comp/button.png","label":"Back","height":42}},{"type":"Button","props":{"y":255,"x":211,"width":179,"var":"btn","skin":"comp/button.png","label":"Main","height":42}}]};
+        public static  uiView:any ={"type":"View","props":{"width":600,"height":400},"child":[{"type":"Image","props":{"y":0,"x":0,"width":600,"skin":"comp/bg.png","sizeGrid":"28,7,7,6","height":400}},{"type":"Button","props":{"y":309,"x":210,"width":179,"var":"btnBack","skin":"comp/button.png","label":"Back","height":42}},{"type":"Button","props":{"y":255,"x":211,"width":179,"var":"btn","skin":"comp/button.png","label":"Main","height":42}},{"type":"Button","props":{"y":68,"x":68,"skin":"comp/button.png","label":"label"},"compId":5}],"animations":[{"nodes":[{"target":5,"keyframes":{"y":[{"value":68,"tweenMethod":"linearNone","tween":true,"target":5,"key":"y","index":0},{"value":179,"tweenMethod":"linearNone","tween":true,"target":5,"key":"y","index":25}],"x":[{"value":68,"tweenMethod":"linearNone","tween":true,"target":5,"key":"x","index":0},{"value":436,"tweenMethod":"linearNone","tween":true,"target":5,"key":"x","index":25}]}}],"name":"ani1","id":1,"frameRate":24,"action":0}]};
         constructor(){ super()}
         createChildren():void {
         

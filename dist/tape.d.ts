@@ -84,7 +84,7 @@ declare module Tape {
         readonly displayWidth: number;
         layoutEnabled: boolean;
 
-        protected addChild(clild: any);
+        protected addChild(child: any);
 
         ///////////////////////
         /// Constructor
@@ -208,6 +208,12 @@ declare module Tape {
 
     }
 
+    export class Effect {
+
+        public static clickEffect(btnView: any, click: Function): void;
+
+    }
+
     ///////////////////////////////////////////////
     ////// Utils
     ///////////////////////////////////////////////
@@ -310,9 +316,9 @@ declare module Tape {
     }
 
     /**
-     * Bus
+     * EventBus
      */
-    class Bus {
+    class EventBus {
 
         static post(event: string, data: any): void;
 
@@ -487,272 +493,116 @@ declare module Tape {
     ///////////////////////////////////////////////
 
     /**
-     * MiniVersion
+     * MiniUI
      */
-    class MiniVersion {
-        public static checkVersion(onShowLoading: Function, onFailed: Function): void;
-    }
+    class MiniUI {
 
-    /**
-     * MiniLogin
-     */
-    class MiniLogin {
+        public static createShareCanvasView(): void;
 
-        /**
-         * 获取应用参数信息
-         */
-        public static getParamData(): Object;
+        public static showSharedCanvas(): void;
 
-        /**
-         * 获取登录相关信息
-         */
-        public static getLoginData(): Object;
+        public static hideSharedCanvas(): void;
 
+        public static showUserInfoButton(options: Object): void;
 
-        /**
-         * 显示登录界面
-         * @param options 按钮位置信息bgPage,type,text,image,x,y,width,height
-         * @param successCallback 获取用户信息成功回调
-         * @param failCallback 失败回调
-         * @param completeCallback 完成回调，失败成功都会回调
-         */
-        public static showLoginPage(options, successCallback: Function, failCallback?: Function, completeCallback?: Function): void;
+        public static hideUserInfoButton(): void;
 
-        /**
-         * 隐藏登录界面
-         */
-        public static hideLoginPage(): void;
+        public static showGameClubButton(options: Object): void;
 
-    }
-
-    /**
-     * MiniGameClub
-     */
-    class MiniGameClub {
-
-        /**
-         * 显示游戏圈按钮
-         * @param options 按钮位置信息icon,top,left,width,height
-         * @param onTap 点击回调
-         */
-        public static showGameClubButton(options, onTap: Function): void;
-
-        /**
-         * 隐藏游戏圈按钮
-         */
         public static hideGameClubButton(): void;
 
     }
 
     /**
-     * MiniKefu
+     * MiniVersion
      */
-    class MiniKefu {
+    class MiniVersion {
 
-        /**
-         * 进入客服会话。后台接入方式与小程序一致
-         * @param options 分享的信息，sessionFrom,showMessageCard,sendMessageTitle,sendMessagePath,sendMessageImg
-         * @param success 成功回调
-         * @param fail 失败回调
-         * @param complete 完成回调，失败成功都会回调
-         */
-        public static openCustomerServiceConversation(options: Object, success?: Function, fail?: Function, complete?: Function): void;
-
+        public static forceUpdate(options: Object): void;
+        
     }
 
     /**
      * MiniOpenData
      */
-    class MiniOpenData {
+    class MiniOpenContext {
 
-        /**
-         * 是否支持开放数据域Canvas
-         */
-        public static isSupportSharedCanvasView(): boolean;
-
-        /**
-         * 显示开放数据域Canvas
-         */
-        public static showSharedCanvasView(bgPage, data?: Object): void;
-
-        /**
-         * 隐藏开放数据域Canvas
-         */
-        public static hideSharedCanvasView(): void;
-
-        /**
-         * 设置用户游戏数据到开放数据域
-         */
-        public static setUserCloudStorage(dataList): void;
-
-        /**
-         * 删除用户托管数据当中对应 key 的数据。
-         */
-        public static removeUserCloudStorage(keyList: string[]): void;
-    }
-
-    /**
-     * MiniShare
-     */
-    class MiniShare {
-
-        /**
-         * 显示转发菜单按钮
-         * @param options 分享的信息，title，imageUrl，query
-         * @param success 成功回调
-         * @param fail 失败回调
-         * @param complete 完成回调，失败成功都会回调
-         */
-        public static showShareMenu(options: Object, success?: Function, fail?: Function, complete?: Function): void;
-
-        /**
-         * 更新转发菜单按钮
-         * @param options 分享的信息，title，imageUrl，query
-         * @param success 成功回调
-         * @param fail 失败回调
-         * @param complete 完成回调，失败成功都会回调
-         */
-        public static updateShareMenu(options: Object, success?: Function, fail?: Function, complete?: Function): void;
-
-        /**
-         * 隐藏转发菜单按钮
-         * @param success 成功回调
-         * @param fail 失败回调
-         * @param complete 完成回调，失败成功都会回调
-         */
-        public static hideShareMenu(success?: Function, fail?: Function, complete?: Function): void;
-
-        /**
-         * 主动转发
-         * @param options 分享的信息，title，imageUrl，query
-         * @param success 成功回调
-         * @param fail 失败回调
-         * @param complete 完成回调，失败成功都会回调
-         */
-        public static shareAppMessage(options: Object, success?: Function, fail?: Function, complete?: Function): void;
-
-        /**
-         * 获取转发详细信息
-         * @param shareTicket shareTicket
-         * @param success 成功回调
-         * @param fail 失败回调
-         * @param complete 完成回调，失败成功都会回调
-         */
-        public static getShareInfo(shareTicket: string, success?: Function, fail?: Function, complete?: Function): void;
-    }
-
-    /**
-     * MiniAd
-     */
-    class MiniAd {
-
-        /**
-         * 显示激励型视频广告
-         * @param adUnitId 广告单元ID
-         * @param onRewarded 完成回调，发放奖励
-         * @param onError 错误回调
-         */
-        public static showRewardedVideoAd(adUnitId: string, onRewarded?: Function, onError?: Function): void;
-
-        /**
-         * 显示Banner广告
-         * @param adUnitId 广告单元ID
-         * @param options Banner位置信息top,left,width,height
-         **/
-        public static showBannerAd(adUnitId: string, options: Object): void;
+        public static postMessageToOpenDataContext(options: Object): void;
 
     }
 
     /**
-     * MiniDisplay
+     * MiniFunc
      */
-    class MiniDisplay {
+    class MiniFunc {
 
-        /**
-         * 根据用户当天游戏时间判断用户是否需要休息
-         * @param todayPlayedTime 今天已经玩游戏的时间，单位：秒
-         * @param success 成功回调 result
-         * @param fail 失败回调
-         * @param complete 完成回调，失败成功都会回调
-         */
-        public static checkIsUserAdvisedToRest(todayPlayedTime, success?: Function, fail?: Function, complete?: Function): void;
+        public static exitMiniProgram(options?: Object): void;
 
-        /**
-         * 获取当前的地理位置、速度。当用户离开小程序后，此接口无法调用；当用户点击“显示在聊天顶部”时，此接口可继续调用。
-         * @param type wgs84 返回 gps 坐标，gcj02 返回可用于 wx.openLocation 的坐标
-         * @param success 成功回调 result
-         * @param fail 失败回调
-         * @param complete 完成回调，失败成功都会回调
-         */
-        public static getLocation(type?: string, success?: Function, fail?: Function, complete?: Function): void;
+        public static login(options?: Object): void;
 
-        /**
-         * 使手机发生较短时间的振动（15 ms）
-         * @param success 成功回调
-         * @param fail 失败回调
-         * @param complete 接口调用结束的回调函数（调用成功、失败都会执行）
-         */
-        public static vibrateShort(success?: Function, fail?: Function, complete?: Function): void;
+        public static authorize(options?: Object): void;
 
-        /**
-         * 使手机发生较长时间的振动（400 ms)
-         * @param success 成功回调
-         * @param fail 失败回调
-         * @param complete 接口调用结束的回调函数（调用成功、失败都会执行）
-         */
-        public static vibrateLong(success?: Function, fail?: Function, complete?: Function): void;
+        public static createGameClubButton(options?: Object): void;
 
-        /**
-         * 显示Loading
-         * @param title 提示的内容
-         * @param mask 是否显示透明蒙层
-         * @param success 成功回调
-         * @param fail 失败回调
-         * @param complete 接口调用结束的回调函数（调用成功、失败都会执行）
-         */
-        public static showLoading(title: string, mask: boolean, success?: Function, fail?: Function, complete?: Function): void;
+        public static createUserInfoButton(options?: Object): void;
 
-        /**
-         * 隐藏Loading
-         * @param success 成功回调
-         * @param fail 失败回调
-         * @param complete 接口调用结束的回调函数（调用成功、失败都会执行）
-         */
-        public static hideLoading(success?: Function, fail?: Function, complete?: Function): void;
+        public static getSystemInfo(options?: Object): void;
 
-        /**
-         * 弹出对话框
-         * @param options 分享的信息，title，content，showCancel, cancelText, confirmText
-         * @param success 成功回调
-         * @param fail 失败回调
-         * @param complete 接口调用结束的回调函数（调用成功、失败都会执行）
-         */
-        public static showModal(options, success?: Function, fail?: Function, complete?: Function): void;
+        public static openSetting(options?: Object): void;
 
-        /**
-         * 获取设备电量
-         * @param success 成功回调
-         * @param fail 失败回调
-         * @param complete 接口调用结束的回调函数（调用成功、失败都会执行）
-         */
-        public static getBatteryInfo(success?: Function, fail?: Function, complete?: Function): void;
+        public static getSetting(options?: Object): void;
 
-        /**
-         * 设置系统剪贴板的内容
-         * @param data 剪贴板的内容
-         * @param success 成功回调
-         * @param fail 失败回调
-         * @param complete 接口调用结束的回调函数（调用成功、失败都会执行）
-         */
-        public static setClipboardData(data: string, success?: Function, fail?: Function, complete?: Function): void;
+        public static getUserInfo(options?: Object): void;
 
-        /**
-         * 获取系统剪贴板的内容
-         * @param success 成功回调
-         * @param fail 失败回调
-         * @param complete 接口调用结束的回调函数（调用成功、失败都会执行）
-         */
-        public static getClipboardData(success?: Function, fail?: Function, complete?: Function): void;
+        public static onShareAppMessage(options?: Object): void;
+
+        public static offShareAppMessage(options?: Object): void;
+
+        public static showShareMenu(options?: Object): void;
+
+        public static hideShareMenu(options?: Object): void;
+
+        public static updateShareMenu(options?: Object): void;
+
+        public static shareAppMessage(options?: Object): void;
+
+        public static getShareInfo(options?: Object): void;
+
+        public static openCustomerServiceConversation(options?: Object): void;
+
+        public static checkIsUserAdvisedToRest(options?: Object): void;
+
+        public static vibrateShort(options?: Object): void;
+
+        public static vibrateLong(options?: Object): void;
+
+        public static showToast(options?: Object): void;
+
+        public static hideToast(options?: Object): void;
+
+        public static showLoading(options?: Object): void;
+
+        public static hideLoading(options?: Object): void;
+
+        public static showModal(options?: Object): void;
+
+        public static showActionSheet(options?: Object): void;
+
+        public static getBatteryInfo(options?: Object): void;
+
+        public static setClipboardData(options?: Object): void;
+
+        public static getClipboardData(options?: Object): void;
+
+        public static getScreenBrightness(options?: Object): void;
+
+        public static setKeepScreenOn(options?: Object): void;
+
+        public static setScreenBrightness(options?: Object): void;
+
+        public static triggerGC(options?: Object): void;
+
+        public static setEnableDebug(options?: Object): void;
 
     }
 

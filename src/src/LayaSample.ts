@@ -2,9 +2,8 @@
 class GameMain {
     constructor() {
         Tape.init(600, 400);
-        Tape.MiniShare.showShareMenu({
-            title: '这一关太难了，求助',
-            query: 'a=1'
+        Tape.MiniFunc.showShareMenu({
+
         });
         let routes = {
             "Main": App.Main.ROUTE({

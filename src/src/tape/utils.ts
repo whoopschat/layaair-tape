@@ -181,9 +181,9 @@ module Tape {
     }
 
     /**
-     * Bus
+     * EventBus
      */
-    export class Bus {
+    export class EventBus {
 
         private static __event_group__: Object = {};
 

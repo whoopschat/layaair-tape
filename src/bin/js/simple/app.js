@@ -39,7 +39,9 @@ var App;
             // Tape.BackgroundMusic.play("res/sound/bg_sound.mp3", 0);
             Tape.Audio.play("res/sound/readygo.mp3");
             this.page1.btn.on(Laya.Event.CLICK, this, function () {
-                Tape.Toast.showToast(new ui.MessageToastUI());
+                var a = new ui.MessageToastUI();
+                a.text.text = JSON.stringify(_this.params);
+                Tape.Toast.showToast(a);
                 _this.navigate("Page2");
             });
             this.page1.btnBack.on(Laya.Event.CLICK, this, function () {
@@ -64,11 +66,20 @@ var App;
         }
         Page2.prototype.onCreate = function () {
             var _this = this;
+            Tape.MiniUI.showSharedCanvas();
+            Laya.timer.once(400, null, function () {
+                var context = Tape.MiniOpenContext.postMessageToOpenDataContext({
+                    data: {
+                        action: "loginUI",
+                        value: JSON.stringify(ui.LoginPageUI.uiView)
+                    }
+                });
+            });
             console.log('Page2.onCreate');
-            Tape.Bus.on('ABC', function (data) {
+            Tape.EventBus.on('ABC', function (data) {
                 Tape.Logger.log(data);
             });
-            Tape.Bus.post('ABC', '11111111111111');
+            Tape.EventBus.post('ABC', '11111111111111');
             this.addChild(this.page2);
             var ws = new Tape.MQTTSocket();
             ws.onConnected = function () {
@@ -84,26 +95,26 @@ var App;
             this.page2.btn.on(Laya.Event.CLICK, this, function () {
                 Tape.Toast.showToast(new ui.MessageToastUI());
                 Tape.Dialog.showDialog(new ui.DialogViewUI());
-                _this.navigate("Main", { name: "你好" }, function () {
-                    _this.back();
+                Tape.MiniUI.showUserInfoButton({
+                    type: 'text',
+                    text: '授权并登录',
+                    style: {
+                        width: 300,
+                        height: 100
+                    },
+                    onGetUserInfo: function (res) {
+                        console.log("获取用户信息成功", res);
+                        _this.navigate("Main", res, function () {
+                            _this.back();
+                        });
+                    },
+                    onFailed: function (res) {
+                        console.log("获取用户信息失败", res);
+                    }
                 });
             });
-            this.page2.btnBack.on(Laya.Event.CLICK, this, function () {
+            Tape.Effect.clickEffect(this.page2.btnBack, function () {
                 _this.back();
-            });
-            Tape.MiniLogin.showLoginPage({
-                bgPage: new ui.LoginPageUI(),
-                type: 'text',
-                text: '授权并登录',
-                left: 0,
-                top: 0,
-                width: 200,
-                height: 50
-            }, function (res) {
-                console.log("获取用户信息成功", res);
-                Tape.MiniOpenData.setUserCloudStorage([{ key: 'data', value: '分数520' }]);
-            }, function (res) {
-                console.log("获取用户信息失败", res);
             });
         };
         Page2.prototype.onPause = function () {

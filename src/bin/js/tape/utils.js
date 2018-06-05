@@ -196,12 +196,12 @@ var Tape;
     }());
     Tape.Logger = Logger;
     /**
-     * Bus
+     * EventBus
      */
-    var Bus = /** @class */ (function () {
-        function Bus() {
+    var EventBus = /** @class */ (function () {
+        function EventBus() {
         }
-        Bus.post = function (event, data) {
+        EventBus.post = function (event, data) {
             if (!event) {
                 return;
             }
@@ -214,7 +214,7 @@ var Tape;
                 }
             }
         };
-        Bus.on = function (event, callback) {
+        EventBus.on = function (event, callback) {
             if (!event || !callback) {
                 return;
             }
@@ -224,8 +224,8 @@ var Tape;
             var list = this.__event_group__[event];
             list.push(callback);
         };
-        Bus.__event_group__ = {};
-        return Bus;
+        EventBus.__event_group__ = {};
+        return EventBus;
     }());
-    Tape.Bus = Bus;
+    Tape.EventBus = EventBus;
 })(Tape || (Tape = {}));
