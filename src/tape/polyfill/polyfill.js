@@ -1,3 +1,6 @@
+// =========================== //
+// Tape polyfill.js
+// =========================== //
 // Object.assign
 if (typeof Object.assign != 'function') {
     // Must be writable: true, enumerable: false, configurable: true

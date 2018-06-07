@@ -3,7 +3,7 @@
 
 Install
 ```
-> npm install -g layaair-tape
+> npm install layaair-tape
 ```
 
 Use

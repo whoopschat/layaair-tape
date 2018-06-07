@@ -1,6 +1,6 @@
 {
   "name": "layaair-tape",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "description": "A layaair game library",
   "author": "liangmayong",
   "license": "ISC",
@@ -14,7 +14,8 @@
     "build": "gulp build"
   },
   "files": [
-    "dist"
+    "dist",
+    "include"
   ],
   "dependencies": {},
   "devDependencies": {

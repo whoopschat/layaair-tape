@@ -1,3 +1,6 @@
+// =========================== //
+// Tape effect.js
+// =========================== //
 var Tape;
 (function (Tape) {
     var Effect = /** @class */ (function () {

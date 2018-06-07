@@ -1,5 +1,5 @@
 // =========================== //
-// tape socket.js
+// Tape socket.js
 // =========================== //
 var Tape;
 (function (Tape) {

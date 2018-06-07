@@ -1,3 +1,6 @@
+// =========================== //
+// Tape polyfill.js
+// =========================== //
 // Object.assign
 if (typeof Object.assign != 'function') {
     // Must be writable: true, enumerable: false, configurable: true
@@ -27,13 +30,10 @@ if (typeof Object.assign != 'function') {
 }
 
 // =========================== //
-// tape utils.js
+// Tape build.js
 // =========================== //
 var Tape;
 (function (Tape) {
-    /**
-     * Build
-     */
     var Build = /** @class */ (function () {
         function Build() {
         }
@@ -64,81 +64,50 @@ var Tape;
         return Build;
     }());
     Tape.Build = Build;
-    /**
-     * NumUtil
-     */
-    var NumUtil = /** @class */ (function () {
-        function NumUtil() {
+})(Tape || (Tape = {}));
+
+// =========================== //
+// Tape eventbus.js
+// =========================== //
+var Tape;
+(function (Tape) {
+    var EventBus = /** @class */ (function () {
+        function EventBus() {
         }
-        /**
-         * rangedNum
-         * @param val curr number
-         * @param min min number
-         * @param max max number
-         */
-        NumUtil.rangedNum = function (val, min, max) {
-            if (val < min)
-                return min;
-            else if (val > max)
-                return max;
-            else
-                return val;
+        EventBus.post = function (event, data) {
+            if (!event) {
+                return;
+            }
+            if (this.__event_group__.hasOwnProperty(event)) {
+                var list = this.__event_group__[event];
+                if (list.length > 0) {
+                    list.forEach(function (value) {
+                        value && value(data);
+                    });
+                }
+            }
         };
-        /**
-         * randomFloat
-         * @param min min number default 0
-         * @param max max number default 1
-         */
-        NumUtil.randomFloat = function (min, max) {
-            if (min === void 0) { min = 0; }
-            if (max === void 0) { max = 1; }
-            return Math.random() * (max - min) + min;
+        EventBus.on = function (event, callback) {
+            if (!event || !callback) {
+                return;
+            }
+            if (!this.__event_group__.hasOwnProperty(event)) {
+                this.__event_group__[event] = new Array();
+            }
+            var list = this.__event_group__[event];
+            list.push(callback);
         };
-        /**
-         * randomInteger
-         * @param min min number
-         * @param max max number
-         */
-        NumUtil.randomInteger = function (min, max) {
-            return Math.floor(Math.random() * (max - min) + min);
-        };
-        return NumUtil;
+        EventBus.__event_group__ = {};
+        return EventBus;
     }());
-    Tape.NumUtil = NumUtil;
-    /**
-     * LinkUtil
-     */
-    var LinkUtil = /** @class */ (function () {
-        function LinkUtil() {
-        }
-        /**
-         * openURL
-         * @param url url
-         */
-        LinkUtil.openURL = function (url) {
-            window.location.href = url;
-        };
-        return LinkUtil;
-    }());
-    Tape.LinkUtil = LinkUtil;
-    /**
-     * UUID
-     */
-    var UUID = /** @class */ (function () {
-        function UUID() {
-        }
-        UUID._s4 = function () {
-            return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-        };
-        UUID.randomUUID = function () {
-            return (this._s4() + this._s4() + "-" + this._s4() + "-" + this._s4() + "-" + this._s4() + "-" + this._s4() + this._s4() + this._s4());
-        };
-        return UUID;
-    }());
-    Tape.UUID = UUID;
-    /**
-     * Logger
-     */
+    Tape.EventBus = EventBus;
+})(Tape || (Tape = {}));
+
+// =========================== //
+// Tape logger.js
+// =========================== //
+var Tape;
+(function (Tape) {
     var Logger = /** @class */ (function () {
         function Logger() {
         }
@@ -219,83 +188,78 @@ var Tape;
             }
             console.debug.apply(console, [message].concat(optionalParams));
         };
-        Logger.__is_debug__ = Build.isDebug();
+        Logger.__is_debug__ = Tape.Build.isDebug();
         return Logger;
     }());
     Tape.Logger = Logger;
-    /**
-     * EventBus
-     */
-    var EventBus = /** @class */ (function () {
-        function EventBus() {
-        }
-        EventBus.post = function (event, data) {
-            if (!event) {
-                return;
-            }
-            if (this.__event_group__.hasOwnProperty(event)) {
-                var list = this.__event_group__[event];
-                if (list.length > 0) {
-                    list.forEach(function (value) {
-                        value && value(data);
-                    });
-                }
-            }
-        };
-        EventBus.on = function (event, callback) {
-            if (!event || !callback) {
-                return;
-            }
-            if (!this.__event_group__.hasOwnProperty(event)) {
-                this.__event_group__[event] = new Array();
-            }
-            var list = this.__event_group__[event];
-            list.push(callback);
-        };
-        EventBus.__event_group__ = {};
-        return EventBus;
-    }());
-    Tape.EventBus = EventBus;
-})(Tape || (Tape = {}));
-
-var Tape;
-(function (Tape) {
-    /**
-     * 初始化
-     * @param width 宽度
-     * @param height 高度
-     * @param options 其他拓展
-     */
-    Tape.init = function (width, height) {
-        var options = [];
-        for (var _i = 2; _i < arguments.length; _i++) {
-            options[_i - 2] = arguments[_i];
-        }
-        if (Tape.isMiniGame()) {
-            Tape.MiniHandler.init.apply(Tape.MiniHandler, [width, height].concat(options));
-        }
-        else {
-            Tape.ConchHandler.init.apply(Tape.ConchHandler, [width, height].concat(options));
-        }
-    };
-    /**
-     * 退出
-     * @param success 成功回调
-     * @param fail 失败回调
-     * @param complete 完成回调，失败成功都会回调
-     */
-    Tape.exit = function () {
-        if (Tape.isMiniGame()) {
-            Tape.MiniHandler.exit();
-        }
-        else if (Tape.isConchApp()) {
-            Tape.ConchHandler.exit();
-        }
-    };
 })(Tape || (Tape = {}));
 
 // =========================== //
-// tape market.js
+// Tape NumUtil.js
+// =========================== //
+var Tape;
+(function (Tape) {
+    var NumUtil = /** @class */ (function () {
+        function NumUtil() {
+        }
+        /**
+         * rangedNum
+         * @param val curr number
+         * @param min min number
+         * @param max max number
+         */
+        NumUtil.rangedNum = function (val, min, max) {
+            if (val < min)
+                return min;
+            else if (val > max)
+                return max;
+            else
+                return val;
+        };
+        /**
+         * randomFloat
+         * @param min min number default 0
+         * @param max max number default 1
+         */
+        NumUtil.randomFloat = function (min, max) {
+            if (min === void 0) { min = 0; }
+            if (max === void 0) { max = 1; }
+            return Math.random() * (max - min) + min;
+        };
+        /**
+         * randomInteger
+         * @param min min number
+         * @param max max number
+         */
+        NumUtil.randomInteger = function (min, max) {
+            return Math.floor(Math.random() * (max - min) + min);
+        };
+        return NumUtil;
+    }());
+    Tape.NumUtil = NumUtil;
+})(Tape || (Tape = {}));
+
+// =========================== //
+// Tape uuid.js
+// =========================== //
+var Tape;
+(function (Tape) {
+    var UUID = /** @class */ (function () {
+        function UUID() {
+        }
+        UUID._s4 = function () {
+            return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+        };
+        UUID.randomUUID = function () {
+            return (this._s4() + this._s4() + "-" + this._s4() + "-" + this._s4() + "-" + this._s4() + "-" + this._s4() + this._s4() + this._s4());
+        };
+        return UUID;
+    }());
+    Tape.UUID = UUID;
+})(Tape || (Tape = {}));
+
+// =========================== //
+// Tape conch.js
 // =========================== //
 var Tape;
 (function (Tape) {
@@ -334,1011 +298,8 @@ var Tape;
     Tape.ConchHandler = ConchHandler;
 })(Tape || (Tape = {}));
 
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 // =========================== //
-// tape comp.js
-// =========================== //
-var Tape;
-(function (Tape) {
-    /**
-     * Dialog
-     */
-    var Dialog = /** @class */ (function () {
-        function Dialog() {
-        }
-        Dialog.instance = function () {
-            if (!this.__dialog_manager_instance__) {
-                this.__dialog_manager_instance__ = new Laya.DialogManager();
-            }
-            return this.__dialog_manager_instance__;
-        };
-        Dialog.showDialog = function (dialog, onOpened, onClosed) {
-            if (onOpened === void 0) { onOpened = null; }
-            if (onClosed === void 0) { onClosed = null; }
-            this.closeDialog();
-            dialog.onClosed = function (type) {
-                onClosed && onClosed(type);
-            };
-            dialog.onOpened = function () {
-                onOpened && onOpened();
-            };
-            this.instance().open(dialog, true, true);
-        };
-        Dialog.closeDialog = function () {
-            this.instance().closeAll();
-        };
-        Dialog.showLockView = function (lockView) {
-            this.instance().setLockView(lockView);
-            this.instance().lock(true);
-        };
-        Dialog.closeLockView = function () {
-            this.instance().lock(false);
-        };
-        Dialog.__dialog_manager_instance__ = null;
-        return Dialog;
-    }());
-    Tape.Dialog = Dialog;
-    /**
-     * Toast
-     */
-    var Toast = /** @class */ (function () {
-        function Toast() {
-        }
-        Toast.showToast = function (view, duration, previousHnadler) {
-            if (duration === void 0) { duration = 500; }
-            if (previousHnadler === void 0) { previousHnadler = null; }
-            if (view && !view.parent) {
-                var type = view.name || '_default_toast';
-                if (!this.__toast_group__.hasOwnProperty(type)) {
-                    this.__toast_group__[type] = new Array();
-                }
-                var list_1 = this.__toast_group__[type];
-                view.alpha = 0;
-                view.zOrder = 99999;
-                Laya.Tween.to(view, { alpha: 1 }, duration, Laya.Ease.quintOut, null, 0);
-                Laya.Tween.to(view, { alpha: 0 }, duration, Laya.Ease.quintOut, Laya.Handler.create(this, function () {
-                    list_1.splice(list_1.indexOf(view), 1);
-                    view.removeSelf();
-                }), duration);
-                Laya.stage.addChild(view);
-                for (var i in list_1) {
-                    if (list_1[i]) {
-                        if (previousHnadler) {
-                            previousHnadler(list_1[i]);
-                        }
-                        else {
-                            list_1[i].visible = false;
-                        }
-                    }
-                }
-                list_1.push(view);
-            }
-        };
-        Toast.__toast_group__ = {};
-        return Toast;
-    }());
-    Tape.Toast = Toast;
-    /**
-     * PropsComponent
-     */
-    var PropsComponent = /** @class */ (function (_super) {
-        __extends(PropsComponent, _super);
-        function PropsComponent(props) {
-            if (props === void 0) { props = {}; }
-            var _this = _super.call(this) || this;
-            _this.props = {};
-            _this.props = Object.assign({}, props);
-            return _this;
-        }
-        return PropsComponent;
-    }(Laya.Component));
-    Tape.PropsComponent = PropsComponent;
-    /**
-     * Activity
-     */
-    var Activity = /** @class */ (function (_super) {
-        __extends(Activity, _super);
-        function Activity(props) {
-            if (props === void 0) { props = {}; }
-            var _this = _super.call(this, props) || this;
-            // navigation
-            _this.routeName = "";
-            _this.routeKey = "";
-            _this.params = {};
-            // in or out
-            _this.inEaseDuration = 300;
-            _this.inEase = null;
-            _this.inEaseFromProps = null;
-            _this.inEaseToProps = null;
-            _this.outEaseDuration = 300;
-            _this.outEase = null;
-            _this.outEaseFromProps = null;
-            _this.outEaseToProps = null;
-            _this.params = Object.assign({}, props['params']);
-            _this.routeName = props['routeName'] || "";
-            _this.routeKey = props['routeKey'] || "";
-            return _this;
-        }
-        Activity.ROUTE = function (options) {
-            if (options === void 0) { options = {}; }
-            return Object.assign({}, options, {
-                activity: this
-            });
-        };
-        ;
-        ///////////////////////
-        /// LifeCycle
-        ///////////////////////
-        Activity.prototype.onCreate = function () {
-        };
-        Activity.prototype.onResume = function () {
-        };
-        Activity.prototype.onPause = function () {
-        };
-        Activity.prototype.onDestroy = function () {
-        };
-        Activity.prototype.onNextProgress = function (progress) {
-        };
-        ///////////////////////
-        /// Navigator
-        ///////////////////////
-        Activity.prototype.redirectTo = function (name, params) {
-            var _this = this;
-            if (params === void 0) { params = {}; }
-            return this.navigate(name, params, function () {
-                _this.back();
-            });
-        };
-        Activity.prototype.navigate = function (name, params, action) {
-            if (params === void 0) { params = {}; }
-            if (action === void 0) { action = null; }
-            if (this.props.hasOwnProperty('navigation')) {
-                return this.props['navigation'].navigate(name, params, action);
-            }
-            return false;
-        };
-        Activity.prototype.deeplink = function (url, action) {
-            if (action === void 0) { action = null; }
-            if (this.props.hasOwnProperty('navigation')) {
-                return this.props['navigation'].deeplink(url, action);
-            }
-            return false;
-        };
-        Activity.prototype.back = function () {
-            if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].finish(this.routeName, this.routeKey);
-            }
-        };
-        Activity.prototype.finish = function (name) {
-            if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].finish(name);
-            }
-        };
-        Activity.prototype.pop = function (number) {
-            if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].pop(number);
-            }
-        };
-        Activity.prototype.popToTop = function () {
-            if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].popToTop();
-            }
-        };
-        return Activity;
-    }(PropsComponent));
-    Tape.Activity = Activity;
-})(Tape || (Tape = {}));
-
-var Tape;
-(function (Tape) {
-    var Effect = /** @class */ (function () {
-        function Effect() {
-        }
-        Effect.clickEffect = function (btnView, click) {
-            if (btnView && btnView['on']) {
-                btnView.on("mouseover", this, function () {
-                    btnView.y += 5;
-                });
-                btnView.on("mouseout", this, function () {
-                    btnView.y -= 5;
-                });
-                btnView.on("click", this, function () {
-                    click && click();
-                });
-            }
-        };
-        return Effect;
-    }());
-    Tape.Effect = Effect;
-})(Tape || (Tape = {}));
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-// =========================== //
-// tape navigation.js
-// =========================== //
-var Tape;
-(function (Tape) {
-    /**
-     * NavigationLoader
-     */
-    var NavigationLoader = /** @class */ (function (_super) {
-        __extends(NavigationLoader, _super);
-        function NavigationLoader(activity, routeName, routeKey, props, res, loaded, onLoadProgress) {
-            if (props === void 0) { props = {}; }
-            if (res === void 0) { res = []; }
-            if (loaded === void 0) { loaded = null; }
-            if (onLoadProgress === void 0) { onLoadProgress = null; }
-            var _this = _super.call(this) || this;
-            _this.routeName = "";
-            _this.routeKey = "";
-            _this.routeRes = [];
-            _this.routeActivity = null;
-            _this.routeName = routeName;
-            _this.routeKey = routeKey;
-            _this.routeRes = res;
-            if (res != null && res.length > 0) {
-                Laya.loader.load(res, Laya.Handler.create(_this, function () {
-                    var act = Laya.Pool.getItemByCreateFun(_this.routeName, function () {
-                        return new activity(props);
-                    });
-                    _this.create(act);
-                    if (loaded) {
-                        loaded(_this);
-                    }
-                }), Laya.Handler.create(_this, function (progress) {
-                    if (onLoadProgress) {
-                        onLoadProgress(_this, progress);
-                    }
-                }, null, false));
-            }
-            else {
-                var act = Laya.Pool.getItemByCreateFun(_this.routeName, function () {
-                    return new activity(props);
-                });
-                _this.create(act);
-                if (loaded) {
-                    loaded(_this);
-                }
-            }
-            return _this;
-        }
-        NavigationLoader.prototype.create = function (routeActivity) {
-            this.routeActivity = routeActivity;
-            this.addChild(this.routeActivity);
-            this.routeActivity.onCreate && this.routeActivity.onCreate();
-        };
-        NavigationLoader.prototype.nextProgress = function (progress) {
-            this.routeActivity.onNextProgress && this.routeActivity.onNextProgress(progress);
-        };
-        NavigationLoader.prototype.postEvent = function (eventName, data) {
-            this.event(eventName, data);
-        };
-        NavigationLoader.prototype.exit = function (anim, callback) {
-            var _this = this;
-            var ease = this.routeActivity.outEase || Laya.Ease.linearIn;
-            var duration = this.routeActivity.outEaseDuration || 300;
-            var fromProps = this.routeActivity.outEaseFromProps || { alpha: 1 };
-            var toProps = this.routeActivity.outEaseToProps || { alpha: 0 };
-            if (anim && ease) {
-                Object.assign(this, fromProps);
-                Laya.Tween.to(this, toProps, duration, ease, Laya.Handler.create(this, function () {
-                    _this.removeSelf();
-                    _this.routeActivity.onDestroy && _this.routeActivity.onDestroy();
-                    callback && callback();
-                    Laya.Pool.clearBySign(_this.routeName);
-                }));
-            }
-            else {
-                this.removeSelf();
-                this.routeActivity.onDestroy && this.routeActivity.onDestroy();
-                callback && callback();
-                Laya.Pool.clearBySign(this.routeName);
-            }
-        };
-        NavigationLoader.prototype.show = function (anim, callback) {
-            var ease = this.routeActivity.inEase || Laya.Ease.linearIn;
-            var duration = this.routeActivity.inEaseDuration || 300;
-            var fromProps = this.routeActivity.inEaseFromProps || { alpha: 0 };
-            var toProps = this.routeActivity.inEaseToProps || { alpha: 1 };
-            if (anim && ease) {
-                Object.assign(this, fromProps);
-                this.visible = true;
-                this.routeActivity.onResume && this.routeActivity.onResume();
-                Laya.Tween.to(this, toProps, duration, ease, Laya.Handler.create(this, function () {
-                    callback && callback();
-                }));
-            }
-            else {
-                this.visible = true;
-                this.routeActivity.onResume && this.routeActivity.onResume();
-                callback && callback();
-            }
-        };
-        NavigationLoader.prototype.hide = function () {
-            this.visible = false;
-            this.routeActivity.onPause && this.routeActivity.onPause();
-        };
-        return NavigationLoader;
-    }(Tape.PropsComponent));
-    /**
-     * NavigationStack
-     */
-    var NavigationStack = /** @class */ (function () {
-        function NavigationStack(navigator) {
-            this.__navigator__ = null;
-            this.__init_name__ = "";
-            this.__routes__ = {};
-            this.__static_res__ = [];
-            this.__stacks__ = [];
-            this.__loaded_handler__ = null;
-            this.__load_progress_handler__ = null;
-            this.__uri_prefix__ = "://";
-            this.__file_version__ = null;
-            this.__loading__ = false;
-            this.__navigator__ = navigator;
-            this.__loaded_handler__ = navigator.props['navigation']['onLoaded'];
-            this.__load_progress_handler__ = navigator.props['navigation']['onLoadProgress'];
-            this.__routes__ = navigator.props['navigation']['routes'];
-            this.__init_name__ = navigator.props['navigation']['initName'];
-            this.__static_res__ = navigator.props['navigation']['staticRes'] || [];
-            this.__uri_prefix__ = navigator.props['navigation']['uriPrefix'] || "://";
-            this.__file_version__ = navigator.props['navigation']['fileVersion'];
-        }
-        NavigationStack.prototype.initPage = function () {
-            var _this = this;
-            if (this.__file_version__) {
-                Laya.ResourceVersion.type = Laya.ResourceVersion.FILENAME_VERSION;
-                Laya.ResourceVersion.enable(this.__file_version__, Laya.Handler.create(this, function () {
-                    _this.navigate(_this.__init_name__);
-                }));
-            }
-            else {
-                this.navigate(this.__init_name__);
-            }
-        };
-        /**
-         * deeplink
-         */
-        NavigationStack.prototype.deeplink = function (url, action) {
-            if (action === void 0) { action = null; }
-            var params = {};
-            var delimiter = this.__uri_prefix__ || '://';
-            var urlSplit = url.split(delimiter);
-            var path = '/';
-            if (urlSplit.length > 1) {
-                var pathSplit = urlSplit[1].split('?');
-                path = pathSplit[0];
-                if (pathSplit.length > 1) {
-                    var paramsSplit = pathSplit[1].split('&');
-                    paramsSplit.forEach(function (value) {
-                        var param = value.split('=');
-                        if (param.length === 2) {
-                            Object.assign(params, (_a = {},
-                                _a[param[0]] = param[1],
-                                _a));
-                        }
-                        var _a;
-                    });
-                }
-            }
-            else {
-                path = url;
-            }
-            return this.navigate(path, params, action);
-        };
-        /**
-         * navigate
-         */
-        NavigationStack.prototype.navigate = function (name, params, action) {
-            var _this = this;
-            if (params === void 0) { params = {}; }
-            if (action === void 0) { action = null; }
-            if (this.__routes__
-                && this.__routes__.hasOwnProperty(name)
-                && this.__routes__[name].hasOwnProperty('activity')) {
-                var route = this.__routes__[name];
-                var activity = route['activity'];
-                var resArray_1 = [];
-                if (this.__static_res__) {
-                    this.__static_res__.forEach(function (res) {
-                        resArray_1.push(res);
-                    });
-                }
-                if (route.hasOwnProperty('res')
-                    && typeof route['res'] === 'object'
-                    && route['res'].length > 0) {
-                    route['res'].forEach(function (res) {
-                        resArray_1.push(res);
-                    });
-                }
-                var paramsObject = {};
-                if (route.hasOwnProperty('res')
-                    && route['res'].length > 0) {
-                    route['res'].forEach(function (res) {
-                        resArray_1.push(res);
-                    });
-                }
-                if (route.hasOwnProperty('params')) {
-                    Object.assign(paramsObject, route['params']);
-                }
-                Object.assign(paramsObject, params);
-                this.__loading__ = true;
-                var key = Tape.UUID.randomUUID();
-                new NavigationLoader(activity, name, key, {
-                    navigation: this,
-                    routeName: name,
-                    routeKey: key,
-                    params: paramsObject
-                }, resArray_1, function (loader) {
-                    _this.__loading__ = false;
-                    _this.__navigator__.addChild(loader);
-                    _this.putStack(loader, function () {
-                        action && action(true);
-                    });
-                    _this.__loaded_handler__ && _this.__loaded_handler__(loader);
-                }, function (loader, progress) {
-                    if (_this.__loading__) {
-                        var stack = _this.lastStack();
-                        stack && stack.nextProgress(progress);
-                    }
-                    _this.__load_progress_handler__ && _this.__load_progress_handler__(loader, progress);
-                });
-                return true;
-            }
-            else {
-                action && action(false);
-                return false;
-            }
-        };
-        /**
-         * finish
-         */
-        NavigationStack.prototype.finish = function (name, key) {
-            if (key === void 0) { key = null; }
-            this.finishStack(name, key);
-        };
-        /**
-         * popToTop
-         */
-        NavigationStack.prototype.popToTop = function () {
-            this.pop(this.__stacks__.length);
-        };
-        /**
-         * pop
-         */
-        NavigationStack.prototype.pop = function (number) {
-            if (number === void 0) { number = 1; }
-            this.popStack(number);
-        };
-        NavigationStack.prototype.lenStack = function () {
-            return this.__stacks__.length;
-        };
-        NavigationStack.prototype.lastStack = function () {
-            var len = this.lenStack();
-            if (len > 0) {
-                return this.__stacks__[len - 1];
-            }
-            return null;
-        };
-        NavigationStack.prototype.putStack = function (stack, callback) {
-            var _this = this;
-            this.__stacks__.push(stack);
-            this.showStack(true, function () {
-                _this.hideStack(1);
-                callback && callback();
-            });
-        };
-        NavigationStack.prototype.popStack = function (count) {
-            if (this.lenStack() > 1 && count > 0) {
-                this.hideStack(0);
-                for (var i = 0; i < count; i++) {
-                    if (this.lenStack() > 1) {
-                        this.__stacks__.pop().exit(false, null);
-                    }
-                }
-                this.showStack(false, null);
-            }
-        };
-        NavigationStack.prototype.finishStack = function (name, key) {
-            var _this = this;
-            if (key === void 0) { key = null; }
-            var len = this.lenStack();
-            if (len > 1) {
-                var targetIndexs_1 = [];
-                for (var i = 0; i < len; i++) {
-                    var stack = this.__stacks__[i];
-                    if (stack.routeName === name) {
-                        var flag = true;
-                        if (key) {
-                            flag = stack.routeKey === key;
-                        }
-                        if (flag && targetIndexs_1.length < len - 1) {
-                            targetIndexs_1.push(i);
-                        }
-                    }
-                }
-                if (targetIndexs_1.length > 0) {
-                    var first_1 = targetIndexs_1.pop();
-                    var flag_1 = first_1 === len - 1;
-                    if (flag_1) {
-                        this.showStack(false, null, 1);
-                    }
-                    var slice = this.__stacks__.splice(first_1, 1);
-                    slice.forEach(function (stack) {
-                        stack.exit(true, function () {
-                            while (targetIndexs_1.length > 0) {
-                                first_1 = targetIndexs_1.pop();
-                                var slice_1 = _this.__stacks__.splice(first_1, 1);
-                                slice_1.forEach(function (stack) {
-                                    stack.exit(targetIndexs_1.length === 1, null);
-                                });
-                            }
-                            if (flag_1) {
-                                _this.showStack(false, null);
-                            }
-                        });
-                    });
-                }
-            }
-        };
-        NavigationStack.prototype.hideStack = function (index) {
-            var len = this.lenStack();
-            if (len - index > 0) {
-                this.__stacks__[len - 1 - index].hide();
-            }
-        };
-        NavigationStack.prototype.showStack = function (anim, callback, index) {
-            if (index === void 0) { index = 0; }
-            var len = this.lenStack();
-            if (len - index > 0) {
-                this.__stacks__[len - 1 - index].show(anim && len > 1, callback);
-            }
-        };
-        return NavigationStack;
-    }());
-    /**
-     * StackNavigator
-     */
-    var StackNavigator = /** @class */ (function (_super) {
-        __extends(StackNavigator, _super);
-        function StackNavigator(props) {
-            var _this = _super.call(this, props) || this;
-            _this.__navigator__ = null;
-            _this.__navigator__ = new NavigationStack(_this);
-            _this.__navigator__.initPage();
-            return _this;
-        }
-        return StackNavigator;
-    }(Tape.PropsComponent));
-    /**
-     * createNavigator
-     * @param routes routes
-     * @param initName initName
-     * @param options options
-     */
-    Tape.createNavigator = function (routes, initName, options) {
-        if (options === void 0) { options = {}; }
-        console.log('init Navigator, Env: ' + Tape.Build.getEnv());
-        return new StackNavigator({
-            navigation: {
-                routes: routes,
-                initName: initName,
-                staticRes: options['res'],
-                fileVersion: options['fileVersion'] || 'version.json',
-                uriPrefix: options['uriPrefix'],
-                onLoaded: options['onLoaded'],
-                onLoadProgress: options['onLoadProgress']
-            }
-        });
-    };
-})(Tape || (Tape = {}));
-
-// =========================== //
-// tape media.js
-// =========================== //
-var Tape;
-(function (Tape) {
-    var fuckWXAudioPlay = function (callback) {
-        var wsb = window;
-        if (wsb['WeixinJSBridge']) {
-            try {
-                wsb['WeixinJSBridge'].invoke("getNetworkType", {}, function () {
-                    callback && callback();
-                });
-            }
-            catch (e) {
-                callback && callback();
-            }
-        }
-        else {
-            callback && callback();
-        }
-    };
-    /**
-     * BackgroundMusic
-     */
-    var BackgroundMusic = /** @class */ (function () {
-        function BackgroundMusic() {
-        }
-        BackgroundMusic.play = function (url, loops, complete) {
-            var _this = this;
-            if (loops === void 0) { loops = 1; }
-            if (complete === void 0) { complete = null; }
-            this.__on_complete__ = complete;
-            if (this.__audio_url__ !== url) {
-                this.__audio_url__ = url;
-                this.stop();
-            }
-            fuckWXAudioPlay(function () {
-                if (_this.__audio_chancel__) {
-                    if (!_this.__is_playing__) {
-                        _this.__audio_chancel__.play();
-                    }
-                    return;
-                }
-                _this.__is_playing__ = true;
-                _this.__audio_chancel__ = Laya.SoundManager.playMusic(_this.__audio_url__, loops, Laya.Handler.create(_this, function () {
-                    _this.__is_playing__ = false;
-                    _this.__audio_chancel__ = null;
-                    _this.__on_complete__ && _this.__on_complete__();
-                }));
-            });
-        };
-        BackgroundMusic.stop = function () {
-            if (this.__audio_chancel__) {
-                this.__audio_chancel__.stop();
-                this.__audio_chancel__ = null;
-                this.__is_playing__ = false;
-            }
-        };
-        BackgroundMusic.pause = function () {
-            if (this.__audio_chancel__) {
-                this.__audio_chancel__.pause();
-                this.__is_playing__ = false;
-            }
-        };
-        BackgroundMusic.__audio_url__ = "";
-        BackgroundMusic.__audio_chancel__ = null;
-        BackgroundMusic.__is_playing__ = false;
-        BackgroundMusic.__on_complete__ = null;
-        return BackgroundMusic;
-    }());
-    Tape.BackgroundMusic = BackgroundMusic;
-    /**
-     * Audio
-     */
-    var Audio = /** @class */ (function () {
-        function Audio(url) {
-            this.__audio_url__ = "";
-            this.__audio_chancel__ = null;
-            this.__is_playing__ = false;
-            this.__on_complete__ = null;
-            this.__audio_url__ = url;
-        }
-        Audio.config = function (dir, ext, conchDir, conchExt) {
-            this.soundWebDir = dir || "";
-            this.soundWebExt = ext || "";
-            this.soundConchDir = conchDir || "";
-            this.soundConchExt = conchExt || "";
-        };
-        Audio.play = function (url, loops, complete) {
-            if (loops === void 0) { loops = 1; }
-            if (complete === void 0) { complete = null; }
-            var audio = new Audio(url);
-            audio.play(loops, complete);
-            return audio;
-        };
-        Audio.prototype.play = function (loops, complete) {
-            var _this = this;
-            if (loops === void 0) { loops = 1; }
-            if (complete === void 0) { complete = null; }
-            this.__on_complete__ = complete;
-            fuckWXAudioPlay(function () {
-                if (_this.__audio_chancel__) {
-                    if (!_this.__is_playing__) {
-                        _this.__audio_chancel__.play();
-                    }
-                    return;
-                }
-                _this.__is_playing__ = true;
-                var soundUrl = "";
-                if (Tape.isConchApp()) {
-                    soundUrl = Audio.soundConchDir + _this.__audio_url__ + Audio.soundConchExt;
-                    var ext = Laya.Utils.getFileExtension(soundUrl);
-                    if (!Audio.showErrorAlert && ext != "wav" && ext != "ogg") {
-                        return;
-                    }
-                }
-                else {
-                    soundUrl = Audio.soundWebDir + _this.__audio_url__ + Audio.soundWebExt;
-                }
-                _this.__audio_chancel__ = Laya.SoundManager.playSound(soundUrl, loops, Laya.Handler.create(_this, function () {
-                    _this.__is_playing__ = false;
-                    _this.__on_complete__ && _this.__on_complete__();
-                }));
-            });
-        };
-        Audio.prototype.stop = function () {
-            if (this.__audio_chancel__) {
-                this.__audio_chancel__.stop();
-                this.__audio_chancel__ = null;
-                this.__is_playing__ = false;
-            }
-        };
-        Audio.prototype.pause = function () {
-            if (this.__audio_chancel__) {
-                this.__audio_chancel__.pause();
-                this.__is_playing__ = false;
-            }
-        };
-        Audio.showErrorAlert = Tape.Build.isDebug();
-        Audio.soundWebDir = "";
-        Audio.soundWebExt = "";
-        Audio.soundConchDir = "";
-        Audio.soundConchExt = "";
-        return Audio;
-    }());
-    Tape.Audio = Audio;
-})(Tape || (Tape = {}));
-
-// =========================== //
-// tape socket.js
-// =========================== //
-var Tape;
-(function (Tape) {
-    /**
-     * Socket TAG
-     */
-    var SocketTAG = /** @class */ (function () {
-        function SocketTAG() {
-        }
-        // connecting
-        SocketTAG.SOCKET_CONNECTE_ING = "connect_ing";
-        // connected
-        SocketTAG.SOCKET_CONNECTED = "connected";
-        // connect closed
-        SocketTAG.SOCKET_CONNECT_CLOSDE = "connect_closed";
-        // connect error
-        SocketTAG.SOCKET_CONNECT_ERROR = "connect_error";
-        // connect reveived
-        SocketTAG.SOCKET_MESSAGE_RECEIVED = "message_received";
-        // connect delivered
-        SocketTAG.SOCKET_MESSAGE_DELIVERED = "message_delivered";
-        // connect publish
-        SocketTAG.EVENT_SOCKET_MESSAGE_PUBLISH = "message_publish";
-        return SocketTAG;
-    }());
-    /**
-     * WEB Socket
-     */
-    var WebSocket = /** @class */ (function () {
-        function WebSocket() {
-            this.__web_socket__ = null;
-            this.onConnecting = null;
-            this.onConnected = null;
-            this.onClosed = null;
-            this.onError = null;
-            this.onMessageReceived = null;
-        }
-        WebSocket.prototype.connect = function (socketUrl) {
-            var _this = this;
-            if (this.isConnecting()) {
-                return;
-            }
-            this.printLog(" -----WS---" + SocketTAG.SOCKET_CONNECTE_ING);
-            this.onConnecting && this.onConnecting();
-            this.__is_connect_ing__ = true;
-            this.__web_socket__ = new Laya.Socket();
-            this.__web_socket__.connectByUrl(socketUrl);
-            this.__web_socket__.on(Laya.Event.OPEN, this, function () {
-                _this.printLog(" -----WS---" + SocketTAG.SOCKET_CONNECTED);
-                _this.__is_connect__ = true;
-                _this.onConnected && _this.onConnected();
-            });
-            this.__web_socket__.on(Laya.Event.CLOSE, this, function (error) {
-                if (_this.isConnecting() || _this.isConnected()) {
-                    _this.printLog(" -----WS---" + SocketTAG.SOCKET_CONNECT_CLOSDE, error);
-                    _this.__is_connect__ = false;
-                    _this.__is_connect_ing__ = false;
-                    _this.onClosed && _this.onClosed(error);
-                }
-            });
-            this.__web_socket__.on(Laya.Event.ERROR, this, function (error) {
-                _this.printLog(" -----WS---" + SocketTAG.SOCKET_CONNECT_ERROR, error);
-                _this.__is_connect__ = false;
-                _this.__is_connect_ing__ = false;
-                _this.onError && _this.onError(error);
-            });
-            this.__web_socket__.on(Laya.Event.MESSAGE, this, function (msg) {
-                _this.printLog(" -----WS---" + SocketTAG.SOCKET_MESSAGE_RECEIVED, msg);
-                _this.onMessageReceived && _this.onMessageReceived(msg);
-            });
-        };
-        WebSocket.prototype.disconnect = function () {
-            if (this.isConnecting() || this.isConnected()) {
-                this.printLog(" -----WS---" + SocketTAG.SOCKET_CONNECT_CLOSDE);
-                this.__web_socket__.close();
-                this.__is_connect__ = false;
-                this.__is_connect_ing__ = false;
-                this.onClosed && this.onClosed();
-            }
-        };
-        WebSocket.prototype.isConnected = function () {
-            return this.__is_connect__;
-        };
-        WebSocket.prototype.isConnecting = function () {
-            return this.__is_connect_ing__;
-        };
-        WebSocket.prototype.publishMessage = function (message) {
-            if (!this.isConnected()) {
-                return;
-            }
-            var messagePayload = "";
-            if (typeof message === 'object') {
-                messagePayload = JSON.stringify(message);
-            }
-            else if (typeof message === 'string') {
-                messagePayload = message;
-            }
-            this.printLog(" -----WS---" + SocketTAG.EVENT_SOCKET_MESSAGE_PUBLISH, messagePayload);
-            this.__web_socket__.send(messagePayload);
-        };
-        WebSocket.prototype.printLog = function (message) {
-            var optionalParams = [];
-            for (var _i = 1; _i < arguments.length; _i++) {
-                optionalParams[_i - 1] = arguments[_i];
-            }
-            (_a = Tape.Logger).log.apply(_a, [message].concat(optionalParams));
-            var _a;
-        };
-        return WebSocket;
-    }());
-    Tape.WebSocket = WebSocket;
-    /**
-     *  MQTT Socket
-     */
-    var MQTTSocket = /** @class */ (function () {
-        function MQTTSocket() {
-            this.__mq_socket__ = null;
-            this.__default_options__ = {
-                timeout: 3,
-                keepAliveInterval: 30,
-                cleanSession: true,
-                useSSL: false,
-                reconnect: false
-            };
-            this.onConnecting = null;
-            this.onConnected = null;
-            this.onClosed = null;
-            this.onError = null;
-            this.onMessageReceived = null;
-            this.onMessageDelivered = null;
-        }
-        MQTTSocket.prototype.connect = function (host, port, clientId, username, password, options) {
-            var _this = this;
-            if (username === void 0) { username = ''; }
-            if (password === void 0) { password = ''; }
-            if (options === void 0) { options = {}; }
-            if (this.isConnecting()) {
-                return;
-            }
-            this.printLog(" -----MQ---" + SocketTAG.SOCKET_CONNECTE_ING);
-            this.onConnecting && this.onConnecting();
-            this.__is_connect_ing__ = true;
-            if (window.hasOwnProperty("Paho")) {
-                this.__mq_socket__ = new window['Paho'].MQTT.Client(host, port, clientId);
-                this.__mq_socket__.onConnectionLost = function (error) {
-                    _this.printLog(" -----MQ---" + SocketTAG.SOCKET_CONNECT_CLOSDE, error);
-                    if (_this.isConnecting() || _this.isConnected()) {
-                        _this.__is_connect__ = false;
-                        _this.__is_connect_ing__ = false;
-                        _this.onClosed && _this.onClosed(error);
-                    }
-                };
-                this.__mq_socket__.onMessageArrived = function (msg) {
-                    _this.printLog(" -----MQ---" + SocketTAG.SOCKET_MESSAGE_RECEIVED, _this.formatMessage(msg));
-                    _this.onMessageReceived && _this.onMessageReceived(msg);
-                };
-                this.__mq_socket__.onMessageDelivered = function (msg) {
-                    _this.printLog(" -----MQ---" + SocketTAG.SOCKET_MESSAGE_DELIVERED, _this.formatMessage(msg));
-                    _this.onMessageDelivered && _this.onMessageDelivered(msg);
-                };
-                ;
-                this.__mq_socket__.connect(Object.assign({}, this.__default_options__, {
-                    userName: username,
-                    password: password,
-                    onSuccess: function () {
-                        _this.printLog(" -----MQ---" + SocketTAG.SOCKET_CONNECTED);
-                        _this.__is_connect__ = true;
-                        _this.onConnected && _this.onConnected();
-                    },
-                    onFailure: function (error) {
-                        _this.printLog(" -----MQ---" + SocketTAG.SOCKET_CONNECT_ERROR, error);
-                        _this.__is_connect__ = false;
-                        _this.__is_connect_ing__ = false;
-                        _this.onError && _this.onError(error);
-                    }
-                }, options));
-            }
-            else {
-                var error = "Cannot find mqtt client support.";
-                this.printLog(" -----MQ---" + SocketTAG.SOCKET_CONNECT_ERROR, error);
-                this.onError && this.onError(error);
-            }
-        };
-        MQTTSocket.prototype.disconnect = function () {
-            if (this.isConnecting() || this.isConnected()) {
-                this.printLog(" -----MQ---" + SocketTAG.SOCKET_CONNECT_CLOSDE);
-                this.__mq_socket__.disconnect();
-                this.__is_connect__ = false;
-                this.__is_connect_ing__ = false;
-                this.onClosed && this.onClosed();
-            }
-        };
-        MQTTSocket.prototype.isConnected = function () {
-            return this.__is_connect__;
-        };
-        MQTTSocket.prototype.isConnecting = function () {
-            return this.__is_connect_ing__;
-        };
-        MQTTSocket.prototype.publishMessage = function (topic, message, qos, retained) {
-            if (qos === void 0) { qos = 1; }
-            if (retained === void 0) { retained = false; }
-            if (!this.isConnected()) {
-                return;
-            }
-            if (window.hasOwnProperty('Paho')) {
-                var messagePayload = "";
-                if (typeof message === 'object') {
-                    messagePayload = JSON.stringify(message);
-                }
-                else if (typeof message === 'string') {
-                    messagePayload = message;
-                }
-                var mqttMessage = new window['Paho'].MQTT.Message(messagePayload);
-                mqttMessage.destinationName = topic;
-                mqttMessage.qos = qos;
-                mqttMessage.retained = retained;
-                this.printLog(" -----MQTT---" + SocketTAG.EVENT_SOCKET_MESSAGE_PUBLISH, this.formatMessage(mqttMessage));
-                this.__mq_socket__.send(mqttMessage);
-            }
-        };
-        MQTTSocket.prototype.formatMessage = function (message) {
-            return message.topic + " " + message.payloadString;
-        };
-        MQTTSocket.prototype.printLog = function (message) {
-            var optionalParams = [];
-            for (var _i = 1; _i < arguments.length; _i++) {
-                optionalParams[_i - 1] = arguments[_i];
-            }
-            (_a = Tape.Logger).log.apply(_a, [message].concat(optionalParams));
-            var _a;
-        };
-        return MQTTSocket;
-    }());
-    Tape.MQTTSocket = MQTTSocket;
-})(Tape || (Tape = {}));
-
-// =========================== //
-// tape mini.js
+// Tape mini.js
 // =========================== //
 var Tape;
 (function (Tape) {
@@ -1888,6 +849,1051 @@ var Tape;
         return MiniFunc;
     }());
     Tape.MiniFunc = MiniFunc;
+})(Tape || (Tape = {}));
+
+// =========================== //
+// Tape common.js
+// =========================== //
+var Tape;
+(function (Tape) {
+    /**
+     * 初始化
+     * @param width 宽度
+     * @param height 高度
+     * @param options 其他拓展
+     */
+    Tape.init = function (width, height) {
+        var options = [];
+        for (var _i = 2; _i < arguments.length; _i++) {
+            options[_i - 2] = arguments[_i];
+        }
+        if (Tape.isMiniGame()) {
+            Tape.MiniHandler.init.apply(Tape.MiniHandler, [width, height].concat(options));
+        }
+        else {
+            Tape.ConchHandler.init.apply(Tape.ConchHandler, [width, height].concat(options));
+        }
+    };
+    /**
+     * 退出
+     * @param success 成功回调
+     * @param fail 失败回调
+     * @param complete 完成回调，失败成功都会回调
+     */
+    Tape.exit = function () {
+        if (Tape.isMiniGame()) {
+            Tape.MiniHandler.exit();
+        }
+        else if (Tape.isConchApp()) {
+            Tape.ConchHandler.exit();
+        }
+    };
+})(Tape || (Tape = {}));
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+// =========================== //
+// Tape comps.js
+// =========================== //
+var Tape;
+(function (Tape) {
+    /**
+     * Dialog
+     */
+    var Dialog = /** @class */ (function () {
+        function Dialog() {
+        }
+        Dialog.instance = function () {
+            if (!this.__dialog_manager_instance__) {
+                this.__dialog_manager_instance__ = new Laya.DialogManager();
+            }
+            return this.__dialog_manager_instance__;
+        };
+        Dialog.showDialog = function (dialog, onOpened, onClosed) {
+            if (onOpened === void 0) { onOpened = null; }
+            if (onClosed === void 0) { onClosed = null; }
+            this.closeDialog();
+            dialog.onClosed = function (type) {
+                onClosed && onClosed(type);
+            };
+            dialog.onOpened = function () {
+                onOpened && onOpened();
+            };
+            this.instance().open(dialog, true, true);
+        };
+        Dialog.closeDialog = function () {
+            this.instance().closeAll();
+        };
+        Dialog.showLockView = function (lockView) {
+            this.instance().setLockView(lockView);
+            this.instance().lock(true);
+        };
+        Dialog.closeLockView = function () {
+            this.instance().lock(false);
+        };
+        Dialog.__dialog_manager_instance__ = null;
+        return Dialog;
+    }());
+    Tape.Dialog = Dialog;
+    /**
+     * Toast
+     */
+    var Toast = /** @class */ (function () {
+        function Toast() {
+        }
+        Toast.showToast = function (view, duration, previousHnadler) {
+            if (duration === void 0) { duration = 500; }
+            if (previousHnadler === void 0) { previousHnadler = null; }
+            if (view && !view.parent) {
+                var type = view.name || '_default_toast';
+                if (!this.__toast_group__.hasOwnProperty(type)) {
+                    this.__toast_group__[type] = new Array();
+                }
+                var list_1 = this.__toast_group__[type];
+                view.alpha = 0;
+                view.zOrder = 99999;
+                Laya.Tween.to(view, { alpha: 1 }, duration, Laya.Ease.quintOut, null, 0);
+                Laya.Tween.to(view, { alpha: 0 }, duration, Laya.Ease.quintOut, Laya.Handler.create(this, function () {
+                    list_1.splice(list_1.indexOf(view), 1);
+                    view.removeSelf();
+                }), duration);
+                Laya.stage.addChild(view);
+                for (var i in list_1) {
+                    if (list_1[i]) {
+                        if (previousHnadler) {
+                            previousHnadler(list_1[i]);
+                        }
+                        else {
+                            list_1[i].visible = false;
+                        }
+                    }
+                }
+                list_1.push(view);
+            }
+        };
+        Toast.__toast_group__ = {};
+        return Toast;
+    }());
+    Tape.Toast = Toast;
+    /**
+     * PropsComponent
+     */
+    var PropsComponent = /** @class */ (function (_super) {
+        __extends(PropsComponent, _super);
+        function PropsComponent(props) {
+            if (props === void 0) { props = {}; }
+            var _this = _super.call(this) || this;
+            _this.props = {};
+            _this.props = Object.assign({}, props);
+            return _this;
+        }
+        return PropsComponent;
+    }(Laya.Component));
+    Tape.PropsComponent = PropsComponent;
+    /**
+     * Activity
+     */
+    var Activity = /** @class */ (function (_super) {
+        __extends(Activity, _super);
+        function Activity(props) {
+            if (props === void 0) { props = {}; }
+            var _this = _super.call(this, props) || this;
+            // navigation
+            _this.routeName = "";
+            _this.routeKey = "";
+            _this.params = {};
+            // in or out
+            _this.inEaseDuration = 300;
+            _this.inEase = null;
+            _this.inEaseFromProps = null;
+            _this.inEaseToProps = null;
+            _this.outEaseDuration = 300;
+            _this.outEase = null;
+            _this.outEaseFromProps = null;
+            _this.outEaseToProps = null;
+            _this.params = Object.assign({}, props['params']);
+            _this.routeName = props['routeName'] || "";
+            _this.routeKey = props['routeKey'] || "";
+            return _this;
+        }
+        Activity.ROUTE = function (options) {
+            if (options === void 0) { options = {}; }
+            return Object.assign({}, options, {
+                activity: this
+            });
+        };
+        ;
+        ///////////////////////
+        /// LifeCycle
+        ///////////////////////
+        Activity.prototype.onCreate = function () {
+        };
+        Activity.prototype.onResume = function () {
+        };
+        Activity.prototype.onPause = function () {
+        };
+        Activity.prototype.onDestroy = function () {
+        };
+        Activity.prototype.onNextProgress = function (progress) {
+        };
+        ///////////////////////
+        /// Navigator
+        ///////////////////////
+        Activity.prototype.redirectTo = function (name, params) {
+            var _this = this;
+            if (params === void 0) { params = {}; }
+            return this.navigate(name, params, function () {
+                _this.back();
+            });
+        };
+        Activity.prototype.navigate = function (name, params, action) {
+            if (params === void 0) { params = {}; }
+            if (action === void 0) { action = null; }
+            if (this.props.hasOwnProperty('navigation')) {
+                return this.props['navigation'].navigate(name, params, action);
+            }
+            return false;
+        };
+        Activity.prototype.deeplink = function (url, action) {
+            if (action === void 0) { action = null; }
+            if (this.props.hasOwnProperty('navigation')) {
+                return this.props['navigation'].deeplink(url, action);
+            }
+            return false;
+        };
+        Activity.prototype.back = function () {
+            if (this.props.hasOwnProperty('navigation')) {
+                this.props['navigation'].finish(this.routeName, this.routeKey);
+            }
+        };
+        Activity.prototype.finish = function (name) {
+            if (this.props.hasOwnProperty('navigation')) {
+                this.props['navigation'].finish(name);
+            }
+        };
+        Activity.prototype.pop = function (number) {
+            if (this.props.hasOwnProperty('navigation')) {
+                this.props['navigation'].pop(number);
+            }
+        };
+        Activity.prototype.popToTop = function () {
+            if (this.props.hasOwnProperty('navigation')) {
+                this.props['navigation'].popToTop();
+            }
+        };
+        return Activity;
+    }(PropsComponent));
+    Tape.Activity = Activity;
+})(Tape || (Tape = {}));
+
+// =========================== //
+// Tape effect.js
+// =========================== //
+var Tape;
+(function (Tape) {
+    var Effect = /** @class */ (function () {
+        function Effect() {
+        }
+        Effect.clickEffect = function (btnView, click) {
+            if (btnView && btnView['on']) {
+                btnView.on("mouseover", this, function () {
+                    btnView.y += 5;
+                });
+                btnView.on("mouseout", this, function () {
+                    btnView.y -= 5;
+                });
+                btnView.on("click", this, function () {
+                    click && click();
+                });
+            }
+        };
+        return Effect;
+    }());
+    Tape.Effect = Effect;
+})(Tape || (Tape = {}));
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+// =========================== //
+// Tape navigation.js
+// =========================== //
+var Tape;
+(function (Tape) {
+    /**
+     * NavigationLoader
+     */
+    var NavigationLoader = /** @class */ (function (_super) {
+        __extends(NavigationLoader, _super);
+        function NavigationLoader(activity, routeName, routeKey, props, res, loaded, onLoadProgress) {
+            if (props === void 0) { props = {}; }
+            if (res === void 0) { res = []; }
+            if (loaded === void 0) { loaded = null; }
+            if (onLoadProgress === void 0) { onLoadProgress = null; }
+            var _this = _super.call(this) || this;
+            _this.routeName = "";
+            _this.routeKey = "";
+            _this.routeRes = [];
+            _this.routeActivity = null;
+            _this.routeName = routeName;
+            _this.routeKey = routeKey;
+            _this.routeRes = res;
+            if (res != null && res.length > 0) {
+                Laya.loader.load(res, Laya.Handler.create(_this, function () {
+                    var act = Laya.Pool.getItemByCreateFun(_this.routeName, function () {
+                        return new activity(props);
+                    });
+                    _this.create(act);
+                    if (loaded) {
+                        loaded(_this);
+                    }
+                }), Laya.Handler.create(_this, function (progress) {
+                    if (onLoadProgress) {
+                        onLoadProgress(_this, progress);
+                    }
+                }, null, false));
+            }
+            else {
+                var act = Laya.Pool.getItemByCreateFun(_this.routeName, function () {
+                    return new activity(props);
+                });
+                _this.create(act);
+                if (loaded) {
+                    loaded(_this);
+                }
+            }
+            return _this;
+        }
+        NavigationLoader.prototype.create = function (routeActivity) {
+            this.routeActivity = routeActivity;
+            this.addChild(this.routeActivity);
+            this.routeActivity.onCreate && this.routeActivity.onCreate();
+        };
+        NavigationLoader.prototype.nextProgress = function (progress) {
+            this.routeActivity.onNextProgress && this.routeActivity.onNextProgress(progress);
+        };
+        NavigationLoader.prototype.postEvent = function (eventName, data) {
+            this.event(eventName, data);
+        };
+        NavigationLoader.prototype.exit = function (anim, callback) {
+            var _this = this;
+            var ease = this.routeActivity.outEase || Laya.Ease.linearIn;
+            var duration = this.routeActivity.outEaseDuration || 300;
+            var fromProps = this.routeActivity.outEaseFromProps || { alpha: 1 };
+            var toProps = this.routeActivity.outEaseToProps || { alpha: 0 };
+            if (anim && ease) {
+                Object.assign(this, fromProps);
+                Laya.Tween.to(this, toProps, duration, ease, Laya.Handler.create(this, function () {
+                    _this.removeSelf();
+                    _this.routeActivity.onDestroy && _this.routeActivity.onDestroy();
+                    callback && callback();
+                    Laya.Pool.clearBySign(_this.routeName);
+                }));
+            }
+            else {
+                this.removeSelf();
+                this.routeActivity.onDestroy && this.routeActivity.onDestroy();
+                callback && callback();
+                Laya.Pool.clearBySign(this.routeName);
+            }
+        };
+        NavigationLoader.prototype.show = function (anim, callback) {
+            var ease = this.routeActivity.inEase || Laya.Ease.linearIn;
+            var duration = this.routeActivity.inEaseDuration || 300;
+            var fromProps = this.routeActivity.inEaseFromProps || { alpha: 0 };
+            var toProps = this.routeActivity.inEaseToProps || { alpha: 1 };
+            if (anim && ease) {
+                Object.assign(this, fromProps);
+                this.visible = true;
+                this.routeActivity.onResume && this.routeActivity.onResume();
+                Laya.Tween.to(this, toProps, duration, ease, Laya.Handler.create(this, function () {
+                    callback && callback();
+                }));
+            }
+            else {
+                this.visible = true;
+                this.routeActivity.onResume && this.routeActivity.onResume();
+                callback && callback();
+            }
+        };
+        NavigationLoader.prototype.hide = function () {
+            this.visible = false;
+            this.routeActivity.onPause && this.routeActivity.onPause();
+        };
+        return NavigationLoader;
+    }(Tape.PropsComponent));
+    /**
+     * NavigationStack
+     */
+    var NavigationStack = /** @class */ (function () {
+        function NavigationStack(navigator) {
+            this.__navigator__ = null;
+            this.__init_name__ = "";
+            this.__routes__ = {};
+            this.__static_res__ = [];
+            this.__stacks__ = [];
+            this.__loaded_handler__ = null;
+            this.__load_progress_handler__ = null;
+            this.__uri_prefix__ = "://";
+            this.__file_version__ = null;
+            this.__loading__ = false;
+            this.__navigator__ = navigator;
+            this.__loaded_handler__ = navigator.props['navigation']['onLoaded'];
+            this.__load_progress_handler__ = navigator.props['navigation']['onLoadProgress'];
+            this.__routes__ = navigator.props['navigation']['routes'];
+            this.__init_name__ = navigator.props['navigation']['initName'];
+            this.__static_res__ = navigator.props['navigation']['staticRes'] || [];
+            this.__uri_prefix__ = navigator.props['navigation']['uriPrefix'] || "://";
+            this.__file_version__ = navigator.props['navigation']['fileVersion'];
+        }
+        NavigationStack.prototype.initPage = function () {
+            var _this = this;
+            if (this.__file_version__) {
+                Laya.ResourceVersion.type = Laya.ResourceVersion.FILENAME_VERSION;
+                Laya.ResourceVersion.enable(this.__file_version__, Laya.Handler.create(this, function () {
+                    _this.navigate(_this.__init_name__);
+                }));
+            }
+            else {
+                this.navigate(this.__init_name__);
+            }
+        };
+        /**
+         * deeplink
+         */
+        NavigationStack.prototype.deeplink = function (url, action) {
+            if (action === void 0) { action = null; }
+            var params = {};
+            var delimiter = this.__uri_prefix__ || '://';
+            var urlSplit = url.split(delimiter);
+            var path = '/';
+            if (urlSplit.length > 1) {
+                var pathSplit = urlSplit[1].split('?');
+                path = pathSplit[0];
+                if (pathSplit.length > 1) {
+                    var paramsSplit = pathSplit[1].split('&');
+                    paramsSplit.forEach(function (value) {
+                        var param = value.split('=');
+                        if (param.length === 2) {
+                            Object.assign(params, (_a = {},
+                                _a[param[0]] = param[1],
+                                _a));
+                        }
+                        var _a;
+                    });
+                }
+            }
+            else {
+                path = url;
+            }
+            return this.navigate(path, params, action);
+        };
+        /**
+         * navigate
+         */
+        NavigationStack.prototype.navigate = function (name, params, action) {
+            var _this = this;
+            if (params === void 0) { params = {}; }
+            if (action === void 0) { action = null; }
+            if (this.__routes__
+                && this.__routes__.hasOwnProperty(name)
+                && this.__routes__[name].hasOwnProperty('activity')) {
+                var route = this.__routes__[name];
+                var activity = route['activity'];
+                var resArray_1 = [];
+                if (this.__static_res__) {
+                    this.__static_res__.forEach(function (res) {
+                        resArray_1.push(res);
+                    });
+                }
+                if (route.hasOwnProperty('res')
+                    && typeof route['res'] === 'object'
+                    && route['res'].length > 0) {
+                    route['res'].forEach(function (res) {
+                        resArray_1.push(res);
+                    });
+                }
+                var paramsObject = {};
+                if (route.hasOwnProperty('res')
+                    && route['res'].length > 0) {
+                    route['res'].forEach(function (res) {
+                        resArray_1.push(res);
+                    });
+                }
+                if (route.hasOwnProperty('params')) {
+                    Object.assign(paramsObject, route['params']);
+                }
+                Object.assign(paramsObject, params);
+                this.__loading__ = true;
+                var key = Tape.UUID.randomUUID();
+                new NavigationLoader(activity, name, key, {
+                    navigation: this,
+                    routeName: name,
+                    routeKey: key,
+                    params: paramsObject
+                }, resArray_1, function (loader) {
+                    _this.__loading__ = false;
+                    _this.__navigator__.addChild(loader);
+                    _this.putStack(loader, function () {
+                        action && action(true);
+                    });
+                    _this.__loaded_handler__ && _this.__loaded_handler__(loader);
+                }, function (loader, progress) {
+                    if (_this.__loading__) {
+                        var stack = _this.lastStack();
+                        stack && stack.nextProgress(progress);
+                    }
+                    _this.__load_progress_handler__ && _this.__load_progress_handler__(loader, progress);
+                });
+                return true;
+            }
+            else {
+                action && action(false);
+                return false;
+            }
+        };
+        /**
+         * finish
+         */
+        NavigationStack.prototype.finish = function (name, key) {
+            if (key === void 0) { key = null; }
+            this.finishStack(name, key);
+        };
+        /**
+         * popToTop
+         */
+        NavigationStack.prototype.popToTop = function () {
+            this.pop(this.__stacks__.length);
+        };
+        /**
+         * pop
+         */
+        NavigationStack.prototype.pop = function (number) {
+            if (number === void 0) { number = 1; }
+            this.popStack(number);
+        };
+        NavigationStack.prototype.lenStack = function () {
+            return this.__stacks__.length;
+        };
+        NavigationStack.prototype.lastStack = function () {
+            var len = this.lenStack();
+            if (len > 0) {
+                return this.__stacks__[len - 1];
+            }
+            return null;
+        };
+        NavigationStack.prototype.putStack = function (stack, callback) {
+            var _this = this;
+            this.__stacks__.push(stack);
+            this.showStack(true, function () {
+                _this.hideStack(1);
+                callback && callback();
+            });
+        };
+        NavigationStack.prototype.popStack = function (count) {
+            if (this.lenStack() > 1 && count > 0) {
+                this.hideStack(0);
+                for (var i = 0; i < count; i++) {
+                    if (this.lenStack() > 1) {
+                        this.__stacks__.pop().exit(false, null);
+                    }
+                }
+                this.showStack(false, null);
+            }
+        };
+        NavigationStack.prototype.finishStack = function (name, key) {
+            var _this = this;
+            if (key === void 0) { key = null; }
+            var len = this.lenStack();
+            if (len > 1) {
+                var targetIndexs_1 = [];
+                for (var i = 0; i < len; i++) {
+                    var stack = this.__stacks__[i];
+                    if (stack.routeName === name) {
+                        var flag = true;
+                        if (key) {
+                            flag = stack.routeKey === key;
+                        }
+                        if (flag && targetIndexs_1.length < len - 1) {
+                            targetIndexs_1.push(i);
+                        }
+                    }
+                }
+                if (targetIndexs_1.length > 0) {
+                    var first_1 = targetIndexs_1.pop();
+                    var flag_1 = first_1 === len - 1;
+                    if (flag_1) {
+                        this.showStack(false, null, 1);
+                    }
+                    var slice = this.__stacks__.splice(first_1, 1);
+                    slice.forEach(function (stack) {
+                        stack.exit(true, function () {
+                            while (targetIndexs_1.length > 0) {
+                                first_1 = targetIndexs_1.pop();
+                                var slice_1 = _this.__stacks__.splice(first_1, 1);
+                                slice_1.forEach(function (stack) {
+                                    stack.exit(targetIndexs_1.length === 1, null);
+                                });
+                            }
+                            if (flag_1) {
+                                _this.showStack(false, null);
+                            }
+                        });
+                    });
+                }
+            }
+        };
+        NavigationStack.prototype.hideStack = function (index) {
+            var len = this.lenStack();
+            if (len - index > 0) {
+                this.__stacks__[len - 1 - index].hide();
+            }
+        };
+        NavigationStack.prototype.showStack = function (anim, callback, index) {
+            if (index === void 0) { index = 0; }
+            var len = this.lenStack();
+            if (len - index > 0) {
+                this.__stacks__[len - 1 - index].show(anim && len > 1, callback);
+            }
+        };
+        return NavigationStack;
+    }());
+    /**
+     * StackNavigator
+     */
+    var StackNavigator = /** @class */ (function (_super) {
+        __extends(StackNavigator, _super);
+        function StackNavigator(props) {
+            var _this = _super.call(this, props) || this;
+            _this.__navigator__ = null;
+            _this.__navigator__ = new NavigationStack(_this);
+            _this.__navigator__.initPage();
+            return _this;
+        }
+        return StackNavigator;
+    }(Tape.PropsComponent));
+    /**
+     * createNavigator
+     * @param routes routes
+     * @param initName initName
+     * @param options options
+     */
+    Tape.createNavigator = function (routes, initName, options) {
+        if (options === void 0) { options = {}; }
+        console.log('init Navigator, Env: ' + Tape.Build.getEnv());
+        return new StackNavigator({
+            navigation: {
+                routes: routes,
+                initName: initName,
+                staticRes: options['res'],
+                fileVersion: options['fileVersion'] || 'version.json',
+                uriPrefix: options['uriPrefix'],
+                onLoaded: options['onLoaded'],
+                onLoadProgress: options['onLoadProgress']
+            }
+        });
+    };
+})(Tape || (Tape = {}));
+
+// =========================== //
+// Tape media.js
+// =========================== //
+var Tape;
+(function (Tape) {
+    var fuckWXAudioPlay = function (callback) {
+        var wsb = window;
+        if (wsb['WeixinJSBridge']) {
+            try {
+                wsb['WeixinJSBridge'].invoke("getNetworkType", {}, function () {
+                    callback && callback();
+                });
+            }
+            catch (e) {
+                callback && callback();
+            }
+        }
+        else {
+            callback && callback();
+        }
+    };
+    /**
+     * BackgroundMusic
+     */
+    var BackgroundMusic = /** @class */ (function () {
+        function BackgroundMusic() {
+        }
+        BackgroundMusic.play = function (url, loops, complete) {
+            var _this = this;
+            if (loops === void 0) { loops = 1; }
+            if (complete === void 0) { complete = null; }
+            this.__on_complete__ = complete;
+            if (this.__audio_url__ !== url) {
+                this.__audio_url__ = url;
+                this.stop();
+            }
+            fuckWXAudioPlay(function () {
+                if (_this.__audio_chancel__) {
+                    if (!_this.__is_playing__) {
+                        _this.__audio_chancel__.play();
+                    }
+                    return;
+                }
+                _this.__is_playing__ = true;
+                _this.__audio_chancel__ = Laya.SoundManager.playMusic(_this.__audio_url__, loops, Laya.Handler.create(_this, function () {
+                    _this.__is_playing__ = false;
+                    _this.__audio_chancel__ = null;
+                    _this.__on_complete__ && _this.__on_complete__();
+                }));
+            });
+        };
+        BackgroundMusic.stop = function () {
+            if (this.__audio_chancel__) {
+                this.__audio_chancel__.stop();
+                this.__audio_chancel__ = null;
+                this.__is_playing__ = false;
+            }
+        };
+        BackgroundMusic.pause = function () {
+            if (this.__audio_chancel__) {
+                this.__audio_chancel__.pause();
+                this.__is_playing__ = false;
+            }
+        };
+        BackgroundMusic.__audio_url__ = "";
+        BackgroundMusic.__audio_chancel__ = null;
+        BackgroundMusic.__is_playing__ = false;
+        BackgroundMusic.__on_complete__ = null;
+        return BackgroundMusic;
+    }());
+    Tape.BackgroundMusic = BackgroundMusic;
+    /**
+     * Audio
+     */
+    var Audio = /** @class */ (function () {
+        function Audio(url) {
+            this.__audio_url__ = "";
+            this.__audio_chancel__ = null;
+            this.__is_playing__ = false;
+            this.__on_complete__ = null;
+            this.__audio_url__ = url;
+        }
+        Audio.config = function (dir, ext, conchDir, conchExt) {
+            this.soundWebDir = dir || "";
+            this.soundWebExt = ext || "";
+            this.soundConchDir = conchDir || "";
+            this.soundConchExt = conchExt || "";
+        };
+        Audio.play = function (url, loops, complete) {
+            if (loops === void 0) { loops = 1; }
+            if (complete === void 0) { complete = null; }
+            var audio = new Audio(url);
+            audio.play(loops, complete);
+            return audio;
+        };
+        Audio.prototype.play = function (loops, complete) {
+            var _this = this;
+            if (loops === void 0) { loops = 1; }
+            if (complete === void 0) { complete = null; }
+            this.__on_complete__ = complete;
+            fuckWXAudioPlay(function () {
+                if (_this.__audio_chancel__) {
+                    if (!_this.__is_playing__) {
+                        _this.__audio_chancel__.play();
+                    }
+                    return;
+                }
+                _this.__is_playing__ = true;
+                var soundUrl = "";
+                if (Tape.isConchApp()) {
+                    soundUrl = Audio.soundConchDir + _this.__audio_url__ + Audio.soundConchExt;
+                    var ext = Laya.Utils.getFileExtension(soundUrl);
+                    if (!Audio.showErrorAlert && ext != "wav" && ext != "ogg") {
+                        return;
+                    }
+                }
+                else {
+                    soundUrl = Audio.soundWebDir + _this.__audio_url__ + Audio.soundWebExt;
+                }
+                _this.__audio_chancel__ = Laya.SoundManager.playSound(soundUrl, loops, Laya.Handler.create(_this, function () {
+                    _this.__is_playing__ = false;
+                    _this.__on_complete__ && _this.__on_complete__();
+                }));
+            });
+        };
+        Audio.prototype.stop = function () {
+            if (this.__audio_chancel__) {
+                this.__audio_chancel__.stop();
+                this.__audio_chancel__ = null;
+                this.__is_playing__ = false;
+            }
+        };
+        Audio.prototype.pause = function () {
+            if (this.__audio_chancel__) {
+                this.__audio_chancel__.pause();
+                this.__is_playing__ = false;
+            }
+        };
+        Audio.showErrorAlert = Tape.Build.isDebug();
+        Audio.soundWebDir = "";
+        Audio.soundWebExt = "";
+        Audio.soundConchDir = "";
+        Audio.soundConchExt = "";
+        return Audio;
+    }());
+    Tape.Audio = Audio;
+})(Tape || (Tape = {}));
+
+// =========================== //
+// Tape socket.js
+// =========================== //
+var Tape;
+(function (Tape) {
+    /**
+     * Socket TAG
+     */
+    var SocketTAG = /** @class */ (function () {
+        function SocketTAG() {
+        }
+        // connecting
+        SocketTAG.SOCKET_CONNECTE_ING = "connect_ing";
+        // connected
+        SocketTAG.SOCKET_CONNECTED = "connected";
+        // connect closed
+        SocketTAG.SOCKET_CONNECT_CLOSDE = "connect_closed";
+        // connect error
+        SocketTAG.SOCKET_CONNECT_ERROR = "connect_error";
+        // connect reveived
+        SocketTAG.SOCKET_MESSAGE_RECEIVED = "message_received";
+        // connect delivered
+        SocketTAG.SOCKET_MESSAGE_DELIVERED = "message_delivered";
+        // connect publish
+        SocketTAG.EVENT_SOCKET_MESSAGE_PUBLISH = "message_publish";
+        return SocketTAG;
+    }());
+    /**
+     * WEB Socket
+     */
+    var WebSocket = /** @class */ (function () {
+        function WebSocket() {
+            this.__web_socket__ = null;
+            this.onConnecting = null;
+            this.onConnected = null;
+            this.onClosed = null;
+            this.onError = null;
+            this.onMessageReceived = null;
+        }
+        WebSocket.prototype.connect = function (socketUrl) {
+            var _this = this;
+            if (this.isConnecting()) {
+                return;
+            }
+            this.printLog(" -----WS---" + SocketTAG.SOCKET_CONNECTE_ING);
+            this.onConnecting && this.onConnecting();
+            this.__is_connect_ing__ = true;
+            this.__web_socket__ = new Laya.Socket();
+            this.__web_socket__.connectByUrl(socketUrl);
+            this.__web_socket__.on(Laya.Event.OPEN, this, function () {
+                _this.printLog(" -----WS---" + SocketTAG.SOCKET_CONNECTED);
+                _this.__is_connect__ = true;
+                _this.onConnected && _this.onConnected();
+            });
+            this.__web_socket__.on(Laya.Event.CLOSE, this, function (error) {
+                if (_this.isConnecting() || _this.isConnected()) {
+                    _this.printLog(" -----WS---" + SocketTAG.SOCKET_CONNECT_CLOSDE, error);
+                    _this.__is_connect__ = false;
+                    _this.__is_connect_ing__ = false;
+                    _this.onClosed && _this.onClosed(error);
+                }
+            });
+            this.__web_socket__.on(Laya.Event.ERROR, this, function (error) {
+                _this.printLog(" -----WS---" + SocketTAG.SOCKET_CONNECT_ERROR, error);
+                _this.__is_connect__ = false;
+                _this.__is_connect_ing__ = false;
+                _this.onError && _this.onError(error);
+            });
+            this.__web_socket__.on(Laya.Event.MESSAGE, this, function (msg) {
+                _this.printLog(" -----WS---" + SocketTAG.SOCKET_MESSAGE_RECEIVED, msg);
+                _this.onMessageReceived && _this.onMessageReceived(msg);
+            });
+        };
+        WebSocket.prototype.disconnect = function () {
+            if (this.isConnecting() || this.isConnected()) {
+                this.printLog(" -----WS---" + SocketTAG.SOCKET_CONNECT_CLOSDE);
+                this.__web_socket__.close();
+                this.__is_connect__ = false;
+                this.__is_connect_ing__ = false;
+                this.onClosed && this.onClosed();
+            }
+        };
+        WebSocket.prototype.isConnected = function () {
+            return this.__is_connect__;
+        };
+        WebSocket.prototype.isConnecting = function () {
+            return this.__is_connect_ing__;
+        };
+        WebSocket.prototype.publishMessage = function (message) {
+            if (!this.isConnected()) {
+                return;
+            }
+            var messagePayload = "";
+            if (typeof message === 'object') {
+                messagePayload = JSON.stringify(message);
+            }
+            else if (typeof message === 'string') {
+                messagePayload = message;
+            }
+            this.printLog(" -----WS---" + SocketTAG.EVENT_SOCKET_MESSAGE_PUBLISH, messagePayload);
+            this.__web_socket__.send(messagePayload);
+        };
+        WebSocket.prototype.printLog = function (message) {
+            var optionalParams = [];
+            for (var _i = 1; _i < arguments.length; _i++) {
+                optionalParams[_i - 1] = arguments[_i];
+            }
+            (_a = Tape.Logger).log.apply(_a, [message].concat(optionalParams));
+            var _a;
+        };
+        return WebSocket;
+    }());
+    Tape.WebSocket = WebSocket;
+    /**
+     *  MQTT Socket
+     */
+    var MQTTSocket = /** @class */ (function () {
+        function MQTTSocket() {
+            this.__mq_socket__ = null;
+            this.__default_options__ = {
+                timeout: 3,
+                keepAliveInterval: 30,
+                cleanSession: true,
+                useSSL: false,
+                reconnect: false
+            };
+            this.onConnecting = null;
+            this.onConnected = null;
+            this.onClosed = null;
+            this.onError = null;
+            this.onMessageReceived = null;
+            this.onMessageDelivered = null;
+        }
+        MQTTSocket.prototype.connect = function (host, port, clientId, username, password, options) {
+            var _this = this;
+            if (username === void 0) { username = ''; }
+            if (password === void 0) { password = ''; }
+            if (options === void 0) { options = {}; }
+            if (this.isConnecting()) {
+                return;
+            }
+            this.printLog(" -----MQ---" + SocketTAG.SOCKET_CONNECTE_ING);
+            this.onConnecting && this.onConnecting();
+            this.__is_connect_ing__ = true;
+            if (window.hasOwnProperty("Paho")) {
+                this.__mq_socket__ = new window['Paho'].MQTT.Client(host, port, clientId);
+                this.__mq_socket__.onConnectionLost = function (error) {
+                    _this.printLog(" -----MQ---" + SocketTAG.SOCKET_CONNECT_CLOSDE, error);
+                    if (_this.isConnecting() || _this.isConnected()) {
+                        _this.__is_connect__ = false;
+                        _this.__is_connect_ing__ = false;
+                        _this.onClosed && _this.onClosed(error);
+                    }
+                };
+                this.__mq_socket__.onMessageArrived = function (msg) {
+                    _this.printLog(" -----MQ---" + SocketTAG.SOCKET_MESSAGE_RECEIVED, _this.formatMessage(msg));
+                    _this.onMessageReceived && _this.onMessageReceived(msg);
+                };
+                this.__mq_socket__.onMessageDelivered = function (msg) {
+                    _this.printLog(" -----MQ---" + SocketTAG.SOCKET_MESSAGE_DELIVERED, _this.formatMessage(msg));
+                    _this.onMessageDelivered && _this.onMessageDelivered(msg);
+                };
+                ;
+                this.__mq_socket__.connect(Object.assign({}, this.__default_options__, {
+                    userName: username,
+                    password: password,
+                    onSuccess: function () {
+                        _this.printLog(" -----MQ---" + SocketTAG.SOCKET_CONNECTED);
+                        _this.__is_connect__ = true;
+                        _this.onConnected && _this.onConnected();
+                    },
+                    onFailure: function (error) {
+                        _this.printLog(" -----MQ---" + SocketTAG.SOCKET_CONNECT_ERROR, error);
+                        _this.__is_connect__ = false;
+                        _this.__is_connect_ing__ = false;
+                        _this.onError && _this.onError(error);
+                    }
+                }, options));
+            }
+            else {
+                var error = "Cannot find mqtt client support.";
+                this.printLog(" -----MQ---" + SocketTAG.SOCKET_CONNECT_ERROR, error);
+                this.onError && this.onError(error);
+            }
+        };
+        MQTTSocket.prototype.disconnect = function () {
+            if (this.isConnecting() || this.isConnected()) {
+                this.printLog(" -----MQ---" + SocketTAG.SOCKET_CONNECT_CLOSDE);
+                this.__mq_socket__.disconnect();
+                this.__is_connect__ = false;
+                this.__is_connect_ing__ = false;
+                this.onClosed && this.onClosed();
+            }
+        };
+        MQTTSocket.prototype.isConnected = function () {
+            return this.__is_connect__;
+        };
+        MQTTSocket.prototype.isConnecting = function () {
+            return this.__is_connect_ing__;
+        };
+        MQTTSocket.prototype.publishMessage = function (topic, message, qos, retained) {
+            if (qos === void 0) { qos = 1; }
+            if (retained === void 0) { retained = false; }
+            if (!this.isConnected()) {
+                return;
+            }
+            if (window.hasOwnProperty('Paho')) {
+                var messagePayload = "";
+                if (typeof message === 'object') {
+                    messagePayload = JSON.stringify(message);
+                }
+                else if (typeof message === 'string') {
+                    messagePayload = message;
+                }
+                var mqttMessage = new window['Paho'].MQTT.Message(messagePayload);
+                mqttMessage.destinationName = topic;
+                mqttMessage.qos = qos;
+                mqttMessage.retained = retained;
+                this.printLog(" -----MQTT---" + SocketTAG.EVENT_SOCKET_MESSAGE_PUBLISH, this.formatMessage(mqttMessage));
+                this.__mq_socket__.send(mqttMessage);
+            }
+        };
+        MQTTSocket.prototype.formatMessage = function (message) {
+            return message.topic + " " + message.payloadString;
+        };
+        MQTTSocket.prototype.printLog = function (message) {
+            var optionalParams = [];
+            for (var _i = 1; _i < arguments.length; _i++) {
+                optionalParams[_i - 1] = arguments[_i];
+            }
+            (_a = Tape.Logger).log.apply(_a, [message].concat(optionalParams));
+            var _a;
+        };
+        return MQTTSocket;
+    }());
+    Tape.MQTTSocket = MQTTSocket;
 })(Tape || (Tape = {}));
 
 /*******************************************************************************

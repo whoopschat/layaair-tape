@@ -1,3 +1,6 @@
+// =========================== //
+// Tape effect.js
+// =========================== //
 module Tape {
 
     export class Effect {

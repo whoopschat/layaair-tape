@@ -1,8 +1,8 @@
 // =========================== //
-// tape market.js
+// Tape conch.js
 // =========================== //
 module Tape {
-
+    
     export const isConchApp = (): boolean => {
         return window.hasOwnProperty('conch');
     };
