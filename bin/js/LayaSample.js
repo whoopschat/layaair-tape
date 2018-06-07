@@ -2,7 +2,6 @@
 var GameMain = /** @class */ (function () {
     function GameMain() {
         Tape.init(600, 400);
-        Tape.MiniFunc.showShareMenu({});
         var routes = {
             "Main": App.Main.ROUTE({
                 res: [

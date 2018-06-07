@@ -1,23 +1,33 @@
 {
-  "name": "build-package-js",
-  "version": "1.0.0",
+  "name": "layaair-tape",
+  "version": "0.0.2",
+  "description": "A layaair game library",
+  "author": "liangmayong",
+  "license": "ISC",
+  "engines": {
+    "node": ">= 0.10"
+  },
   "scripts": {
     "dev": "http-server ./",
     "clean": "gulp build:clean",
     "tsc": "gulp build:tsc",
     "build": "gulp build"
   },
-  "license": "UNLICENSED",
+  "files": [
+    "dist"
+  ],
   "dependencies": {},
   "devDependencies": {
     "del": "*",
     "gulp": "^4.0.0",
-    "merge-stream": "^1.0.1",
-    "array-union": "^1.0.2",
     "typescript": "^2.8.1",
     "gulp-concat": "^2.6.1",
     "gulp-typescript": "^4.0.2",
     "http-server": "*"
   },
-  "description": ""
+  "keywords": [
+    "layaair",
+    "tape",
+    "layaair-tape"
+  ]
 }

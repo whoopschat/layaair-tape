@@ -1,26 +1,13 @@
 # layaair-tape
-> A layaair game library for ts 
+> A layaair game library
 
-* github: [layaair-tape](https://github.com/whoopschat/layaair-tape)
+Install
+```
+> npm install -g layaair-tape
+```
 
-## Func
-* isMiniGame
-* isConchApp
-* init
-* exit
-* createNavigator
-
-## Class
-* Dialog
-* Toast
-* Activity
-* Build
-* Bus
-* UUID
-* Task
-* BackgroundMusic
-* Audio
-* WebSocket
-* MQTTSocket
-
-## Author
+Use
+```html
+<!-- Tape Library -->
+<script src="../node_modules/layaair-tape/dist/tape.js"></script>
+```

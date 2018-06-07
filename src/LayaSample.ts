@@ -2,9 +2,6 @@
 class GameMain {
     constructor() {
         Tape.init(600, 400);
-        Tape.MiniFunc.showShareMenu({
-
-        });
         let routes = {
             "Main": App.Main.ROUTE({
                 res: [

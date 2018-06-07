@@ -85,15 +85,15 @@ module App {
                     text: '授权并登录',
                     style: {
                         width: 300,
-                        height: 100
+                        height: 80
                     },
-                    onGetUserInfo: (res) => {
+                    success: (res) => {
                         console.log("获取用户信息成功", res);
                         this.navigate("Main", res, () => {
                             this.back();
                         });
                     },
-                    onFailed: (res) => {
+                    fail: (res) => {
                         console.log("获取用户信息失败", res);
                     }
                 });

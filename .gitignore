@@ -7,6 +7,7 @@ yarn.lock
 package-lock.json
 
 build/
+bin/js/
 .idea
 
 # node.js

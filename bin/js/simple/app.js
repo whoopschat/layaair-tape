@@ -100,15 +100,15 @@ var App;
                     text: '授权并登录',
                     style: {
                         width: 300,
-                        height: 100
+                        height: 80
                     },
-                    onGetUserInfo: function (res) {
+                    success: function (res) {
                         console.log("获取用户信息成功", res);
                         _this.navigate("Main", res, function () {
                             _this.back();
                         });
                     },
-                    onFailed: function (res) {
+                    fail: function (res) {
                         console.log("获取用户信息失败", res);
                     }
                 });

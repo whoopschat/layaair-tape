@@ -1,14 +1,11 @@
 var del = require('del');
-var merge = require('merge-stream');
 var gulp = require('gulp');
 var gulpConcat = require('gulp-concat');
 var gulpTypescript = require("gulp-typescript");
 
 var moduleName = 'tape';
-var srcDir = './src/';
-var includePath = srcDir + '/include/';
-var inputJsPath = srcDir + '/bin/js/';
-var typesConfig = srcDir + '/tsconfig.json';
+var inputJsPath = './bin/js/';
+var typesConfig = './tsconfig.json';
 var outputPath = './dist/';
 
 gulp.task('task:clean', del.bind(null, [outputPath + '*', inputJsPath + '*']));
@@ -16,8 +13,8 @@ gulp.task('task:clean', del.bind(null, [outputPath + '*', inputJsPath + '*']));
 gulp.task("task:tsc", function () {
     var tsProject = gulpTypescript.createProject(typesConfig);
     return tsProject.src()
-    .pipe(tsProject())
-    .js.pipe(gulp.dest(inputJsPath));
+        .pipe(tsProject())
+        .js.pipe(gulp.dest(inputJsPath));
 });
 
 var packageList = [
@@ -35,16 +32,9 @@ var packageList = [
 ];
 
 gulp.task('task:bundle', function () {
-    var bundleTapeJs = gulp.src(packageList)
-    .pipe(gulpConcat(moduleName + '.js'))
-    .pipe(gulp.dest(outputPath));
-    var copyInclude = gulp.src([includePath + "**/*"])
-    .pipe(gulp.dest(outputPath));
-    var tasks = [
-        copyInclude,
-        bundleTapeJs
-    ];
-    return merge(tasks);
+    return gulp.src(packageList)
+        .pipe(gulpConcat(moduleName + '.js'))
+        .pipe(gulp.dest(outputPath));
 });
 
 gulp.task('build',
