@@ -370,6 +370,11 @@ var Tape;
             Laya.stage.scaleMode = Laya.Stage.SCALE_EXACTFIT;
             Laya.stage.alignV = Laya.Stage.ALIGN_MIDDLE;
             Laya.stage.alignH = Laya.Stage.ALIGN_CENTER;
+            if (window.hasOwnProperty('sharedCanvas')) {
+                var sharedCanvas = window['sharedCanvas'];
+                sharedCanvas.width = Laya.stage.width;
+                sharedCanvas.height = Laya.stage.height;
+            }
             MiniOpenContext.postMessageToOpenDataContext({
                 data: {
                     action: 'init',
@@ -378,13 +383,6 @@ var Tape;
                         height: Laya.stage.height,
                         matrix: Laya.stage._canvasTransform
                     }
-                }
-            });
-            Laya.timer.once(500, null, function () {
-                if (window.hasOwnProperty('sharedCanvas')) {
-                    var sharedCanvas = window['sharedCanvas'];
-                    sharedCanvas.width = Laya.stage.width;
-                    sharedCanvas.height = Laya.stage.height;
                 }
             });
         };
