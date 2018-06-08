@@ -67,6 +67,13 @@ module Tape {
                     }
                 }
             });
+            Laya.timer.once(500, null, () => {
+                if (window.hasOwnProperty('sharedCanvas')) {
+                    var sharedCanvas = window['sharedCanvas'];
+                    sharedCanvas.width = Laya.stage.width;
+                    sharedCanvas.height = Laya.stage.height;
+                }
+            });
         }
 
         public static exit() {

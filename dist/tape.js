@@ -380,6 +380,13 @@ var Tape;
                     }
                 }
             });
+            Laya.timer.once(500, null, function () {
+                if (window.hasOwnProperty('sharedCanvas')) {
+                    var sharedCanvas = window['sharedCanvas'];
+                    sharedCanvas.width = Laya.stage.width;
+                    sharedCanvas.height = Laya.stage.height;
+                }
+            });
         };
         MiniHandler.exit = function () {
             Tape.__WX__('exitMiniProgram');
