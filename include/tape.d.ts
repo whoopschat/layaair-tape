@@ -493,15 +493,16 @@ declare module Tape {
     ///////////////////////////////////////////////
 
     /**
+     * __WX__
+     */
+    function __WX__(func: string, ...options): any;
+
+    /**
      * MiniUI
      */
     class MiniUI {
 
-        public static createShareCanvasView(): void;
-
-        public static showSharedCanvas(): void;
-
-        public static hideSharedCanvas(): void;
+        public static createSharedCanvasView(): void;
 
         public static showUserInfoButton(options: Object): void;
 
@@ -519,7 +520,7 @@ declare module Tape {
     class MiniVersion {
 
         public static forceUpdate(options: Object): void;
-        
+
     }
 
     /**
@@ -528,81 +529,6 @@ declare module Tape {
     class MiniOpenContext {
 
         public static postMessageToOpenDataContext(options: Object): void;
-
-    }
-
-    /**
-     * MiniFunc
-     */
-    class MiniFunc {
-
-        public static exitMiniProgram(options?: Object): void;
-
-        public static login(options?: Object): void;
-
-        public static authorize(options?: Object): void;
-
-        public static createGameClubButton(options?: Object): void;
-
-        public static createUserInfoButton(options?: Object): void;
-
-        public static getSystemInfo(options?: Object): void;
-
-        public static openSetting(options?: Object): void;
-
-        public static getSetting(options?: Object): void;
-
-        public static getUserInfo(options?: Object): void;
-
-        public static onShareAppMessage(options?: Object): void;
-
-        public static offShareAppMessage(options?: Object): void;
-
-        public static showShareMenu(options?: Object): void;
-
-        public static hideShareMenu(options?: Object): void;
-
-        public static updateShareMenu(options?: Object): void;
-
-        public static shareAppMessage(options?: Object): void;
-
-        public static getShareInfo(options?: Object): void;
-
-        public static openCustomerServiceConversation(options?: Object): void;
-
-        public static checkIsUserAdvisedToRest(options?: Object): void;
-
-        public static vibrateShort(options?: Object): void;
-
-        public static vibrateLong(options?: Object): void;
-
-        public static showToast(options?: Object): void;
-
-        public static hideToast(options?: Object): void;
-
-        public static showLoading(options?: Object): void;
-
-        public static hideLoading(options?: Object): void;
-
-        public static showModal(options?: Object): void;
-
-        public static showActionSheet(options?: Object): void;
-
-        public static getBatteryInfo(options?: Object): void;
-
-        public static setClipboardData(options?: Object): void;
-
-        public static getClipboardData(options?: Object): void;
-
-        public static getScreenBrightness(options?: Object): void;
-
-        public static setKeepScreenOn(options?: Object): void;
-
-        public static setScreenBrightness(options?: Object): void;
-
-        public static triggerGC(options?: Object): void;
-
-        public static setEnableDebug(options?: Object): void;
 
     }
 

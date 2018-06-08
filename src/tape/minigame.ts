@@ -3,18 +3,41 @@
 // =========================== //
 module Tape {
 
-    /**
-     * Mini状态类
-     */
-    class MiniState {
-        public static sharedCanvasView = null;
-        public static onHideGameClubButton = null;
-        public static onHideUserInfoButton = null;
+    const mockHandler = (func: string, ...options) => {
+        if (options['fail'] && typeof options['fail'] === 'function') {
+            options['fail']();
+        }
+        return "";
     }
 
-    //////////////////////////////////////////////////////////////
-    ////// Export
-    //////////////////////////////////////////////////////////////
+    /**
+     * __WX__
+     */
+    export const __WX__ = (func: string, ...options) => {
+        if (window.hasOwnProperty("wx")) {
+            if (window['wx'].hasOwnProperty(func)) {
+                if (options['success'] && typeof options['success'] === 'function') {
+                    var success = options['success'];
+                }
+                if (options['fail'] && typeof options['fail'] === 'function') {
+                    var fail = options['fail'];
+                }
+                options['success'] = (res) => {
+                    success && success(res);
+                    Tape.Logger.debug("__WX__:success", res);
+                }
+                options['fail'] = (res) => {
+                    fail && fail(res);
+                    Tape.Logger.debug("__WX__:fail", res);
+                }
+                return window['wx'][func](...options);
+            } else {
+                return mockHandler(func, ...options);
+            }
+        } else {
+            return mockHandler(func, ...options);
+        }
+    }
 
     /**
      * isMiniGame
@@ -44,16 +67,10 @@ module Tape {
                     }
                 }
             });
-            Laya.timer.once(400, null, () => {
-                if (MiniState.sharedCanvasView) {
-                    return;
-                }
-                MiniState.sharedCanvasView = MiniUI.createSharedCanvasView();
-            });
         }
 
         public static exit() {
-            MiniFunc.exitMiniProgram();
+            __WX__('exitMiniProgram');
         }
 
     }
@@ -63,6 +80,8 @@ module Tape {
     //-------------------------------------------------------
 
     export class MiniUI {
+        public static onHideGameClubButton = null;
+        public static onHideUserInfoButton = null;
 
         public static createSharedCanvasView() {
             var sharedCanvasView = new Laya.Sprite();
@@ -85,28 +104,6 @@ module Tape {
             return sharedCanvasView;
         }
 
-        public static showSharedCanvas() {
-            if (MiniState.sharedCanvasView) {
-                MiniOpenContext.postMessageToOpenDataContext({
-                    data: {
-                        action: "show"
-                    }
-                });
-                Laya.stage.addChild(MiniState.sharedCanvasView);
-            }
-        }
-
-        public static hideSharedCanvas() {
-            if (MiniState.sharedCanvasView) {
-                MiniOpenContext.postMessageToOpenDataContext({
-                    data: {
-                        action: "hide"
-                    }
-                });
-                MiniState.sharedCanvasView.removeSelf();
-            }
-        }
-
         public static showUserInfoButton(options: Object) {
             if (!options) {
                 options = {};
@@ -122,7 +119,7 @@ module Tape {
                 options['complete'] && options['complete'](res);
             };
             MiniUI.hideUserInfoButton();
-            MiniFunc.getSystemInfo({
+            __WX__('getSystemInfo', {
                 success: (systemInfo) => {
                     var stageWidth = Laya.stage.width;
                     var stageHeight = Laya.stage.width;
@@ -142,9 +139,9 @@ module Tape {
                     style['textAlign'] = (style['textAlign'] || 'center');
                     style['borderRadius'] = borderRadius * windowHeight / stageHeight;
                     options['style'] = style;
-                    var userInfoButton = MiniFunc.createUserInfoButton(options);
+                    var userInfoButton = __WX__('createUserInfoButton', options);
                     if (userInfoButton) {
-                        MiniState.onHideUserInfoButton = () => {
+                        MiniUI.onHideUserInfoButton = () => {
                             try {
                                 userInfoButton.hide();
                                 userInfoButton.destroy();
@@ -152,7 +149,7 @@ module Tape {
                             }
                         }
                         userInfoButton.onTap((res) => {
-                            MiniFunc.getSetting({
+                            __WX__('getSetting', {
                                 success: (authRes) => {
                                     var authSetting = authRes.authSetting;
                                     if (authSetting['scope.userInfo'] === true) {
@@ -167,7 +164,7 @@ module Tape {
                         });
                         userInfoButton.show();
                     } else {
-                        MiniState.onHideUserInfoButton = () => {
+                        MiniUI.onHideUserInfoButton = () => {
                             hideCustom && hideCustom();
                         }
                         var getUserInfoFail = () => {
@@ -179,13 +176,13 @@ module Tape {
                             onSuccess && onSuccess(res);
                         }
                         var getUserInfo = () => {
-                            MiniFunc.getUserInfo({
+                            __WX__('getUserInfo', {
                                 success: getUserInfoSuccess,
                                 fail: getUserInfoFail
                             });
                         }
                         var tap = () => {
-                            MiniFunc.getSetting({
+                            __WX__('getSetting', {
                                 success: (res) => {
                                     var authSetting = res.authSetting;
                                     if (authSetting['scope.userInfo'] === false) {
@@ -193,7 +190,7 @@ module Tape {
                                         var settingGuideText = '获取用户信息失败，请到设置页面开启相关权限。';
                                         var settingGuideCancel = '取消';
                                         var settingGuideOpen = '去设置';
-                                        MiniFunc.showModal({
+                                        __WX__('showModal', {
                                             title: settingGuideTitle,
                                             content: settingGuideText,
                                             showCancel: true,
@@ -204,7 +201,7 @@ module Tape {
                                                     getUserInfoFail();
                                                 }
                                                 var open = () => {
-                                                    MiniFunc.openSetting({
+                                                    __WX__('openSetting', {
                                                         success: (res) => {
                                                             var authSetting = res.authSetting;
                                                             if (authSetting['scope.userInfo'] === true) {
@@ -235,8 +232,8 @@ module Tape {
         }
 
         public static hideUserInfoButton() {
-            MiniState.onHideUserInfoButton && MiniState.onHideUserInfoButton();
-            MiniState.onHideUserInfoButton = null;
+            MiniUI.onHideUserInfoButton && MiniUI.onHideUserInfoButton();
+            MiniUI.onHideUserInfoButton = null;
         }
 
         public static showGameClubButton(options: Object) {
@@ -252,7 +249,7 @@ module Tape {
                 options['fail'] && options['fail'](res);
                 options['complete'] && options['complete'](res);
             };
-            MiniFunc.getSystemInfo({
+            __WX__('getSystemInfo', {
                 success: (systemInfo) => {
                     var stageWidth = Laya.stage.width;
                     var stageHeight = Laya.stage.width;
@@ -264,9 +261,9 @@ module Tape {
                     style['top'] = (style['top'] || 40) * windowHeight / stageHeight;
                     style['height'] = (style['height'] || 40) * windowHeight / stageHeight;
                     options['style'] = style;
-                    var gameClubButton = MiniFunc.createGameClubButton(options);
+                    var gameClubButton = __WX__('createGameClubButton', options);
                     if (gameClubButton) {
-                        MiniState.onHideGameClubButton = () => {
+                        MiniUI.onHideGameClubButton = () => {
                             try {
                                 gameClubButton.hide();
                                 gameClubButton.destroy();
@@ -287,8 +284,8 @@ module Tape {
         }
 
         public static hideGameClubButton() {
-            MiniState.onHideGameClubButton && MiniState.onHideGameClubButton();
-            MiniState.onHideGameClubButton = null;
+            MiniUI.onHideGameClubButton && MiniUI.onHideGameClubButton();
+            MiniUI.onHideGameClubButton = null;
         }
     }
 
@@ -302,7 +299,7 @@ module Tape {
             if (!options) {
                 options = {};
             }
-            const updateManager = __wx__('getUpdateManager');
+            const updateManager = __WX__('getUpdateManager');
             if (updateManager) {
                 updateManager.onCheckForUpdate(function (res) {
                     if (res && res.hasUpdate) {
@@ -333,7 +330,7 @@ module Tape {
             if (!options) {
                 options = {};
             }
-            let openDataContext = __wx__('getOpenDataContext');
+            let openDataContext = __WX__('getOpenDataContext');
             if (openDataContext) {
                 openDataContext && openDataContext.postMessage(options['data'] || {});
                 options['success'] && options['success']({
@@ -347,187 +344,5 @@ module Tape {
         }
 
     }
-
-    //-------------------------------------------------------
-    //-- MiniFunc
-    //-------------------------------------------------------
-
-    const wxHandler = (func: string, ...options) => {
-        if (options['fail'] && typeof options['fail'] === 'function') {
-            options['fail']();
-        }
-        return "";
-    }
-
-    const logHandler = (message: any, ...options) => {
-        if (Build.isDebug()) {
-            console.log(message, ...options);
-        }
-    }
-
-    const __wx__ = (func: string, ...options) => {
-        if (window.hasOwnProperty("wx")) {
-            if (window['wx'].hasOwnProperty(func)) {
-                if (options['success'] && typeof options['success'] === 'function') {
-                    var success = options['success'];
-                }
-                if (options['fail'] && typeof options['fail'] === 'function') {
-                    var fail = options['fail'];
-                }
-                options['success'] = (res) => {
-                    success && success(res);
-                    logHandler(res);
-                }
-                options['fail'] = (res) => {
-                    fail && fail(res);
-                    logHandler(res);
-                }
-                return window['wx'][func](...options);
-            }
-        } else {
-            return wxHandler(func, ...options);
-        }
-    }
-
-    export class MiniFunc {
-
-        public static exitMiniProgram = (options: Object = {}) => {
-            return __wx__('exitMiniProgram', options);
-        }
-
-        public static login = (options: Object = {}) => {
-            return __wx__('login', options);
-        }
-
-        public static authorize = (options: Object = {}) => {
-            return __wx__('authorize', options);
-        }
-
-        public static createGameClubButton = (options: Object = {}) => {
-            return __wx__('createGameClubButton', options);
-        }
-
-        public static createUserInfoButton = (options: Object = {}) => {
-            return __wx__('createUserInfoButton', options);
-        }
-
-        public static getSystemInfo = (options: Object = {}) => {
-            return __wx__('getSystemInfo', options);
-        }
-
-        public static openSetting = (options: Object = {}) => {
-            return __wx__('openSetting', options);
-        }
-
-        public static getSetting = (options: Object = {}) => {
-            return __wx__('getSetting', options);
-        }
-
-        public static getUserInfo = (options: Object = {}) => {
-            return __wx__('getUserInfo', options);
-        }
-
-        public static onShareAppMessage = (options: Object = {}) => {
-            return __wx__('onShareAppMessage', options);
-        }
-
-        public static offShareAppMessage = (options: Object = {}) => {
-            return __wx__('offShareAppMessage', options);
-        }
-
-        public static showShareMenu(options: Object = {}) {
-            return __wx__('showShareMenu', options);
-        }
-
-        public static hideShareMenu(options: Object = {}) {
-            return __wx__('hideShareMenu', options);
-        }
-
-        public static updateShareMenu(options: Object = {}) {
-            return __wx__('updateShareMenu', options);
-        }
-
-        public static shareAppMessage(options: Object = {}) {
-            return __wx__('shareAppMessage', options);
-        }
-
-        public static getShareInfo(options: Object = {}) {
-            return __wx__('getShareInfo', options);
-        }
-
-        public static openCustomerServiceConversation(options: Object = {}) {
-            return __wx__('openCustomerServiceConversation', options);
-        }
-
-        public static checkIsUserAdvisedToRest(options: Object = {}) {
-            return __wx__('checkIsUserAdvisedToRest', options);
-        }
-
-        public static vibrateShort(options: Object = {}) {
-            return __wx__('vibrateShort', options);
-        }
-
-        public static vibrateLong(options: Object = {}) {
-            return __wx__('vibrateLong', options);
-        }
-
-        public static showToast(options: Object = {}) {
-            return __wx__('showToast', options);
-        }
-
-        public static hideToast(options: Object = {}) {
-            return __wx__('hideToast', options);
-        }
-
-        public static showLoading(options: Object = {}) {
-            return __wx__('showLoading', options);
-        }
-
-        public static hideLoading(options: Object = {}) {
-            return __wx__('hideLoading', options);
-        }
-
-        public static showModal(options: Object = {}) {
-            return __wx__('showModal', options);
-        }
-
-        public static showActionSheet = (options: Object = {}) => {
-            return __wx__('showActionSheet', options);
-        }
-
-        public static getBatteryInfo(options: Object = {}) {
-            return __wx__('getBatteryInfo', options);
-        }
-
-        public static setClipboardData(options: Object = {}) {
-            return __wx__('setClipboardData', options);
-        }
-
-        public static getClipboardData(options: Object = {}) {
-            return __wx__('getClipboardData', options);
-        }
-
-        public static getScreenBrightness = (options: Object = {}) => {
-            return __wx__('getScreenBrightness', options);
-        }
-
-        public static setKeepScreenOn = (options: Object = {}) => {
-            return __wx__('setKeepScreenOn', options);
-        }
-
-        public static setScreenBrightness = (options: Object = {}) => {
-            return __wx__('setScreenBrightness', options);
-        }
-
-        public static triggerGC = (options: Object = {}) => {
-            return __wx__('triggerGC', options);
-        }
-
-        public static setEnableDebug = (options: Object = {}) => {
-            return __wx__('setEnableDebug', options);
-        }
-
-    }
-
 
 }

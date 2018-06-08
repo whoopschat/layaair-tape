@@ -51,7 +51,6 @@ module App {
         private page2 = new ui.Page2UI();
 
         protected onCreate() {
-            Tape.MiniUI.showSharedCanvas();
             Laya.timer.once(400, null, function () {
                 var context = Tape.MiniOpenContext.postMessageToOpenDataContext({
                     data: {

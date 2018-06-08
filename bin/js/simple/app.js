@@ -66,7 +66,6 @@ var App;
         }
         Page2.prototype.onCreate = function () {
             var _this = this;
-            Tape.MiniUI.showSharedCanvas();
             Laya.timer.once(400, null, function () {
                 var context = Tape.MiniOpenContext.postMessageToOpenDataContext({
                     data: {

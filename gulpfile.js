@@ -20,7 +20,8 @@ gulp.task("task:tsc", function () {
 var packageList = [
     inputJsPath + moduleName + '/polyfill/**/*.js',
     inputJsPath + moduleName + '/utils/**/*.js',
-    inputJsPath + moduleName + '/platform/**/*.js',
+    inputJsPath + moduleName + '/conch.js',
+    inputJsPath + moduleName + '/minigame.js',
     inputJsPath + moduleName + '/common.js',
     inputJsPath + moduleName + '/comps.js',
     inputJsPath + moduleName + '/effect.js',

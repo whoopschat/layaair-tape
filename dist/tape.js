@@ -303,20 +303,51 @@ var Tape;
 // =========================== //
 var Tape;
 (function (Tape) {
-    /**
-     * Mini状态类
-     */
-    var MiniState = /** @class */ (function () {
-        function MiniState() {
+    var mockHandler = function (func) {
+        var options = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            options[_i - 1] = arguments[_i];
         }
-        MiniState.sharedCanvasView = null;
-        MiniState.onHideGameClubButton = null;
-        MiniState.onHideUserInfoButton = null;
-        return MiniState;
-    }());
-    //////////////////////////////////////////////////////////////
-    ////// Export
-    //////////////////////////////////////////////////////////////
+        if (options['fail'] && typeof options['fail'] === 'function') {
+            options['fail']();
+        }
+        return "";
+    };
+    /**
+     * __WX__
+     */
+    Tape.__WX__ = function (func) {
+        var options = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            options[_i - 1] = arguments[_i];
+        }
+        if (window.hasOwnProperty("wx")) {
+            if (window['wx'].hasOwnProperty(func)) {
+                if (options['success'] && typeof options['success'] === 'function') {
+                    var success = options['success'];
+                }
+                if (options['fail'] && typeof options['fail'] === 'function') {
+                    var fail = options['fail'];
+                }
+                options['success'] = function (res) {
+                    success && success(res);
+                    Tape.Logger.debug("__WX__:success", res);
+                };
+                options['fail'] = function (res) {
+                    fail && fail(res);
+                    Tape.Logger.debug("__WX__:fail", res);
+                };
+                return (_a = window['wx'])[func].apply(_a, options);
+            }
+            else {
+                return mockHandler.apply(void 0, [func].concat(options));
+            }
+        }
+        else {
+            return mockHandler.apply(void 0, [func].concat(options));
+        }
+        var _a;
+    };
     /**
      * isMiniGame
      */
@@ -349,15 +380,9 @@ var Tape;
                     }
                 }
             });
-            Laya.timer.once(400, null, function () {
-                if (MiniState.sharedCanvasView) {
-                    return;
-                }
-                MiniState.sharedCanvasView = MiniUI.createSharedCanvasView();
-            });
         };
         MiniHandler.exit = function () {
-            MiniFunc.exitMiniProgram();
+            Tape.__WX__('exitMiniProgram');
         };
         return MiniHandler;
     }());
@@ -388,26 +413,6 @@ var Tape;
             }
             return sharedCanvasView;
         };
-        MiniUI.showSharedCanvas = function () {
-            if (MiniState.sharedCanvasView) {
-                MiniOpenContext.postMessageToOpenDataContext({
-                    data: {
-                        action: "show"
-                    }
-                });
-                Laya.stage.addChild(MiniState.sharedCanvasView);
-            }
-        };
-        MiniUI.hideSharedCanvas = function () {
-            if (MiniState.sharedCanvasView) {
-                MiniOpenContext.postMessageToOpenDataContext({
-                    data: {
-                        action: "hide"
-                    }
-                });
-                MiniState.sharedCanvasView.removeSelf();
-            }
-        };
         MiniUI.showUserInfoButton = function (options) {
             if (!options) {
                 options = {};
@@ -423,7 +428,7 @@ var Tape;
                 options['complete'] && options['complete'](res);
             };
             MiniUI.hideUserInfoButton();
-            MiniFunc.getSystemInfo({
+            Tape.__WX__('getSystemInfo', {
                 success: function (systemInfo) {
                     var stageWidth = Laya.stage.width;
                     var stageHeight = Laya.stage.width;
@@ -443,9 +448,9 @@ var Tape;
                     style['textAlign'] = (style['textAlign'] || 'center');
                     style['borderRadius'] = borderRadius * windowHeight / stageHeight;
                     options['style'] = style;
-                    var userInfoButton = MiniFunc.createUserInfoButton(options);
+                    var userInfoButton = Tape.__WX__('createUserInfoButton', options);
                     if (userInfoButton) {
-                        MiniState.onHideUserInfoButton = function () {
+                        MiniUI.onHideUserInfoButton = function () {
                             try {
                                 userInfoButton.hide();
                                 userInfoButton.destroy();
@@ -454,7 +459,7 @@ var Tape;
                             }
                         };
                         userInfoButton.onTap(function (res) {
-                            MiniFunc.getSetting({
+                            Tape.__WX__('getSetting', {
                                 success: function (authRes) {
                                     var authSetting = authRes.authSetting;
                                     if (authSetting['scope.userInfo'] === true) {
@@ -471,7 +476,7 @@ var Tape;
                         userInfoButton.show();
                     }
                     else {
-                        MiniState.onHideUserInfoButton = function () {
+                        MiniUI.onHideUserInfoButton = function () {
                             hideCustom && hideCustom();
                         };
                         var getUserInfoFail = function () {
@@ -483,13 +488,13 @@ var Tape;
                             onSuccess && onSuccess(res);
                         };
                         var getUserInfo = function () {
-                            MiniFunc.getUserInfo({
+                            Tape.__WX__('getUserInfo', {
                                 success: getUserInfoSuccess,
                                 fail: getUserInfoFail
                             });
                         };
                         var tap = function () {
-                            MiniFunc.getSetting({
+                            Tape.__WX__('getSetting', {
                                 success: function (res) {
                                     var authSetting = res.authSetting;
                                     if (authSetting['scope.userInfo'] === false) {
@@ -497,7 +502,7 @@ var Tape;
                                         var settingGuideText = '获取用户信息失败，请到设置页面开启相关权限。';
                                         var settingGuideCancel = '取消';
                                         var settingGuideOpen = '去设置';
-                                        MiniFunc.showModal({
+                                        Tape.__WX__('showModal', {
                                             title: settingGuideTitle,
                                             content: settingGuideText,
                                             showCancel: true,
@@ -508,7 +513,7 @@ var Tape;
                                                     getUserInfoFail();
                                                 };
                                                 var open = function () {
-                                                    MiniFunc.openSetting({
+                                                    Tape.__WX__('openSetting', {
                                                         success: function (res) {
                                                             var authSetting = res.authSetting;
                                                             if (authSetting['scope.userInfo'] === true) {
@@ -541,8 +546,8 @@ var Tape;
             });
         };
         MiniUI.hideUserInfoButton = function () {
-            MiniState.onHideUserInfoButton && MiniState.onHideUserInfoButton();
-            MiniState.onHideUserInfoButton = null;
+            MiniUI.onHideUserInfoButton && MiniUI.onHideUserInfoButton();
+            MiniUI.onHideUserInfoButton = null;
         };
         MiniUI.showGameClubButton = function (options) {
             if (!options) {
@@ -557,7 +562,7 @@ var Tape;
                 options['fail'] && options['fail'](res);
                 options['complete'] && options['complete'](res);
             };
-            MiniFunc.getSystemInfo({
+            Tape.__WX__('getSystemInfo', {
                 success: function (systemInfo) {
                     var stageWidth = Laya.stage.width;
                     var stageHeight = Laya.stage.width;
@@ -569,9 +574,9 @@ var Tape;
                     style['top'] = (style['top'] || 40) * windowHeight / stageHeight;
                     style['height'] = (style['height'] || 40) * windowHeight / stageHeight;
                     options['style'] = style;
-                    var gameClubButton = MiniFunc.createGameClubButton(options);
+                    var gameClubButton = Tape.__WX__('createGameClubButton', options);
                     if (gameClubButton) {
-                        MiniState.onHideGameClubButton = function () {
+                        MiniUI.onHideGameClubButton = function () {
                             try {
                                 gameClubButton.hide();
                                 gameClubButton.destroy();
@@ -593,9 +598,11 @@ var Tape;
             });
         };
         MiniUI.hideGameClubButton = function () {
-            MiniState.onHideGameClubButton && MiniState.onHideGameClubButton();
-            MiniState.onHideGameClubButton = null;
+            MiniUI.onHideGameClubButton && MiniUI.onHideGameClubButton();
+            MiniUI.onHideGameClubButton = null;
         };
+        MiniUI.onHideGameClubButton = null;
+        MiniUI.onHideUserInfoButton = null;
         return MiniUI;
     }());
     Tape.MiniUI = MiniUI;
@@ -609,7 +616,7 @@ var Tape;
             if (!options) {
                 options = {};
             }
-            var updateManager = __wx__('getUpdateManager');
+            var updateManager = Tape.__WX__('getUpdateManager');
             if (updateManager) {
                 updateManager.onCheckForUpdate(function (res) {
                     if (res && res.hasUpdate) {
@@ -640,7 +647,7 @@ var Tape;
             if (!options) {
                 options = {};
             }
-            var openDataContext = __wx__('getOpenDataContext');
+            var openDataContext = Tape.__WX__('getOpenDataContext');
             if (openDataContext) {
                 openDataContext && openDataContext.postMessage(options['data'] || {});
                 options['success'] && options['success']({
@@ -656,199 +663,6 @@ var Tape;
         return MiniOpenContext;
     }());
     Tape.MiniOpenContext = MiniOpenContext;
-    //-------------------------------------------------------
-    //-- MiniFunc
-    //-------------------------------------------------------
-    var wxHandler = function (func) {
-        var options = [];
-        for (var _i = 1; _i < arguments.length; _i++) {
-            options[_i - 1] = arguments[_i];
-        }
-        if (options['fail'] && typeof options['fail'] === 'function') {
-            options['fail']();
-        }
-        return "";
-    };
-    var logHandler = function (message) {
-        var options = [];
-        for (var _i = 1; _i < arguments.length; _i++) {
-            options[_i - 1] = arguments[_i];
-        }
-        if (Tape.Build.isDebug()) {
-            console.log.apply(console, [message].concat(options));
-        }
-    };
-    var __wx__ = function (func) {
-        var options = [];
-        for (var _i = 1; _i < arguments.length; _i++) {
-            options[_i - 1] = arguments[_i];
-        }
-        if (window.hasOwnProperty("wx")) {
-            if (window['wx'].hasOwnProperty(func)) {
-                if (options['success'] && typeof options['success'] === 'function') {
-                    var success = options['success'];
-                }
-                if (options['fail'] && typeof options['fail'] === 'function') {
-                    var fail = options['fail'];
-                }
-                options['success'] = function (res) {
-                    success && success(res);
-                    logHandler(res);
-                };
-                options['fail'] = function (res) {
-                    fail && fail(res);
-                    logHandler(res);
-                };
-                return (_a = window['wx'])[func].apply(_a, options);
-            }
-        }
-        else {
-            return wxHandler.apply(void 0, [func].concat(options));
-        }
-        var _a;
-    };
-    var MiniFunc = /** @class */ (function () {
-        function MiniFunc() {
-        }
-        MiniFunc.showShareMenu = function (options) {
-            if (options === void 0) { options = {}; }
-            return __wx__('showShareMenu', options);
-        };
-        MiniFunc.hideShareMenu = function (options) {
-            if (options === void 0) { options = {}; }
-            return __wx__('hideShareMenu', options);
-        };
-        MiniFunc.updateShareMenu = function (options) {
-            if (options === void 0) { options = {}; }
-            return __wx__('updateShareMenu', options);
-        };
-        MiniFunc.shareAppMessage = function (options) {
-            if (options === void 0) { options = {}; }
-            return __wx__('shareAppMessage', options);
-        };
-        MiniFunc.getShareInfo = function (options) {
-            if (options === void 0) { options = {}; }
-            return __wx__('getShareInfo', options);
-        };
-        MiniFunc.openCustomerServiceConversation = function (options) {
-            if (options === void 0) { options = {}; }
-            return __wx__('openCustomerServiceConversation', options);
-        };
-        MiniFunc.checkIsUserAdvisedToRest = function (options) {
-            if (options === void 0) { options = {}; }
-            return __wx__('checkIsUserAdvisedToRest', options);
-        };
-        MiniFunc.vibrateShort = function (options) {
-            if (options === void 0) { options = {}; }
-            return __wx__('vibrateShort', options);
-        };
-        MiniFunc.vibrateLong = function (options) {
-            if (options === void 0) { options = {}; }
-            return __wx__('vibrateLong', options);
-        };
-        MiniFunc.showToast = function (options) {
-            if (options === void 0) { options = {}; }
-            return __wx__('showToast', options);
-        };
-        MiniFunc.hideToast = function (options) {
-            if (options === void 0) { options = {}; }
-            return __wx__('hideToast', options);
-        };
-        MiniFunc.showLoading = function (options) {
-            if (options === void 0) { options = {}; }
-            return __wx__('showLoading', options);
-        };
-        MiniFunc.hideLoading = function (options) {
-            if (options === void 0) { options = {}; }
-            return __wx__('hideLoading', options);
-        };
-        MiniFunc.showModal = function (options) {
-            if (options === void 0) { options = {}; }
-            return __wx__('showModal', options);
-        };
-        MiniFunc.getBatteryInfo = function (options) {
-            if (options === void 0) { options = {}; }
-            return __wx__('getBatteryInfo', options);
-        };
-        MiniFunc.setClipboardData = function (options) {
-            if (options === void 0) { options = {}; }
-            return __wx__('setClipboardData', options);
-        };
-        MiniFunc.getClipboardData = function (options) {
-            if (options === void 0) { options = {}; }
-            return __wx__('getClipboardData', options);
-        };
-        MiniFunc.exitMiniProgram = function (options) {
-            if (options === void 0) { options = {}; }
-            return __wx__('exitMiniProgram', options);
-        };
-        MiniFunc.login = function (options) {
-            if (options === void 0) { options = {}; }
-            return __wx__('login', options);
-        };
-        MiniFunc.authorize = function (options) {
-            if (options === void 0) { options = {}; }
-            return __wx__('authorize', options);
-        };
-        MiniFunc.createGameClubButton = function (options) {
-            if (options === void 0) { options = {}; }
-            return __wx__('createGameClubButton', options);
-        };
-        MiniFunc.createUserInfoButton = function (options) {
-            if (options === void 0) { options = {}; }
-            return __wx__('createUserInfoButton', options);
-        };
-        MiniFunc.getSystemInfo = function (options) {
-            if (options === void 0) { options = {}; }
-            return __wx__('getSystemInfo', options);
-        };
-        MiniFunc.openSetting = function (options) {
-            if (options === void 0) { options = {}; }
-            return __wx__('openSetting', options);
-        };
-        MiniFunc.getSetting = function (options) {
-            if (options === void 0) { options = {}; }
-            return __wx__('getSetting', options);
-        };
-        MiniFunc.getUserInfo = function (options) {
-            if (options === void 0) { options = {}; }
-            return __wx__('getUserInfo', options);
-        };
-        MiniFunc.onShareAppMessage = function (options) {
-            if (options === void 0) { options = {}; }
-            return __wx__('onShareAppMessage', options);
-        };
-        MiniFunc.offShareAppMessage = function (options) {
-            if (options === void 0) { options = {}; }
-            return __wx__('offShareAppMessage', options);
-        };
-        MiniFunc.showActionSheet = function (options) {
-            if (options === void 0) { options = {}; }
-            return __wx__('showActionSheet', options);
-        };
-        MiniFunc.getScreenBrightness = function (options) {
-            if (options === void 0) { options = {}; }
-            return __wx__('getScreenBrightness', options);
-        };
-        MiniFunc.setKeepScreenOn = function (options) {
-            if (options === void 0) { options = {}; }
-            return __wx__('setKeepScreenOn', options);
-        };
-        MiniFunc.setScreenBrightness = function (options) {
-            if (options === void 0) { options = {}; }
-            return __wx__('setScreenBrightness', options);
-        };
-        MiniFunc.triggerGC = function (options) {
-            if (options === void 0) { options = {}; }
-            return __wx__('triggerGC', options);
-        };
-        MiniFunc.setEnableDebug = function (options) {
-            if (options === void 0) { options = {}; }
-            return __wx__('setEnableDebug', options);
-        };
-        return MiniFunc;
-    }());
-    Tape.MiniFunc = MiniFunc;
 })(Tape || (Tape = {}));
 
 // =========================== //
