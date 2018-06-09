@@ -410,11 +410,9 @@ var Tape;
                 }
                 var rankTexture = new Laya.Texture(sharedCanvas);
                 rankTexture.bitmap.alwaysChange = true;
-                var rankSprite = new Laya.Sprite();
-                rankSprite.width = Laya.stage.width;
-                rankSprite.height = Laya.stage.height;
-                rankSprite.graphics.drawTexture(rankTexture, 0, 0, rankTexture.width, rankTexture.height);
-                sharedCanvasView.addChild(rankSprite);
+                sharedCanvasView.width = Laya.stage.width;
+                sharedCanvasView.height = Laya.stage.height;
+                sharedCanvasView.graphics.drawTexture(rankTexture, 0, 0, rankTexture.width, rankTexture.height);
             }
             return sharedCanvasView;
         };
@@ -648,6 +646,23 @@ var Tape;
     var MiniOpenContext = /** @class */ (function () {
         function MiniOpenContext() {
         }
+        MiniOpenContext.showByUI = function (uiView, data) {
+            MiniOpenContext.postMessageToOpenDataContext({
+                data: {
+                    type: "showByUI",
+                    ui: JSON.stringify(uiView || {}),
+                    data: data
+                }
+            });
+        };
+        MiniOpenContext.setUserCloudStorage = function (KVDataList) {
+            MiniOpenContext.postMessageToOpenDataContext({
+                data: {
+                    type: "setUserCloudStorage",
+                    KVDataList: KVDataList
+                }
+            });
+        };
         MiniOpenContext.postMessageToOpenDataContext = function (options) {
             if (!options) {
                 options = {};
