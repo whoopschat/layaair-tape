@@ -449,7 +449,7 @@ var Tape;
             Tape.__WX__('getSystemInfo', {
                 success: function (systemInfo) {
                     var stageWidth = Laya.stage.width;
-                    var stageHeight = Laya.stage.width;
+                    var stageHeight = Laya.stage.height;
                     var windowWidth = systemInfo.windowWidth || stageWidth;
                     var windowHeight = systemInfo.windowHeight || stageHeight;
                     var style = options['style'] || {};
@@ -583,7 +583,7 @@ var Tape;
             Tape.__WX__('getSystemInfo', {
                 success: function (systemInfo) {
                     var stageWidth = Laya.stage.width;
-                    var stageHeight = Laya.stage.width;
+                    var stageHeight = Laya.stage.height;
                     var windowWidth = systemInfo.windowWidth || stageWidth;
                     var windowHeight = systemInfo.windowHeight || stageHeight;
                     var style = options['style'] || {};
@@ -666,7 +666,7 @@ var Tape;
             if (customData === void 0) { customData = {}; }
             MiniOpenContext.postMessageToOpenDataContext({
                 data: {
-                    type: "showByUI",
+                    action: "showByUI",
                     ui: JSON.stringify(uiView || {}),
                     data: {
                         keyList: keyList,
@@ -678,7 +678,7 @@ var Tape;
         MiniOpenContext.setUserCloudStorage = function (KVDataList) {
             MiniOpenContext.postMessageToOpenDataContext({
                 data: {
-                    type: "setUserCloudStorage",
+                    action: "setUserCloudStorage",
                     KVDataList: KVDataList
                 }
             });

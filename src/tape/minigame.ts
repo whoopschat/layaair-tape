@@ -140,7 +140,7 @@ module Tape {
             __WX__('getSystemInfo', {
                 success: (systemInfo) => {
                     var stageWidth = Laya.stage.width;
-                    var stageHeight = Laya.stage.width;
+                    var stageHeight = Laya.stage.height;
                     var windowWidth = systemInfo.windowWidth || stageWidth;
                     var windowHeight = systemInfo.windowHeight || stageHeight;
                     var style = options['style'] || {};
@@ -270,7 +270,7 @@ module Tape {
             __WX__('getSystemInfo', {
                 success: (systemInfo) => {
                     var stageWidth = Laya.stage.width;
-                    var stageHeight = Laya.stage.width;
+                    var stageHeight = Laya.stage.height;
                     var windowWidth = systemInfo.windowWidth || stageWidth;
                     var windowHeight = systemInfo.windowHeight || stageHeight;
                     var style = options['style'] || {};
@@ -347,7 +347,7 @@ module Tape {
         public static showByUI(uiView: Object, keyList: Array<String> = ['score'], customData: Object = {}) {
             MiniOpenContext.postMessageToOpenDataContext({
                 data: {
-                    type: "showByUI",
+                    action: "showByUI",
                     ui: JSON.stringify(uiView || {}),
                     data: {
                         keyList,
@@ -360,7 +360,7 @@ module Tape {
         public static setUserCloudStorage(KVDataList: Array<Object>) {
             MiniOpenContext.postMessageToOpenDataContext({
                 data: {
-                    type: "setUserCloudStorage",
+                    action: "setUserCloudStorage",
                     KVDataList: KVDataList
                 }
             });
