@@ -329,17 +329,20 @@ module Tape {
 
     export class MiniOpenContext {
 
-        public static showByUI(uiView, data: Object) {
+        public static showByUI(uiView: Object, keyList: Array<String> = ['score'], customData: Object = {}) {
             MiniOpenContext.postMessageToOpenDataContext({
                 data: {
                     type: "showByUI",
                     ui: JSON.stringify(uiView || {}),
-                    data: data
+                    data: {
+                        keyList,
+                        customData
+                    }
                 }
             });
         }
 
-        public static setUserCloudStorage(KVDataList) {
+        public static setUserCloudStorage(KVDataList: Array<Object>) {
             MiniOpenContext.postMessageToOpenDataContext({
                 data: {
                     type: "setUserCloudStorage",

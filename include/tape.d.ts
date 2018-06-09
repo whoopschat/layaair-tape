@@ -528,9 +528,9 @@ declare module Tape {
      */
     class MiniOpenContext {
 
-        public static showByUI(uiView, data: Object): void;
+        public static showByUI(uiView: Object, keyList?: Array<String>, customData?: Object): void;
 
-        public static setUserCloudStorage(KVDataList): void;
+        public static setUserCloudStorage(KVDataList: Array<Object>): void;
 
         public static postMessageToOpenDataContext(options: Object): void;
 

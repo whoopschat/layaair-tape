@@ -646,12 +646,17 @@ var Tape;
     var MiniOpenContext = /** @class */ (function () {
         function MiniOpenContext() {
         }
-        MiniOpenContext.showByUI = function (uiView, data) {
+        MiniOpenContext.showByUI = function (uiView, keyList, customData) {
+            if (keyList === void 0) { keyList = ['score']; }
+            if (customData === void 0) { customData = {}; }
             MiniOpenContext.postMessageToOpenDataContext({
                 data: {
                     type: "showByUI",
                     ui: JSON.stringify(uiView || {}),
-                    data: data
+                    data: {
+                        keyList: keyList,
+                        customData: customData
+                    }
                 }
             });
         };
