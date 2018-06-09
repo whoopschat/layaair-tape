@@ -62,6 +62,21 @@ module Tape {
                 sharedCanvas.width = Laya.stage.width;
                 sharedCanvas.height = Laya.stage.height;
             }
+            __WX__('onShow', (res) => {
+                MiniOpenContext.postMessageToOpenDataContext({
+                    data: {
+                        action: 'onShow',
+                        data: res
+                    }
+                });
+            });
+            __WX__('onHide', (res) => {
+                MiniOpenContext.postMessageToOpenDataContext({
+                    data: {
+                        action: 'onHide'
+                    }
+                });
+            });
             MiniOpenContext.postMessageToOpenDataContext({
                 data: {
                     action: 'init',

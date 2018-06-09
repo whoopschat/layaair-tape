@@ -502,14 +502,29 @@ declare module Tape {
      */
     class MiniUI {
 
+        /**
+         * 创建开放数据域的View
+         */
         public static createSharedCanvasView(): void;
 
+        /**
+         * 显示获取用户信息按钮
+         */
         public static showUserInfoButton(options: Object): void;
 
+        /**
+         * 隐藏获取用户信息按钮
+         */
         public static hideUserInfoButton(): void;
 
+        /**
+         * 显示游戏圈按钮
+         */
         public static showGameClubButton(options: Object): void;
 
+        /**
+         * 隐藏游戏圈按钮
+         */
         public static hideGameClubButton(): void;
 
     }
@@ -519,6 +534,9 @@ declare module Tape {
      */
     class MiniVersion {
 
+        /**
+         * 强制更新
+         */
         public static forceUpdate(options: Object): void;
 
     }
@@ -528,10 +546,22 @@ declare module Tape {
      */
     class MiniOpenContext {
 
+        /**
+         * 根据uiView显示界面
+         * @param uiView ui
+         * @param keyList 开放数据的key list
+         * @param customData 自定义数据
+         */
         public static showByUI(uiView: Object, keyList?: Array<String>, customData?: Object): void;
 
+        /**
+         * 将数据托管到微信
+         */
         public static setUserCloudStorage(KVDataList: Array<Object>): void;
 
+        /**
+         * 发送消息到开放数据域
+         */
         public static postMessageToOpenDataContext(options: Object): void;
 
     }

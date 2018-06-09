@@ -375,6 +375,21 @@ var Tape;
                 sharedCanvas.width = Laya.stage.width;
                 sharedCanvas.height = Laya.stage.height;
             }
+            Tape.__WX__('onShow', function (res) {
+                MiniOpenContext.postMessageToOpenDataContext({
+                    data: {
+                        action: 'onShow',
+                        data: res
+                    }
+                });
+            });
+            Tape.__WX__('onHide', function (res) {
+                MiniOpenContext.postMessageToOpenDataContext({
+                    data: {
+                        action: 'onHide'
+                    }
+                });
+            });
             MiniOpenContext.postMessageToOpenDataContext({
                 data: {
                     action: 'init',
