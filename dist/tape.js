@@ -661,17 +661,16 @@ var Tape;
     var MiniOpenContext = /** @class */ (function () {
         function MiniOpenContext() {
         }
-        MiniOpenContext.showByUI = function (uiView, keyList, customData) {
+        MiniOpenContext.showByUI = function (uiView, keyList, options) {
             if (keyList === void 0) { keyList = ['score']; }
-            if (customData === void 0) { customData = {}; }
+            if (options === void 0) { options = {}; }
             MiniOpenContext.postMessageToOpenDataContext({
                 data: {
                     action: "showByUI",
-                    ui: JSON.stringify(uiView || {}),
-                    data: {
+                    data: Object.assign({
+                        ui: JSON.stringify(uiView || {}),
                         keyList: keyList,
-                        customData: customData
-                    }
+                    }, options)
                 }
             });
         };
@@ -679,7 +678,9 @@ var Tape;
             MiniOpenContext.postMessageToOpenDataContext({
                 data: {
                     action: "setUserCloudStorage",
-                    KVDataList: KVDataList
+                    data: {
+                        KVDataList: KVDataList
+                    }
                 }
             });
         };

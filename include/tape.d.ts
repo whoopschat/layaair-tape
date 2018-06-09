@@ -550,9 +550,9 @@ declare module Tape {
          * 根据uiView显示界面
          * @param uiView ui
          * @param keyList 开放数据的key list
-         * @param customData 自定义数据
+         * @param options 可选参数
          */
-        public static showByUI(uiView: Object, keyList?: Array<String>, customData?: Object): void;
+        public static showByUI(uiView: Object | Array<Object>, keyList?: Array<String>, options?: Object): void;
 
         /**
          * 将数据托管到微信
