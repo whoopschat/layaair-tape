@@ -344,14 +344,22 @@ module Tape {
 
     export class MiniOpenContext {
 
-        public static showByUI(uiView: Object | Array<Object>, keyList: Array<String> = ['score'], options: Object = {}) {
+        public static showUI(uiView: Object | Array<Object>, keyList: Array<String> = ['score'], options: Object = {}) {
             MiniOpenContext.postMessageToOpenDataContext({
                 data: {
-                    action: "showByUI",
+                    action: "showUI",
                     data: (<any>Object).assign({
                         ui: JSON.stringify(uiView || {}),
                         keyList,
                     }, options)
+                }
+            });
+        }
+        
+        public static hideUI() {
+            MiniOpenContext.postMessageToOpenDataContext({
+                data: {
+                    action: "hideUI"
                 }
             });
         }

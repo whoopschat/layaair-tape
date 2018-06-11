@@ -536,6 +536,7 @@ declare module Tape {
 
         /**
          * 强制更新
+         * @param options {loading, confirm, success, fail}
          */
         public static forceUpdate(options: Object): void;
 
@@ -552,15 +553,22 @@ declare module Tape {
          * @param keyList 开放数据的key list
          * @param options 可选参数
          */
-        public static showByUI(uiView: Object | Array<Object>, keyList?: Array<String>, options?: Object): void;
+        public static showUI(uiView: Object | Array<Object>, keyList?: Array<String>, options?: Object): void;
+
+        /**
+         * 隐藏界面
+         */
+        public static hideUI():void;
 
         /**
          * 将数据托管到微信
+         * @param KVDataList 格式：[{key:'key1',value:'value1'}]
          */
         public static setUserCloudStorage(KVDataList: Array<Object>): void;
 
         /**
          * 发送消息到开放数据域
+         * @param options { data }
          */
         public static postMessageToOpenDataContext(options: Object): void;
 

@@ -5,7 +5,7 @@ module Tape {
 
     export class Logger {
 
-        private static __is_debug__: Boolean = Build.isDebug();
+        private static __is_debug__: Boolean = true;
 
         /**
          * setDebug
@@ -18,7 +18,7 @@ module Tape {
          * isDebug
          */
         public static isDebug(): Boolean {
-            return this.__is_debug__;
+            return this.__is_debug__ && Build.isDebug();
         }
 
         /**

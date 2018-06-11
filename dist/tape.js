@@ -121,7 +121,7 @@ var Tape;
          * isDebug
          */
         Logger.isDebug = function () {
-            return this.__is_debug__;
+            return this.__is_debug__ && Tape.Build.isDebug();
         };
         /**
          * log
@@ -188,7 +188,7 @@ var Tape;
             }
             console.debug.apply(console, [message].concat(optionalParams));
         };
-        Logger.__is_debug__ = Tape.Build.isDebug();
+        Logger.__is_debug__ = true;
         return Logger;
     }());
     Tape.Logger = Logger;
@@ -661,16 +661,23 @@ var Tape;
     var MiniOpenContext = /** @class */ (function () {
         function MiniOpenContext() {
         }
-        MiniOpenContext.showByUI = function (uiView, keyList, options) {
+        MiniOpenContext.showUI = function (uiView, keyList, options) {
             if (keyList === void 0) { keyList = ['score']; }
             if (options === void 0) { options = {}; }
             MiniOpenContext.postMessageToOpenDataContext({
                 data: {
-                    action: "showByUI",
+                    action: "showUI",
                     data: Object.assign({
                         ui: JSON.stringify(uiView || {}),
                         keyList: keyList,
                     }, options)
+                }
+            });
+        };
+        MiniOpenContext.hideUI = function () {
+            MiniOpenContext.postMessageToOpenDataContext({
+                data: {
+                    action: "hideUI"
                 }
             });
         };
