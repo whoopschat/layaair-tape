@@ -6,7 +6,7 @@ module Tape {
     /**
      * NavigationLoader
      */
-    class NavigationLoader extends Tape.PropsComponent {
+    class NavigationLoader extends Laya.Component {
 
         public routeName = "";
         public routeKey = "";
@@ -46,15 +46,13 @@ module Tape {
         public create(routeActivity) {
             this.routeActivity = routeActivity;
             this.addChild(this.routeActivity);
+            this.routeActivity.event('onCreate');
             this.routeActivity.onCreate && this.routeActivity.onCreate();
         }
 
         public nextProgress(progress) {
+            this.routeActivity.event('nextProgress', progress);
             this.routeActivity.onNextProgress && this.routeActivity.onNextProgress(progress);
-        }
-
-        public postEvent(eventName, data) {
-            this.event(eventName, data);
         }
 
         public exit(anim: boolean, callback: Function) {
@@ -65,13 +63,15 @@ module Tape {
             if (anim && ease) {
                 (<any>Object).assign(this, fromProps);
                 Laya.Tween.to(this, toProps, duration, ease, Laya.Handler.create(this, () => {
-                    this.removeSelf();
+                    this.destroy();
+                    this.routeActivity.event('onDestroy');
                     this.routeActivity.onDestroy && this.routeActivity.onDestroy();
                     callback && callback();
                     Laya.Pool.clearBySign(this.routeName);
                 }));
             } else {
-                this.removeSelf();
+                this.destroy();
+                this.routeActivity.event('onDestroy');
                 this.routeActivity.onDestroy && this.routeActivity.onDestroy();
                 callback && callback();
                 Laya.Pool.clearBySign(this.routeName);
@@ -86,12 +86,14 @@ module Tape {
             if (anim && ease) {
                 (<any>Object).assign(this, fromProps);
                 this.visible = true;
+                this.routeActivity.event('onResume');
                 this.routeActivity.onResume && this.routeActivity.onResume();
                 Laya.Tween.to(this, toProps, duration, ease, Laya.Handler.create(this, () => {
                     callback && callback();
                 }));
             } else {
                 this.visible = true;
+                this.routeActivity.event('onResume');
                 this.routeActivity.onResume && this.routeActivity.onResume();
                 callback && callback();
             }
@@ -99,6 +101,7 @@ module Tape {
 
         public hide() {
             this.visible = false;
+            this.routeActivity.event('onPause');
             this.routeActivity.onPause && this.routeActivity.onPause();
         }
 
@@ -112,8 +115,8 @@ module Tape {
         private __navigator__ = null;
         private __init_name__ = "";
         private __routes__: Object = {};
-        private __static_res__: Array<Object> = [];
-        private __stacks__: Array<NavigationLoader> = [];
+        private __static_res__: Object[] = [];
+        private __stacks__: NavigationLoader[] = [];
         private __loaded_handler__: Function = null;
         private __load_progress_handler__: Function = null;
         private __uri_prefix__ = "://";
@@ -205,7 +208,7 @@ module Tape {
                 }
                 (<any>Object).assign(paramsObject, params);
                 this.__loading__ = true;
-                let key = Tape.UUID.randomUUID();
+                let key = UUID.randomUUID();
                 new NavigationLoader(activity, name, key, {
                     navigation: this,
                     routeName: name,
@@ -249,7 +252,7 @@ module Tape {
         /**
          * pop
          */
-        public pop(number: Number = 1) {
+        public pop(number: number = 1) {
             this.popStack(number);
         }
 
@@ -345,10 +348,12 @@ module Tape {
     /**
      * StackNavigator
      */
-    class StackNavigator extends Tape.PropsComponent {
+    class StackNavigator extends Laya.Component {
         private __navigator__: NavigationStack = null;
+        public readonly props: Object = {};
         constructor(props) {
-            super(props);
+            super();
+            this.props = (<any>Object).assign({}, props);
             this.__navigator__ = new NavigationStack(this);
             this.__navigator__.initPage();
         }
@@ -361,7 +366,7 @@ module Tape {
      * @param options options
      */
     export const createNavigator = function (routes, initName, options = {}): any {
-        console.log('init Navigator, Env: ' + Tape.Build.getEnv());
+        console.log('init Navigator, Env: ' + Tape.Env.getEnv());
         return new StackNavigator({
             navigation: {
                 routes: routes,

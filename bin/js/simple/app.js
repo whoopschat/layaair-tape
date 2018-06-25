@@ -36,12 +36,7 @@ var App;
             this.outEaseToProps = {
                 y: this.height
             };
-            // Tape.BackgroundMusic.play("res/sound/bg_sound.mp3", 0);
-            Tape.Audio.play("res/sound/readygo.mp3");
             this.page1.btn.on(Laya.Event.CLICK, this, function () {
-                var a = new ui.MessageToastUI();
-                a.text.text = JSON.stringify(_this.params);
-                Tape.Toast.showToast(a);
                 _this.navigate("Page2");
             });
             this.page1.btnBack.on(Laya.Event.CLICK, this, function () {
@@ -66,54 +61,12 @@ var App;
         }
         Page2.prototype.onCreate = function () {
             var _this = this;
-            Laya.timer.once(400, null, function () {
-                var context = Tape.MiniOpenContext.postMessageToOpenDataContext({
-                    data: {
-                        action: "loginUI",
-                        value: JSON.stringify(ui.LoginPageUI.uiView)
-                    }
-                });
-            });
             console.log('Page2.onCreate');
-            Tape.EventBus.on('ABC', function (data) {
-                Tape.Logger.log(data);
-            });
-            Tape.EventBus.post('ABC', '11111111111111');
             this.addChild(this.page2);
-            var ws = new Tape.MQTTSocket();
-            ws.onConnected = function () {
-                console.log('onConnected');
-            };
-            ws.onClosed = function () {
-                console.log('onClosed');
-            };
-            ws.onError = function () {
-                console.log('onError');
-            };
-            ws.connect('192.168.69.74', 8083, '$client/aaa');
             this.page2.btn.on(Laya.Event.CLICK, this, function () {
-                Tape.Toast.showToast(new ui.MessageToastUI());
-                Tape.Dialog.showDialog(new ui.DialogViewUI());
-                Tape.MiniUI.showUserInfoButton({
-                    type: 'text',
-                    text: '授权并登录',
-                    style: {
-                        width: 300,
-                        height: 80
-                    },
-                    success: function (res) {
-                        console.log("获取用户信息成功", res);
-                        _this.navigate("Main", res, function () {
-                            _this.back();
-                        });
-                    },
-                    fail: function (res) {
-                        console.log("获取用户信息失败", res);
-                    }
+                _this.navigate("Main", {}, function () {
+                    _this.back();
                 });
-            });
-            Tape.Effect.clickEffect(this.page2.btnBack, function () {
-                _this.back();
             });
         };
         Page2.prototype.onPause = function () {

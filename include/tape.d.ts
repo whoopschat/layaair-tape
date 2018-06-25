@@ -1,16 +1,6 @@
 declare module Tape {
 
     /**
-     * isMiniGame
-     */
-    function isMiniGame(): boolean;
-
-    /**
-     * isConchApp
-     */
-    function isConchApp(): boolean;
-
-    /**
      * init
      * @param width 宽度
      * @param height 高度
@@ -31,546 +21,144 @@ declare module Tape {
      */
     function createNavigator(routes, initName, options?: Object);
 
-    ///////////////////////////////////////////////
-    ////// Component
-    ///////////////////////////////////////////////
+    /** Platform */
+    module Platform {
 
-    /**
-     * Activity
-     */
-    class Activity {
+        /** isLongPhone */
+        function isLongPhone(): boolean;
+
+        /** isWechatApp */
+        function isWechatApp(): boolean;
+
+    }
+
+    /** Activity */
+    class Activity extends Laya.Component {
 
         static ROUTE(options?: Object): Object;
+
+        /** props */
 
         public readonly props: Object;
         public readonly params: Object;
         public readonly routeName: string;
         public readonly routeKey: string;
-        /**
-         * in anim
-         */
+
+        constructor(props?: Object);
+
+        /** anim */
         protected inEase: Function;
         protected inEaseDuration: number;
         protected inEaseFromProps: Object;
         protected inEaseToProps: Object;
-        /**
-         * out anim
-         */
         protected outEaseDuration: number;
         protected outEase: Function;
         protected outEaseFromProps: Object;
         protected outEaseToProps: Object;
 
         ///////////////////////
-        //// Extends component props
+        /// life cycle
         ///////////////////////
 
-        gray: boolean;
-        disabled: boolean;
-        tag: any;
-        top: number;
-        bottom: number;
-        left: number;
-        right: number;
-        centerX: number;
-        centerY: number;
-        anchorX: number;
-        anchorY: number;
-        scaleX: number;
-        scaleY: number;
-        height: number;
-        readonly displayHeight: number;
-        width: number;
-        readonly displayWidth: number;
-        layoutEnabled: boolean;
-
-        protected addChild(child: any);
+        /** onCreate */
+        protected onCreate: () => void;
+        /** onResume */
+        protected onResume: () => void;
+        /** onPause */
+        protected onPause: () => void;
+        /** onDestroy */
+        protected onDestroy: () => void;
+        /** onNextProgress */
+        protected onNextProgress: (progress: number) => void;
 
         ///////////////////////
-        /// Constructor
+        /// navigation
         ///////////////////////
 
-        constructor(props?: Object);
+        /** redirectTo */
+        protected redirectTo: (name, params?) => boolean;
 
-        ///////////////////////
-        /// LifeCycle
-        ///////////////////////
+        /** navigate */
+        protected navigate: (name, params?, action?: Function) => boolean;
 
-        /**
-         * onCreate
-         */
-        protected onCreate(): void;
+        /** deeplink */
+        protected deeplink: (url, action?: Function) => boolean;
 
-        /**
-         * onResume
-         */
-        protected onResume(): void;
+        /** finish self */
+        protected back: () => void;
 
-        /**
-         * onPause
-         */
-        protected onPause(): void;
+        /** finish activity */
+        protected finish: (name) => void;
 
-        /**
-         * onDestroy
-         */
-        protected onDestroy(): void;
+        /** pop count , n default 1 */
+        protected pop: (n?: number) => void;
 
-        /**
-         * onNextProgress
-         * @param progress progress
-         */
-        protected onNextProgress(progress: number): void;
-
-        ///////////////////////
-        /// Navigator
-        ///////////////////////
-
-        /**
-         * redirectTo
-         */
-        protected redirectTo(name, params?): boolean;
-
-        /**
-         * navigate
-         */
-        protected navigate(name, params?, action?: Function): boolean;
-
-        /**
-         * deeplink
-         */
-        protected deeplink(url, action?: Function): boolean;
-
-        /**
-         * finish self
-         */
-        protected back(): void;
-
-        /**
-         * finish activity
-         */
-        protected finish(name): void;
-
-        /**
-         * pop count , n default 1
-         */
-        protected pop(n?: number): void;
-
-        /**
-         * pop to top
-         */
-        protected popToTop(): void;
+        /** pop to top */
+        protected popToTop: () => void;
 
     }
 
-    /**
-     * Dialog
-     */
-    class Dialog {
-
-        /**
-         * showDialog
-         * @param dialog dialog ui
-         * @param onOpened onOpened callback
-         * @param onClosed onClosed callback
-         */
-        static showDialog(dialog, onOpened?: Function, onClosed?: Function): void;
-
-        /**
-         * closeDialog
-         */
-        static closeDialog(): void;
-
-        /**
-         * showLockView
-         * @param lockView lockView
-         */
-        static showLockView(lockView): void;
-
-        /**
-         * closeLockView
-         */
-        static closeLockView(): void;
-    }
-
-    /**
-     * Toast
-     */
-    class Toast {
-
-        /**
-         * showToast
-         * @param view show toast view
-         * @param duration duration default 500 ms
-         * @param previousHnadler previous hnadler callback
-         */
-        static showToast(view, duration?: number, previousHnadler?: Function): void;
-
-    }
-
-    export class Effect {
-
-        public static clickEffect(btnView: any, click: Function): void;
-
-    }
-
-    ///////////////////////////////////////////////
-    ////// Utils
-    ///////////////////////////////////////////////
-
-    /**
-     * Build
-     */
-    class Build {
-
-        /**
-         * configEnv
-         * @param env development or production
-         */
-        static configEnv(env: string);
+    /** Env */
+    module Env {
 
         /**
          * get build env
          * @return env mode : development or production
          */
-        static getEnv(): string;
+        function getEnv(): string;
 
         /**
-         * isDebug
+         * isDev
          */
-        static isDebug(): boolean;
+        function isDev(): boolean;
+
+        /**
+         * isProd
+         */
+        function isProd(): boolean;
 
     }
 
-    /**
-     * NumUtil
-     */
-    class NumUtil {
+    /** ArrayUtil */
+    module ArrayUtil {
 
-        /**
-         * rangedNum
-         * @param val curr number
-         * @param min min number
-         * @param max max number
-         */
-        static rangedNum(val: number, min: number, max: number): number;
+        /** random */
+        function random(source: any[]): any;
 
-        /**
-         * randomFloat
-         * @param min min number default 0
-         * @param max max number default 1
-         */
-        static randomFloat(min?: number, max?: number): number;
-
-        /**
-         * randomInteger
-         * @param min min number
-         * @param max max number
-         */
-        static randomInteger(min: number, max: number): number;
+        /** randomArr */
+        function randomArr(source: any[], length: number = -1): any[];
 
     }
 
-    /**
-     * UUID
-     */
-    class UUID {
+    /** UUID */
+    module UUID {
 
-        /**
-         * randUUID
-         */
-        static randomUUID(): string;
+        /** randomUUID */
+        function randomUUID(): string;
 
     }
 
-    /**
-     * Logger
-     */
-    class Logger {
+    /** MiniAd */
+    module MiniAd {
 
-        /**
-         * print console log
-         */
-        static log(message?: any, ...optionalParams: any[]): void;
+        /** showBannerAd */
+        function showBannerAd(adUnitId: string, x: number, y: number, w: number, h: number): void;
 
-        /**
-         * print console error log
-         */
-        static error(message?: any, ...optionalParams: any[]): void;
-
-        /**
-         * print console info log
-         */
-        static info(message?: any, ...optionalParams: any[]): void;
-
-        /**
-         * print console warn log
-         */
-        static warn(message?: any, ...optionalParams: any[]): void;
-
-        /**
-         * print console debug log
-         */
-        static debug(message?: any, ...optionalParams: any[]): void;
+        /** hideBannerAd */
+        function hideBannerAd(adUnitId: string): void;
 
     }
 
-    /**
-     * EventBus
-     */
-    class EventBus {
+    /** MiniRank */
+    module MiniRank {
 
-        static post(event: string, data: any): void;
+        function createRankView(x?: number, y?: number, width?: number, height?: number): Laya.Sprite;
 
-        static on(event: string, callback: Function): void;
-    }
+        function showRank(uiView: Object | Object[], options?: Object, onlyRefreshData?: boolean): void;
 
-    ///////////////////////////////////////////////
-    ////// Media
-    ///////////////////////////////////////////////
+        function hideRank(): void;
 
-    /**
-     * BackgroundMusic
-     */
-    class BackgroundMusic {
-
-        /**
-         * play background music
-         * @param url url
-         * @param loops loops count,default 1
-         * @param complete complete callback
-         */
-        public static play(url: String, loops?: number, complete?: Function): void;
-
-        /**
-         * stop background music
-         */
-        public static stop(): void;
-
-        /**
-         * pause audio
-         */
-        public static pause(): void;
-    }
-
-    /**
-     * Audio
-     */
-    class Audio {
-
-        /**
-         * config audio
-         * @param dir sound dir for web
-         * @param ext sound ext for web
-         * @param conchDir sound dir for conch
-         */
-        public static config(dir: string, ext: string, conchDir: string, conchExt: string);
-
-        /**
-         * play audio
-         * @param url url
-         * @param loops loops count,default 1
-         * @param complete complete callback
-         */
-        public static play(url: String, loops?: number, complete?: Function): Audio;
-
-        /**
-         * constructor
-         * @param url sound url
-         */
-        constructor(url: String);
-
-        /**
-         * play audio
-         * @param loops loops count,default 1
-         * @param complete complete callback
-         */
-        public play(loops?: number, complete?: Function): void;
-
-        /**
-         * stop audio
-         */
-        public stop(): void;
-
-        /**
-         * pause audio
-         */
-        public pause(): void;
-
-    }
-
-    ///////////////////////////////////////////////
-    ////// Socket
-    ///////////////////////////////////////////////
-
-    /**
-     * WebSocket
-     */
-    class WebSocket {
-
-        onConnecting: Function;
-        onConnected: Function;
-        onClosed: Function;
-        onError: Function;
-        onMessageReceived: Function;
-
-        /**
-         * @param socketUrl     socket url
-         */
-        connect(socketUrl: String): void;
-
-        /**
-         * disconnect
-         */
-        disconnect(): void;
-
-        /**
-         * @return is connected
-         */
-        isConnected(): boolean;
-
-        /**
-         * @return is connecting
-         */
-        isConnecting(): boolean;
-
-        /**
-         * @param message socket message
-         */
-        publishMessage(message: any): void;
-
-    }
-
-    /**
-     * MQTTSocket
-     */
-    class MQTTSocket {
-
-        onConnecting: Function;
-        onConnected: Function;
-        onClosed: Function;
-        onError: Function;
-        onMessageReceived: Function;
-        onMessageDelivered: Function;
-
-        /**
-         * @param host     mqtt host
-         * @param port     mqtt port
-         * @param clientId     mqtt clientId
-         * @param username     mqtt username
-         * @param password     mqtt password
-         * @param options     mqtt options
-         */
-        connect(host: string, port: number, clientId: string, username?: string, password?: string, options?: Object): void;
-
-        /**
-         * disconnect
-         */
-        disconnect(): void;
-
-        /**
-         * @return is connected
-         */
-        isConnected(): boolean;
-
-        /**
-         * @return is connecting
-         */
-        isConnecting(): boolean;
-
-        /**
-         * @param topic     mqtt topic
-         * @param message     mqtt message
-         * @param qos     mqtt qos
-         * @param retained     mqtt retained
-         */
-        publishMessage(topic: string, message: any, qos?: number, retained?: boolean): void;
-
-    }
-
-    ///////////////////////////////////////////////
-    ////// Mini
-    ///////////////////////////////////////////////
-
-    /**
-     * __WX__
-     */
-    function __WX__(func: string, ...options): any;
-
-    /**
-     * MiniUI
-     */
-    class MiniUI {
-
-        /**
-         * 创建开放数据域的View
-         */
-        public static createSharedCanvasView(): void;
-
-        /**
-         * 显示获取用户信息按钮
-         */
-        public static showUserInfoButton(options: Object): void;
-
-        /**
-         * 隐藏获取用户信息按钮
-         */
-        public static hideUserInfoButton(): void;
-
-        /**
-         * 显示游戏圈按钮
-         */
-        public static showGameClubButton(options: Object): void;
-
-        /**
-         * 隐藏游戏圈按钮
-         */
-        public static hideGameClubButton(): void;
-
-    }
-
-    /**
-     * MiniVersion
-     */
-    class MiniVersion {
-
-        /**
-         * 强制更新
-         * @param options {loading, confirm, success, fail}
-         */
-        public static forceUpdate(options: Object): void;
-
-    }
-
-    /**
-     * MiniOpenData
-     */
-    class MiniOpenContext {
-
-        /**
-         * 根据uiView显示界面
-         * @param uiView ui
-         * @param keyList 开放数据的key list
-         * @param options 可选参数
-         */
-        public static showUI(uiView: Object | Array<Object>, keyList?: Array<String>, options?: Object): void;
-
-        /**
-         * 隐藏界面
-         */
-        public static hideUI():void;
-
-        /**
-         * 将数据托管到微信
-         * @param KVDataList 格式：[{key:'key1',value:'value1'}]
-         */
-        public static setUserCloudStorage(KVDataList: Array<Object>): void;
-
-        /**
-         * 发送消息到开放数据域
-         * @param options { data }
-         */
-        public static postMessageToOpenDataContext(options: Object): void;
+        function setRankData(list: Object[]): void;
 
     }
 
