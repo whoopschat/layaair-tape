@@ -764,7 +764,6 @@ var Tape;
      */
     Tape.createNavigator = function (routes, initName, options) {
         if (options === void 0) { options = {}; }
-        console.log('init Navigator, Env: ' + Tape.Env.getEnv());
         return new StackNavigator({
             navigation: {
                 routes: routes,
@@ -791,12 +790,16 @@ var __extends = (this && this.__extends) || (function () {
 })();
 var runtime;
 (function (runtime) {
+    function center(view) {
+        view.x = view.x + view.width / 2 - view.pivotX;
+        view.y = view.y + view.height / 2 - view.pivotY;
+        view.pivot(view.width / 2, view.height / 2);
+    }
     var btn = /** @class */ (function (_super) {
         __extends(btn, _super);
         function btn() {
             var _this = _super.call(this) || this;
             _this.scaleTime = 100;
-            _this.anchorX = _this.anchorY = 0.5;
             _this.on(Laya.Event.MOUSE_DOWN, _this, _this.scaleSmal);
             _this.on(Laya.Event.MOUSE_UP, _this, _this.scaleBig);
             _this.on(Laya.Event.MOUSE_OUT, _this, _this.scaleBig);
@@ -806,12 +809,34 @@ var runtime;
             Laya.Tween.to(this, { scaleX: 1, scaleY: 1 }, this.scaleTime);
         };
         btn.prototype.scaleSmal = function () {
+            center(this);
             // scale 0.8
             Laya.Tween.to(this, { scaleX: 0.8, scaleY: 0.8 }, this.scaleTime);
         };
         return btn;
-    }(Laya.Image));
+    }(Laya.Button));
     runtime.btn = btn;
+    var img_btn = /** @class */ (function (_super) {
+        __extends(img_btn, _super);
+        function img_btn() {
+            var _this = _super.call(this) || this;
+            _this.scaleTime = 100;
+            _this.on(Laya.Event.MOUSE_DOWN, _this, _this.scaleSmal);
+            _this.on(Laya.Event.MOUSE_UP, _this, _this.scaleBig);
+            _this.on(Laya.Event.MOUSE_OUT, _this, _this.scaleBig);
+            return _this;
+        }
+        img_btn.prototype.scaleBig = function () {
+            Laya.Tween.to(this, { scaleX: 1, scaleY: 1 }, this.scaleTime);
+        };
+        img_btn.prototype.scaleSmal = function () {
+            center(this);
+            // scale 0.8
+            Laya.Tween.to(this, { scaleX: 0.8, scaleY: 0.8 }, this.scaleTime);
+        };
+        return img_btn;
+    }(Laya.Image));
+    runtime.img_btn = img_btn;
 })(runtime || (runtime = {}));
 
 var Tape;

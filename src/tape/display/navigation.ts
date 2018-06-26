@@ -366,7 +366,6 @@ module Tape {
      * @param options options
      */
     export const createNavigator = function (routes, initName, options = {}): any {
-        console.log('init Navigator, Env: ' + Tape.Env.getEnv());
         return new StackNavigator({
             navigation: {
                 routes: routes,
