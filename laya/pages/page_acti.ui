@@ -1,4 +1,5 @@
 {
+    "x":0,
     "type":"View",
     "selectedBox":1,
     "selecteID":5,
@@ -12,6 +13,7 @@
     "compId":1,
     "child":[
         {
+            "x":15,
             "type":"Image",
             "props":{"y":0,"x":0,"width":600,"skin":"comp/bg.png","sizeGrid":"28,7,7,6","height":400},
             "nodeParent":1,
@@ -25,6 +27,7 @@
             "$LOCKED":true
         },
         {
+            "x":15,
             "type":"Button",
             "props":{"y":309,"x":210,"width":179,"var":"btnBack","skin":"comp/button.png","label":"Back","height":42},
             "nodeParent":1,
@@ -37,6 +40,7 @@
                 ]
         },
         {
+            "x":15,
             "type":"Button",
             "props":{"y":255,"x":211,"width":179,"var":"btn","skin":"comp/button.png","label":"Main","height":42},
             "nodeParent":1,
@@ -49,59 +53,22 @@
                 ]
         },
         {
+            "x":15,
             "type":"Button",
-            "props":{"y":68,"x":68,"skin":"comp/button.png","label":"label"},
+            "props":{"y":202,"x":211,"width":179,"var":"pop","skin":"comp/button.png","label":"POP","height":42},
             "nodeParent":1,
-            "label":"Button",
+            "label":"Button(pop)",
             "isDirectory":false,
             "isAniNode":true,
             "hasChild":false,
-            "compId":5,
+            "compId":6,
             "child":[
                 ]
         }],
     "animations":[
         {
             "nodes":[
-                {
-                    "target":5,
-                    "keyframes":{
-                        "y":[
-                            {
-                                "value":68,
-                                "tweenMethod":"linearNone",
-                                "tween":true,
-                                "target":5,
-                                "key":"y",
-                                "index":0
-                            },
-                            {
-                                "value":179,
-                                "tweenMethod":"linearNone",
-                                "tween":true,
-                                "target":5,
-                                "key":"y",
-                                "index":25
-                            }],
-                        "x":[
-                            {
-                                "value":68,
-                                "tweenMethod":"linearNone",
-                                "tween":true,
-                                "target":5,
-                                "key":"x",
-                                "index":0
-                            },
-                            {
-                                "value":436,
-                                "tweenMethod":"linearNone",
-                                "tween":true,
-                                "target":5,
-                                "key":"x",
-                                "index":25
-                            }]
-                    }
-                }],
+                ],
             "name":"ani1",
             "id":1,
             "frameRate":24,

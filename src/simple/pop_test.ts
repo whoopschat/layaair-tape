@@ -1,18 +1,18 @@
-class A extends Tape.PopView {
+class TestPop extends Tape.PopView {
 
     constructor() {
         super();
-        this.addChild(new ui.DemoUI);
+        this.addChild(new ui.test_popUI);
         this.isTranslucent = false;
         this.canceledOnTouchOutside = true;
     }
 
     onShow() {
-        console.log('onShow',this);
+        console.log('onShow', this);
     }
 
     onHide() {
-        console.log('onHide',this);
+        console.log('onHide', this);
     }
 
 }

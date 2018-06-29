@@ -3,7 +3,7 @@ var GameMain = /** @class */ (function () {
     function GameMain() {
         Tape.init(600, 400);
         Tape.Navigator.init({
-            mainPage: App.Main,
+            mainPage: MainActivity,
             commonRes: [
                 { url: 'res/atlas/comp.atlas', type: Laya.Loader.ATLAS },
                 { url: 'res/config.json', type: Laya.Loader.JSON }
