@@ -21,8 +21,6 @@ module Tape {
     const __create_rank_texture__ = () => {
         if (window.hasOwnProperty('sharedCanvas')) {
             var sharedCanvas = window['sharedCanvas'];
-            sharedCanvas.width = Laya.stage.width;
-            sharedCanvas.height = Laya.stage.height;
             if (!sharedCanvas.hasOwnProperty('_addReference')) {
                 sharedCanvas['_addReference'] = () => {
                 };
@@ -35,28 +33,38 @@ module Tape {
         return __rank_texture__;
     }
 
+    const __init_rank__ = () => {
+        if (window.hasOwnProperty('sharedCanvas')) {
+            var sharedCanvas = window['sharedCanvas'];
+            sharedCanvas.width = Laya.stage.width;
+            sharedCanvas.height = Laya.stage.height;
+        }
+        __post_message_to_sub_context__({
+            action: 'init',
+            data: {
+                width: Laya.stage.width,
+                height: Laya.stage.height,
+                matrix: Laya.stage._canvasTransform
+            }
+        });
+        __post_message_to_sub_context__({
+            action: 'setDebug',
+            data: {
+                debug: Env.isDev()
+            }
+        });
+    }
+
     /** MiniHandler */
     export module MiniHandler {
 
         export const init = (width: number, height: number, ...options) => {
             Laya.MiniAdpter.init(true);
             Laya.init(width, height, ...options);
-            Laya.stage.scaleMode = Laya.Stage.SCALE_EXACTFIT;
+            Laya.stage.scaleMode = Laya.Stage.SCALE_SHOWALL;
             Laya.stage.alignV = Laya.Stage.ALIGN_MIDDLE;
             Laya.stage.alignH = Laya.Stage.ALIGN_CENTER;
-            if (window.hasOwnProperty('sharedCanvas')) {
-                var sharedCanvas = window['sharedCanvas'];
-                sharedCanvas.width = Laya.stage.width;
-                sharedCanvas.height = Laya.stage.height;
-            }
-            __post_message_to_sub_context__({
-                action: 'init',
-                data: {
-                    width: Laya.stage.width,
-                    height: Laya.stage.height,
-                    matrix: Laya.stage._canvasTransform
-                }
-            });
+            __init_rank__();
         }
 
         export const exit = () => {

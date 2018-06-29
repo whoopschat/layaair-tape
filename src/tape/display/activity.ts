@@ -1,100 +1,70 @@
 module Tape {
 
+
     /** Activity */
-    export class Activity extends Laya.Component {
+    export abstract class Activity extends Laya.Component {
 
-        static ROUTE(options: Object = {}): Object {
-            return (<any>Object).assign({}, options, {
-                activity: this
-            });
-        };
-
-        public readonly props: Object = {};
-        public readonly routeName: string = "";
-        public readonly routeKey: string = "";
+        /** page type */
+        public readonly page: any = null;
+        /** params */
         public readonly params: Object = {};
-        protected inEaseDuration: number = 300;
-        protected inEase: Function = null;
-        protected inEaseFromProps: Object = null;
-        protected inEaseToProps: Object = null;
-        protected outEaseDuration: number = 300;
-        protected outEase: Function = null;
-        protected outEaseFromProps: Object = null;
-        protected outEaseToProps: Object = null;
+        /** res */
+        public res: ResourceOptions[] = [];
+        /** turn on and off animation */
+        public inEaseDuration: number = 0;
+        public inEase: Function = null;
+        public inEaseFromProps: Object = null;
+        public inEaseToProps: Object = null;
 
-        constructor(props: Object = {}) {
+        public onCreate?(): void;
+        public onResume?(): void;
+        public onPause?(): void;
+        public onDestroy?(): void;
+        public onNextProgress?(progress): void;
+
+        constructor(options: ActivityOptions) {
             super();
-            this.props = (<any>Object).assign({}, props);
-            this.params = (<any>Object).assign({}, props['params']);
-            this.routeName = props['routeName'] || "";
-            this.routeKey = props['routeKey'] || "";
+            this.params = (<any>Object).assign({}, options.params || {});
+            this.page = options.page;
         }
 
-        //////////////////////////
-        /// life cycle function
-        //////////////////////////
-
-        protected onCreate() {
-        }
-
-        protected onResume() {
-        }
-
-        protected onPause() {
-        }
-
-        protected onDestroy() {
-        }
-
-        protected onNextProgress(progress) {
+        public onLoadRes(onLoaded: Function, onLoadProgress: Function) {
+            let res = this.res || [];
+            if (res.length > 0) {
+                Laya.loader.load(res, Laya.Handler.create(this, onLoaded), Laya.Handler.create(this, onLoadProgress, null, false));
+            } else {
+                onLoaded();
+            }
         }
 
         //////////////////////////
         /// navigator function
         //////////////////////////
 
-        protected redirectTo(name, params: Object = {}): boolean {
-            return this.navigate(name, params, () => {
+        protected redirectTo(page, params: Object = {}) {
+            this.navigate(page, params, () => {
                 this.back();
             });
         }
 
-        protected navigate(name, params: Object = {}, action: Function = null): boolean {
-            if (this.props.hasOwnProperty('navigation')) {
-                return this.props['navigation'].navigate(name, params, action);
-            }
-            return false;
-        }
-
-        protected deeplink(url, action: Function = null): boolean {
-            if (this.props.hasOwnProperty('navigation')) {
-                return this.props['navigation'].deeplink(url, action);
-            }
-            return false;
+        protected navigate(page, params: Object = {}, action: Function = null) {
+            NavigatorStack.navigate(page, params, action);
         }
 
         protected back() {
-            if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].finish(this.routeName, this.routeKey);
-            }
+            NavigatorStack.finish(this.page, this);
         }
 
-        protected finish(name) {
-            if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].finish(name);
-            }
+        protected finish(page) {
+            NavigatorStack.finish(page);
         }
 
-        protected pop(number?: Number) {
-            if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].pop(number);
-            }
+        protected pop(number?: number) {
+            NavigatorStack.pop(number);
         }
 
         protected popToTop() {
-            if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].popToTop();
-            }
+            NavigatorStack.popToTop();
         }
 
     }

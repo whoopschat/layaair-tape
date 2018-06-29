@@ -28,26 +28,12 @@ var App;
             this.inEaseToProps = {
                 y: 0
             };
-            this.outEase = Laya.Ease.linearIn;
-            this.outEaseDuration = 300;
-            this.outEaseFromProps = {
-                y: 0
-            };
-            this.outEaseToProps = {
-                y: this.height
-            };
             this.page1.btn.on(Laya.Event.CLICK, this, function () {
-                _this.navigate("Page2");
+                _this.navigate(Page2);
             });
             this.page1.btnBack.on(Laya.Event.CLICK, this, function () {
                 _this.back();
             });
-        };
-        Main.prototype.onPause = function () {
-        };
-        Main.prototype.onResume = function () {
-        };
-        Main.prototype.onDestroy = function () {
         };
         return Main;
     }(Tape.Activity));
@@ -61,21 +47,13 @@ var App;
         }
         Page2.prototype.onCreate = function () {
             var _this = this;
-            console.log('Page2.onCreate');
             this.addChild(this.page2);
             this.page2.btn.on(Laya.Event.CLICK, this, function () {
-                _this.navigate("Main", {}, function () {
-                    _this.back();
-                });
+                _this.navigate(Main);
             });
-        };
-        Page2.prototype.onPause = function () {
-        };
-        Page2.prototype.onResume = function () {
-        };
-        Page2.prototype.onDestroy = function () {
-        };
-        Page2.prototype.onNextProgress = function (progress) {
+            this.page2.btnBack.on(Laya.Event.CLICK, this, function () {
+                Tape.PopManager.showPop(A);
+            });
         };
         return Page2;
     }(Tape.Activity));

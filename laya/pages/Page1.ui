@@ -28,7 +28,7 @@
         {
             "x":15,
             "type":"Button",
-            "props":{"y":289,"x":420,"width":243,"var":"btn","skin":"comp/button.png","runtime":"runtime.btn","label":"Page2","height":44,"anchorY":0.5,"anchorX":0.5},
+            "props":{"y":289,"x":419,"width":243,"var":"btn","skin":"comp/button.png","runtime":"runtime.btn","label":"Page2","height":44,"anchorY":0.5,"anchorX":0.5},
             "nodeParent":1,
             "label":"Button(btn)",
             "isDirectory":false,

@@ -51,19 +51,20 @@ var Tape;
     })(ArrayUtil || (ArrayUtil = {}));
 })(Tape || (Tape = {}));
 
-// =========================== //
-// Tape build.js
-// =========================== //
 var Tape;
 (function (Tape) {
     var Env;
     (function (Env) {
         /**
-         * get build env
+         * get env
          * @return env mode : development or production
          */
         Env.getEnv = function () {
-            return '${env}';
+            var env = '${env}';
+            if (env.indexOf('${') === 0) {
+                return 'development';
+            }
+            return env;
         };
         /**
          * isDebug
@@ -78,6 +79,20 @@ var Tape;
             return Env.getEnv() === 'production';
         };
     })(Env = Tape.Env || (Tape.Env = {}));
+})(Tape || (Tape = {}));
+
+var Tape;
+(function (Tape) {
+    var Platform;
+    (function (Platform) {
+        Platform.isWechatApp = function () {
+            return window.hasOwnProperty("wx");
+        };
+        Platform.isLongPhone = function () {
+            var scale = (Laya.Browser.clientHeight / laya.utils.Browser.clientWidth);
+            return scale > 2.1;
+        };
+    })(Platform = Tape.Platform || (Tape.Platform = {}));
 })(Tape || (Tape = {}));
 
 var Tape;
@@ -105,7 +120,7 @@ var Tape;
                 options[_i - 2] = arguments[_i];
             }
             Laya.init.apply(Laya, [width, height].concat(options));
-            Laya.stage.scaleMode = Laya.Stage.SCALE_EXACTFIT;
+            Laya.stage.scaleMode = Laya.Stage.SCALE_SHOWALL;
             Laya.stage.alignV = Laya.Stage.ALIGN_MIDDLE;
             Laya.stage.alignH = Laya.Stage.ALIGN_CENTER;
         };
@@ -139,8 +154,6 @@ var Tape;
     var __create_rank_texture__ = function () {
         if (window.hasOwnProperty('sharedCanvas')) {
             var sharedCanvas = window['sharedCanvas'];
-            sharedCanvas.width = Laya.stage.width;
-            sharedCanvas.height = Laya.stage.height;
             if (!sharedCanvas.hasOwnProperty('_addReference')) {
                 sharedCanvas['_addReference'] = function () {
                 };
@@ -152,6 +165,27 @@ var Tape;
         }
         return __rank_texture__;
     };
+    var __init_rank__ = function () {
+        if (window.hasOwnProperty('sharedCanvas')) {
+            var sharedCanvas = window['sharedCanvas'];
+            sharedCanvas.width = Laya.stage.width;
+            sharedCanvas.height = Laya.stage.height;
+        }
+        __post_message_to_sub_context__({
+            action: 'init',
+            data: {
+                width: Laya.stage.width,
+                height: Laya.stage.height,
+                matrix: Laya.stage._canvasTransform
+            }
+        });
+        __post_message_to_sub_context__({
+            action: 'setDebug',
+            data: {
+                debug: Tape.Env.isDev()
+            }
+        });
+    };
     /** MiniHandler */
     var MiniHandler;
     (function (MiniHandler) {
@@ -162,22 +196,10 @@ var Tape;
             }
             Laya.MiniAdpter.init(true);
             Laya.init.apply(Laya, [width, height].concat(options));
-            Laya.stage.scaleMode = Laya.Stage.SCALE_EXACTFIT;
+            Laya.stage.scaleMode = Laya.Stage.SCALE_SHOWALL;
             Laya.stage.alignV = Laya.Stage.ALIGN_MIDDLE;
             Laya.stage.alignH = Laya.Stage.ALIGN_CENTER;
-            if (window.hasOwnProperty('sharedCanvas')) {
-                var sharedCanvas = window['sharedCanvas'];
-                sharedCanvas.width = Laya.stage.width;
-                sharedCanvas.height = Laya.stage.height;
-            }
-            __post_message_to_sub_context__({
-                action: 'init',
-                data: {
-                    width: Laya.stage.width,
-                    height: Laya.stage.height,
-                    matrix: Laya.stage._canvasTransform
-                }
-            });
+            __init_rank__();
         };
         MiniHandler.exit = function () {
             __exec_wx__('exitMiniProgram');
@@ -263,20 +285,6 @@ var Tape;
     })(MiniRank = Tape.MiniRank || (Tape.MiniRank = {}));
 })(Tape || (Tape = {}));
 
-var Tape;
-(function (Tape) {
-    var Platform;
-    (function (Platform) {
-        Platform.isWechatApp = function () {
-            return window.hasOwnProperty("wx");
-        };
-        Platform.isLongPhone = function () {
-            var scale = (Laya.Browser.clientHeight / laya.utils.Browser.clientWidth);
-            return scale > 2.1;
-        };
-    })(Platform = Tape.Platform || (Tape.Platform = {}));
-})(Tape || (Tape = {}));
-
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -292,95 +300,105 @@ var Tape;
     /** Activity */
     var Activity = /** @class */ (function (_super) {
         __extends(Activity, _super);
-        function Activity(props) {
-            if (props === void 0) { props = {}; }
+        function Activity(options) {
             var _this = _super.call(this) || this;
-            _this.props = {};
-            _this.routeName = "";
-            _this.routeKey = "";
+            /** page type */
+            _this.page = null;
+            /** params */
             _this.params = {};
-            _this.inEaseDuration = 300;
+            /** res */
+            _this.res = [];
+            /** turn on and off animation */
+            _this.inEaseDuration = 0;
             _this.inEase = null;
             _this.inEaseFromProps = null;
             _this.inEaseToProps = null;
-            _this.outEaseDuration = 300;
-            _this.outEase = null;
-            _this.outEaseFromProps = null;
-            _this.outEaseToProps = null;
-            _this.props = Object.assign({}, props);
-            _this.params = Object.assign({}, props['params']);
-            _this.routeName = props['routeName'] || "";
-            _this.routeKey = props['routeKey'] || "";
+            _this.params = Object.assign({}, options.params || {});
+            _this.page = options.page;
             return _this;
         }
-        Activity.ROUTE = function (options) {
-            if (options === void 0) { options = {}; }
-            return Object.assign({}, options, {
-                activity: this
-            });
-        };
-        ;
-        //////////////////////////
-        /// life cycle function
-        //////////////////////////
-        Activity.prototype.onCreate = function () {
-        };
-        Activity.prototype.onResume = function () {
-        };
-        Activity.prototype.onPause = function () {
-        };
-        Activity.prototype.onDestroy = function () {
-        };
-        Activity.prototype.onNextProgress = function (progress) {
+        Activity.prototype.onLoadRes = function (onLoaded, onLoadProgress) {
+            var res = this.res || [];
+            if (res.length > 0) {
+                Laya.loader.load(res, Laya.Handler.create(this, onLoaded), Laya.Handler.create(this, onLoadProgress, null, false));
+            }
+            else {
+                onLoaded();
+            }
         };
         //////////////////////////
         /// navigator function
         //////////////////////////
-        Activity.prototype.redirectTo = function (name, params) {
+        Activity.prototype.redirectTo = function (page, params) {
             var _this = this;
             if (params === void 0) { params = {}; }
-            return this.navigate(name, params, function () {
+            this.navigate(page, params, function () {
                 _this.back();
             });
         };
-        Activity.prototype.navigate = function (name, params, action) {
+        Activity.prototype.navigate = function (page, params, action) {
             if (params === void 0) { params = {}; }
             if (action === void 0) { action = null; }
-            if (this.props.hasOwnProperty('navigation')) {
-                return this.props['navigation'].navigate(name, params, action);
-            }
-            return false;
-        };
-        Activity.prototype.deeplink = function (url, action) {
-            if (action === void 0) { action = null; }
-            if (this.props.hasOwnProperty('navigation')) {
-                return this.props['navigation'].deeplink(url, action);
-            }
-            return false;
+            Tape.NavigatorStack.navigate(page, params, action);
         };
         Activity.prototype.back = function () {
-            if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].finish(this.routeName, this.routeKey);
-            }
+            Tape.NavigatorStack.finish(this.page, this);
         };
-        Activity.prototype.finish = function (name) {
-            if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].finish(name);
-            }
+        Activity.prototype.finish = function (page) {
+            Tape.NavigatorStack.finish(page);
         };
         Activity.prototype.pop = function (number) {
-            if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].pop(number);
-            }
+            Tape.NavigatorStack.pop(number);
         };
         Activity.prototype.popToTop = function () {
-            if (this.props.hasOwnProperty('navigation')) {
-                this.props['navigation'].popToTop();
-            }
+            Tape.NavigatorStack.popToTop();
         };
         return Activity;
     }(Laya.Component));
     Tape.Activity = Activity;
+})(Tape || (Tape = {}));
+
+var Tape;
+(function (Tape) {
+    var PopManager;
+    (function (PopManager) {
+        var pops = {};
+        function showPop(pop, data) {
+            if (data === void 0) { data = null; }
+            var view = pops[pop];
+            if (view) {
+                view.pop = pop;
+                view.data = data;
+            }
+            else {
+                view = new pop();
+                view.pop = pop;
+                view.data = data;
+                pops[pop] = view;
+            }
+            view.onShow && view.onShow();
+            Tape.UIManager.addPopUI(view);
+        }
+        PopManager.showPop = showPop;
+        function hidePop(pop) {
+            var view = pops[pop];
+            if (view) {
+                view.onHide && view.onHide();
+                view.removeSelf && view.removeSelf();
+                delete pops[pop];
+            }
+        }
+        PopManager.hidePop = hidePop;
+        function refreshPos() {
+            for (var str in pops) {
+                var view = pops[str];
+                if (view) {
+                    view.resize && view.resize();
+                }
+            }
+        }
+        PopManager.refreshPos = refreshPos;
+    })(PopManager = Tape.PopManager || (Tape.PopManager = {}));
 })(Tape || (Tape = {}));
 
 var __extends = (this && this.__extends) || (function () {
@@ -393,389 +411,332 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-// =========================== //
-// Tape navigation.js
-// =========================== //
 var Tape;
 (function (Tape) {
-    /**
-     * NavigationLoader
-     */
-    var NavigationLoader = /** @class */ (function (_super) {
-        __extends(NavigationLoader, _super);
-        function NavigationLoader(activity, routeName, routeKey, props, res, loaded, onLoadProgress) {
-            if (props === void 0) { props = {}; }
-            if (res === void 0) { res = []; }
-            if (loaded === void 0) { loaded = null; }
-            if (onLoadProgress === void 0) { onLoadProgress = null; }
+    var PopView = /** @class */ (function (_super) {
+        __extends(PopView, _super);
+        function PopView() {
             var _this = _super.call(this) || this;
-            _this.routeName = "";
-            _this.routeKey = "";
-            _this.routeRes = [];
-            _this.routeActivity = null;
-            _this.routeName = routeName;
-            _this.routeKey = routeKey;
-            _this.routeRes = res;
-            if (res != null && res.length > 0) {
-                Laya.loader.load(res, Laya.Handler.create(_this, function () {
-                    var act = Laya.Pool.getItemByCreateFun(_this.routeName, function () {
-                        return new activity(props);
+            _this.isTranslucent = false;
+            _this.canceledOnTouchOutside = false;
+            _this.width = Laya.stage.width;
+            _this.height = Laya.stage.height;
+            setTimeout(function () {
+                if (!_this.isTranslucent) {
+                    var bg = new Laya.Sprite();
+                    bg.graphics.save();
+                    bg.alpha = 0.5;
+                    bg.graphics.drawRect(0, 0, Laya.stage.width, Laya.stage.height, "#000000");
+                    bg.graphics.restore();
+                    bg.width = Laya.stage.width;
+                    bg.height = Laya.stage.height;
+                    bg.on(Laya.Event.CLICK, _this, function (e) {
+                        if (_this.canceledOnTouchOutside) {
+                            _this.finish();
+                        }
+                        e.stopPropagation();
                     });
-                    _this.create(act);
-                    if (loaded) {
-                        loaded(_this);
-                    }
-                }), Laya.Handler.create(_this, function (progress) {
-                    if (onLoadProgress) {
-                        onLoadProgress(_this, progress);
-                    }
-                }, null, false));
-            }
-            else {
-                var act = Laya.Pool.getItemByCreateFun(_this.routeName, function () {
-                    return new activity(props);
-                });
-                _this.create(act);
-                if (loaded) {
-                    loaded(_this);
+                    _this.addChildAt(bg, 0);
                 }
-            }
+            }, 0);
             return _this;
         }
-        NavigationLoader.prototype.create = function (routeActivity) {
-            this.routeActivity = routeActivity;
-            this.addChild(this.routeActivity);
-            this.routeActivity.event('onCreate');
-            this.routeActivity.onCreate && this.routeActivity.onCreate();
+        PopView.prototype.finish = function () {
+            Tape.PopManager.hidePop(this.pop);
         };
-        NavigationLoader.prototype.nextProgress = function (progress) {
-            this.routeActivity.event('nextProgress', progress);
-            this.routeActivity.onNextProgress && this.routeActivity.onNextProgress(progress);
-        };
-        NavigationLoader.prototype.exit = function (anim, callback) {
-            var _this = this;
-            var ease = this.routeActivity.outEase || Laya.Ease.linearIn;
-            var duration = this.routeActivity.outEaseDuration || 300;
-            var fromProps = this.routeActivity.outEaseFromProps || { alpha: 1 };
-            var toProps = this.routeActivity.outEaseToProps || { alpha: 0 };
-            if (anim && ease) {
-                Object.assign(this, fromProps);
-                Laya.Tween.to(this, toProps, duration, ease, Laya.Handler.create(this, function () {
-                    _this.destroy();
-                    _this.routeActivity.event('onDestroy');
-                    _this.routeActivity.onDestroy && _this.routeActivity.onDestroy();
-                    callback && callback();
-                    Laya.Pool.clearBySign(_this.routeName);
-                }));
+        return PopView;
+    }(Laya.Sprite));
+    Tape.PopView = PopView;
+})(Tape || (Tape = {}));
+
+var Tape;
+(function (Tape) {
+    var UIManager;
+    (function (UIManager) {
+        var inited = false;
+        var mainUILayer;
+        var popUILayer;
+        var topUILayer;
+        function init() {
+            if (inited) {
+                return;
             }
-            else {
-                this.destroy();
-                this.routeActivity.event('onDestroy');
-                this.routeActivity.onDestroy && this.routeActivity.onDestroy();
-                callback && callback();
-                Laya.Pool.clearBySign(this.routeName);
-            }
-        };
-        NavigationLoader.prototype.show = function (anim, callback) {
-            var ease = this.routeActivity.inEase || Laya.Ease.linearIn;
-            var duration = this.routeActivity.inEaseDuration || 300;
-            var fromProps = this.routeActivity.inEaseFromProps || { alpha: 0 };
-            var toProps = this.routeActivity.inEaseToProps || { alpha: 1 };
-            if (anim && ease) {
-                Object.assign(this, fromProps);
-                this.visible = true;
-                this.routeActivity.event('onResume');
-                this.routeActivity.onResume && this.routeActivity.onResume();
-                Laya.Tween.to(this, toProps, duration, ease, Laya.Handler.create(this, function () {
-                    callback && callback();
-                }));
-            }
-            else {
-                this.visible = true;
-                this.routeActivity.event('onResume');
-                this.routeActivity.onResume && this.routeActivity.onResume();
-                callback && callback();
-            }
-        };
-        NavigationLoader.prototype.hide = function () {
-            this.visible = false;
-            this.routeActivity.event('onPause');
-            this.routeActivity.onPause && this.routeActivity.onPause();
-        };
-        return NavigationLoader;
-    }(Laya.Component));
-    /**
-     * NavigationStack
-     */
-    var NavigationStack = /** @class */ (function () {
-        function NavigationStack(navigator) {
-            this.__navigator__ = null;
-            this.__init_name__ = "";
-            this.__routes__ = {};
-            this.__static_res__ = [];
-            this.__stacks__ = [];
-            this.__loaded_handler__ = null;
-            this.__load_progress_handler__ = null;
-            this.__uri_prefix__ = "://";
-            this.__file_version__ = null;
-            this.__loading__ = false;
-            this.__navigator__ = navigator;
-            this.__loaded_handler__ = navigator.props['navigation']['onLoaded'];
-            this.__load_progress_handler__ = navigator.props['navigation']['onLoadProgress'];
-            this.__routes__ = navigator.props['navigation']['routes'];
-            this.__init_name__ = navigator.props['navigation']['initName'];
-            this.__static_res__ = navigator.props['navigation']['staticRes'] || [];
-            this.__uri_prefix__ = navigator.props['navigation']['uriPrefix'] || "://";
-            this.__file_version__ = navigator.props['navigation']['fileVersion'];
+            var uiManager = new Laya.Sprite();
+            mainUILayer = new Laya.Sprite();
+            popUILayer = new Laya.Sprite();
+            topUILayer = new Laya.Sprite();
+            uiManager.addChild(mainUILayer);
+            uiManager.addChild(popUILayer);
+            uiManager.addChild(topUILayer);
+            Laya.stage.addChild(uiManager);
+            inited = true;
         }
-        NavigationStack.prototype.initPage = function () {
-            var _this = this;
-            if (this.__file_version__) {
+        function addMainUI(view) {
+            init();
+            view && mainUILayer.addChild(view);
+        }
+        UIManager.addMainUI = addMainUI;
+        function clearMainUI() {
+            init();
+            mainUILayer.removeChildren();
+        }
+        UIManager.clearMainUI = clearMainUI;
+        function addPopUI(view) {
+            init();
+            view && popUILayer.addChild(view);
+        }
+        UIManager.addPopUI = addPopUI;
+        function clearPopUI() {
+            init();
+            popUILayer.removeChildren();
+        }
+        UIManager.clearPopUI = clearPopUI;
+        function addTopUI(view) {
+            init();
+            view && topUILayer.addChild(view);
+        }
+        UIManager.addTopUI = addTopUI;
+        function clearTopUI() {
+            init();
+            topUILayer.removeChildren();
+        }
+        UIManager.clearTopUI = clearTopUI;
+    })(UIManager = Tape.UIManager || (Tape.UIManager = {}));
+})(Tape || (Tape = {}));
+
+var Tape;
+(function (Tape) {
+    var Navigator;
+    (function (Navigator) {
+        var __options__ = null;
+        var __loading__ = false;
+        var __inited__ = false;
+        function init(options) {
+            if (!options || __inited__) {
+                return;
+            }
+            __options__ = options;
+            __enableResourceVersion__();
+            __inited__ = true;
+        }
+        Navigator.init = init;
+        function __enableResourceVersion__() {
+            if (__options__ && __options__.fileVersion) {
                 Laya.ResourceVersion.type = Laya.ResourceVersion.FILENAME_VERSION;
-                Laya.ResourceVersion.enable(this.__file_version__, Laya.Handler.create(this, function () {
-                    _this.navigate(_this.__init_name__);
+                Laya.ResourceVersion.enable(__options__.fileVersion, Laya.Handler.create(null, function () {
+                    __beginLoadStaticRes__();
                 }));
             }
             else {
-                this.navigate(this.__init_name__);
+                __beginLoadStaticRes__();
             }
-        };
-        /**
-         * deeplink
-         */
-        NavigationStack.prototype.deeplink = function (url, action) {
-            if (action === void 0) { action = null; }
-            var params = {};
-            var delimiter = this.__uri_prefix__ || '://';
-            var urlSplit = url.split(delimiter);
-            var path = '/';
-            if (urlSplit.length > 1) {
-                var pathSplit = urlSplit[1].split('?');
-                path = pathSplit[0];
-                if (pathSplit.length > 1) {
-                    var paramsSplit = pathSplit[1].split('&');
-                    paramsSplit.forEach(function (value) {
-                        var _a;
-                        var param = value.split('=');
-                        if (param.length === 2) {
-                            Object.assign(params, (_a = {},
-                                _a[param[0]] = param[1],
-                                _a));
-                        }
-                    });
-                }
+        }
+        function __beginLoadStaticRes__() {
+            var res = __options__.commonRes || [];
+            if (res.length > 0) {
+                Laya.loader.load(res, Laya.Handler.create(null, function () {
+                    __onStaticResLoaded__();
+                }));
             }
             else {
-                path = url;
+                __onStaticResLoaded__();
             }
-            return this.navigate(path, params, action);
+        }
+        function __onStaticResLoaded__() {
+            Tape.NavigatorStack.navigate(__options__.mainPage);
+        }
+    })(Navigator = Tape.Navigator || (Tape.Navigator = {}));
+})(Tape || (Tape = {}));
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var Tape;
+(function (Tape) {
+    var NavigatorLoader = /** @class */ (function (_super) {
+        __extends(NavigatorLoader, _super);
+        function NavigatorLoader(options) {
+            var _this = _super.call(this) || this;
+            _this.__options__ = null;
+            _this.__activity__ = null;
+            _this.__options__ = options;
+            _this.__activity__ = new _this.__options__.page({
+                page: _this.__options__.page,
+                params: _this.__options__.params
+            });
+            _this.__activity__.onLoadRes(function () { _this.__onLoaded__(); }, function (progress) {
+                _this.__onLoadProgress__(progress);
+            });
+            return _this;
+        }
+        NavigatorLoader.prototype.__onLoaded__ = function () {
+            this.addChild(this.__activity__);
+            this.__activity__.onCreate && this.__activity__.onCreate();
+            this.__options__.onLoaded && this.__options__.onLoaded(this);
         };
-        /**
-         * navigate
-         */
-        NavigationStack.prototype.navigate = function (name, params, action) {
-            var _this = this;
-            if (params === void 0) { params = {}; }
-            if (action === void 0) { action = null; }
-            if (this.__routes__
-                && this.__routes__.hasOwnProperty(name)
-                && this.__routes__[name].hasOwnProperty('activity')) {
-                var route = this.__routes__[name];
-                var activity = route['activity'];
-                var resArray_1 = [];
-                if (this.__static_res__) {
-                    this.__static_res__.forEach(function (res) {
-                        resArray_1.push(res);
-                    });
-                }
-                if (route.hasOwnProperty('res')
-                    && typeof route['res'] === 'object'
-                    && route['res'].length > 0) {
-                    route['res'].forEach(function (res) {
-                        resArray_1.push(res);
-                    });
-                }
-                var paramsObject = {};
-                if (route.hasOwnProperty('res')
-                    && route['res'].length > 0) {
-                    route['res'].forEach(function (res) {
-                        resArray_1.push(res);
-                    });
-                }
-                if (route.hasOwnProperty('params')) {
-                    Object.assign(paramsObject, route['params']);
-                }
-                Object.assign(paramsObject, params);
-                this.__loading__ = true;
-                var key = Tape.UUID.randomUUID();
-                new NavigationLoader(activity, name, key, {
-                    navigation: this,
-                    routeName: name,
-                    routeKey: key,
-                    params: paramsObject
-                }, resArray_1, function (loader) {
-                    _this.__loading__ = false;
-                    _this.__navigator__.addChild(loader);
-                    _this.putStack(loader, function () {
-                        action && action(true);
-                    });
-                    _this.__loaded_handler__ && _this.__loaded_handler__(loader);
-                }, function (loader, progress) {
-                    if (_this.__loading__) {
-                        var stack = _this.lastStack();
-                        stack && stack.nextProgress(progress);
-                    }
-                    _this.__load_progress_handler__ && _this.__load_progress_handler__(loader, progress);
-                });
+        NavigatorLoader.prototype.__onLoadProgress__ = function (progress) {
+            this.__options__.onLoadProgress && this.__options__.onLoadProgress(this, progress);
+        };
+        NavigatorLoader.prototype.nextProgress = function (progress) {
+            this.__activity__.onNextProgress && this.__activity__.onNextProgress(progress);
+        };
+        NavigatorLoader.prototype.canFinish = function (page, activity) {
+            if (page === this.__options__.page && activity === this.__activity__) {
                 return true;
             }
+            return false;
+        };
+        NavigatorLoader.prototype.show = function (anim, callback) {
+            var ease = this.__activity__.inEase || Laya.Ease.linearIn;
+            var duration = this.__activity__.inEaseDuration || 0;
+            var fromProps = this.__activity__.inEaseFromProps || {};
+            var toProps = this.__activity__.inEaseToProps || {};
+            if (anim && ease && duration > 0) {
+                Object.assign(this, fromProps);
+                this.__activity__.onResume && this.__activity__.onResume();
+                this.visible = true;
+                Laya.Tween.to(this, toProps, duration, ease, Laya.Handler.create(this, function () {
+                    callback && callback();
+                }));
+            }
             else {
-                action && action(false);
-                return false;
+                this.__activity__.onResume && this.__activity__.onResume();
+                this.visible = true;
+                callback && callback();
             }
         };
-        /**
-         * finish
-         */
-        NavigationStack.prototype.finish = function (name, key) {
-            if (key === void 0) { key = null; }
-            this.finishStack(name, key);
-        };
-        /**
-         * popToTop
-         */
-        NavigationStack.prototype.popToTop = function () {
-            this.pop(this.__stacks__.length);
-        };
-        /**
-         * pop
-         */
-        NavigationStack.prototype.pop = function (number) {
-            if (number === void 0) { number = 1; }
-            this.popStack(number);
-        };
-        NavigationStack.prototype.lenStack = function () {
-            return this.__stacks__.length;
-        };
-        NavigationStack.prototype.lastStack = function () {
-            var len = this.lenStack();
-            if (len > 0) {
-                return this.__stacks__[len - 1];
+        NavigatorLoader.prototype.hide = function () {
+            if (!this.visible) {
+                return;
             }
-            return null;
+            this.__activity__.onPause && this.__activity__.onPause();
+            this.visible = false;
         };
-        NavigationStack.prototype.putStack = function (stack, callback) {
-            var _this = this;
-            this.__stacks__.push(stack);
-            this.showStack(true, function () {
-                _this.hideStack(1);
+        NavigatorLoader.prototype.exit = function () {
+            this.__activity__.onDestroy && this.__activity__.onDestroy();
+            this.destroy();
+        };
+        return NavigatorLoader;
+    }(Laya.Component));
+    Tape.NavigatorLoader = NavigatorLoader;
+})(Tape || (Tape = {}));
+
+
+var Tape;
+(function (Tape) {
+    var NavigatorStack;
+    (function (NavigatorStack) {
+        var __loaders__ = [];
+        var __loading__ = false;
+        function all() {
+            return __loaders__;
+        }
+        function length() {
+            return __loaders__.length;
+        }
+        function getStack(index) {
+            if (index === void 0) { index = 0; }
+            var len = length();
+            return len > index ? __loaders__[len - 1 - index] : null;
+        }
+        function showStack(index, anim, callback) {
+            if (index === void 0) { index = 0; }
+            if (anim === void 0) { anim = false; }
+            if (callback === void 0) { callback = null; }
+            var stack = getStack(index);
+            if (!stack) {
+                return;
+            }
+            stack.show(anim && length() > 1, callback);
+        }
+        function putStack(stack, callback) {
+            __loaders__.push(stack);
+            showStack(0, true, function () {
+                var stack = getStack(1);
+                if (!stack) {
+                    return;
+                }
+                stack.hide();
                 callback && callback();
             });
-        };
-        NavigationStack.prototype.popStack = function (count) {
-            if (this.lenStack() > 1 && count > 0) {
-                this.hideStack(0);
-                for (var i = 0; i < count; i++) {
-                    if (this.lenStack() > 1) {
-                        this.__stacks__.pop().exit(false, null);
-                    }
-                }
-                this.showStack(false, null);
-            }
-        };
-        NavigationStack.prototype.finishStack = function (name, key) {
-            var _this = this;
-            if (key === void 0) { key = null; }
-            var len = this.lenStack();
-            if (len > 1) {
-                var targetIndexs_1 = [];
-                for (var i = 0; i < len; i++) {
-                    var stack = this.__stacks__[i];
-                    if (stack.routeName === name) {
-                        var flag = true;
-                        if (key) {
-                            flag = stack.routeKey === key;
-                        }
-                        if (flag && targetIndexs_1.length < len - 1) {
-                            targetIndexs_1.push(i);
-                        }
-                    }
-                }
-                if (targetIndexs_1.length > 0) {
-                    var first_1 = targetIndexs_1.pop();
-                    var flag_1 = first_1 === len - 1;
-                    if (flag_1) {
-                        this.showStack(false, null, 1);
-                    }
-                    var slice = this.__stacks__.splice(first_1, 1);
-                    slice.forEach(function (stack) {
-                        stack.exit(true, function () {
-                            while (targetIndexs_1.length > 0) {
-                                first_1 = targetIndexs_1.pop();
-                                var slice_1 = _this.__stacks__.splice(first_1, 1);
-                                slice_1.forEach(function (stack) {
-                                    stack.exit(targetIndexs_1.length === 1, null);
-                                });
-                            }
-                            if (flag_1) {
-                                _this.showStack(false, null);
-                            }
-                        });
-                    });
-                }
-            }
-        };
-        NavigationStack.prototype.hideStack = function (index) {
-            var len = this.lenStack();
-            if (len - index > 0) {
-                this.__stacks__[len - 1 - index].hide();
-            }
-        };
-        NavigationStack.prototype.showStack = function (anim, callback, index) {
-            if (index === void 0) { index = 0; }
-            var len = this.lenStack();
-            if (len - index > 0) {
-                this.__stacks__[len - 1 - index].show(anim && len > 1, callback);
-            }
-        };
-        return NavigationStack;
-    }());
-    /**
-     * StackNavigator
-     */
-    var StackNavigator = /** @class */ (function (_super) {
-        __extends(StackNavigator, _super);
-        function StackNavigator(props) {
-            var _this = _super.call(this) || this;
-            _this.__navigator__ = null;
-            _this.props = {};
-            _this.props = Object.assign({}, props);
-            _this.__navigator__ = new NavigationStack(_this);
-            _this.__navigator__.initPage();
-            return _this;
         }
-        return StackNavigator;
-    }(Laya.Component));
-    /**
-     * createNavigator
-     * @param routes routes
-     * @param initName initName
-     * @param options options
-     */
-    Tape.createNavigator = function (routes, initName, options) {
-        if (options === void 0) { options = {}; }
-        return new StackNavigator({
-            navigation: {
-                routes: routes,
-                initName: initName,
-                staticRes: options['res'],
-                fileVersion: options['fileVersion'] || 'version.json',
-                uriPrefix: options['uriPrefix'],
-                onLoaded: options['onLoaded'],
-                onLoadProgress: options['onLoadProgress']
+        function finishStack(stacks) {
+            if (!stacks || stacks.length <= 0) {
+                return;
             }
-        });
-    };
+            for (var i = 0; length() > 1 && i < stacks.length; i++) {
+                var stack = stacks[i];
+                __loaders__.splice(__loaders__.indexOf(stack), 1);
+                stack.hide();
+                stack.exit();
+            }
+            showStack(0);
+        }
+        function popStack(count) {
+            if (length() <= 1 && count <= 0) {
+                return;
+            }
+            var pops = __loaders__.splice(length() - count, count);
+            pops.forEach(function (element) {
+                element.hide();
+                element.exit();
+            });
+            showStack(0);
+        }
+        /** navigate */
+        function navigate(page, params, action) {
+            if (params === void 0) { params = {}; }
+            if (action === void 0) { action = null; }
+            new Tape.NavigatorLoader({
+                page: page,
+                params: params,
+                onLoaded: function (loader) {
+                    __loading__ = false;
+                    Tape.UIManager.addMainUI(loader);
+                    putStack(loader, function () {
+                        action && action(true);
+                    });
+                },
+                onLoadProgress: function (loader, progress) {
+                    if (__loading__) {
+                        var stack = getStack();
+                        stack && stack.nextProgress(progress);
+                    }
+                }
+            });
+        }
+        NavigatorStack.navigate = navigate;
+        /** popToTop */
+        function popToTop() {
+            popStack(length());
+        }
+        NavigatorStack.popToTop = popToTop;
+        /** pop */
+        function pop(number) {
+            if (number === void 0) { number = 1; }
+            popStack(number);
+        }
+        NavigatorStack.pop = pop;
+        /** finish */
+        function finish(page, instance) {
+            if (instance === void 0) { instance = null; }
+            var stacks = [];
+            all().forEach(function (stack) {
+                if (stack.canFinish(page, instance)) {
+                    stacks.push(stack);
+                }
+            });
+            finishStack(stacks);
+        }
+        NavigatorStack.finish = finish;
+    })(NavigatorStack = Tape.NavigatorStack || (Tape.NavigatorStack = {}));
 })(Tape || (Tape = {}));
 
 var __extends = (this && this.__extends) || (function () {

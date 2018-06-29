@@ -4,7 +4,7 @@ module App {
 
         private page1 = new ui.Page1UI();
 
-        protected onCreate() {
+        public onCreate() {
             this.addChild(this.page1);
             this.inEase = Laya.Ease.linearIn;
             this.inEaseDuration = 300;
@@ -14,30 +14,14 @@ module App {
             this.inEaseToProps = {
                 y: 0
             }
-            this.outEase = Laya.Ease.linearIn;
-            this.outEaseDuration = 300;
-            this.outEaseFromProps = {
-                y: 0
-            }
-            this.outEaseToProps = {
-                y: this.height
-            }
             this.page1.btn.on(Laya.Event.CLICK, this, () => {
-                this.navigate("Page2");
+                this.navigate(Page2);
             });
             this.page1.btnBack.on(Laya.Event.CLICK, this, () => {
                 this.back();
             });
         }
 
-        protected onPause() {
-        }
-
-        protected onResume() {
-        }
-
-        protected onDestroy() {
-        }
     }
 
 
@@ -45,26 +29,14 @@ module App {
 
         private page2 = new ui.Page2UI();
 
-        protected onCreate() {
-            console.log('Page2.onCreate');
+        public onCreate() {
             this.addChild(this.page2);
             this.page2.btn.on(Laya.Event.CLICK, this, () => {
-                this.navigate("Main", {}, () => {
-                    this.back();
-                });
+                this.navigate(Main);
             })
-        }
-
-        protected onPause() {
-        }
-
-        protected onResume() {
-        }
-
-        protected onDestroy() {
-        }
-
-        protected onNextProgress(progress) {
+            this.page2.btnBack.on(Laya.Event.CLICK, this, () => {
+                Tape.PopManager.showPop(A);
+            });
         }
 
     }

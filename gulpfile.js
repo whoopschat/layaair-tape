@@ -22,6 +22,7 @@ var packageList = [
     inputJsPath + moduleName + '/utils/**/*.js',
     inputJsPath + moduleName + '/platform/**/*.js',
     inputJsPath + moduleName + '/display/**/*.js',
+    inputJsPath + moduleName + '/navigator/**/*.js',
     inputJsPath + moduleName + '/runtime/**/*.js',
     inputJsPath + moduleName + '/tape.js'
 ];

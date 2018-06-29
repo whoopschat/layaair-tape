@@ -1,5 +1,24 @@
 declare module Tape {
 
+    /** ActivityOptions */
+    export interface ActivityOptions {
+        page: any,
+        params: any
+    }
+
+    /** ResourceOptions */
+    export interface ResourceOptions {
+        url: string,
+        type: string
+    }
+
+    /** NavigatorOptions */
+    export interface NavigatorOptions {
+        mainPage: any;
+        commonRes?: ResourceOptions[];
+        fileVersion?: string;
+    }
+
     /**
      * init
      * @param width 宽度
@@ -8,18 +27,125 @@ declare module Tape {
      */
     function init(width: number, height: number, ...options): void;
 
-    /**
-     * exit
-     */
+    /** exit */
     function exit(): void;
 
-    /**
-     * createNavigator
-     * @param routes routes
-     * @param initName initName
-     * @param options options
-     */
-    function createNavigator(routes, initName, options?: Object);
+    /** Navigator */
+    module Navigator {
+
+        /** init */
+        function init(options: NavigatorOptions): void;
+
+    }
+
+    /** UIManager */
+    module UIManager {
+
+        /** addMainUI */
+        function addMainUI(view): void;
+
+        /** addPopUI */
+        function addPopUI(view): void;
+
+        /** addTopUI */
+        function addTopUI(view): void;
+
+        /** clearMainUI */
+        function clearMainUI(): void;
+
+        /** clearPopUI */
+        function clearPopUI(): void;
+
+        /** clearTopUI */
+        function clearTopUI(): void;
+    }
+
+    /** POPManager */
+    module POPManager {
+
+        /** showPop */
+        function showPop(pop, data): void;
+
+        /** hidePop */
+        function hidePop(pop): void;
+
+        /** refreshPos */
+        function refreshPos(): void;
+
+    }
+
+    /** PopView */
+    class PopView extends Laya.Sprite {
+
+        /** pop */
+        protected pop: any;
+        /** data */
+        protected data: any;
+        /** isTranslucent */
+        protected isTranslucent: boolean = false;
+        /** canceledOnTouchOutside */
+        protected canceledOnTouchOutside: boolean = false;
+        /** pop on show */
+        protected onShow?(): void;
+        /** pop on hide */
+        protected onHide?(): void;
+        /** finish pop */
+        protected finish(): void;
+
+        constructor();
+
+    }
+
+    /** Activity */
+    class Activity extends Laya.Component {
+
+        /** page type */
+        protected readonly page: any;
+        /** params */
+        protected readonly params: Object;
+        /** res */
+        protected res: ResourceOptions[];
+        /** anim */
+        protected inEase: Function;
+        protected inEaseDuration: number;
+        protected inEaseFromProps: Object;
+        protected inEaseToProps: Object;
+        /** activity on create */
+        protected onCreate?(): void;
+        /** activity on resume */
+        protected onResume?(): void;
+        /** activity on pause */
+        protected onPause?(): void;
+        /** activity on destroy */
+        protected onDestroy?(): void;
+        /** activity on next page load progress */
+        protected onNextProgress?(progress): void;
+
+        constructor(options: ActivityOptions);
+
+        ///////////////////////
+        /// navigation
+        ///////////////////////
+
+        /** redirectTo */
+        protected redirectTo: (page, params?) => boolean;
+
+        /** navigate */
+        protected navigate: (page, params?, action?: Function) => boolean;
+
+        /** finish self */
+        protected back: () => void;
+
+        /** finish activity */
+        protected finish: (page) => void;
+
+        /** pop */
+        protected pop: (num?: number) => void;
+
+        /** pop to top */
+        protected popToTop: () => void;
+
+    }
 
     /** Platform */
     module Platform {
@@ -29,72 +155,6 @@ declare module Tape {
 
         /** isWechatApp */
         function isWechatApp(): boolean;
-
-    }
-
-    /** Activity */
-    class Activity extends Laya.Component {
-
-        static ROUTE(options?: Object): Object;
-
-        /** props */
-
-        public readonly props: Object;
-        public readonly params: Object;
-        public readonly routeName: string;
-        public readonly routeKey: string;
-
-        constructor(props?: Object);
-
-        /** anim */
-        protected inEase: Function;
-        protected inEaseDuration: number;
-        protected inEaseFromProps: Object;
-        protected inEaseToProps: Object;
-        protected outEaseDuration: number;
-        protected outEase: Function;
-        protected outEaseFromProps: Object;
-        protected outEaseToProps: Object;
-
-        ///////////////////////
-        /// life cycle
-        ///////////////////////
-
-        /** onCreate */
-        protected onCreate: () => void;
-        /** onResume */
-        protected onResume: () => void;
-        /** onPause */
-        protected onPause: () => void;
-        /** onDestroy */
-        protected onDestroy: () => void;
-        /** onNextProgress */
-        protected onNextProgress: (progress: number) => void;
-
-        ///////////////////////
-        /// navigation
-        ///////////////////////
-
-        /** redirectTo */
-        protected redirectTo: (name, params?) => boolean;
-
-        /** navigate */
-        protected navigate: (name, params?, action?: Function) => boolean;
-
-        /** deeplink */
-        protected deeplink: (url, action?: Function) => boolean;
-
-        /** finish self */
-        protected back: () => void;
-
-        /** finish activity */
-        protected finish: (name) => void;
-
-        /** pop count , n default 1 */
-        protected pop: (n?: number) => void;
-
-        /** pop to top */
-        protected popToTop: () => void;
 
     }
 
@@ -126,7 +186,7 @@ declare module Tape {
         function random(source: any[]): any;
 
         /** randomArr */
-        function randomArr(source: any[], length: number = -1): any[];
+        function randomArr(source: any[], length?: number): any[];
 
     }
 

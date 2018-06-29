@@ -1,16 +1,17 @@
-// =========================== //
-// Tape build.js
-// =========================== //
 module Tape {
 
     export module Env {
 
         /**
-         * get build env
+         * get env
          * @return env mode : development or production
          */
         export const getEnv = (): string => {
-            return '${env}';
+            let env = '${env}';
+            if (env.indexOf('${') === 0) {
+                return 'development';
+            }
+            return env;
         }
 
         /**
