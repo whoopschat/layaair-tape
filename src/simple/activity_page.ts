@@ -10,6 +10,9 @@ class PageActivity extends Tape.Activity {
         this.pageUI.pop.on(Laya.Event.CLICK, this, () => {
             Tape.PopManager.showPop(TestPop);
         });
+        this.pageUI.popToTop.on(Laya.Event.CLICK, this, () => {
+            this.popToTop();
+        });
         this.pageUI.btnBack.on(Laya.Event.CLICK, this, () => {
             this.back();
         });

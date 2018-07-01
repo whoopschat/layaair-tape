@@ -52,7 +52,10 @@ module Tape {
         }
 
         function popStack(count) {
-            if (length() <= 1 && count <= 0) {
+            if (count >= length()) {
+                count = length() - 1;
+            }
+            if (count <= 0) {
                 return;
             }
             let pops = __loaders__.splice(length() - count, count);

@@ -27,8 +27,9 @@ module ui {
 		public btnBack:Laya.Button;
 		public btn:Laya.Button;
 		public pop:Laya.Button;
+		public popToTop:Laya.Button;
 
-        public static  uiView:any ={"type":"View","props":{"width":600,"height":400},"child":[{"type":"Image","props":{"y":0,"x":0,"width":600,"skin":"comp/bg.png","sizeGrid":"28,7,7,6","height":400}},{"type":"Button","props":{"y":309,"x":210,"width":179,"var":"btnBack","skin":"comp/button.png","label":"Back","height":42}},{"type":"Button","props":{"y":255,"x":211,"width":179,"var":"btn","skin":"comp/button.png","label":"Main","height":42}},{"type":"Button","props":{"y":202,"x":211,"width":179,"var":"pop","skin":"comp/button.png","label":"POP","height":42}}]};
+        public static  uiView:any ={"type":"View","props":{"width":600,"height":400},"child":[{"type":"Image","props":{"y":0,"x":0,"width":600,"skin":"comp/bg.png","sizeGrid":"28,7,7,6","height":400}},{"type":"Button","props":{"y":309,"x":210,"width":179,"var":"btnBack","skin":"comp/button.png","label":"Back","height":42}},{"type":"Button","props":{"y":255,"x":211,"width":179,"var":"btn","skin":"comp/button.png","label":"Main","height":42}},{"type":"Button","props":{"y":202,"x":211,"width":179,"var":"pop","skin":"comp/button.png","label":"POP","height":42}},{"type":"Button","props":{"y":148,"x":210,"width":179,"var":"popToTop","skin":"comp/button.png","label":"popToTop","height":42}}]};
         constructor(){ super()}
         createChildren():void {
         
