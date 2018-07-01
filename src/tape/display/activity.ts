@@ -16,25 +16,32 @@ module Tape {
         public inEaseFromProps: Object = null;
         public inEaseToProps: Object = null;
 
+        public onLoad?(): void;
         public onCreate?(): void;
         public onResume?(): void;
         public onPause?(): void;
         public onDestroy?(): void;
         public onNextProgress?(progress): void;
 
-        constructor(options: ActivityOptions) {
+        constructor(options: LoaderOptions) {
             super();
+            this.width = Laya.stage.width;
+            this.height = Laya.stage.height;
             this.params = (<any>Object).assign({}, options.params || {});
             this.page = options.page;
-        }
-
-        public onLoadRes(onLoaded: Function, onLoadProgress: Function) {
-            let res = this.res || [];
-            if (res.length > 0) {
-                Laya.loader.load(res, Laya.Handler.create(this, onLoaded), Laya.Handler.create(this, onLoadProgress, null, false));
-            } else {
-                onLoaded();
-            }
+            this.onLoad && this.onLoad();
+            setTimeout(() => {
+                let res = this.res || [];
+                if (res.length > 0) {
+                    Laya.loader.load(res, Laya.Handler.create(this, () => {
+                        options.onLoaded && options.onLoaded(this);
+                    }), Laya.Handler.create(this, (progress) => {
+                        options.onLoadProgress && options.onLoadProgress(progress);
+                    }, null, false));
+                } else {
+                    options.onLoaded && options.onLoaded();
+                }
+            }, 0);
         }
 
         //////////////////////////

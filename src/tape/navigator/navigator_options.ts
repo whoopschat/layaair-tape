@@ -1,11 +1,5 @@
 module Tape {
 
-    /** ActivityOptions */
-    export interface ActivityOptions {
-        page: any,
-        params: any
-    }
-
     /** ResourceOptions */
     export interface ResourceOptions {
         url: string,
@@ -16,8 +10,8 @@ module Tape {
     export interface LoaderOptions {
         page: any;
         params: Object;
-        onLoaded: Function;
-        onLoadProgress: Function;
+        onLoaded?: Function;
+        onLoadProgress?: Function;
     }
 
     /** NavigatorOptions */

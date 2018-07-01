@@ -95,7 +95,9 @@ declare module Tape {
         /** page type */
         protected readonly page: any;
         /** params */
-        protected readonly params: Object;
+        protected readonly params: {
+            [key: string]: any
+        };
         /** res */
         protected res: ResourceOptions[];
         /** inEase */

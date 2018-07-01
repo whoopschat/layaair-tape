@@ -313,19 +313,26 @@ var Tape;
             _this.inEase = null;
             _this.inEaseFromProps = null;
             _this.inEaseToProps = null;
+            _this.width = Laya.stage.width;
+            _this.height = Laya.stage.height;
             _this.params = Object.assign({}, options.params || {});
             _this.page = options.page;
+            _this.onLoad && _this.onLoad();
+            setTimeout(function () {
+                var res = _this.res || [];
+                if (res.length > 0) {
+                    Laya.loader.load(res, Laya.Handler.create(_this, function () {
+                        options.onLoaded && options.onLoaded(_this);
+                    }), Laya.Handler.create(_this, function (progress) {
+                        options.onLoadProgress && options.onLoadProgress(progress);
+                    }, null, false));
+                }
+                else {
+                    options.onLoaded && options.onLoaded();
+                }
+            }, 0);
             return _this;
         }
-        Activity.prototype.onLoadRes = function (onLoaded, onLoadProgress) {
-            var res = this.res || [];
-            if (res.length > 0) {
-                Laya.loader.load(res, Laya.Handler.create(this, onLoaded), Laya.Handler.create(this, onLoadProgress, null, false));
-            }
-            else {
-                onLoaded();
-            }
-        };
         //////////////////////////
         /// navigator function
         //////////////////////////
@@ -569,17 +576,20 @@ var Tape;
             _this.__options__ = options;
             _this.__activity__ = new _this.__options__.page({
                 page: _this.__options__.page,
-                params: _this.__options__.params
-            });
-            _this.__activity__.onLoadRes(function () { _this.__onLoaded__(); }, function (progress) {
-                _this.__onLoadProgress__(progress);
+                params: _this.__options__.params,
+                onLoaded: function () {
+                    _this.__onLoaded__ && _this.__onLoaded__();
+                },
+                onLoadProgress: function (progress) {
+                    _this.__onLoadProgress__ && _this.__onLoadProgress__(progress);
+                }
             });
             return _this;
         }
         NavigatorLoader.prototype.__onLoaded__ = function () {
             this.addChild(this.__activity__);
-            this.__activity__.onCreate && this.__activity__.onCreate();
             this.__options__.onLoaded && this.__options__.onLoaded(this);
+            this.__activity__.onCreate && this.__activity__.onCreate();
         };
         NavigatorLoader.prototype.__onLoadProgress__ = function (progress) {
             this.__options__.onLoadProgress && this.__options__.onLoadProgress(this, progress);

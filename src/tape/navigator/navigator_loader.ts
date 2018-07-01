@@ -10,17 +10,20 @@ module Tape {
             this.__options__ = options;
             this.__activity__ = new this.__options__.page({
                 page: this.__options__.page,
-                params: this.__options__.params
-            });
-            this.__activity__.onLoadRes(() => { this.__onLoaded__() }, (progress) => {
-                this.__onLoadProgress__(progress);
+                params: this.__options__.params,
+                onLoaded: () => {
+                    this.__onLoaded__ && this.__onLoaded__();
+                },
+                onLoadProgress: (progress) => {
+                    this.__onLoadProgress__ && this.__onLoadProgress__(progress);
+                }
             });
         }
 
         private __onLoaded__() {
             this.addChild(this.__activity__);
-            this.__activity__.onCreate && this.__activity__.onCreate();
             this.__options__.onLoaded && this.__options__.onLoaded(this);
+            this.__activity__.onCreate && this.__activity__.onCreate();
         }
 
         private __onLoadProgress__(progress) {
