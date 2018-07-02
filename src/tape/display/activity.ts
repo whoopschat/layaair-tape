@@ -48,13 +48,13 @@ module Tape {
         /// navigator function
         //////////////////////////
 
-        protected redirectTo(page, params: Object = {}) {
+        protected redirectTo(page, params: any = {}) {
             this.navigate(page, params, () => {
                 this.back();
             });
         }
 
-        protected navigate(page, params: Object = {}, action: Function = null) {
+        protected navigate(page, params: any = {}, action: Function = null) {
             NavigatorStack.navigate(page, params, action);
         }
 

@@ -138,12 +138,12 @@ var Tape;
         for (var _i = 1; _i < arguments.length; _i++) {
             options[_i - 1] = arguments[_i];
         }
-        var _a;
         if (window.hasOwnProperty("wx")) {
             if (window['wx'].hasOwnProperty(func)) {
                 return (_a = window['wx'])[func].apply(_a, options);
             }
         }
+        var _a;
     };
     /** __post_message_to_sub_context__ */
     var __post_message_to_sub_context__ = function (data) {
@@ -210,7 +210,6 @@ var Tape;
     (function (MiniAd) {
         var bannerStack = {};
         MiniAd.showBannerAd = function (adUnitId, x, y, w, h) {
-            var _a;
             MiniAd.hideBannerAd(adUnitId);
             var systemInfo = __exec_wx__('getSystemInfoSync');
             if (systemInfo) {
@@ -238,6 +237,7 @@ var Tape;
                         _a));
                 }
             }
+            var _a;
         };
         MiniAd.hideBannerAd = function (adUnitId) {
             if (bannerStack.hasOwnProperty(adUnitId)) {

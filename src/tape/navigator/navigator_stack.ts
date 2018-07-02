@@ -67,7 +67,7 @@ module Tape {
         }
 
         /** navigate */
-        export function navigate(page: any, params = {}, action: Function = null) {
+        export function navigate(page: any, params: any = {}, action: Function = null) {
             new NavigatorLoader({
                 page,
                 params,
