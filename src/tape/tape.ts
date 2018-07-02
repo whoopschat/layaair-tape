@@ -12,6 +12,7 @@ module Tape {
         } else {
             BrowserHandler.init(width, height, ...options);
         }
+        setBgColor();
     }
 
     /**
@@ -23,6 +24,30 @@ module Tape {
         } else {
             BrowserHandler.exit();
         }
+    }
+
+    let bgColor = '#ffffff';
+
+    export const setBgColor = (color = bgColor) => {
+        bgColor = color;
+        if (Laya.stage) {
+            let bgView = Laya.stage.getChildByName('__tape_bg_view__') as Laya.Label;
+            if (bgView) {
+                bgView.bgColor = color;
+            } else {
+                bgView = new Laya.Label();
+                bgView.bgColor = color;
+                bgView.x = 0;
+                bgView.y = 0;
+                bgView.width = 750;
+                bgView.height = 1334;
+                Laya.stage.addChild(bgView);
+            }
+        }
+    }
+
+    export const getBgColor = () => {
+        return bgColor;
     }
 
 }

@@ -29,14 +29,20 @@ declare module Tape {
 
     /**
      * init
-     * @param width 宽度
-     * @param height 高度
-     * @param options 其他拓展
+     * @param width
+     * @param height
+     * @param options
      */
     function init(width: number, height: number, ...options): void;
 
     /** exit */
     function exit(): void;
+
+    /** getBgColor */
+    function getBgColor(): string;
+
+    /** setBgColor  @param color */
+    function setBgColor(color: string): void;
 
     /** Navigator */
     module Navigator {

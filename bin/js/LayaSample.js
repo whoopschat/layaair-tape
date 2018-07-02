@@ -2,6 +2,7 @@
 var GameMain = /** @class */ (function () {
     function GameMain() {
         Tape.init(600, 400);
+        Tape.setBgColor('#3399ff');
         Tape.Navigator.init({
             mainPage: LoadingActivity,
             commonRes: [

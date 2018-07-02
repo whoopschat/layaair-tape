@@ -33,6 +33,7 @@ module Tape {
         return __rank_texture__;
     }
 
+    /** __init_rank__ */
     const __init_rank__ = () => {
         if (window.hasOwnProperty('sharedCanvas')) {
             var sharedCanvas = window['sharedCanvas'];

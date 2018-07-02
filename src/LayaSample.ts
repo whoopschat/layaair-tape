@@ -2,6 +2,7 @@
 class GameMain {
     constructor() {
         Tape.init(600, 400);
+        Tape.setBgColor('#3399ff');
         Tape.Navigator.init({
             mainPage: LoadingActivity,
             commonRes: [

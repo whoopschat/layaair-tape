@@ -165,6 +165,7 @@ var Tape;
         }
         return __rank_texture__;
     };
+    /** __init_rank__ */
     var __init_rank__ = function () {
         if (window.hasOwnProperty('sharedCanvas')) {
             var sharedCanvas = window['sharedCanvas'];
@@ -840,6 +841,7 @@ var Tape;
         else {
             Tape.BrowserHandler.init.apply(Tape.BrowserHandler, [width, height].concat(options));
         }
+        Tape.setBgColor();
     };
     /**
      * 退出APP
@@ -851,5 +853,28 @@ var Tape;
         else {
             Tape.BrowserHandler.exit();
         }
+    };
+    var bgColor = '#ffffff';
+    Tape.setBgColor = function (color) {
+        if (color === void 0) { color = bgColor; }
+        bgColor = color;
+        if (Laya.stage) {
+            var bgView = Laya.stage.getChildByName('__tape_bg_view__');
+            if (bgView) {
+                bgView.bgColor = color;
+            }
+            else {
+                bgView = new Laya.Label();
+                bgView.bgColor = color;
+                bgView.x = 0;
+                bgView.y = 0;
+                bgView.width = 750;
+                bgView.height = 1334;
+                Laya.stage.addChild(bgView);
+            }
+        }
+    };
+    Tape.getBgColor = function () {
+        return bgColor;
     };
 })(Tape || (Tape = {}));
