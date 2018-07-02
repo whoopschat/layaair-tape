@@ -93,9 +93,11 @@ declare module Tape {
     /** Activity */
     class Activity extends Laya.Component {
         /** page type */
-        protected readonly page: any;
+        protected page: any;
+        /** view */
+        protected view: any;
         /** params */
-        protected readonly params: any;
+        protected params: any;
         /** res */
         protected res: ResourceOptions[];
         /** inEase */
@@ -118,6 +120,8 @@ declare module Tape {
         protected onNextProgress?(progress): void;
         /** constructor */
         constructor(options: ActivityOptions);
+        /** redirectTo */
+        protected setContentView: (view) => void;
         /** redirectTo */
         protected redirectTo: (page, params?: any) => boolean;
         /** navigate */

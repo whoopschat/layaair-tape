@@ -1,13 +1,14 @@
 module Tape {
 
-
     /** Activity */
-    export abstract class Activity extends Laya.Component {
+    export class Activity extends Laya.Component {
 
         /** page type */
-        public readonly page: any = null;
+        public page: any = null;
         /** params */
-        public readonly params: Object = {};
+        public view = null;
+        /** params */
+        public params: any = {};
         /** res */
         public res: ResourceOptions[] = [];
         /** turn on and off animation */
@@ -42,6 +43,12 @@ module Tape {
                     options.onLoaded && options.onLoaded();
                 }
             }, 0);
+        }
+
+        protected setContentView(view) {
+            this.view = view;
+            this.removeChildren();
+            this.addChild(view);
         }
 
         //////////////////////////

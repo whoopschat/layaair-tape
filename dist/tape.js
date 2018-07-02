@@ -305,6 +305,8 @@ var Tape;
             /** page type */
             _this.page = null;
             /** params */
+            _this.view = null;
+            /** params */
             _this.params = {};
             /** res */
             _this.res = [];
@@ -333,6 +335,11 @@ var Tape;
             }, 0);
             return _this;
         }
+        Activity.prototype.setContentView = function (view) {
+            this.view = view;
+            this.removeChildren();
+            this.addChild(view);
+        };
         //////////////////////////
         /// navigator function
         //////////////////////////
