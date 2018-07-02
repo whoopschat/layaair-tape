@@ -77,9 +77,9 @@ declare module Tape {
         /** data */
         protected data: any;
         /** isTranslucent */
-        protected isTranslucent: boolean = false;
+        protected isTranslucent: boolean;
         /** canceledOnTouchOutside */
-        protected canceledOnTouchOutside: boolean = false;
+        protected canceledOnTouchOutside: boolean;
         /** pop on show */
         protected onShow?(): void;
         /** pop on hide */
@@ -95,9 +95,7 @@ declare module Tape {
         /** page type */
         protected readonly page: any;
         /** params */
-        protected readonly params: {
-            [key: string]: any
-        };
+        protected readonly params: any;
         /** res */
         protected res: ResourceOptions[];
         /** inEase */
@@ -121,9 +119,9 @@ declare module Tape {
         /** constructor */
         constructor(options: ActivityOptions);
         /** redirectTo */
-        protected redirectTo: (page, params?) => boolean;
+        protected redirectTo: (page, params?: any) => boolean;
         /** navigate */
-        protected navigate: (page, params?, action?: Function) => boolean;
+        protected navigate: (page, params?: any, action?: Function) => boolean;
         /** finish self */
         protected back: () => void;
         /** finish activity */
