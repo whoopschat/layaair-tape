@@ -109,6 +109,8 @@ declare module Tape {
         /** inEaseToProps */
         protected inEaseToProps: Object;
         /** activity on create */
+        public onInitView?(view: any): void;
+        /** activity on create */
         protected onCreate?(): void;
         /** activity on resume */
         protected onResume?(): void;
@@ -121,19 +123,19 @@ declare module Tape {
         /** constructor */
         constructor(options: ActivityOptions);
         /** redirectTo */
-        protected setContentView: (view) => void;
+        protected setContentView(view): void;
         /** redirectTo */
-        protected redirectTo: (page, params?: any) => boolean;
+        protected redirectTo(page, params?: any): boolean;
         /** navigate */
-        protected navigate: (page, params?: any, action?: Function) => boolean;
+        protected navigate(page, params?: any, action?: Function): boolean;
         /** finish self */
-        protected back: () => void;
+        protected back(): void;
         /** finish activity */
-        protected finish: (page) => void;
+        protected finish(page): void;
         /** pop */
-        protected pop: (num?: number) => void;
+        protected pop(num?: number): void;
         /** pop to top */
-        protected popToTop: () => void;
+        protected popToTop(): void;
     }
 
     /** Platform */
@@ -146,18 +148,11 @@ declare module Tape {
 
     /** Env */
     module Env {
-        /**
-         * get build env
-         * @return env mode : development or production
-         */
+        /** get build env @return env mode : development or production */
         function getEnv(): string;
-        /**
-         * isDev
-         */
+        /** isDev */
         function isDev(): boolean;
-        /**
-         * isProd
-         */
+        /** isProd */
         function isProd(): boolean;
     }
 
@@ -165,7 +160,6 @@ declare module Tape {
     module ArrayUtil {
         /** random */
         function random(source: any[]): any;
-
         /** randomArr */
         function randomArr(source: any[], length?: number): any[];
     }

@@ -11,12 +11,11 @@ class MainActivity extends Tape.Activity {
         y: 0
     }
 
-    public onLoad() {
+    onCreate() {
+        this.setContentView(new ui.main_actiUI);
     }
 
-    public onCreate() {
-        this.setContentView(new ui.main_actiUI);
-        let view = this.view as ui.main_actiUI;
+    onInitView(view: ui.main_actiUI) {
         view.btn.on(Laya.Event.CLICK, this, () => {
             this.navigate(PageActivity);
         });

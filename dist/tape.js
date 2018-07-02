@@ -304,8 +304,8 @@ var Tape;
             var _this = _super.call(this) || this;
             /** page type */
             _this.page = null;
-            /** params */
-            _this.view = null;
+            /** contentView */
+            _this.contentView = null;
             /** params */
             _this.params = {};
             /** res */
@@ -336,9 +336,10 @@ var Tape;
             return _this;
         }
         Activity.prototype.setContentView = function (view) {
-            this.view = view;
+            this.contentView = view;
             this.removeChildren();
             this.addChild(view);
+            this.onInitView && this.onInitView(view);
         };
         //////////////////////////
         /// navigator function
