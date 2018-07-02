@@ -2,7 +2,9 @@ declare module runtime {
 
     class btn extends Laya.Button { }
 
-    class img_btn extends Laya.Image { }
+    class btn_img extends Laya.Image { }
+
+    class btn_label extends Laya.Label { }
 
 }
 

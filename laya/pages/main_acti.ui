@@ -2,7 +2,7 @@
     "x":0,
     "type":"View",
     "selectedBox":1,
-    "selecteID":1,
+    "selecteID":3,
     "props":{"width":600,"sceneColor":"#000000","runtime":"Tape.Activity","height":400},
     "nodeParent":-1,
     "label":"View",
@@ -54,7 +54,7 @@
         {
             "x":15,
             "type":"Image",
-            "props":{"y":82,"x":57,"var":"img","skin":"comp/image.png","runtime":"runtime.img_btn","mouseover":"MOV","mouseout":"MOU"},
+            "props":{"y":82,"x":57,"var":"img","skin":"comp/image.png","runtime":"runtime.btn_img","mouseover":"MOV","mouseout":"MOU"},
             "nodeParent":1,
             "label":"Image(img)",
             "isDirectory":false,

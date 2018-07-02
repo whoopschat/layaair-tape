@@ -773,53 +773,55 @@ var __extends = (this && this.__extends) || (function () {
 })();
 var runtime;
 (function (runtime) {
+    var scaleTime = 100;
     function center(view) {
         view.x = view.x + view.width / 2 - view.pivotX;
         view.y = view.y + view.height / 2 - view.pivotY;
         view.pivot(view.width / 2, view.height / 2);
     }
+    function scaleSmal(view) {
+        center(view);
+        Laya.Tween.to(view, { scaleX: 0.8, scaleY: 0.8 }, scaleTime);
+    }
+    function scaleBig(view) {
+        Laya.Tween.to(view, { scaleX: 1, scaleY: 1 }, scaleTime);
+    }
     var btn = /** @class */ (function (_super) {
         __extends(btn, _super);
         function btn() {
             var _this = _super.call(this) || this;
-            _this.scaleTime = 100;
-            _this.on(Laya.Event.MOUSE_DOWN, _this, _this.scaleSmal);
-            _this.on(Laya.Event.MOUSE_UP, _this, _this.scaleBig);
-            _this.on(Laya.Event.MOUSE_OUT, _this, _this.scaleBig);
+            _this.on(Laya.Event.MOUSE_DOWN, _this, function () { return scaleSmal(_this); });
+            _this.on(Laya.Event.MOUSE_UP, _this, function () { return scaleBig(_this); });
+            _this.on(Laya.Event.MOUSE_OUT, _this, function () { return scaleBig(_this); });
             return _this;
         }
-        btn.prototype.scaleBig = function () {
-            Laya.Tween.to(this, { scaleX: 1, scaleY: 1 }, this.scaleTime);
-        };
-        btn.prototype.scaleSmal = function () {
-            center(this);
-            // scale 0.8
-            Laya.Tween.to(this, { scaleX: 0.8, scaleY: 0.8 }, this.scaleTime);
-        };
         return btn;
     }(Laya.Button));
     runtime.btn = btn;
-    var img_btn = /** @class */ (function (_super) {
-        __extends(img_btn, _super);
-        function img_btn() {
+    var btn_img = /** @class */ (function (_super) {
+        __extends(btn_img, _super);
+        function btn_img() {
             var _this = _super.call(this) || this;
-            _this.scaleTime = 100;
-            _this.on(Laya.Event.MOUSE_DOWN, _this, _this.scaleSmal);
-            _this.on(Laya.Event.MOUSE_UP, _this, _this.scaleBig);
-            _this.on(Laya.Event.MOUSE_OUT, _this, _this.scaleBig);
+            _this.on(Laya.Event.MOUSE_DOWN, _this, function () { return scaleSmal(_this); });
+            _this.on(Laya.Event.MOUSE_UP, _this, function () { return scaleBig(_this); });
+            _this.on(Laya.Event.MOUSE_OUT, _this, function () { return scaleBig(_this); });
             return _this;
         }
-        img_btn.prototype.scaleBig = function () {
-            Laya.Tween.to(this, { scaleX: 1, scaleY: 1 }, this.scaleTime);
-        };
-        img_btn.prototype.scaleSmal = function () {
-            center(this);
-            // scale 0.8
-            Laya.Tween.to(this, { scaleX: 0.8, scaleY: 0.8 }, this.scaleTime);
-        };
-        return img_btn;
+        return btn_img;
     }(Laya.Image));
-    runtime.img_btn = img_btn;
+    runtime.btn_img = btn_img;
+    var btn_label = /** @class */ (function (_super) {
+        __extends(btn_label, _super);
+        function btn_label() {
+            var _this = _super.call(this) || this;
+            _this.on(Laya.Event.MOUSE_DOWN, _this, function () { return scaleSmal(_this); });
+            _this.on(Laya.Event.MOUSE_UP, _this, function () { return scaleBig(_this); });
+            _this.on(Laya.Event.MOUSE_OUT, _this, function () { return scaleBig(_this); });
+            return _this;
+        }
+        return btn_label;
+    }(Laya.Label));
+    runtime.btn_label = btn_label;
 })(runtime || (runtime = {}));
 
 var Tape;
