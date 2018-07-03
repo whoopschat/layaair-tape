@@ -68,14 +68,25 @@ declare module Tape {
         function clearTopUI(): void;
     }
 
-    /** POPManager */
-    module POPManager {
+    /** PopManager */
+    module PopManager {
         /** showPop */
-        function showPop(pop, data): void;
+        function showPop(pop, data?): void;
         /** hidePop */
         function hidePop(pop): void;
         /** refreshPos */
         function refreshPos(): void;
+    }
+
+    /** ToastManager　*/
+    module ToastManager {
+
+        /** showToast */
+        function showToast(view: Laya.Sprite, duration?: number, fromProps?: Object, toProps?: Object): void;
+
+        /** hideAll */
+        function hideAll(): void;
+
     }
 
     /** PopView */

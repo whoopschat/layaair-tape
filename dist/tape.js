@@ -467,6 +467,37 @@ var Tape;
 
 var Tape;
 (function (Tape) {
+    var ToastManager;
+    (function (ToastManager) {
+        var _toast_list_ = [];
+        function showToast(view, duration, fromProps, toProps) {
+            if (duration === void 0) { duration = 500; }
+            if (fromProps === void 0) { fromProps = null; }
+            if (toProps === void 0) { toProps = null; }
+            var from = fromProps || { alpha: 0 };
+            var to = toProps || { alpha: 1 };
+            Object.assign(view, from);
+            Laya.Tween.to(view, to, duration, Laya.Ease.quintOut, null, 0);
+            Laya.Tween.to(view, to, duration, Laya.Ease.quintOut, Laya.Handler.create(this, function () {
+                _toast_list_.splice(_toast_list_.indexOf(view), 1);
+                view.destroy();
+            }), duration);
+            Tape.UIManager.addTopUI(view);
+            _toast_list_.push(view);
+        }
+        ToastManager.showToast = showToast;
+        function hideAll() {
+            var list = _toast_list_.splice(0, _toast_list_.length);
+            list.forEach(function (view) {
+                view.destroy();
+            });
+        }
+        ToastManager.hideAll = hideAll;
+    })(ToastManager = Tape.ToastManager || (Tape.ToastManager = {}));
+})(Tape || (Tape = {}));
+
+var Tape;
+(function (Tape) {
     var UIManager;
     (function (UIManager) {
         var inited = false;
