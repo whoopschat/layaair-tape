@@ -247,6 +247,18 @@ var Tape;
                         });
                     });
                 }
+                else {
+                    onError && onError({
+                        errMsg: 'showBannerAd:fail',
+                        err_code: -1
+                    });
+                }
+            }
+            else {
+                onError && onError({
+                    errMsg: 'showBannerAd:fail',
+                    err_code: -1
+                });
             }
         };
         MiniAd.hideBannerAd = function (adUnitId) {

@@ -115,7 +115,17 @@ module Tape {
                             onError && onError(err);
                         });
                     });
+                } else {
+                    onError && onError({
+                        errMsg: 'showBannerAd:fail',
+                        err_code: -1
+                    });
                 }
+            } else {
+                onError && onError({
+                    errMsg: 'showBannerAd:fail',
+                    err_code: -1
+                });
             }
         }
 
