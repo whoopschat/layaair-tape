@@ -95,6 +95,10 @@ declare module Tape {
         protected pop: any;
         /** data */
         protected data: any;
+        /** bgAlpha */
+        protected bgAlpha: number;
+        /** bgColor */
+        protected bgColor: string;
         /** isTranslucent */
         protected isTranslucent: boolean;
         /** canceledOnTouchOutside */
@@ -205,6 +209,13 @@ declare module Tape {
          * @param adUnitId 
          */
         function hideBannerAd(adUnitId: string): void;
+        /**
+         * showRewardedVideoAd
+         * @param adUnitId 
+         * @param onRewarded 
+         * @param onCancal 
+         */
+        function showRewardedVideoAd(adUnitId: string, onRewarded: Function, onCancal: Function): void;
     }
 
     /** MiniRank */
@@ -219,7 +230,7 @@ declare module Tape {
         function createRankView(x?: number, y?: number, width?: number, height?: number): Laya.Sprite;
         /**
          * showRank
-         * @param uiView 
+         * @param uiView
          * @param options 
          * @param onlyRefreshData 
          */

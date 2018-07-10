@@ -11,7 +11,11 @@
     "dev": "http-server ./",
     "clean": "gulp build:clean",
     "tsc": "gulp build:tsc",
-    "build": "gulp build"
+    "build": "gulp build",
+    "test": "echo 'no tests'",
+    "preversion": "npm test",
+    "version": "npm run build && git add -A dist",
+    "postversion": "git push origin master && git push origin --tags && npm publish"
   },
   "files": [
     "dist",

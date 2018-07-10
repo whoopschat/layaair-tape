@@ -33,7 +33,6 @@ module Tape {
         return __rank_texture__;
     }
 
-    /** __init_rank__ */
     const __init_rank__ = () => {
         if (window.hasOwnProperty('sharedCanvas')) {
             var sharedCanvas = window['sharedCanvas'];
@@ -74,11 +73,12 @@ module Tape {
 
     }
 
-
     /** MiniAd */
     export module MiniAd {
 
-        const bannerStack = {};
+        let __bannerStack__ = {};
+        let __rewardedVideoAd__ = null;
+        let __rewardedVideoCallback__ = null;
 
         export const showBannerAd = (adUnitId: string, x: number, y: number, w: number, h: number) => {
             hideBannerAd(adUnitId);
@@ -104,19 +104,46 @@ module Tape {
                     }
                 });
                 if (bannerAd) {
-                    bannerAd.show();
-                    (<any>Object).assign(bannerStack, {
+                    (<any>Object).assign(__bannerStack__, {
                         [adUnitId]: bannerAd
+                    });
+                    bannerAd.onResize(res => {
+                        bannerAd.style.top = bannerAd.style.top + height - res.height
+                    });
+                    bannerAd.show().catch(err => {
+                        bannerAd.load().then(() => bannerAd.show());
                     });
                 }
             }
         }
 
         export const hideBannerAd = (adUnitId: string) => {
-            if (bannerStack.hasOwnProperty(adUnitId)) {
-                let bannerAd = bannerStack[adUnitId];
+            if (__bannerStack__.hasOwnProperty(adUnitId)) {
+                let bannerAd = __bannerStack__[adUnitId];
                 bannerAd.destroy();
-                delete bannerStack[adUnitId];
+                delete __bannerStack__[adUnitId];
+            }
+        }
+
+        export const showRewardedVideoAd = (adUnitId: string, onRewarded: Function, onCancal: Function) => {
+            __rewardedVideoAd__ = __exec_wx__('createRewardedVideoAd', {
+                adUnitId
+            });
+            if (__rewardedVideoAd__) {
+                __rewardedVideoCallback__ && __rewardedVideoAd__.offClose(__rewardedVideoCallback__);
+                __rewardedVideoCallback__ = (res) => {
+                    if (res && res.isEnded || res === undefined) {
+                        onRewarded && onRewarded();
+                    } else {
+                        onCancal && onCancal();
+                    }
+                };
+                __rewardedVideoAd__.onClose(__rewardedVideoCallback__);
+                __rewardedVideoAd__.show().catch(err => {
+                    __rewardedVideoAd__.load().then(() => __rewardedVideoAd__.show());
+                });
+            } else {
+                onCancal && onCancal();
             }
         }
 

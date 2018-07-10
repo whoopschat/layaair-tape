@@ -138,12 +138,12 @@ var Tape;
         for (var _i = 1; _i < arguments.length; _i++) {
             options[_i - 1] = arguments[_i];
         }
+        var _a;
         if (window.hasOwnProperty("wx")) {
             if (window['wx'].hasOwnProperty(func)) {
                 return (_a = window['wx'])[func].apply(_a, options);
             }
         }
-        var _a;
     };
     /** __post_message_to_sub_context__ */
     var __post_message_to_sub_context__ = function (data) {
@@ -165,7 +165,6 @@ var Tape;
         }
         return __rank_texture__;
     };
-    /** __init_rank__ */
     var __init_rank__ = function () {
         if (window.hasOwnProperty('sharedCanvas')) {
             var sharedCanvas = window['sharedCanvas'];
@@ -209,8 +208,11 @@ var Tape;
     /** MiniAd */
     var MiniAd;
     (function (MiniAd) {
-        var bannerStack = {};
+        var __bannerStack__ = {};
+        var __rewardedVideoAd__ = null;
+        var __rewardedVideoCallback__ = null;
         MiniAd.showBannerAd = function (adUnitId, x, y, w, h) {
+            var _a;
             MiniAd.hideBannerAd(adUnitId);
             var systemInfo = __exec_wx__('getSystemInfoSync');
             if (systemInfo) {
@@ -221,30 +223,57 @@ var Tape;
                 var left = x * windowWidth / stageWidth;
                 var top_1 = y * windowHeight / stageHeight;
                 var width = w * windowWidth / stageWidth;
-                var height = h * windowHeight / stageHeight;
-                var bannerAd = __exec_wx__('createBannerAd', {
+                var height_1 = h * windowHeight / stageHeight;
+                var bannerAd_1 = __exec_wx__('createBannerAd', {
                     adUnitId: adUnitId,
                     style: {
                         left: left,
                         top: top_1,
                         width: width,
-                        height: height
+                        height: height_1
                     }
                 });
-                if (bannerAd) {
-                    bannerAd.show();
-                    Object.assign(bannerStack, (_a = {},
-                        _a[adUnitId] = bannerAd,
+                if (bannerAd_1) {
+                    Object.assign(__bannerStack__, (_a = {},
+                        _a[adUnitId] = bannerAd_1,
                         _a));
+                    bannerAd_1.onResize(function (res) {
+                        bannerAd_1.style.top = bannerAd_1.style.top + height_1 - res.height;
+                    });
+                    bannerAd_1.show().catch(function (err) {
+                        bannerAd_1.load().then(function () { return bannerAd_1.show(); });
+                    });
                 }
             }
-            var _a;
         };
         MiniAd.hideBannerAd = function (adUnitId) {
-            if (bannerStack.hasOwnProperty(adUnitId)) {
-                var bannerAd = bannerStack[adUnitId];
+            if (__bannerStack__.hasOwnProperty(adUnitId)) {
+                var bannerAd = __bannerStack__[adUnitId];
                 bannerAd.destroy();
-                delete bannerStack[adUnitId];
+                delete __bannerStack__[adUnitId];
+            }
+        };
+        MiniAd.showRewardedVideoAd = function (adUnitId, onRewarded, onCancal) {
+            __rewardedVideoAd__ = __exec_wx__('createRewardedVideoAd', {
+                adUnitId: adUnitId
+            });
+            if (__rewardedVideoAd__) {
+                __rewardedVideoCallback__ && __rewardedVideoAd__.offClose(__rewardedVideoCallback__);
+                __rewardedVideoCallback__ = function (res) {
+                    if (res && res.isEnded || res === undefined) {
+                        onRewarded && onRewarded();
+                    }
+                    else {
+                        onCancal && onCancal();
+                    }
+                };
+                __rewardedVideoAd__.onClose(__rewardedVideoCallback__);
+                __rewardedVideoAd__.show().catch(function (err) {
+                    __rewardedVideoAd__.load().then(function () { return __rewardedVideoAd__.show(); });
+                });
+            }
+            else {
+                onCancal && onCancal();
             }
         };
     })(MiniAd = Tape.MiniAd || (Tape.MiniAd = {}));
@@ -384,12 +413,12 @@ var Tape;
             var view = pops[pop];
             if (view) {
                 view.pop = pop;
-                view.data = data;
+                view.data = data || {};
             }
             else {
                 view = new pop();
                 view.pop = pop;
-                view.data = data;
+                view.data = data || {};
                 pops[pop] = view;
             }
             view.onShow && view.onShow();
@@ -433,6 +462,8 @@ var Tape;
         __extends(PopView, _super);
         function PopView() {
             var _this = _super.call(this) || this;
+            _this.bgAlpha = 0.5;
+            _this.bgColor = '#000000';
             _this.isTranslucent = false;
             _this.canceledOnTouchOutside = false;
             _this.width = Laya.stage.width;
@@ -441,8 +472,8 @@ var Tape;
                 if (!_this.isTranslucent) {
                     var bg = new Laya.Sprite();
                     bg.graphics.save();
-                    bg.alpha = 0.5;
-                    bg.graphics.drawRect(0, 0, Laya.stage.width, Laya.stage.height, "#000000");
+                    bg.alpha = _this.bgAlpha;
+                    bg.graphics.drawRect(0, 0, Laya.stage.width, Laya.stage.height, _this.bgColor);
                     bg.graphics.restore();
                     bg.width = Laya.stage.width;
                     bg.height = Laya.stage.height;

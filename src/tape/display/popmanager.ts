@@ -8,11 +8,11 @@ module Tape {
             var view = pops[pop];
             if (view) {
                 view.pop = pop;
-                view.data = data;
+                view.data = data || {};
             } else {
                 view = new pop();
                 view.pop = pop;
-                view.data = data;
+                view.data = data || {};
                 pops[pop] = view;
             }
             view.onShow && view.onShow();
@@ -36,7 +36,7 @@ module Tape {
                 }
             }
         }
-        
+
     }
 
 }

@@ -4,6 +4,8 @@ module Tape {
 
         public pop: any;
         public data: any;
+        public bgAlpha: number = 0.5;
+        public bgColor: string = '#000000';
         public isTranslucent: boolean = false;
         public canceledOnTouchOutside: boolean = false;
 
@@ -18,8 +20,8 @@ module Tape {
                 if (!this.isTranslucent) {
                     var bg: Laya.Sprite = new Laya.Sprite();
                     bg.graphics.save();
-                    bg.alpha = 0.5;
-                    bg.graphics.drawRect(0, 0, Laya.stage.width, Laya.stage.height, "#000000");
+                    bg.alpha = this.bgAlpha;
+                    bg.graphics.drawRect(0, 0, Laya.stage.width, Laya.stage.height, this.bgColor);
                     bg.graphics.restore();
                     bg.width = Laya.stage.width;
                     bg.height = Laya.stage.height;
