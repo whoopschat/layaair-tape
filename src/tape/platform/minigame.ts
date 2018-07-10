@@ -110,11 +110,10 @@ module Tape {
                     bannerAd.onResize(res => {
                         bannerAd.style.top = bannerAd.style.top + height - res.height
                     });
-                    bannerAd.show().catch(err => {
-                        bannerAd.load().then(() => bannerAd.show()).catch(err => {
-                            onError && onError(err);
-                        });
+                    bannerAd.onError(err => {
+                        onError && onError(err);
                     });
+                    bannerAd.show();
                 } else {
                     onError && onError({
                         errMsg: 'showBannerAd:fail',

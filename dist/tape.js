@@ -241,11 +241,10 @@ var Tape;
                     bannerAd_1.onResize(function (res) {
                         bannerAd_1.style.top = bannerAd_1.style.top + height_1 - res.height;
                     });
-                    bannerAd_1.show().catch(function (err) {
-                        bannerAd_1.load().then(function () { return bannerAd_1.show(); }).catch(function (err) {
-                            onError && onError(err);
-                        });
+                    bannerAd_1.onError(function (err) {
+                        onError && onError(err);
                     });
+                    bannerAd_1.show();
                 }
                 else {
                     onError && onError({
