@@ -10,6 +10,9 @@ class GameMain {
                 { url: 'res/config.json', type: Laya.Loader.JSON }
             ]
         });
+        Tape.NavigatorRouter.configRoutes({
+            'page/loading/:abc/:ccc/': MainActivity
+        });
     }
 }
 window.onerror = (error) => {

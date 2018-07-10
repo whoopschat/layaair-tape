@@ -66,6 +66,13 @@ module Tape {
             showStack(0);
         }
 
+        export function link(path) {
+            let {page, params} = NavigatorRouter.getRoute(path);
+            if (page) {
+                navigate(page, params);
+            }
+        }
+
         /** navigate */
         export function navigate(page: any, params: any = {}, action: Function = null) {
             new NavigatorLoader({

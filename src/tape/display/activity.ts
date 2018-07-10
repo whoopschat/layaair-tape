@@ -63,6 +63,10 @@ module Tape {
             });
         }
 
+        protected link(path) {
+            NavigatorStack.link(path);
+        }
+
         protected navigate(page, params: any = {}, action: Function = null) {
             NavigatorStack.navigate(page, params, action);
         }

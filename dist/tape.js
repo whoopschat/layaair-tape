@@ -396,6 +396,9 @@ var Tape;
                 _this.back();
             });
         };
+        Activity.prototype.link = function (path) {
+            Tape.NavigatorStack.link(path);
+        };
         Activity.prototype.navigate = function (page, params, action) {
             if (params === void 0) { params = {}; }
             if (action === void 0) { action = null; }
@@ -727,6 +730,73 @@ var Tape;
 
 var Tape;
 (function (Tape) {
+    var NavigatorRouter;
+    (function (NavigatorRouter) {
+        var __routes__ = {};
+        function findRoute(path) {
+            var keys = Object.keys(__routes__);
+            for (var index = 0; index < keys.length; index++) {
+                var p = keys[index];
+                var ps = p.split('\/');
+                var paths = path.split('\/');
+                var flag = true;
+                var len = Math.max(ps.length, paths.length);
+                var params = {};
+                for (var i = 0; i < len; i++) {
+                    var l = ps.length > i ? ps[i] : '';
+                    var t = paths.length > i ? paths[i] : '';
+                    if (l.indexOf(':') === 0) {
+                        params[l.substr(1)] = t;
+                    }
+                    else {
+                        flag = flag && l === t;
+                    }
+                }
+                if (flag) {
+                    return {
+                        page: __routes__[p],
+                        params: params
+                    };
+                }
+            }
+            return {
+                page: null,
+                params: {}
+            };
+        }
+        function configRoutes(routes) {
+            __routes__ = routes;
+        }
+        NavigatorRouter.configRoutes = configRoutes;
+        function getRoute(path) {
+            if (!path) {
+                return {
+                    page: null,
+                    params: {}
+                };
+            }
+            var qs = path.split('?');
+            var _a = findRoute(qs[0]), page = _a.page, params = _a.params;
+            if (qs.length > 1) {
+                var strs = qs[1].split("&");
+                for (var i = 0; i < strs.length; i++) {
+                    var ps = strs[i].split("=")[0];
+                    if (ps.length > 1) {
+                        params[ps[0]] = ps[1];
+                    }
+                }
+            }
+            return {
+                page: page,
+                params: params
+            };
+        }
+        NavigatorRouter.getRoute = getRoute;
+    })(NavigatorRouter = Tape.NavigatorRouter || (Tape.NavigatorRouter = {}));
+})(Tape || (Tape = {}));
+
+var Tape;
+(function (Tape) {
     var NavigatorStack;
     (function (NavigatorStack) {
         var __loaders__ = [];
@@ -789,6 +859,13 @@ var Tape;
             });
             showStack(0);
         }
+        function link(path) {
+            var _a = Tape.NavigatorRouter.getRoute(path), page = _a.page, params = _a.params;
+            if (page) {
+                navigate(page, params);
+            }
+        }
+        NavigatorStack.link = link;
         /** navigate */
         function navigate(page, params, action) {
             if (params === void 0) { params = {}; }

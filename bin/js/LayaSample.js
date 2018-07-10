@@ -10,6 +10,9 @@ var GameMain = /** @class */ (function () {
                 { url: 'res/config.json', type: Laya.Loader.JSON }
             ]
         });
+        Tape.NavigatorRouter.configRoutes({
+            'page/loading/:abc/:ccc/': MainActivity
+        });
     }
     return GameMain;
 }());

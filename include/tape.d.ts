@@ -54,6 +54,11 @@ declare module Tape {
         function init(options: NavigatorOptions): void;
     }
 
+    module NavigatorRouter {
+        /** configRoutes */
+        function configRoutes(routes: Object): void;
+    }
+
     /** UIManager */
     module UIManager {
         /** addMainUI */
@@ -149,10 +154,12 @@ declare module Tape {
         constructor(options: ActivityOptions);
         /** redirectTo */
         protected setContentView(view): void;
+        /** link */
+        protected link(path: string): void;
         /** redirectTo */
-        protected redirectTo(page, params?: any): boolean;
+        protected redirectTo(page, params?: any): void;
         /** navigate */
-        protected navigate(page, params?: any, action?: Function): boolean;
+        protected navigate(page, params?: any, action?: Function): void;
         /** finish self */
         protected back(): void;
         /** finish activity */
