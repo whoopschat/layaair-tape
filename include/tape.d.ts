@@ -1,5 +1,7 @@
 declare module runtime {
 
+    let clickSound: string;
+
     class btn extends Laya.Button { }
 
     class btn_img extends Laya.Image { }
@@ -203,7 +205,7 @@ declare module Tape {
          * @param width 
          * @param height 
          */
-        function showBannerAd(adUnitId: string, x: number, y: number, width: number, height: number): void;
+        function showBannerAd(adUnitId: string, x: number, y: number, width: number, height: number, onError?: Function): void;
         /**
          * hideBannerAd
          * @param adUnitId 
@@ -215,7 +217,7 @@ declare module Tape {
          * @param onRewarded 
          * @param onCancal 
          */
-        function showRewardedVideoAd(adUnitId: string, onRewarded: Function, onCancal: Function): void;
+        function showRewardedVideoAd(adUnitId: string, onRewarded: Function, onCancal: Function, onError?: Function): void;
     }
 
     /** MiniRank */
@@ -244,6 +246,11 @@ declare module Tape {
          * @param kv_data_list 
          */
         function setRankData(kv_data_list: Object[]): void;
+        /**
+         * setDebug
+         * @param debug 
+         */
+        function setDebug(debug: boolean): void;
     }
 
 }

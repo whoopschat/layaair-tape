@@ -1,5 +1,7 @@
 module runtime {
 
+    export let clickSound = null;
+
     let scaleTime: number = 100;
 
     function center(view) {
@@ -17,6 +19,12 @@ module runtime {
         Laya.Tween.to(view, { scaleX: 1, scaleY: 1 }, scaleTime);
     }
 
+    function playSound(view) {
+        if (clickSound) {
+            Laya.SoundManager.playSound(clickSound, 1);
+        }
+    }
+
     export class btn extends Laya.Button {
 
         constructor() {
@@ -24,6 +32,7 @@ module runtime {
             this.on(Laya.Event.MOUSE_DOWN, this, () => scaleSmal(this));
             this.on(Laya.Event.MOUSE_UP, this, () => scaleBig(this));
             this.on(Laya.Event.MOUSE_OUT, this, () => scaleBig(this));
+            this.on(Laya.Event.CLICK, this, () => playSound(this));
         }
 
     }
@@ -35,6 +44,7 @@ module runtime {
             this.on(Laya.Event.MOUSE_DOWN, this, () => scaleSmal(this));
             this.on(Laya.Event.MOUSE_UP, this, () => scaleBig(this));
             this.on(Laya.Event.MOUSE_OUT, this, () => scaleBig(this));
+            this.on(Laya.Event.CLICK, this, () => playSound(this));
         }
 
     }
@@ -46,6 +56,7 @@ module runtime {
             this.on(Laya.Event.MOUSE_DOWN, this, () => scaleSmal(this));
             this.on(Laya.Event.MOUSE_UP, this, () => scaleBig(this));
             this.on(Laya.Event.MOUSE_OUT, this, () => scaleBig(this));
+            this.on(Laya.Event.CLICK, this, () => playSound(this));
         }
 
     }

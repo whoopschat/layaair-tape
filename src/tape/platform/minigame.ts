@@ -80,7 +80,7 @@ module Tape {
         let __rewardedVideoAd__ = null;
         let __rewardedVideoCallback__ = null;
 
-        export const showBannerAd = (adUnitId: string, x: number, y: number, w: number, h: number) => {
+        export const showBannerAd = (adUnitId: string, x: number, y: number, w: number, h: number, onError: Function = null) => {
             hideBannerAd(adUnitId);
             let systemInfo = __exec_wx__('getSystemInfoSync');
             if (systemInfo) {
@@ -111,7 +111,9 @@ module Tape {
                         bannerAd.style.top = bannerAd.style.top + height - res.height
                     });
                     bannerAd.show().catch(err => {
-                        bannerAd.load().then(() => bannerAd.show());
+                        bannerAd.load().then(() => bannerAd.show()).catch(err => {
+                            onError && onError(err);
+                        });
                     });
                 }
             }
@@ -125,7 +127,7 @@ module Tape {
             }
         }
 
-        export const showRewardedVideoAd = (adUnitId: string, onRewarded: Function, onCancal: Function) => {
+        export const showRewardedVideoAd = (adUnitId: string, onRewarded: Function, onCancal: Function, onError: Function = null) => {
             __rewardedVideoAd__ = __exec_wx__('createRewardedVideoAd', {
                 adUnitId
             });
@@ -140,10 +142,15 @@ module Tape {
                 };
                 __rewardedVideoAd__.onClose(__rewardedVideoCallback__);
                 __rewardedVideoAd__.show().catch(err => {
-                    __rewardedVideoAd__.load().then(() => __rewardedVideoAd__.show());
+                    __rewardedVideoAd__.load().then(() => __rewardedVideoAd__.show()).catch(err => {
+                        onError && onError(err);
+                    });
                 });
             } else {
-                onCancal && onCancal();
+                onError && onError({
+                    errMsg: 'showRewardedVideoAd:fail',
+                    err_code: -1
+                });
             }
         }
 
@@ -168,7 +175,7 @@ module Tape {
         export const showRank = (uiView: Object | Object[], options: Object = {}, onlyRefreshData: boolean = false) => {
             __post_message_to_sub_context__({
                 action: onlyRefreshData ? "refreshData" : "showUI",
-                data: (<any>Object).assign({
+                data: onlyRefreshData ? options : (<any>Object).assign({
                     ui: JSON.stringify(uiView || {}),
                 }, options)
             });
@@ -180,6 +187,13 @@ module Tape {
 
         export const setRankData = (list: Object[]) => {
             __post_message_to_sub_context__({ action: 'setUserCloudStorage', data: { KVDataList: list } });
+        }
+
+        export const setDebug = (debug: boolean) => {
+            __post_message_to_sub_context__({
+                action: 'setDebug',
+                data: { debug }
+            });
         }
 
     }

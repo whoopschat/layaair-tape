@@ -211,7 +211,8 @@ var Tape;
         var __bannerStack__ = {};
         var __rewardedVideoAd__ = null;
         var __rewardedVideoCallback__ = null;
-        MiniAd.showBannerAd = function (adUnitId, x, y, w, h) {
+        MiniAd.showBannerAd = function (adUnitId, x, y, w, h, onError) {
+            if (onError === void 0) { onError = null; }
             var _a;
             MiniAd.hideBannerAd(adUnitId);
             var systemInfo = __exec_wx__('getSystemInfoSync');
@@ -241,7 +242,9 @@ var Tape;
                         bannerAd_1.style.top = bannerAd_1.style.top + height_1 - res.height;
                     });
                     bannerAd_1.show().catch(function (err) {
-                        bannerAd_1.load().then(function () { return bannerAd_1.show(); });
+                        bannerAd_1.load().then(function () { return bannerAd_1.show(); }).catch(function (err) {
+                            onError && onError(err);
+                        });
                     });
                 }
             }
@@ -253,7 +256,8 @@ var Tape;
                 delete __bannerStack__[adUnitId];
             }
         };
-        MiniAd.showRewardedVideoAd = function (adUnitId, onRewarded, onCancal) {
+        MiniAd.showRewardedVideoAd = function (adUnitId, onRewarded, onCancal, onError) {
+            if (onError === void 0) { onError = null; }
             __rewardedVideoAd__ = __exec_wx__('createRewardedVideoAd', {
                 adUnitId: adUnitId
             });
@@ -269,11 +273,16 @@ var Tape;
                 };
                 __rewardedVideoAd__.onClose(__rewardedVideoCallback__);
                 __rewardedVideoAd__.show().catch(function (err) {
-                    __rewardedVideoAd__.load().then(function () { return __rewardedVideoAd__.show(); });
+                    __rewardedVideoAd__.load().then(function () { return __rewardedVideoAd__.show(); }).catch(function (err) {
+                        onError && onError(err);
+                    });
                 });
             }
             else {
-                onCancal && onCancal();
+                onError && onError({
+                    errMsg: 'showRewardedVideoAd:fail',
+                    err_code: -1
+                });
             }
         };
     })(MiniAd = Tape.MiniAd || (Tape.MiniAd = {}));
@@ -301,7 +310,7 @@ var Tape;
             if (onlyRefreshData === void 0) { onlyRefreshData = false; }
             __post_message_to_sub_context__({
                 action: onlyRefreshData ? "refreshData" : "showUI",
-                data: Object.assign({
+                data: onlyRefreshData ? options : Object.assign({
                     ui: JSON.stringify(uiView || {}),
                 }, options)
             });
@@ -311,6 +320,12 @@ var Tape;
         };
         MiniRank.setRankData = function (list) {
             __post_message_to_sub_context__({ action: 'setUserCloudStorage', data: { KVDataList: list } });
+        };
+        MiniRank.setDebug = function (debug) {
+            __post_message_to_sub_context__({
+                action: 'setDebug',
+                data: { debug: debug }
+            });
         };
     })(MiniRank = Tape.MiniRank || (Tape.MiniRank = {}));
 })(Tape || (Tape = {}));
@@ -835,6 +850,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 var runtime;
 (function (runtime) {
+    runtime.clickSound = null;
     var scaleTime = 100;
     function center(view) {
         view.x = view.x + view.width / 2 - view.pivotX;
@@ -848,6 +864,11 @@ var runtime;
     function scaleBig(view) {
         Laya.Tween.to(view, { scaleX: 1, scaleY: 1 }, scaleTime);
     }
+    function playSound(view) {
+        if (runtime.clickSound) {
+            Laya.SoundManager.playSound(runtime.clickSound, 1);
+        }
+    }
     var btn = /** @class */ (function (_super) {
         __extends(btn, _super);
         function btn() {
@@ -855,6 +876,7 @@ var runtime;
             _this.on(Laya.Event.MOUSE_DOWN, _this, function () { return scaleSmal(_this); });
             _this.on(Laya.Event.MOUSE_UP, _this, function () { return scaleBig(_this); });
             _this.on(Laya.Event.MOUSE_OUT, _this, function () { return scaleBig(_this); });
+            _this.on(Laya.Event.CLICK, _this, function () { return playSound(_this); });
             return _this;
         }
         return btn;
@@ -867,6 +889,7 @@ var runtime;
             _this.on(Laya.Event.MOUSE_DOWN, _this, function () { return scaleSmal(_this); });
             _this.on(Laya.Event.MOUSE_UP, _this, function () { return scaleBig(_this); });
             _this.on(Laya.Event.MOUSE_OUT, _this, function () { return scaleBig(_this); });
+            _this.on(Laya.Event.CLICK, _this, function () { return playSound(_this); });
             return _this;
         }
         return btn_img;
@@ -879,6 +902,7 @@ var runtime;
             _this.on(Laya.Event.MOUSE_DOWN, _this, function () { return scaleSmal(_this); });
             _this.on(Laya.Event.MOUSE_UP, _this, function () { return scaleBig(_this); });
             _this.on(Laya.Event.MOUSE_OUT, _this, function () { return scaleBig(_this); });
+            _this.on(Laya.Event.CLICK, _this, function () { return playSound(_this); });
             return _this;
         }
         return btn_label;
