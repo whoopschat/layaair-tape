@@ -1,16 +1,16 @@
 module Tape {
+    
+   export module ArrayUtil {
 
-    module ArrayUtil {
-
-        export function random(source: Array<any>): Object {
+        export function random(source: any[]): Object {
             return source[Math.floor(Math.random() * source.length)];
         }
 
-        export function randomArr(source: Array<any>, length: number = -1): Array<any> {
+        export function randomArr(source: any[], length: number = -1): Array<any> {
             let randomLength = length == -1 ? source.length : length;
             randomLength = Math.min(randomLength, source.length);
             var copy: Array<any> = source.concat([]);
-            var result: Array<any> = new Array<any>();
+            var result: Array<any> = [];
             while (result.length < randomLength) {
                 let randomObj = random(copy);
                 result.push(randomObj);
@@ -18,7 +18,7 @@ module Tape {
             }
             return result;
         }
-        
+
     }
 
 }

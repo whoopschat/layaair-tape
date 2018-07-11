@@ -139,7 +139,7 @@ declare module Tape {
         /** inEaseToProps */
         protected inEaseToProps: Object;
         /** activity on create */
-        public onInitView?(view: any): void;
+        protected onInitView?(view: any): void;
         /** activity on create */
         protected onCreate?(): void;
         /** activity on resume */

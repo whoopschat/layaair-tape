@@ -39,7 +39,7 @@ var Tape;
             var randomLength = length == -1 ? source.length : length;
             randomLength = Math.min(randomLength, source.length);
             var copy = source.concat([]);
-            var result = new Array();
+            var result = [];
             while (result.length < randomLength) {
                 var randomObj = random(copy);
                 result.push(randomObj);
@@ -48,7 +48,7 @@ var Tape;
             return result;
         }
         ArrayUtil.randomArr = randomArr;
-    })(ArrayUtil || (ArrayUtil = {}));
+    })(ArrayUtil = Tape.ArrayUtil || (Tape.ArrayUtil = {}));
 })(Tape || (Tape = {}));
 
 var Tape;
