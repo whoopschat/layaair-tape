@@ -54,9 +54,28 @@ declare module Tape {
         function init(options: NavigatorOptions): void;
     }
 
+    /** NavigatorRouter */
     module NavigatorRouter {
         /** configRoutes */
         function configRoutes(routes: Object): void;
+    }
+
+    /** NavigatorStack */
+    module NavigatorStack{
+        /** link */
+        function link(path: string): void;
+        /** redirectTo */
+        function redirectTo(page, params?: any): void;
+        /** navigate */
+        function navigate(page, params?: any, action?: Function): void;
+        /** finish self */
+        function back(): void;
+        /** finish activity */
+        function finish(page): void;
+        /** pop */
+        function pop(num?: number): void;
+        /** pop to top */
+        function popToTop(): void;
     }
 
     /** UIManager */
