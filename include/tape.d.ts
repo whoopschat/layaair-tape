@@ -61,15 +61,13 @@ declare module Tape {
     }
 
     /** NavigatorStack */
-    module NavigatorStack{
+    module NavigatorStack {
         /** link */
         function link(path: string): void;
         /** redirectTo */
         function redirectTo(page, params?: any): void;
         /** navigate */
         function navigate(page, params?: any, action?: Function): void;
-        /** finish self */
-        function back(): void;
         /** finish activity */
         function finish(page): void;
         /** pop */
