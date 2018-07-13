@@ -362,8 +362,6 @@ var Tape;
             _this.page = null;
             /** params */
             _this.params = {};
-            /** res */
-            _this.res = [];
             /** turn on and off animation */
             _this.inEaseDuration = 0;
             _this.inEase = null;
@@ -373,23 +371,9 @@ var Tape;
             _this.height = Laya.stage.height;
             _this.params = Object.assign({}, options.params || {});
             _this.page = options.page;
-            _this.onLoad && _this.onLoad();
-            setTimeout(function () {
-                var res = _this.res || [];
-                if (res.length > 0) {
-                    Laya.loader.load(res, Laya.Handler.create(_this, function () {
-                        options.onLoaded && options.onLoaded(_this);
-                    }), Laya.Handler.create(_this, function (progress) {
-                        options.onLoadProgress && options.onLoadProgress(progress);
-                    }, null, false));
-                }
-                else {
-                    options.onLoaded && options.onLoaded();
-                }
-            }, 0);
             return _this;
         }
-        Object.defineProperty(Activity.prototype, "contentView", {
+        Object.defineProperty(Activity.prototype, "ui", {
             get: function () {
                 return this.getChildAt(0);
             },
@@ -430,6 +414,8 @@ var Tape;
         Activity.prototype.popToTop = function () {
             Tape.NavigatorStack.popToTop();
         };
+        /** res */
+        Activity.res = [];
         return Activity;
     }(Laya.Component));
     Tape.Activity = Activity;
@@ -462,18 +448,18 @@ var Tape;
                 arr.splice(0, arr.length);
             }
         }
-        function showPop(pop, data, onHide) {
-            if (data === void 0) { data = null; }
+        function showPop(pop, params, onHide) {
+            if (params === void 0) { params = null; }
             if (onHide === void 0) { onHide = null; }
             var view = pops[pop];
             if (view) {
                 view.pop = pop;
-                view.data = data || {};
+                view.params = params || {};
             }
             else {
                 view = new pop();
                 view.pop = pop;
-                view.data = data || {};
+                view.params = params || {};
                 pops[pop] = view;
             }
             view.onShow && view.onShow();
@@ -545,6 +531,17 @@ var Tape;
             }, 0);
             return _this;
         }
+        Object.defineProperty(PopView.prototype, "ui", {
+            get: function () {
+                return this.getChildAt(0);
+            },
+            set: function (view) {
+                this.removeChildren();
+                this.addChild(view);
+            },
+            enumerable: true,
+            configurable: true
+        });
         PopView.prototype.finish = function () {
             Tape.PopManager.hidePop(this.pop);
         };
@@ -702,24 +699,37 @@ var Tape;
             _this.__options__ = null;
             _this.__activity__ = null;
             _this.__options__ = options;
-            _this.__activity__ = new _this.__options__.page({
-                page: _this.__options__.page,
-                params: _this.__options__.params,
-                onLoaded: function () {
-                    _this.__onLoaded__ && _this.__onLoaded__();
-                },
-                onLoadProgress: function (progress) {
-                    _this.__onLoadProgress__ && _this.__onLoadProgress__(progress);
-                }
-            });
+            var res = _this.__options__.page.res;
+            if (res && res.length > 0) {
+                Laya.loader.load(res, Laya.Handler.create(_this, function () {
+                    _this.__new_activity__();
+                    _this.__on_loaded__();
+                }), Laya.Handler.create(_this, function (progress) {
+                    _this.__on_load_progress__(progress);
+                }, null, false));
+            }
+            else {
+                _this.__new_activity__();
+                _this.__on_loaded__();
+            }
             return _this;
         }
-        NavigatorLoader.prototype.__onLoaded__ = function () {
+        NavigatorLoader.prototype.__new_activity__ = function () {
+            if (this.__activity__) {
+                return;
+            }
+            this.__activity__ = new this.__options__.page({
+                page: this.__options__.page,
+                params: this.__options__.params
+            });
+        };
+        NavigatorLoader.prototype.__on_loaded__ = function () {
+            this.__options__.onLoaded && this.__options__.onLoaded(this);
             this.addChild(this.__activity__);
             this.__activity__.onCreate && this.__activity__.onCreate();
-            this.__options__.onLoaded && this.__options__.onLoaded(this);
+            this.__options__.onShow && this.__options__.onShow();
         };
-        NavigatorLoader.prototype.__onLoadProgress__ = function (progress) {
+        NavigatorLoader.prototype.__on_load_progress__ = function (progress) {
             this.__options__.onLoadProgress && this.__options__.onLoadProgress(this, progress);
         };
         NavigatorLoader.prototype.nextProgress = function (progress) {
@@ -861,8 +871,10 @@ var Tape;
             }
             stack.show(anim && length() > 1, callback);
         }
-        function putStack(stack, callback) {
+        function pushStack(stack) {
             __loaders__.push(stack);
+        }
+        function refreshStack(callback) {
             showStack(0, true, function () {
                 var stack = getStack(1);
                 if (!stack) {
@@ -912,12 +924,15 @@ var Tape;
             new Tape.NavigatorLoader({
                 page: page,
                 params: params,
+                onShow: function () {
+                    refreshStack(function () {
+                        action && action(true);
+                    });
+                },
                 onLoaded: function (loader) {
                     __loading__ = false;
                     Tape.UIManager.addMainUI(loader);
-                    putStack(loader, function () {
-                        action && action(true);
-                    });
+                    pushStack(loader);
                 },
                 onLoadProgress: function (loader, progress) {
                     if (__loading__) {
@@ -1069,11 +1084,12 @@ var Tape;
             }
             else {
                 bgView = new Laya.Label();
+                bgView.name = '__tape_bg_view__';
                 bgView.bgColor = color;
                 bgView.x = 0;
                 bgView.y = 0;
-                bgView.width = 750;
-                bgView.height = 1334;
+                bgView.width = Laya.stage.width;
+                bgView.height = Laya.stage.height;
                 Laya.stage.addChild(bgView);
             }
         }

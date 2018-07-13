@@ -10,6 +10,7 @@ module Tape {
     export interface LoaderOptions {
         page: any;
         params: Object;
+        onShow?: Function;
         onLoaded?: Function;
         onLoadProgress?: Function;
     }

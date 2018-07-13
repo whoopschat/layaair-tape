@@ -3,19 +3,19 @@ module Tape {
     /** Activity */
     export class Activity extends Laya.Component {
 
+        /** res */
+        public static res: ResourceOptions[] = [];
+
         /** page type */
         public page: any = null;
         /** params */
         public params: any = {};
-        /** res */
-        public res: ResourceOptions[] = [];
         /** turn on and off animation */
         public inEaseDuration: number = 0;
         public inEase: Function = null;
         public inEaseFromProps: Object = null;
         public inEaseToProps: Object = null;
 
-        public onLoad?(): void;
         public onCreate?(): void;
         public onResume?(): void;
         public onPause?(): void;
@@ -28,27 +28,14 @@ module Tape {
             this.height = Laya.stage.height;
             this.params = (<any>Object).assign({}, options.params || {});
             this.page = options.page;
-            this.onLoad && this.onLoad();
-            setTimeout(() => {
-                let res = this.res || [];
-                if (res.length > 0) {
-                    Laya.loader.load(res, Laya.Handler.create(this, () => {
-                        options.onLoaded && options.onLoaded(this);
-                    }), Laya.Handler.create(this, (progress) => {
-                        options.onLoadProgress && options.onLoadProgress(progress);
-                    }, null, false));
-                } else {
-                    options.onLoaded && options.onLoaded();
-                }
-            }, 0);
         }
 
-        protected set contentView(view) {
+        protected set ui(view) {
             this.removeChildren();
             this.addChild(view);
         }
 
-        protected get contentView(): any {
+        protected get ui(): any {
             return this.getChildAt(0);
         }
 

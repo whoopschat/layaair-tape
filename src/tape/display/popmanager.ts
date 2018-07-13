@@ -27,15 +27,15 @@ module Tape {
             }
         }
 
-        export function showPop(pop: any, data = null, onHide: Function = null): void {
+        export function showPop(pop: any, params = null, onHide: Function = null): void {
             var view = pops[pop];
             if (view) {
                 view.pop = pop;
-                view.data = data || {};
+                view.params = params || {};
             } else {
                 view = new pop();
                 view.pop = pop;
-                view.data = data || {};
+                view.params = params || {};
                 pops[pop] = view;
             }
             view.onShow && view.onShow();

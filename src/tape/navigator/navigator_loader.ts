@@ -8,25 +8,38 @@ module Tape {
         constructor(options: LoaderOptions) {
             super();
             this.__options__ = options;
+            let res = this.__options__.page.res;
+            if (res && res.length > 0) {
+                Laya.loader.load(res, Laya.Handler.create(this, () => {
+                    this.__new_activity__();
+                    this.__on_loaded__();
+                }), Laya.Handler.create(this, (progress) => {
+                    this.__on_load_progress__(progress);
+                }, null, false));
+            } else {
+                this.__new_activity__();
+                this.__on_loaded__();
+            }
+        }
+
+        private __new_activity__() {
+            if (this.__activity__) {
+                return;
+            }
             this.__activity__ = new this.__options__.page({
                 page: this.__options__.page,
-                params: this.__options__.params,
-                onLoaded: () => {
-                    this.__onLoaded__ && this.__onLoaded__();
-                },
-                onLoadProgress: (progress) => {
-                    this.__onLoadProgress__ && this.__onLoadProgress__(progress);
-                }
+                params: this.__options__.params
             });
         }
 
-        private __onLoaded__() {
+        private __on_loaded__() {
+            this.__options__.onLoaded && this.__options__.onLoaded(this);
             this.addChild(this.__activity__);
             this.__activity__.onCreate && this.__activity__.onCreate();
-            this.__options__.onLoaded && this.__options__.onLoaded(this);
+            this.__options__.onShow && this.__options__.onShow();
         }
 
-        private __onLoadProgress__(progress) {
+        private __on_load_progress__(progress) {
             this.__options__.onLoadProgress && this.__options__.onLoadProgress(this, progress);
         }
 

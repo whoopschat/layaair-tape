@@ -3,7 +3,7 @@ module Tape {
     export class PopView extends Laya.Sprite {
 
         public pop: any;
-        public data: any;
+        public params: any;
         public bgAlpha: number = 0.5;
         public bgColor: string = '#000000';
         public isTranslucent: boolean = false;
@@ -11,6 +11,15 @@ module Tape {
 
         public onShow?(): void;
         public onHide?(): void;
+
+        protected set ui(view) {
+            this.removeChildren();
+            this.addChild(view);
+        }
+
+        protected get ui(): any {
+            return this.getChildAt(0);
+        }
 
         public constructor() {
             super();

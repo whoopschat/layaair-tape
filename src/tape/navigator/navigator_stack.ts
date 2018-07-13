@@ -26,8 +26,11 @@ module Tape {
             stack.show(anim && length() > 1, callback);
         }
 
-        function putStack(stack, callback: Function) {
+        function pushStack(stack) {
             __loaders__.push(stack);
+        }
+
+        function refreshStack(callback: Function) {
             showStack(0, true, () => {
                 let stack = getStack(1);
                 if (!stack) {
@@ -78,12 +81,15 @@ module Tape {
             new NavigatorLoader({
                 page,
                 params,
+                onShow: () => {
+                    refreshStack(() => {
+                        action && action(true);
+                    });
+                },
                 onLoaded: (loader) => {
                     __loading__ = false;
                     UIManager.addMainUI(loader);
-                    putStack(loader, () => {
-                        action && action(true);
-                    });
+                    pushStack(loader);
                 },
                 onLoadProgress: (loader, progress) => {
                     if (__loading__) {

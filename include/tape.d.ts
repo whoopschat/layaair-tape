@@ -24,13 +24,6 @@ declare module Tape {
         type: string
     }
 
-    /** NavigatorOptions */
-    interface NavigatorOptions {
-        mainPage: any;
-        commonRes?: ResourceOptions[];
-        fileVersion?: string;
-    }
-
     /**
      * init
      * @param width
@@ -47,6 +40,13 @@ declare module Tape {
 
     /** setBgColor  @param color */
     function setBgColor(color: string): void;
+
+    /** NavigatorOptions */
+    interface NavigatorOptions {
+        mainPage: any;
+        commonRes?: ResourceOptions[];
+        fileVersion?: string;
+    }
 
     /** Navigator */
     module Navigator {
@@ -69,7 +69,7 @@ declare module Tape {
         /** navigate */
         function navigate(page, params?: any, action?: Function): void;
         /** finish activity */
-        function finish(page): void;
+        function finish(page, instance?: any): void;
         /** pop */
         function pop(num?: number): void;
         /** pop to top */
@@ -117,8 +117,10 @@ declare module Tape {
     class PopView extends Laya.Sprite {
         /** pop */
         protected pop: any;
-        /** data */
-        protected data: any;
+        /** ui */
+        protected ui: any;
+        /** params */
+        protected params: any;
         /** bgAlpha */
         protected bgAlpha: number;
         /** bgColor */
@@ -141,8 +143,8 @@ declare module Tape {
     class Activity extends Laya.Component {
         /** page type */
         protected page: any;
-        /** view */
-        protected contentView: any;
+        /** ui */
+        protected ui: any;
         /** params */
         protected params: any;
         /** res */
@@ -155,8 +157,6 @@ declare module Tape {
         protected inEaseFromProps: Object;
         /** inEaseToProps */
         protected inEaseToProps: Object;
-        /** activity on load */
-        protected onLoad?(): void;
         /** activity on create */
         protected onCreate?(): void;
         /** activity on resume */
@@ -178,7 +178,7 @@ declare module Tape {
         /** finish self */
         protected back(): void;
         /** finish activity */
-        protected finish(page): void;
+        protected finish(page, instance?: any): void;
         /** pop */
         protected pop(num?: number): void;
         /** pop to top */

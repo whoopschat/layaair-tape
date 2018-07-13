@@ -1,8 +1,9 @@
 class TestPop extends Tape.PopView {
 
+    ui = new ui.test_popUI;
+
     constructor() {
         super();
-        this.addChild(new ui.test_popUI);
         this.isTranslucent = false;
         this.canceledOnTouchOutside = true;
     }

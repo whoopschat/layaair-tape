@@ -36,11 +36,12 @@ module Tape {
                 bgView.bgColor = color;
             } else {
                 bgView = new Laya.Label();
+                bgView.name = '__tape_bg_view__';
                 bgView.bgColor = color;
                 bgView.x = 0;
                 bgView.y = 0;
-                bgView.width = 750;
-                bgView.height = 1334;
+                bgView.width = Laya.stage.width;
+                bgView.height = Laya.stage.height;
                 Laya.stage.addChild(bgView);
             }
         }
