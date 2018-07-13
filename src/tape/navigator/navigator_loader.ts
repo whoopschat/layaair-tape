@@ -22,8 +22,8 @@ module Tape {
 
         private __onLoaded__() {
             this.addChild(this.__activity__);
-            this.__options__.onLoaded && this.__options__.onLoaded(this);
             this.__activity__.onCreate && this.__activity__.onCreate();
+            this.__options__.onLoaded && this.__options__.onLoaded(this);
         }
 
         private __onLoadProgress__(progress) {

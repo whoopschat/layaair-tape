@@ -95,7 +95,7 @@ declare module Tape {
     /** PopManager */
     module PopManager {
         /** showPop */
-        function showPop(pop, data?): void;
+        function showPop(pop, data?, onHide?: (pop) => void): void;
         /** hidePop */
         function hidePop(pop): void;
         /** refreshPos */
@@ -142,7 +142,7 @@ declare module Tape {
         /** page type */
         protected page: any;
         /** view */
-        protected view: any;
+        protected contentView: any;
         /** params */
         protected params: any;
         /** res */
@@ -155,8 +155,8 @@ declare module Tape {
         protected inEaseFromProps: Object;
         /** inEaseToProps */
         protected inEaseToProps: Object;
-        /** activity on create */
-        protected onInitView?(view: any): void;
+        /** activity on load */
+        protected onLoad?(): void;
         /** activity on create */
         protected onCreate?(): void;
         /** activity on resume */
@@ -169,8 +169,6 @@ declare module Tape {
         protected onNextProgress?(progress): void;
         /** constructor */
         constructor(options: ActivityOptions);
-        /** redirectTo */
-        protected setContentView(view): void;
         /** link */
         protected link(path: string): void;
         /** redirectTo */

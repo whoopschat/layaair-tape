@@ -1,23 +1,24 @@
 class PageActivity extends Tape.Activity {
 
-    private pageUI = new ui.page_actiUI();
 
-    public onCreate() {
-        this.addChild(this.pageUI);
-        this.pageUI.btn.on(Laya.Event.CLICK, this, () => {
+    onCreate() {
+        this.contentView = new ui.page_actiUI();
+        this.contentView.btn.on(Laya.Event.CLICK, this, () => {
             this.navigate(MainActivity);
         })
-        this.pageUI.pop.on(Laya.Event.CLICK, this, () => {
-            Tape.PopManager.showPop(TestPop);
+        this.contentView.pop.on(Laya.Event.CLICK, this, () => {
+            Tape.PopManager.showPop(TestPop,{},() => {
+                console.log(' ------------------ ');
+            });
         });
-        this.pageUI.toast.on(Laya.Event.CLICK, this, () => {
+        this.contentView.toast.on(Laya.Event.CLICK, this, () => {
             Tape.ToastManager.showToast(new ui.test_toastUI);
             // Tape.ToastManager.hideAll();
         });
-        this.pageUI.popToTop.on(Laya.Event.CLICK, this, () => {
+        this.contentView.popToTop.on(Laya.Event.CLICK, this, () => {
             this.popToTop();
         });
-        this.pageUI.btnBack.on(Laya.Event.CLICK, this, () => {
+        this.contentView.btnBack.on(Laya.Event.CLICK, this, () => {
             this.back();
         });
     }

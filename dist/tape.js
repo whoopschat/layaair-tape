@@ -360,8 +360,6 @@ var Tape;
             var _this = _super.call(this) || this;
             /** page type */
             _this.page = null;
-            /** contentView */
-            _this.contentView = null;
             /** params */
             _this.params = {};
             /** res */
@@ -391,12 +389,17 @@ var Tape;
             }, 0);
             return _this;
         }
-        Activity.prototype.setContentView = function (view) {
-            this.contentView = view;
-            this.removeChildren();
-            this.addChild(view);
-            this.onInitView && this.onInitView(view);
-        };
+        Object.defineProperty(Activity.prototype, "contentView", {
+            get: function () {
+                return this.getChildAt(0);
+            },
+            set: function (view) {
+                this.removeChildren();
+                this.addChild(view);
+            },
+            enumerable: true,
+            configurable: true
+        });
         //////////////////////////
         /// navigator function
         //////////////////////////
@@ -437,8 +440,31 @@ var Tape;
     var PopManager;
     (function (PopManager) {
         var pops = {};
-        function showPop(pop, data) {
+        var onhides = {};
+        function registerOnHide(pop, onHide) {
+            if (!onHide || typeof onHide !== 'function') {
+                return;
+            }
+            var arr = onhides[pop];
+            if (arr) {
+                arr.push(onHide);
+            }
+            else {
+                onhides[pop] = [onHide];
+            }
+        }
+        function callOnHide(pop) {
+            var arr = onhides[pop];
+            if (arr && arr.length > 0) {
+                arr.forEach(function (element) {
+                    element && element(pop);
+                });
+                arr.splice(0, arr.length);
+            }
+        }
+        function showPop(pop, data, onHide) {
             if (data === void 0) { data = null; }
+            if (onHide === void 0) { onHide = null; }
             var view = pops[pop];
             if (view) {
                 view.pop = pop;
@@ -452,6 +478,7 @@ var Tape;
             }
             view.onShow && view.onShow();
             Tape.UIManager.addPopUI(view);
+            registerOnHide(pop, onHide);
         }
         PopManager.showPop = showPop;
         function hidePop(pop) {
@@ -461,6 +488,7 @@ var Tape;
                 view.removeSelf && view.removeSelf();
                 delete pops[pop];
             }
+            callOnHide(pop);
         }
         PopManager.hidePop = hidePop;
         function refreshPos() {
@@ -688,8 +716,8 @@ var Tape;
         }
         NavigatorLoader.prototype.__onLoaded__ = function () {
             this.addChild(this.__activity__);
-            this.__options__.onLoaded && this.__options__.onLoaded(this);
             this.__activity__.onCreate && this.__activity__.onCreate();
+            this.__options__.onLoaded && this.__options__.onLoaded(this);
         };
         NavigatorLoader.prototype.__onLoadProgress__ = function (progress) {
             this.__options__.onLoadProgress && this.__options__.onLoadProgress(this, progress);

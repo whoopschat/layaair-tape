@@ -12,17 +12,14 @@ class MainActivity extends Tape.Activity {
     }
 
     onCreate() {
-        this.setContentView(new ui.main_actiUI);
-        console.log(this.params);
-    }
-
-    onInitView(view: ui.main_actiUI) {
-        view.btn.on(Laya.Event.CLICK, this, () => {
-            this.link('page/loading/abc/ccc');
+        this.contentView = new ui.main_actiUI;
+        this.contentView.btn.on(Laya.Event.CLICK, this, () => {
+            this.navigate(PageActivity);
         });
-        view.btnBack.on(Laya.Event.CLICK, this, () => {
+        this.contentView.btnBack.on(Laya.Event.CLICK, this, () => {
             this.back();
         });
+        console.log(this.params);
     }
 
 }

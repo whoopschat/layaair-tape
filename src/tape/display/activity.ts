@@ -5,8 +5,6 @@ module Tape {
 
         /** page type */
         public page: any = null;
-        /** contentView */
-        public contentView = null;
         /** params */
         public params: any = {};
         /** res */
@@ -17,7 +15,6 @@ module Tape {
         public inEaseFromProps: Object = null;
         public inEaseToProps: Object = null;
 
-        public onInitView?(view: any): void;
         public onLoad?(): void;
         public onCreate?(): void;
         public onResume?(): void;
@@ -46,11 +43,13 @@ module Tape {
             }, 0);
         }
 
-        protected setContentView(view) {
-            this.contentView = view;
+        protected set contentView(view) {
             this.removeChildren();
             this.addChild(view);
-            this.onInitView && this.onInitView(view);
+        }
+
+        protected get contentView(): any {
+            return this.getChildAt(0);
         }
 
         //////////////////////////
