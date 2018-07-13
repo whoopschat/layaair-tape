@@ -61,8 +61,8 @@ module Tape {
             NavigatorStack.finish(this.page, this);
         }
 
-        protected finish(page) {
-            NavigatorStack.finish(page);
+        protected finish(page, instance: any = null) {
+            NavigatorStack.finish(page, instance);
         }
 
         protected pop(number?: number) {
