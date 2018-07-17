@@ -1,10 +1,13 @@
 class PageActivity extends Tape.Activity {
 
     ui = new ui.page_actiUI;
-    
+
     onCreate() {
         this.ui.btn.on(Laya.Event.CLICK, this, () => {
             this.navigate(MainActivity);
+        });
+        this.ui.finish.on(Laya.Event.CLICK, this, () => {
+            this.finish(PageActivity);
         })
         this.ui.pop.on(Laya.Event.CLICK, this, () => {
             Tape.PopManager.showPop(TestPop, {}, () => {

@@ -48,8 +48,8 @@ module Tape {
         }
 
         public canFinish(page: any, activity: any) {
-            if (page === this.__options__.page && activity === this.__activity__) {
-                return true;
+            if (page === this.__options__.page) {
+                return !activity || activity === this.__activity__;
             }
             return false;
         }

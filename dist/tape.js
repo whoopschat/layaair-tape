@@ -405,8 +405,9 @@ var Tape;
         Activity.prototype.back = function () {
             Tape.NavigatorStack.finish(this.page, this);
         };
-        Activity.prototype.finish = function (page) {
-            Tape.NavigatorStack.finish(page);
+        Activity.prototype.finish = function (page, instance) {
+            if (instance === void 0) { instance = null; }
+            Tape.NavigatorStack.finish(page, instance);
         };
         Activity.prototype.pop = function (number) {
             Tape.NavigatorStack.pop(number);
@@ -736,8 +737,8 @@ var Tape;
             this.__activity__.onNextProgress && this.__activity__.onNextProgress(progress);
         };
         NavigatorLoader.prototype.canFinish = function (page, activity) {
-            if (page === this.__options__.page && activity === this.__activity__) {
-                return true;
+            if (page === this.__options__.page) {
+                return !activity || activity === this.__activity__;
             }
             return false;
         };
