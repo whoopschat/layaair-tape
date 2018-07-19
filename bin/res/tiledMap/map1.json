@@ -6,7 +6,8 @@
     "tileheight": 100,
     "tilewidth": 100,
     "padding": 0,
-    "showGrid": true,
+    "showPoint": false,
+    "showGrid": false,
     "gridAlpha": 1,
     "tilesets": [
         {

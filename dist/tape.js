@@ -154,6 +154,8 @@ var Tape;
     var __create_rank_texture__ = function () {
         if (window.hasOwnProperty('sharedCanvas')) {
             var sharedCanvas = window['sharedCanvas'];
+            sharedCanvas.width = 1500;
+            sharedCanvas.height = 3000;
             if (!sharedCanvas.hasOwnProperty('_addReference')) {
                 sharedCanvas['_addReference'] = function () {
                 };
@@ -168,8 +170,8 @@ var Tape;
     var __init_rank__ = function () {
         if (window.hasOwnProperty('sharedCanvas')) {
             var sharedCanvas = window['sharedCanvas'];
-            sharedCanvas.width = Laya.stage.width;
-            sharedCanvas.height = Laya.stage.height;
+            sharedCanvas.width = 1500;
+            sharedCanvas.height = 3000;
         }
         __post_message_to_sub_context__({
             action: 'init',
@@ -1099,6 +1101,9 @@ var Tape;
         MapView.prototype.getMapData = function () {
             return this._mapData_;
         };
+        MapView.prototype.getMapUrl = function () {
+            return this._mapUrl_;
+        };
         MapView.prototype.getMapPath = function () {
             return this._mapUrl_.substr(0, this._mapUrl_.lastIndexOf('\/'));
         };
@@ -1241,7 +1246,7 @@ var Tape;
                                 tile.name = r + "_" + c;
                                 pointSp.addChild(tile);
                             }
-                            tile.text = "(" + c + "," + r + ")";
+                            tile.text = "(" + r + "," + c + ")";
                             tile.fontSize = 20;
                             tile.color = color;
                             tile.x = c * tilewidth;

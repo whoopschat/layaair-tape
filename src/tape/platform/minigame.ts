@@ -21,6 +21,8 @@ module Tape {
     const __create_rank_texture__ = () => {
         if (window.hasOwnProperty('sharedCanvas')) {
             var sharedCanvas = window['sharedCanvas'];
+            sharedCanvas.width = 1500;
+            sharedCanvas.height = 3000;
             if (!sharedCanvas.hasOwnProperty('_addReference')) {
                 sharedCanvas['_addReference'] = () => {
                 };
@@ -36,8 +38,8 @@ module Tape {
     const __init_rank__ = () => {
         if (window.hasOwnProperty('sharedCanvas')) {
             var sharedCanvas = window['sharedCanvas'];
-            sharedCanvas.width = Laya.stage.width;
-            sharedCanvas.height = Laya.stage.height;
+            sharedCanvas.width = 1500;
+            sharedCanvas.height = 3000;
         }
         __post_message_to_sub_context__({
             action: 'init',

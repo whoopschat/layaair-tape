@@ -29,7 +29,6 @@ class MainActivity extends Tape.Activity {
             }
         });
         view.onMapLoaded((data) => {
-            data.showPoint = true;
             let v = view.getMapCustomLayer('layer_1');
             console.log('----------------', v);
         });

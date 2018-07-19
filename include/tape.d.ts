@@ -309,7 +309,7 @@ declare module Tape {
 
     class MapView extends Laya.Sprite {
 
-        public onMapTileMouse(callback: (event: { type: string, event: any }, tile: MapTile, row: number, column: number) => void): void;
+        public onMapTileMouse(callback: (event: { type: string, event: any }, tile: MapTile, row: number, column: number, id: number) => void): void;
 
         public onMapLoaded(callback: (mapData: MapData) => void): void;
 

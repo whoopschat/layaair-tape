@@ -55,6 +55,10 @@ module Tape {
             return this._mapData_;
         }
 
+        public getMapUrl() {
+            return this._mapUrl_;
+        }
+
         public getMapPath() {
             return this._mapUrl_.substr(0, this._mapUrl_.lastIndexOf('\/'));
         }
@@ -187,12 +191,13 @@ module Tape {
             let columns = this._mapData_.columns || 0;
             let tilewidth = this._mapData_.tilewidth || 0;
             let tileheight = this._mapData_.tileheight || 0;
+
             let mapX = -this._mapSprite_.x;
             let mapY = -this._mapSprite_.y;
             let offsetR = Math.floor(mapY / tileheight) - 2;
             let offsetC = Math.floor(mapX / tilewidth) - 2;
-            let countR = Math.floor(this.height / tileheight) + 3;
-            let countC = Math.floor(this.width / tilewidth) + 3;
+            let countR = Math.floor(this.height / tileheight) + 4;
+            let countC = Math.floor(this.width / tilewidth) + 4;
             if (r >= offsetR && c >= offsetC && r < offsetR + countR && c < offsetC + countC) {
                 return true
             }
@@ -207,7 +212,7 @@ module Tape {
 
             let pointSp = this._mapSprite_.getChildByName(`layer_point`) as Laya.Sprite;
             if (pointSp) {
-                pointSp.visible = this._mapData_.showPoint;
+                pointSp.visible = this._mapData_.showPoint === true;
                 pointSp.alpha = this._mapData_.pointAlpha || 1;
                 let color = this._mapData_.pointColor || '#3399ff';
                 for (var r = 0; r < rows; r++) {
@@ -217,23 +222,27 @@ module Tape {
                         if (!checkVisible) {
                             if (tile) {
                                 tile.removeSelf();
-                                Laya.Pool.recover('layer_point', tile);
+                                Laya.Pool.recover('layer_point_tile', tile);
                             }
                         } else {
                             if (!tile) {
-                                tile = Laya.Pool.getItemByCreateFun('layer_point', () => {
+                                tile = Laya.Pool.getItemByCreateFun('layer_point_tile', () => {
                                     return new Laya.Label;
                                 });
                                 tile.name = `${r}_${c}`;
                                 pointSp.addChild(tile);
                             }
-                            tile.text = `(${c},${r})`;
+                            tile.text = `(${r},${c})`;
                             tile.fontSize = 20;
                             tile.color = color;
-                            tile.x = c * tilewidth;
-                            tile.y = r * tileheight;
+
+                            tile.x = c * tilewidth + tilewidth / 2;
+                            tile.y = r * tileheight + tileheight / 2;
                             tile.width = tilewidth;
                             tile.height = tileheight;
+                            tile.anchorX = 0.5;
+                            tile.anchorY = 0.5;
+
                         }
                     }
                 }
@@ -248,7 +257,7 @@ module Tape {
 
             let gridSp = this._mapSprite_.getChildByName(`layer_grid`) as Laya.Sprite;
             if (gridSp) {
-                gridSp.visible = this._mapData_.showGrid;
+                gridSp.visible = this._mapData_.showGrid === true;
                 gridSp.alpha = this._mapData_.gridAlpha || 1;
                 let bgColor = this._mapData_.gridColor || '#000000';
                 for (var r = 0; r < rows; r++) {
@@ -258,11 +267,11 @@ module Tape {
                         if (!checkVisible) {
                             if (tile) {
                                 tile.removeSelf();
-                                Laya.Pool.recover('layer_grid', tile);
+                                Laya.Pool.recover('layer_grid_tile', tile);
                             }
                         } else {
                             if (!tile) {
-                                tile = Laya.Pool.getItemByCreateFun('layer_grid', () => {
+                                tile = Laya.Pool.getItemByCreateFun('layer_grid_tile', () => {
                                     return new Laya.Label;
                                 });
                                 tile.name = `${r}_${c}`;
@@ -274,10 +283,13 @@ module Tape {
                             } else {
                                 tile.bgColor = '#ffffff';
                             }
-                            tile.x = c * tilewidth;
-                            tile.y = r * tileheight;
+
+                            tile.x = c * tilewidth + tilewidth / 2;
+                            tile.y = r * tileheight + tileheight / 2;
                             tile.width = tilewidth;
                             tile.height = tileheight;
+                            tile.anchorX = 0.5;
+                            tile.anchorY = 0.5;
                         }
                     }
                 }
@@ -323,6 +335,8 @@ module Tape {
                                         (<any>Object).assign(tile, {
                                             alpha: 1,
                                             rotation: 0,
+                                            scaleX: 1,
+                                            scaleY: 1,
                                             visible: true
                                         });
                                         tile.name = `${r}_${c}_${id}`;
@@ -386,10 +400,13 @@ module Tape {
                                         layerSp.addChild(tile);
                                     }
                                     tile.skin = `${this.getMapPath()}/${this.getMapTileField(id, 'image')}`;
+
                                     tile.x = c * tilewidth;
                                     tile.y = r * tileheight;
-                                    tile.width = tilewidth;
-                                    tile.height = tileheight;
+                                    tile.width = tilewidth * 2;
+                                    tile.height = tileheight * 2;
+                                    tile.anchorX = 0.5;
+                                    tile.anchorY = 0.5;
                                 }
                             }
                         }
