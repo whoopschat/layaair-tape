@@ -14,11 +14,12 @@ module Tape {
 
         protected set ui(view) {
             this.removeChildren();
+            view.name = '_contentView';
             this.addChild(view);
         }
 
         protected get ui(): any {
-            return this.getChildAt(0);
+            return this.getChildByName('_contentView');
         }
 
         public constructor() {
@@ -40,6 +41,9 @@ module Tape {
                         }
                         e.stopPropagation();
                     });
+                    if (this.canceledOnTouchOutside && this.ui) {
+                        this.ui.mouseThrough = true;
+                    }
                     this.addChildAt(bg, 0);
                 }
             }, 0);

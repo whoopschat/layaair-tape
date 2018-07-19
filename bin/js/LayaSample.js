@@ -3,7 +3,7 @@ var GameMain = /** @class */ (function () {
     function GameMain() {
         Tape.init(600, 400);
         //调用DebugPanel调试面板
-        Laya.DebugPanel.init();
+        Laya.Stat.show();
         Tape.setBgColor('#3399ff');
         Tape.Navigator.init({
             mainPage: LoadingActivity,

@@ -24,6 +24,7 @@ var packageList = [
     inputJsPath + moduleName + '/display/**/*.js',
     inputJsPath + moduleName + '/navigator/**/*.js',
     inputJsPath + moduleName + '/runtime/**/*.js',
+    inputJsPath + moduleName + '/map/**/*.js',
     inputJsPath + moduleName + '/tape.js'
 ];
 

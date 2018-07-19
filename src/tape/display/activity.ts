@@ -31,12 +31,13 @@ module Tape {
         }
 
         protected set ui(view) {
+            view.name = '_contentView';
             this.removeChildren();
             this.addChild(view);
         }
 
         protected get ui(): any {
-            return this.getChildAt(0);
+            return this.getChildByName('_contentView');
         }
 
         //////////////////////////
