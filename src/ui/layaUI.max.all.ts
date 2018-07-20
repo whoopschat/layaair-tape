@@ -47,7 +47,7 @@ module ui {
 module ui {
     export class test_popUI extends View {
 
-        public static  uiView:any ={"type":"View","props":{"width":600,"height":400},"child":[{"type":"Label","props":{"y":172,"x":186,"text":"POP示例","fontSize":55,"color":"#ffffff"}}]};
+        public static  uiView:any ={"type":"View","props":{"width":600,"height":400},"child":[{"type":"Label","props":{"y":172,"x":186,"text":"POP示例","fontSize":55,"color":"#ffffff"}},{"type":"Sprite","props":{"y":253,"x":71,"width":109,"height":107},"child":[{"type":"Poly","props":{"points":"37,7,148,-5,103,58,2,80","lineWidth":1,"lineColor":"#ff0000","fillColor":"#00ffff"}}]}]};
         constructor(){ super()}
         createChildren():void {
         

@@ -1207,12 +1207,13 @@ var Tape;
             var columns = this._mapData_.columns || 0;
             var tilewidth = this._mapData_.tilewidth || 0;
             var tileheight = this._mapData_.tileheight || 0;
+            var oblique = this._mapData_.oblique === true;
             var mapX = -this._mapSprite_.x;
             var mapY = -this._mapSprite_.y;
             var offsetR = Math.floor(mapY / tileheight) - 2;
             var offsetC = Math.floor(mapX / tilewidth) - 2;
-            var countR = Math.floor(this.height / tileheight) + 3;
-            var countC = Math.floor(this.width / tilewidth) + 3;
+            var countR = Math.floor(this.height / tileheight) + 4;
+            var countC = Math.floor(this.width / tilewidth) + 4;
             if (r >= offsetR && c >= offsetC && r < offsetR + countR && c < offsetC + countC) {
                 return true;
             }
@@ -1225,7 +1226,7 @@ var Tape;
             var tileheight = this._mapData_.tileheight || 0;
             var pointSp = this._mapSprite_.getChildByName("layer_point");
             if (pointSp) {
-                pointSp.visible = this._mapData_.showPoint;
+                pointSp.visible = this._mapData_.showPoint === true;
                 pointSp.alpha = this._mapData_.pointAlpha || 1;
                 var color = this._mapData_.pointColor || '#3399ff';
                 for (var r = 0; r < rows; r++) {
@@ -1235,12 +1236,12 @@ var Tape;
                         if (!checkVisible) {
                             if (tile) {
                                 tile.removeSelf();
-                                Laya.Pool.recover('layer_point', tile);
+                                Laya.Pool.recover('layer_point_tile', tile);
                             }
                         }
                         else {
                             if (!tile) {
-                                tile = Laya.Pool.getItemByCreateFun('layer_point', function () {
+                                tile = Laya.Pool.getItemByCreateFun('layer_point_tile', function () {
                                     return new Laya.Label;
                                 });
                                 tile.name = r + "_" + c;
@@ -1249,10 +1250,12 @@ var Tape;
                             tile.text = "(" + r + "," + c + ")";
                             tile.fontSize = 20;
                             tile.color = color;
-                            tile.x = c * tilewidth;
-                            tile.y = r * tileheight;
+                            tile.x = c * tilewidth + tilewidth / 2;
+                            tile.y = r * tileheight + tileheight / 2;
                             tile.width = tilewidth;
                             tile.height = tileheight;
+                            tile.anchorX = 0.5;
+                            tile.anchorY = 0.5;
                         }
                     }
                 }
@@ -1265,7 +1268,7 @@ var Tape;
             var tileheight = this._mapData_.tileheight || 0;
             var gridSp = this._mapSprite_.getChildByName("layer_grid");
             if (gridSp) {
-                gridSp.visible = this._mapData_.showGrid;
+                gridSp.visible = this._mapData_.showGrid === true;
                 gridSp.alpha = this._mapData_.gridAlpha || 1;
                 var bgColor = this._mapData_.gridColor || '#000000';
                 for (var r = 0; r < rows; r++) {
@@ -1275,12 +1278,12 @@ var Tape;
                         if (!checkVisible) {
                             if (tile) {
                                 tile.removeSelf();
-                                Laya.Pool.recover('layer_grid', tile);
+                                Laya.Pool.recover('layer_grid_tile', tile);
                             }
                         }
                         else {
                             if (!tile) {
-                                tile = Laya.Pool.getItemByCreateFun('layer_grid', function () {
+                                tile = Laya.Pool.getItemByCreateFun('layer_grid_tile', function () {
                                     return new Laya.Label;
                                 });
                                 tile.name = r + "_" + c;
@@ -1293,10 +1296,12 @@ var Tape;
                             else {
                                 tile.bgColor = '#ffffff';
                             }
-                            tile.x = c * tilewidth;
-                            tile.y = r * tileheight;
+                            tile.x = c * tilewidth + tilewidth / 2;
+                            tile.y = r * tileheight + tileheight / 2;
                             tile.width = tilewidth;
                             tile.height = tileheight;
+                            tile.anchorX = 0.5;
+                            tile.anchorY = 0.5;
                         }
                     }
                 }
@@ -1311,6 +1316,7 @@ var Tape;
             var columns = this._mapData_.columns || 0;
             var tilewidth = this._mapData_.tilewidth || 0;
             var tileheight = this._mapData_.tileheight || 0;
+            var oblique = this._mapData_.oblique === true;
             var layers = this._mapData_.layers || [];
             layers.forEach(function (layer) {
                 var alpha = layer.alpha || 1;
@@ -1340,8 +1346,11 @@ var Tape;
                                         Object.assign(tile_1, {
                                             alpha: 1,
                                             rotation: 0,
+                                            scaleX: 1,
+                                            scaleY: 1,
                                             visible: true
                                         });
+                                        tile_1.zOrder = index;
                                         tile_1.name = r + "_" + c + "_" + id;
                                         tile_1.tag = layer;
                                         tile_1.on(Laya.Event.CLICK, _this, function (event) {
@@ -1402,11 +1411,17 @@ var Tape;
                                         });
                                         layerSp.addChild(tile_1);
                                     }
+                                    tile_1.width = undefined;
+                                    tile_1.height = undefined;
                                     tile_1.skin = _this.getMapPath() + "/" + _this.getMapTileField(id, 'image');
-                                    tile_1.x = c * tilewidth;
-                                    tile_1.y = r * tileheight;
+                                    var b = tile_1.height / tile_1.width;
+                                    tile_1.x = c * tilewidth + tilewidth / 2;
+                                    tile_1.y = r * tileheight + tileheight / 2;
                                     tile_1.width = tilewidth;
-                                    tile_1.height = tileheight;
+                                    tile_1.height = tile_1.width * b;
+                                    tile_1.anchorX = 0.5;
+                                    tile_1.anchorY = 0.5;
+                                    tile_1.y = tile_1.y - (tile_1.height - tileheight) / 2;
                                 }
                             }
                         };

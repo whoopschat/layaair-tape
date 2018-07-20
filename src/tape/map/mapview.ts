@@ -19,6 +19,7 @@ module Tape {
         tilewidth: number;
         tileheight: number;
         padding: number;
+        oblique: boolean;
         layers?: MapLayer[];
         tilesets?: MapTileset[];
         showPoint?: boolean;
@@ -191,6 +192,7 @@ module Tape {
             let columns = this._mapData_.columns || 0;
             let tilewidth = this._mapData_.tilewidth || 0;
             let tileheight = this._mapData_.tileheight || 0;
+            let oblique = this._mapData_.oblique === true;
 
             let mapX = -this._mapSprite_.x;
             let mapY = -this._mapSprite_.y;
@@ -306,6 +308,7 @@ module Tape {
             let columns = this._mapData_.columns || 0;
             let tilewidth = this._mapData_.tilewidth || 0;
             let tileheight = this._mapData_.tileheight || 0;
+            let oblique = this._mapData_.oblique === true;
 
             let layers = this._mapData_.layers || [];
             layers.forEach(layer => {
@@ -339,6 +342,7 @@ module Tape {
                                             scaleY: 1,
                                             visible: true
                                         });
+                                        tile.zOrder = index;
                                         tile.name = `${r}_${c}_${id}`;
                                         tile.tag = layer;
                                         tile.on(Laya.Event.CLICK, this, (event) => {
@@ -399,14 +403,18 @@ module Tape {
                                         });
                                         layerSp.addChild(tile);
                                     }
+                                    tile.width = undefined;
+                                    tile.height = undefined;
                                     tile.skin = `${this.getMapPath()}/${this.getMapTileField(id, 'image')}`;
+                                    let b = tile.height / tile.width;
 
-                                    tile.x = c * tilewidth;
-                                    tile.y = r * tileheight;
-                                    tile.width = tilewidth * 2;
-                                    tile.height = tileheight * 2;
+                                    tile.x = c * tilewidth + tilewidth / 2;
+                                    tile.y = r * tileheight + tileheight / 2;
+                                    tile.width = tilewidth;
+                                    tile.height = tile.width * b;
                                     tile.anchorX = 0.5;
                                     tile.anchorY = 0.5;
+                                    tile.y = tile.y - (tile.height - tileheight) / 2;
                                 }
                             }
                         }

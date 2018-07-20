@@ -1,8 +1,8 @@
 {
     "x":0,
     "type":"View",
-    "selectedBox":1,
-    "selecteID":10,
+    "selectedBox":11,
+    "selecteID":12,
     "props":{"width":600,"sceneColor":"#000000","height":400},
     "nodeParent":-1,
     "label":"View",
@@ -24,6 +24,32 @@
             "compId":10,
             "child":[
                 ]
+        },
+        {
+            "x":15,
+            "type":"Sprite",
+            "props":{"y":253,"x":71,"width":109,"height":107},
+            "nodeParent":1,
+            "label":"Sprite",
+            "isOpen":true,
+            "isDirectory":true,
+            "isAniNode":true,
+            "hasChild":true,
+            "compId":11,
+            "child":[
+                {
+                    "x":30,
+                    "type":"Poly",
+                    "props":{"points":"37,7,148,-5,103,58,2,80","lineWidth":1,"lineColor":"#ff0000","fillColor":"#00ffff"},
+                    "nodeParent":11,
+                    "label":"Poly",
+                    "isDirectory":false,
+                    "isAniNode":true,
+                    "hasChild":false,
+                    "compId":12,
+                    "child":[
+                        ]
+                }]
         }],
     "animations":[
         {

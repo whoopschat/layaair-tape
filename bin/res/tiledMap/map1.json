@@ -6,8 +6,9 @@
     "tileheight": 100,
     "tilewidth": 100,
     "padding": 0,
+    "oblique": true,
     "showPoint": false,
-    "showGrid": false,
+    "showGrid": true,
     "gridAlpha": 1,
     "tilesets": [
         {
@@ -15,7 +16,7 @@
             "id": 2
         },
         {
-            "image": "ZhuoZi001.png",
+            "image": "ZhuoZi002.png",
             "id": 1
         }
     ],
