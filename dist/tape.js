@@ -83,6 +83,34 @@ var Tape;
 
 var Tape;
 (function (Tape) {
+    function addHook(target, methodName, hook, upsert) {
+        if (upsert === void 0) { upsert = false; }
+        var method = target[methodName];
+        if (!method && !upsert) {
+            return;
+        }
+        if (method) {
+            // bind original method to target
+            method = method.bind(target);
+        }
+        Object.defineProperty(target, methodName, {
+            value: function () {
+                var params = [];
+                for (var _i = 0; _i < arguments.length; _i++) {
+                    params[_i] = arguments[_i];
+                }
+                return hook.apply(void 0, [target, methodName, method].concat(params));
+            },
+            enumerable: true,
+            writable: true,
+            configurable: true,
+        });
+    }
+    Tape.addHook = addHook;
+})(Tape || (Tape = {}));
+
+var Tape;
+(function (Tape) {
     var Platform;
     (function (Platform) {
         Platform.isWechatApp = function () {
@@ -92,7 +120,56 @@ var Tape;
             var scale = (Laya.Browser.clientHeight / laya.utils.Browser.clientWidth);
             return scale > 2.1;
         };
+        Platform.getScreenHeightWidthRatio = function () {
+            var scale = (Laya.Browser.clientHeight / laya.utils.Browser.clientWidth);
+            return scale;
+        };
     })(Platform = Tape.Platform || (Tape.Platform = {}));
+})(Tape || (Tape = {}));
+
+var Tape;
+(function (Tape) {
+    var Screen;
+    (function (Screen) {
+        var __offset_x__ = 0;
+        var __offset_y__ = 0;
+        function init(width, height) {
+            var options = [];
+            for (var _i = 2; _i < arguments.length; _i++) {
+                options[_i - 2] = arguments[_i];
+            }
+            var screenRatio = Tape.Platform.getScreenHeightWidthRatio();
+            var initRatio = height / width;
+            var initWidth = width;
+            var initHeight = height;
+            __offset_x__ = 0;
+            __offset_y__ = 0;
+            if (screenRatio > initRatio) {
+                initHeight = width * screenRatio;
+                __offset_y__ = (initHeight - height) / 2;
+            }
+            else {
+                initWidth = height / screenRatio;
+                __offset_x__ = (initWidth - width) / 2;
+            }
+            Laya.init.apply(Laya, [initWidth, initHeight].concat(options));
+            Tape.Background.init();
+            Laya.stage.x = __offset_x__;
+            Laya.stage.y = __offset_y__;
+            Laya.stage.scaleMode = Laya.Stage.SCALE_FIXED_WIDTH;
+            Laya.stage.alignH = Laya.Stage.ALIGN_CENTER;
+            Laya.stage.alignV = Laya.Stage.ALIGN_MIDDLE;
+        }
+        Screen.init = init;
+        function getOffestX() {
+            return __offset_x__;
+        }
+        Screen.getOffestX = getOffestX;
+        function getOffestY() {
+            return __offset_y__;
+        }
+        Screen.getOffestY = getOffestY;
+    })(Screen = Tape.Screen || (Tape.Screen = {}));
 })(Tape || (Tape = {}));
 
 var Tape;
@@ -119,10 +196,7 @@ var Tape;
             for (var _i = 2; _i < arguments.length; _i++) {
                 options[_i - 2] = arguments[_i];
             }
-            Laya.init.apply(Laya, [width, height].concat(options));
-            Laya.stage.scaleMode = Laya.Stage.SCALE_SHOWALL;
-            Laya.stage.alignV = Laya.Stage.ALIGN_MIDDLE;
-            Laya.stage.alignH = Laya.Stage.ALIGN_CENTER;
+            Tape.Screen.init.apply(Tape.Screen, [width, height].concat(options));
         };
         BrowserHandler.exit = function () {
         };
@@ -197,10 +271,7 @@ var Tape;
                 options[_i - 2] = arguments[_i];
             }
             Laya.MiniAdpter.init(true);
-            Laya.init.apply(Laya, [width, height].concat(options));
-            Laya.stage.scaleMode = Laya.Stage.SCALE_SHOWALL;
-            Laya.stage.alignV = Laya.Stage.ALIGN_MIDDLE;
-            Laya.stage.alignH = Laya.Stage.ALIGN_CENTER;
+            Tape.Screen.init(width, height, options);
             __init_rank__();
         };
         MiniHandler.exit = function () {
@@ -223,8 +294,8 @@ var Tape;
                 var windowHeight = systemInfo.windowHeight;
                 var stageWidth = Laya.stage.width;
                 var stageHeight = Laya.stage.height;
-                var left = x * windowWidth / stageWidth;
-                var top_1 = y * windowHeight / stageHeight;
+                var left = (x + Tape.Screen.getOffestX()) * windowWidth / stageWidth;
+                var top_1 = (y + Tape.Screen.getOffestY()) * windowHeight / stageHeight;
                 var width = w * windowWidth / stageWidth;
                 var height_1 = h * windowHeight / stageHeight;
                 var bannerAd_1 = __exec_wx__('createBannerAd', {
@@ -427,6 +498,43 @@ var Tape;
 
 var Tape;
 (function (Tape) {
+    var Background;
+    (function (Background) {
+        var bgSprite = null;
+        var bgColor = '#000000';
+        function init() {
+            bgSprite = new Laya.Sprite;
+            bgSprite.x = -Tape.Screen.getOffestX();
+            bgSprite.y = -Tape.Screen.getOffestY();
+            bgSprite.width = Laya.stage.width;
+            bgSprite.height = Laya.stage.height;
+            bgSprite.graphics.clear();
+            bgSprite.graphics.drawRect(0, 0, bgSprite.width, bgSprite.height, bgColor);
+            Laya.stage.addChild(bgSprite);
+        }
+        Background.init = init;
+        function getBgSprite() {
+            return bgSprite;
+        }
+        Background.getBgSprite = getBgSprite;
+        function setBgColor(color) {
+            bgColor = color;
+            if (!bgSprite) {
+                return;
+            }
+            bgSprite.graphics.clear();
+            bgSprite.graphics.drawRect(0, 0, bgSprite.width, bgSprite.height, color);
+        }
+        Background.setBgColor = setBgColor;
+        function getBgColor() {
+            return bgColor;
+        }
+        Background.getBgColor = getBgColor;
+    })(Background = Tape.Background || (Tape.Background = {}));
+})(Tape || (Tape = {}));
+
+var Tape;
+(function (Tape) {
     var PopManager;
     (function (PopManager) {
         var pops = {};
@@ -515,27 +623,7 @@ var Tape;
             _this.canceledOnTouchOutside = false;
             _this.width = Laya.stage.width;
             _this.height = Laya.stage.height;
-            setTimeout(function () {
-                if (!_this.isTranslucent) {
-                    var bg = new Laya.Sprite();
-                    bg.graphics.save();
-                    bg.alpha = _this.bgAlpha;
-                    bg.graphics.drawRect(0, 0, Laya.stage.width, Laya.stage.height, _this.bgColor);
-                    bg.graphics.restore();
-                    bg.width = Laya.stage.width;
-                    bg.height = Laya.stage.height;
-                    bg.on(Laya.Event.CLICK, _this, function (e) {
-                        if (_this.canceledOnTouchOutside) {
-                            _this.finish();
-                        }
-                        e.stopPropagation();
-                    });
-                    if (_this.canceledOnTouchOutside && _this.ui) {
-                        _this.ui.mouseThrough = true;
-                    }
-                    _this.addChildAt(bg, 0);
-                }
-            }, 0);
+            _this.initBg();
             return _this;
         }
         Object.defineProperty(PopView.prototype, "ui", {
@@ -550,6 +638,32 @@ var Tape;
             enumerable: true,
             configurable: true
         });
+        PopView.prototype.initBg = function () {
+            var _this = this;
+            setTimeout(function () {
+                if (_this.isTranslucent) {
+                    return;
+                }
+                var bgSprite = new Laya.Sprite();
+                bgSprite.alpha = _this.bgAlpha;
+                bgSprite.graphics.clear();
+                bgSprite.graphics.drawRect(0, 0, Laya.stage.width, Laya.stage.height, _this.bgColor);
+                bgSprite.x = -Tape.Screen.getOffestX();
+                bgSprite.y = -Tape.Screen.getOffestY();
+                bgSprite.width = Laya.stage.width;
+                bgSprite.height = Laya.stage.height;
+                bgSprite.on(Laya.Event.CLICK, _this, function (e) {
+                    if (_this.canceledOnTouchOutside) {
+                        _this.finish();
+                    }
+                    e.stopPropagation();
+                });
+                if (_this.canceledOnTouchOutside && _this.ui) {
+                    _this.ui.mouseThrough = true;
+                }
+                _this.addChildAt(bgSprite, 0);
+            }, 0);
+        };
         PopView.prototype.finish = function () {
             Tape.PopManager.hidePop(this.pop);
         };
@@ -1003,8 +1117,11 @@ var runtime;
     function scaleBig(view) {
         Laya.Tween.to(view, { scaleX: 1, scaleY: 1 }, scaleTime);
     }
-    function playSound(view) {
-        if (runtime.clickSound) {
+    function playSound(view, sound) {
+        if (sound) {
+            Laya.SoundManager.playSound(sound, 1);
+        }
+        else if (runtime.clickSound) {
             Laya.SoundManager.playSound(runtime.clickSound, 1);
         }
     }
@@ -1012,10 +1129,11 @@ var runtime;
         __extends(btn, _super);
         function btn() {
             var _this = _super.call(this) || this;
+            _this.sound = null;
             _this.on(Laya.Event.MOUSE_DOWN, _this, function () { return scaleSmal(_this); });
             _this.on(Laya.Event.MOUSE_UP, _this, function () { return scaleBig(_this); });
             _this.on(Laya.Event.MOUSE_OUT, _this, function () { return scaleBig(_this); });
-            _this.on(Laya.Event.CLICK, _this, function () { return playSound(_this); });
+            _this.on(Laya.Event.CLICK, _this, function () { return playSound(_this, _this.sound); });
             return _this;
         }
         return btn;
@@ -1025,10 +1143,11 @@ var runtime;
         __extends(btn_img, _super);
         function btn_img() {
             var _this = _super.call(this) || this;
+            _this.sound = null;
             _this.on(Laya.Event.MOUSE_DOWN, _this, function () { return scaleSmal(_this); });
             _this.on(Laya.Event.MOUSE_UP, _this, function () { return scaleBig(_this); });
             _this.on(Laya.Event.MOUSE_OUT, _this, function () { return scaleBig(_this); });
-            _this.on(Laya.Event.CLICK, _this, function () { return playSound(_this); });
+            _this.on(Laya.Event.CLICK, _this, function () { return playSound(_this, _this.sound); });
             return _this;
         }
         return btn_img;
@@ -1038,10 +1157,11 @@ var runtime;
         __extends(btn_label, _super);
         function btn_label() {
             var _this = _super.call(this) || this;
+            _this.sound = null;
             _this.on(Laya.Event.MOUSE_DOWN, _this, function () { return scaleSmal(_this); });
             _this.on(Laya.Event.MOUSE_UP, _this, function () { return scaleBig(_this); });
             _this.on(Laya.Event.MOUSE_OUT, _this, function () { return scaleBig(_this); });
-            _this.on(Laya.Event.CLICK, _this, function () { return playSound(_this); });
+            _this.on(Laya.Event.CLICK, _this, function () { return playSound(_this, _this.sound); });
             return _this;
         }
         return btn_label;
@@ -1456,7 +1576,6 @@ var Tape;
         else {
             Tape.BrowserHandler.init.apply(Tape.BrowserHandler, [width, height].concat(options));
         }
-        Tape.setBgColor();
     };
     /**
      * 退出APP
@@ -1468,29 +1587,5 @@ var Tape;
         else {
             Tape.BrowserHandler.exit();
         }
-    };
-    var bgColor = '#ffffff';
-    Tape.setBgColor = function (color) {
-        if (color === void 0) { color = bgColor; }
-        bgColor = color;
-        if (Laya.stage) {
-            var bgView = Laya.stage.getChildByName('__tape_bg_view__');
-            if (bgView) {
-                bgView.bgColor = color;
-            }
-            else {
-                bgView = new Laya.Label();
-                bgView.name = '__tape_bg_view__';
-                bgView.bgColor = color;
-                bgView.x = 0;
-                bgView.y = 0;
-                bgView.width = Laya.stage.width;
-                bgView.height = Laya.stage.height;
-                Laya.stage.addChild(bgView);
-            }
-        }
-    };
-    Tape.getBgColor = function () {
-        return bgColor;
     };
 })(Tape || (Tape = {}));

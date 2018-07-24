@@ -2,11 +2,17 @@ declare module runtime {
 
     let clickSound: string;
 
-    class btn extends Laya.Button { }
+    class btn extends Laya.Button {
+        public sound: string;
+    }
 
-    class btn_img extends Laya.Image { }
+    class btn_img extends Laya.Image {
+        public sound: string;
+    }
 
-    class btn_label extends Laya.Label { }
+    class btn_label extends Laya.Label {
+        public sound: string;
+    }
 
 }
 
@@ -35,11 +41,23 @@ declare module Tape {
     /** exit */
     function exit(): void;
 
-    /** getBgColor */
-    function getBgColor(): string;
+    /** Background */
+    module Background {
+        /** getBgSprite */
+        function getBgSprite(): Laya.Sprite;
+        /** setBgColor */
+        function setBgColor(color: string): void;
+        /** getBgColor */
+        function getBgColor(): string;
+    }
 
-    /** setBgColor  @param color */
-    function setBgColor(color: string): void;
+    /** Screen */
+    module Screen {
+        /** getOffestX */
+        function getOffestX(): number;
+        /** getOffestY */
+        function getOffestY(): number;
+    }
 
     /** NavigatorOptions */
     interface NavigatorOptions {

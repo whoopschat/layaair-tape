@@ -19,20 +19,6 @@ class MainActivity extends Tape.Activity {
             this.back();
         });
         console.log(this.params);
-        let view = new Tape.MapView('res/tiledMap/map1.json');
-        view.onMapTileMouse((event, tild, row, column) => {
-            if (event.type === Laya.Event.MOUSE_DOWN) {
-                tild.alpha = 0.5;
-            }
-            if (event.type === Laya.Event.MOUSE_UP) {
-                tild.alpha = 1;
-            }
-        });
-        view.onMapLoaded((data) => {
-            let v = view.getMapCustomLayer('layer_1');
-            console.log('----------------', v);
-        });
-        this.addChild(view);
     }
 
 }

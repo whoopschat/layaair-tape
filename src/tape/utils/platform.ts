@@ -11,6 +11,11 @@ module Tape {
             return scale > 2.1;
         }
 
+        export const getScreenHeightWidthRatio = () => {
+            var scale: number = (Laya.Browser.clientHeight / laya.utils.Browser.clientWidth);
+            return scale;
+        }
+
     }
 
 }

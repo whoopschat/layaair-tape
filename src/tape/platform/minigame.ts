@@ -62,10 +62,7 @@ module Tape {
 
         export const init = (width: number, height: number, ...options) => {
             Laya.MiniAdpter.init(true);
-            Laya.init(width, height, ...options);
-            Laya.stage.scaleMode = Laya.Stage.SCALE_SHOWALL;
-            Laya.stage.alignV = Laya.Stage.ALIGN_MIDDLE;
-            Laya.stage.alignH = Laya.Stage.ALIGN_CENTER;
+            Screen.init(width, height, options);
             __init_rank__();
         }
 
@@ -91,8 +88,8 @@ module Tape {
                 let stageWidth = Laya.stage.width;
                 let stageHeight = Laya.stage.height;
 
-                let left = x * windowWidth / stageWidth;
-                let top = y * windowHeight / stageHeight;
+                let left = (x + Screen.getOffestX()) * windowWidth / stageWidth;
+                let top = (y + Screen.getOffestY()) * windowHeight / stageHeight;
                 let width = w * windowWidth / stageWidth;
                 let height = h * windowHeight / stageHeight;
 

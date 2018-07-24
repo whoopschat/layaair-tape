@@ -4,7 +4,7 @@ class GameMain {
         Tape.init(600, 400);
         //调用DebugPanel调试面板
         Laya.Stat.show();
-        Tape.setBgColor('#3399ff');
+        Tape.Background.setBgColor('#3399ff');
         Tape.Navigator.init({
             mainPage: LoadingActivity,
             commonRes: [

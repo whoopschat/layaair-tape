@@ -22,31 +22,37 @@ module Tape {
             return this.getChildByName('_contentView');
         }
 
+        protected initBg() {
+            setTimeout(() => {
+                if (this.isTranslucent) {
+                    return;
+                }
+                let bgSprite = new Laya.Sprite();
+                bgSprite.alpha = this.bgAlpha;
+                bgSprite.graphics.clear();
+                bgSprite.graphics.drawRect(0, 0, Laya.stage.width, Laya.stage.height, this.bgColor);
+                bgSprite.x = -Screen.getOffestX();
+                bgSprite.y = -Screen.getOffestY();
+                bgSprite.width = Laya.stage.width;
+                bgSprite.height = Laya.stage.height;
+                bgSprite.on(Laya.Event.CLICK, this, (e: Laya.Event) => {
+                    if (this.canceledOnTouchOutside) {
+                        this.finish();
+                    }
+                    e.stopPropagation();
+                });
+                if (this.canceledOnTouchOutside && this.ui) {
+                    this.ui.mouseThrough = true;
+                }
+                this.addChildAt(bgSprite, 0);
+            }, 0);
+        }
+
         public constructor() {
             super();
             this.width = Laya.stage.width;
             this.height = Laya.stage.height;
-            setTimeout(() => {
-                if (!this.isTranslucent) {
-                    var bg: Laya.Sprite = new Laya.Sprite();
-                    bg.graphics.save();
-                    bg.alpha = this.bgAlpha;
-                    bg.graphics.drawRect(0, 0, Laya.stage.width, Laya.stage.height, this.bgColor);
-                    bg.graphics.restore();
-                    bg.width = Laya.stage.width;
-                    bg.height = Laya.stage.height;
-                    bg.on(Laya.Event.CLICK, this, (e: Laya.Event) => {
-                        if (this.canceledOnTouchOutside) {
-                            this.finish();
-                        }
-                        e.stopPropagation();
-                    });
-                    if (this.canceledOnTouchOutside && this.ui) {
-                        this.ui.mouseThrough = true;
-                    }
-                    this.addChildAt(bg, 0);
-                }
-            }, 0);
+            this.initBg();
         }
 
         protected finish() {
