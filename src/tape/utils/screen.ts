@@ -4,20 +4,27 @@ module Tape {
 
         let __offset_x__ = 0;
         let __offset_y__ = 0;
+        let __design_width__ = 0;
+        let __design_height__ = 0;
 
         export function init(width, height, ...options) {
+            __design_width__ = width;
+            __design_width__ = height;
             let screenRatio = Platform.getScreenHeightWidthRatio();
             let initRatio = height / width;
             let initWidth = width;
             let initHeight = height;
             __offset_x__ = 0;
             __offset_y__ = 0;
-            if (screenRatio > initRatio) {
-                initHeight = width * screenRatio;
-                __offset_y__ = (initHeight - height) / 2;
-            } else {
-                initWidth = height / screenRatio;
-                __offset_x__ = (initWidth - width) / 2;
+            
+            if (Math.abs(screenRatio / initRatio - 1) > 0.1) {
+                if (screenRatio > initRatio) {
+                    initHeight = width * screenRatio;
+                    __offset_y__ = (initHeight - height) / 2;
+                } else {
+                    initWidth = height / screenRatio;
+                    __offset_x__ = (initWidth - width) / 2;
+                }
             }
 
             Laya.init(initWidth, initHeight, ...options);
@@ -35,6 +42,14 @@ module Tape {
 
         export function getOffestY() {
             return __offset_y__;
+        }
+
+        export function getDesignWidth() {
+            return __design_width__;
+        }
+
+        export function getDesignHeight() {
+            return __design_height__;
         }
 
     }

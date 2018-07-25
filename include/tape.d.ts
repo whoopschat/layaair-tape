@@ -57,6 +57,10 @@ declare module Tape {
         function getOffestX(): number;
         /** getOffestY */
         function getOffestY(): number;
+        /** getDesignWidth */
+        function getDesignWidth(): number;
+        /** getDesignHeight */
+        function getDesignHeight(): number;
     }
 
     /** NavigatorOptions */

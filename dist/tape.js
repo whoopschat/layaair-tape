@@ -133,24 +133,30 @@ var Tape;
     (function (Screen) {
         var __offset_x__ = 0;
         var __offset_y__ = 0;
+        var __design_width__ = 0;
+        var __design_height__ = 0;
         function init(width, height) {
             var options = [];
             for (var _i = 2; _i < arguments.length; _i++) {
                 options[_i - 2] = arguments[_i];
             }
+            __design_width__ = width;
+            __design_width__ = height;
             var screenRatio = Tape.Platform.getScreenHeightWidthRatio();
             var initRatio = height / width;
             var initWidth = width;
             var initHeight = height;
             __offset_x__ = 0;
             __offset_y__ = 0;
-            if (screenRatio > initRatio) {
-                initHeight = width * screenRatio;
-                __offset_y__ = (initHeight - height) / 2;
-            }
-            else {
-                initWidth = height / screenRatio;
-                __offset_x__ = (initWidth - width) / 2;
+            if (Math.abs(screenRatio / initRatio - 1) > 0.1) {
+                if (screenRatio > initRatio) {
+                    initHeight = width * screenRatio;
+                    __offset_y__ = (initHeight - height) / 2;
+                }
+                else {
+                    initWidth = height / screenRatio;
+                    __offset_x__ = (initWidth - width) / 2;
+                }
             }
             Laya.init.apply(Laya, [initWidth, initHeight].concat(options));
             Tape.Background.init();
@@ -169,6 +175,14 @@ var Tape;
             return __offset_y__;
         }
         Screen.getOffestY = getOffestY;
+        function getDesignWidth() {
+            return __design_width__;
+        }
+        Screen.getDesignWidth = getDesignWidth;
+        function getDesignHeight() {
+            return __design_height__;
+        }
+        Screen.getDesignHeight = getDesignHeight;
     })(Screen = Tape.Screen || (Tape.Screen = {}));
 })(Tape || (Tape = {}));
 
@@ -503,14 +517,18 @@ var Tape;
         var bgSprite = null;
         var bgColor = '#000000';
         function init() {
-            bgSprite = new Laya.Sprite;
+            bgSprite = Laya.stage.getChildByName('BackgroundSprite');
+            if (!bgSprite) {
+                bgSprite = new Laya.Sprite;
+                bgSprite.name = 'BackgroundSprite';
+                Laya.stage.addChild(bgSprite);
+            }
             bgSprite.x = -Tape.Screen.getOffestX();
             bgSprite.y = -Tape.Screen.getOffestY();
             bgSprite.width = Laya.stage.width;
             bgSprite.height = Laya.stage.height;
             bgSprite.graphics.clear();
             bgSprite.graphics.drawRect(0, 0, bgSprite.width, bgSprite.height, bgColor);
-            Laya.stage.addChild(bgSprite);
         }
         Background.init = init;
         function getBgSprite() {

@@ -6,14 +6,18 @@ module Tape {
         let bgColor: string = '#000000';
 
         export function init() {
-            bgSprite = new Laya.Sprite;
+            bgSprite = Laya.stage.getChildByName('BackgroundSprite') as Laya.Sprite;
+            if (!bgSprite) {
+                bgSprite = new Laya.Sprite;
+                bgSprite.name = 'BackgroundSprite';
+                Laya.stage.addChild(bgSprite);
+            }
             bgSprite.x = -Screen.getOffestX();
             bgSprite.y = -Screen.getOffestY();
             bgSprite.width = Laya.stage.width;
             bgSprite.height = Laya.stage.height;
             bgSprite.graphics.clear();
             bgSprite.graphics.drawRect(0, 0, bgSprite.width, bgSprite.height, bgColor);
-            Laya.stage.addChild(bgSprite);
         }
 
         export function getBgSprite(): Laya.Sprite {
