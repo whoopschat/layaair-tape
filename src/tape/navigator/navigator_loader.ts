@@ -35,7 +35,7 @@ module Tape {
         private __on_loaded__() {
             this.__options__.onLoaded && this.__options__.onLoaded(this);
             this.addChild(this.__activity__);
-            this.__activity__.onCreate && this.__activity__.onCreate();
+            this.__activity__._create();
             this.__options__.onShow && this.__options__.onShow();
         }
 
@@ -44,7 +44,7 @@ module Tape {
         }
 
         public nextProgress(progress) {
-            this.__activity__.onNextProgress && this.__activity__.onNextProgress(progress);
+            this.__activity__._nextProgress(progress);
         }
 
         public canFinish(page: any, activity: any) {
@@ -61,13 +61,13 @@ module Tape {
             var toProps = this.__activity__.inEaseToProps || {};
             if (anim && ease && duration > 0) {
                 (<any>Object).assign(this, fromProps);
-                this.__activity__.onResume && this.__activity__.onResume();
+                this.__activity__._resume();
                 this.visible = true;
                 Laya.Tween.to(this, toProps, duration, ease, Laya.Handler.create(this, () => {
                     callback && callback();
                 }));
             } else {
-                this.__activity__.onResume && this.__activity__.onResume();
+                this.__activity__._resume();
                 this.visible = true;
                 callback && callback();
             }
@@ -77,12 +77,12 @@ module Tape {
             if (!this.visible) {
                 return;
             }
-            this.__activity__.onPause && this.__activity__.onPause();
+            this.__activity__._pause();
             this.visible = false;
         }
 
         public exit() {
-            this.__activity__.onDestroy && this.__activity__.onDestroy();
+            this.__activity__._destroy();
             this.destroy();
         }
 

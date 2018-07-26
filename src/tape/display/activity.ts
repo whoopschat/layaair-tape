@@ -40,6 +40,22 @@ module Tape {
             return this.getChildByName('_contentView');
         }
 
+        public _create() {
+            this.onCreate && this.onCreate();
+        }
+        public _resume() {
+            this.onResume && this.onResume();
+        }
+        public _pause() {
+            this.onPause && this.onPause();
+        }
+        public _destroy() {
+            this.onDestroy && this.onDestroy();
+        }
+        public _nextProgress(progress) {
+            this.onNextProgress && this.onNextProgress(progress);
+        }
+
         //////////////////////////
         /// navigator function
         //////////////////////////
