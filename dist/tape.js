@@ -285,7 +285,7 @@ var Tape;
                 options[_i - 2] = arguments[_i];
             }
             Laya.MiniAdpter.init(true);
-            Tape.Screen.init(width, height, options);
+            Tape.Screen.init.apply(Tape.Screen, [width, height].concat(options));
             __init_rank__();
         };
         MiniHandler.exit = function () {
@@ -472,6 +472,21 @@ var Tape;
             enumerable: true,
             configurable: true
         });
+        Activity.prototype._create = function () {
+            this.onCreate && this.onCreate();
+        };
+        Activity.prototype._resume = function () {
+            this.onResume && this.onResume();
+        };
+        Activity.prototype._pause = function () {
+            this.onPause && this.onPause();
+        };
+        Activity.prototype._destroy = function () {
+            this.onDestroy && this.onDestroy();
+        };
+        Activity.prototype._nextProgress = function (progress) {
+            this.onNextProgress && this.onNextProgress(progress);
+        };
         //////////////////////////
         /// navigator function
         //////////////////////////
@@ -866,14 +881,14 @@ var Tape;
         NavigatorLoader.prototype.__on_loaded__ = function () {
             this.__options__.onLoaded && this.__options__.onLoaded(this);
             this.addChild(this.__activity__);
-            this.__activity__.onCreate && this.__activity__.onCreate();
+            this.__activity__._create();
             this.__options__.onShow && this.__options__.onShow();
         };
         NavigatorLoader.prototype.__on_load_progress__ = function (progress) {
             this.__options__.onLoadProgress && this.__options__.onLoadProgress(this, progress);
         };
         NavigatorLoader.prototype.nextProgress = function (progress) {
-            this.__activity__.onNextProgress && this.__activity__.onNextProgress(progress);
+            this.__activity__._nextProgress(progress);
         };
         NavigatorLoader.prototype.canFinish = function (page, activity) {
             if (page === this.__options__.page) {
@@ -888,14 +903,14 @@ var Tape;
             var toProps = this.__activity__.inEaseToProps || {};
             if (anim && ease && duration > 0) {
                 Object.assign(this, fromProps);
-                this.__activity__.onResume && this.__activity__.onResume();
+                this.__activity__._resume();
                 this.visible = true;
                 Laya.Tween.to(this, toProps, duration, ease, Laya.Handler.create(this, function () {
                     callback && callback();
                 }));
             }
             else {
-                this.__activity__.onResume && this.__activity__.onResume();
+                this.__activity__._resume();
                 this.visible = true;
                 callback && callback();
             }
@@ -904,11 +919,11 @@ var Tape;
             if (!this.visible) {
                 return;
             }
-            this.__activity__.onPause && this.__activity__.onPause();
+            this.__activity__._pause();
             this.visible = false;
         };
         NavigatorLoader.prototype.exit = function () {
-            this.__activity__.onDestroy && this.__activity__.onDestroy();
+            this.__activity__._destroy();
             this.destroy();
         };
         return NavigatorLoader;
@@ -1187,392 +1202,92 @@ var runtime;
     runtime.btn_label = btn_label;
 })(runtime || (runtime = {}));
 
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 var Tape;
 (function (Tape) {
-    var MapTile = /** @class */ (function (_super) {
-        __extends(MapTile, _super);
-        function MapTile() {
-            return _super !== null && _super.apply(this, arguments) || this;
+    var TiledMap = /** @class */ (function () {
+        function TiledMap(url) {
+            this.mCanDrag = false;
+            this.mMapUrl = '';
+            this.mLastMouseX = 0;
+            this.mLastMouseY = 0;
+            this.mX = 0;
+            this.mY = 0;
+            this.onLoaded = null;
+            this.mMapUrl = url;
+            this.mX = 0;
+            this.mY = 0;
+            this.mTiledMap = new Laya.TiledMap();
+            this.loadMap();
+            Laya.stage.on(Laya.Event.MOUSE_DOWN, this, this.mouseDown);
+            Laya.stage.on(Laya.Event.MOUSE_UP, this, this.mouseUp);
+            Laya.stage.on(Laya.Event.RESIZE, this, this.resize);
         }
-        return MapTile;
-    }(Laya.Image));
-    Tape.MapTile = MapTile;
-    var MapView = /** @class */ (function (_super) {
-        __extends(MapView, _super);
-        function MapView(url) {
-            var _this = _super.call(this) || this;
-            _this._mapUrl_ = '';
-            _this._mapData_ = null;
-            _this._mapSprite_ = new Laya.Sprite;
-            _this._mapTileMouse_ = null;
-            _this._mapLoaded_ = null;
-            _this.width = Laya.stage.width;
-            _this.height = Laya.stage.height;
-            _this._mapUrl_ = url;
-            _this.addChild(_this._mapSprite_);
-            _this.loadMapData();
-            _this._mapSprite_.on(Laya.Event.MOUSE_DOWN, _this, function () {
-                _this._mapSprite_.startDrag();
-            });
-            _this._mapSprite_.on(Laya.Event.MOUSE_UP, _this, function () {
-                _this._mapSprite_.stopDrag();
-            });
-            return _this;
-        }
-        // public props
-        MapView.prototype.onMapTileMouse = function (callback) {
-            this._mapTileMouse_ = callback;
+        TiledMap.prototype.setCanDrag = function (canDrag) {
+            this.mCanDrag = canDrag;
         };
-        MapView.prototype.onMapLoaded = function (callback) {
-            this._mapLoaded_ = callback;
+        TiledMap.prototype.getMap = function () {
+            return this.mTiledMap;
         };
-        MapView.prototype.getMapData = function () {
-            return this._mapData_;
-        };
-        MapView.prototype.getMapUrl = function () {
-            return this._mapUrl_;
-        };
-        MapView.prototype.getMapPath = function () {
-            return this._mapUrl_.substr(0, this._mapUrl_.lastIndexOf('\/'));
-        };
-        MapView.prototype.getMapTileSets = function () {
-            return this._mapData_.tilesets || [];
-        };
-        MapView.prototype.getMapTileField = function (id, field) {
-            var tilesets = this._mapData_.tilesets || [];
-            if (tilesets.length > 0) {
-                var filter = tilesets.filter(function (res) {
-                    return res.id == id;
-                });
-                if (filter.length > 0) {
-                    return filter[0][field];
-                }
+        TiledMap.prototype.destroy = function () {
+            if (!this.mTiledMap) {
+                return;
             }
-            return null;
+            this.mTiledMap.destroy();
+            this.mTiledMap = null;
         };
-        MapView.prototype.getMapCustomLayer = function (name) {
-            return this._mapSprite_.getChildByName("layer_custom_" + name);
-        };
-        MapView.prototype.getMapBgLayer = function () {
-            return this._mapSprite_.getChildByName("layer_bg");
-        };
-        MapView.prototype.getMapLayer = function (name) {
-            return this._mapSprite_.getChildByName("layer_" + name);
-        };
-        MapView.prototype.loadMapData = function () {
-            var _this = this;
-            Laya.loader.load(this._mapUrl_, Laya.Handler.create(this, function (res) {
-                _this._mapData_ = res || {};
-                _this.loadMapRes();
-            }), null, Laya.Loader.JSON);
-        };
-        MapView.prototype.loadMapRes = function () {
-            var _this = this;
-            var tilesets = this._mapData_.tilesets || [];
-            if (tilesets.length > 0) {
-                Laya.loader.load(tilesets.map(function (val) {
-                    return { url: _this.getMapPath() + "/" + val.image, type: Laya.Loader.IMAGE };
-                }), Laya.Handler.create(this, function () {
-                    _this.loadComplete();
-                }));
+        TiledMap.prototype.show = function () {
+            if (!this.mTiledMap) {
+                return;
             }
-            else {
-                this.loadComplete();
+            this.mTiledMap.mapSprite().visible = true;
+        };
+        TiledMap.prototype.hide = function () {
+            if (!this.mTiledMap) {
+                return;
             }
+            this.mTiledMap.mapSprite().visible = false;
         };
-        MapView.prototype.loadComplete = function () {
-            var _this = this;
-            var rows = this._mapData_.rows || 0;
-            var columns = this._mapData_.columns || 0;
-            var tilewidth = this._mapData_.tilewidth || 0;
-            var tileheight = this._mapData_.tileheight || 0;
-            var padding = this._mapData_.padding || 0;
-            var layers = this._mapData_.layers || [];
-            var width = columns * tilewidth;
-            var height = rows * tileheight;
-            var bgSp = new Laya.Sprite;
-            bgSp.name = "layer_bg";
-            this._mapSprite_.addChild(bgSp);
-            var gridSp = new Laya.Sprite;
-            gridSp.name = "layer_grid";
-            this._mapSprite_.addChild(gridSp);
-            layers.forEach(function (layer) {
-                var layerSp = new Laya.Sprite;
-                layerSp.name = "layer_" + layer.name;
-                _this._mapSprite_.addChild(layerSp);
-                var customSp = new Laya.Sprite;
-                customSp.name = "layer_custom_" + layer.name;
-                _this._mapSprite_.addChild(customSp);
-            });
-            var pointSp = new Laya.Sprite;
-            pointSp.name = "layer_point";
-            this._mapSprite_.addChild(pointSp);
-            this._mapLoaded_ && this._mapLoaded_(this._mapData_);
-            this.frameLoop(1, this, this.drawMapLayer);
-        };
-        MapView.prototype.refreshSize = function () {
-            var rows = this._mapData_.rows || 0;
-            var columns = this._mapData_.columns || 0;
-            var tilewidth = this._mapData_.tilewidth || 0;
-            var tileheight = this._mapData_.tileheight || 0;
-            var padding = this._mapData_.padding || 0;
-            var layers = this._mapData_.layers || [];
-            var width = columns * tilewidth;
-            var height = rows * tileheight;
-            this._mapSprite_.width = width + 2 * padding;
-            this._mapSprite_.height = height + 2 * padding;
-            var num = this._mapSprite_.numChildren;
-            for (var index = 0; index < num; index++) {
-                var layer = this._mapSprite_.getChildAt(index);
-                layer.x = padding;
-                layer.y = padding;
-                layer.width = width;
-                layer.height = height;
+        TiledMap.prototype.loadMap = function () {
+            if (!this.mTiledMap) {
+                return;
             }
+            this.mTiledMap.createMap(this.mMapUrl, new Laya.Rectangle(0, 0, Laya.stage.width, Laya.stage.height), new Laya.Handler(this, this.completeHandler), new Laya.Rectangle(160, 160, 160, 160), null, true, true);
         };
-        MapView.prototype.checkVisible = function (r, c) {
-            var rows = this._mapData_.rows || 0;
-            var columns = this._mapData_.columns || 0;
-            var tilewidth = this._mapData_.tilewidth || 0;
-            var tileheight = this._mapData_.tileheight || 0;
-            var oblique = this._mapData_.oblique === true;
-            var mapX = -this._mapSprite_.x;
-            var mapY = -this._mapSprite_.y;
-            var offsetR = Math.floor(mapY / tileheight) - 2;
-            var offsetC = Math.floor(mapX / tilewidth) - 2;
-            var countR = Math.floor(this.height / tileheight) + 4;
-            var countC = Math.floor(this.width / tilewidth) + 4;
-            if (r >= offsetR && c >= offsetC && r < offsetR + countR && c < offsetC + countC) {
-                return true;
+        TiledMap.prototype.completeHandler = function () {
+            if (!this.mTiledMap) {
+                return;
             }
-            return false;
+            this.onLoaded && this.onLoaded();
+            this.resize();
         };
-        MapView.prototype.drawPoint = function () {
-            var rows = this._mapData_.rows || 0;
-            var columns = this._mapData_.columns || 0;
-            var tilewidth = this._mapData_.tilewidth || 0;
-            var tileheight = this._mapData_.tileheight || 0;
-            var pointSp = this._mapSprite_.getChildByName("layer_point");
-            if (pointSp) {
-                pointSp.visible = this._mapData_.showPoint === true;
-                pointSp.alpha = this._mapData_.pointAlpha || 1;
-                var color = this._mapData_.pointColor || '#3399ff';
-                for (var r = 0; r < rows; r++) {
-                    for (var c = 0; c < columns; c++) {
-                        var checkVisible = this.checkVisible(r, c);
-                        var tile = pointSp.getChildByName(r + "_" + c);
-                        if (!checkVisible) {
-                            if (tile) {
-                                tile.removeSelf();
-                                Laya.Pool.recover('layer_point_tile', tile);
-                            }
-                        }
-                        else {
-                            if (!tile) {
-                                tile = Laya.Pool.getItemByCreateFun('layer_point_tile', function () {
-                                    return new Laya.Label;
-                                });
-                                tile.name = r + "_" + c;
-                                pointSp.addChild(tile);
-                            }
-                            tile.text = "(" + r + "," + c + ")";
-                            tile.fontSize = 20;
-                            tile.color = color;
-                            tile.x = c * tilewidth + tilewidth / 2;
-                            tile.y = r * tileheight + tileheight / 2;
-                            tile.width = tilewidth;
-                            tile.height = tileheight;
-                            tile.anchorX = 0.5;
-                            tile.anchorY = 0.5;
-                        }
-                    }
-                }
+        TiledMap.prototype.mouseDown = function () {
+            this.mLastMouseX = Laya.stage.mouseX;
+            this.mLastMouseY = Laya.stage.mouseY;
+            Laya.stage.on(Laya.Event.MOUSE_MOVE, this, this.mouseMove);
+        };
+        TiledMap.prototype.mouseMove = function () {
+            if (!this.mCanDrag) {
+                return;
             }
-        };
-        MapView.prototype.drawGrid = function () {
-            var rows = this._mapData_.rows || 0;
-            var columns = this._mapData_.columns || 0;
-            var tilewidth = this._mapData_.tilewidth || 0;
-            var tileheight = this._mapData_.tileheight || 0;
-            var gridSp = this._mapSprite_.getChildByName("layer_grid");
-            if (gridSp) {
-                gridSp.visible = this._mapData_.showGrid === true;
-                gridSp.alpha = this._mapData_.gridAlpha || 1;
-                var bgColor = this._mapData_.gridColor || '#000000';
-                for (var r = 0; r < rows; r++) {
-                    for (var c = 0; c < columns; c++) {
-                        var checkVisible = this.checkVisible(r, c);
-                        var tile = gridSp.getChildByName(r + "_" + c);
-                        if (!checkVisible) {
-                            if (tile) {
-                                tile.removeSelf();
-                                Laya.Pool.recover('layer_grid_tile', tile);
-                            }
-                        }
-                        else {
-                            if (!tile) {
-                                tile = Laya.Pool.getItemByCreateFun('layer_grid_tile', function () {
-                                    return new Laya.Label;
-                                });
-                                tile.name = r + "_" + c;
-                                gridSp.addChild(tile);
-                            }
-                            tile.fontSize = 20;
-                            if ((c + r) % 2 == 1) {
-                                tile.bgColor = bgColor;
-                            }
-                            else {
-                                tile.bgColor = '#ffffff';
-                            }
-                            tile.x = c * tilewidth + tilewidth / 2;
-                            tile.y = r * tileheight + tileheight / 2;
-                            tile.width = tilewidth;
-                            tile.height = tileheight;
-                            tile.anchorX = 0.5;
-                            tile.anchorY = 0.5;
-                        }
-                    }
-                }
+            if (!this.mTiledMap) {
+                return;
             }
+            this.mTiledMap.moveViewPort(this.mX - (Laya.stage.mouseX - this.mLastMouseX), this.mY - (Laya.stage.mouseY - this.mLastMouseY));
         };
-        MapView.prototype.drawMapLayer = function () {
-            var _this = this;
-            this.refreshSize();
-            this.drawGrid();
-            this.drawPoint();
-            var rows = this._mapData_.rows || 0;
-            var columns = this._mapData_.columns || 0;
-            var tilewidth = this._mapData_.tilewidth || 0;
-            var tileheight = this._mapData_.tileheight || 0;
-            var oblique = this._mapData_.oblique === true;
-            var layers = this._mapData_.layers || [];
-            layers.forEach(function (layer) {
-                var alpha = layer.alpha || 1;
-                var datas = layer.data || [];
-                var layerSp = _this._mapSprite_.getChildByName("layer_" + layer.name);
-                if (layerSp) {
-                    layerSp.visible = layer.visible !== false;
-                    layerSp.alpha = alpha;
-                    for (var r = 0; r < rows; r++) {
-                        var _loop_1 = function () {
-                            var index = r * columns + c;
-                            var id = datas[index];
-                            if (id > 0) {
-                                var tile_1 = layerSp.getChildByName(r + "_" + c + "_" + id);
-                                var checkVisible = _this.checkVisible(r, c);
-                                if (!checkVisible) {
-                                    if (tile_1) {
-                                        tile_1.removeSelf();
-                                        Laya.Pool.recover("layer_tild", tile_1);
-                                    }
-                                }
-                                else {
-                                    if (!tile_1) {
-                                        tile_1 = Laya.Pool.getItemByCreateFun("layer_tild", function () {
-                                            return new MapTile();
-                                        });
-                                        Object.assign(tile_1, {
-                                            alpha: 1,
-                                            rotation: 0,
-                                            scaleX: 1,
-                                            scaleY: 1,
-                                            visible: true
-                                        });
-                                        tile_1.zOrder = index;
-                                        tile_1.name = r + "_" + c + "_" + id;
-                                        tile_1.tag = layer;
-                                        tile_1.on(Laya.Event.CLICK, _this, function (event) {
-                                            if (layer.clickable) {
-                                                _this._mapTileMouse_ && _this._mapTileMouse_({
-                                                    type: Laya.Event.CLICK,
-                                                    event: event
-                                                }, tile_1, r, c, id);
-                                            }
-                                        });
-                                        tile_1.on(Laya.Event.MOUSE_DOWN, _this, function (event) {
-                                            if (layer.clickable) {
-                                                _this._mapTileMouse_ && _this._mapTileMouse_({
-                                                    type: Laya.Event.MOUSE_DOWN,
-                                                    event: event
-                                                }, tile_1, r, c, id);
-                                            }
-                                        });
-                                        tile_1.on(Laya.Event.MOUSE_MOVE, _this, function (event) {
-                                            if (layer.clickable) {
-                                                _this._mapTileMouse_ && _this._mapTileMouse_({
-                                                    type: Laya.Event.MOUSE_MOVE,
-                                                    event: event
-                                                }, tile_1, r, c, id);
-                                            }
-                                        });
-                                        tile_1.on(Laya.Event.MOUSE_OUT, _this, function (event) {
-                                            if (layer.clickable) {
-                                                _this._mapTileMouse_ && _this._mapTileMouse_({
-                                                    type: Laya.Event.MOUSE_OUT,
-                                                    event: event
-                                                }, tile_1, r, c, id);
-                                            }
-                                        });
-                                        tile_1.on(Laya.Event.MOUSE_OVER, _this, function (event) {
-                                            if (layer.clickable) {
-                                                _this._mapTileMouse_ && _this._mapTileMouse_({
-                                                    type: Laya.Event.MOUSE_OVER,
-                                                    event: event
-                                                }, tile_1, r, c, id);
-                                            }
-                                        });
-                                        tile_1.on(Laya.Event.MOUSE_UP, _this, function (event) {
-                                            if (layer.clickable) {
-                                                _this._mapTileMouse_ && _this._mapTileMouse_({
-                                                    type: Laya.Event.MOUSE_UP,
-                                                    event: event
-                                                }, tile_1, r, c, id);
-                                            }
-                                        });
-                                        tile_1.on(Laya.Event.MOUSE_WHEEL, _this, function (event) {
-                                            if (layer.clickable) {
-                                                _this._mapTileMouse_ && _this._mapTileMouse_({
-                                                    type: Laya.Event.MOUSE_WHEEL,
-                                                    event: event
-                                                }, tile_1, r, c, id);
-                                            }
-                                        });
-                                        layerSp.addChild(tile_1);
-                                    }
-                                    tile_1.width = undefined;
-                                    tile_1.height = undefined;
-                                    tile_1.skin = _this.getMapPath() + "/" + _this.getMapTileField(id, 'image');
-                                    var b = tile_1.height / tile_1.width;
-                                    tile_1.x = c * tilewidth + tilewidth / 2;
-                                    tile_1.y = r * tileheight + tileheight / 2;
-                                    tile_1.width = tilewidth;
-                                    tile_1.height = tile_1.width * b;
-                                    tile_1.anchorX = 0.5;
-                                    tile_1.anchorY = 0.5;
-                                    tile_1.y = tile_1.y - (tile_1.height - tileheight) / 2;
-                                }
-                            }
-                        };
-                        for (var c = 0; c < columns; c++) {
-                            _loop_1();
-                        }
-                    }
-                }
-            });
+        TiledMap.prototype.mouseUp = function () {
+            this.mX = this.mX - (Laya.stage.mouseX - this.mLastMouseX);
+            this.mY = this.mY - (Laya.stage.mouseY - this.mLastMouseY);
+            Laya.stage.off(Laya.Event.MOUSE_MOVE, this, this.mouseMove);
         };
-        return MapView;
-    }(Laya.Sprite));
-    Tape.MapView = MapView;
+        TiledMap.prototype.resize = function () {
+            if (!this.mTiledMap) {
+                return;
+            }
+            this.mTiledMap.changeViewPort(this.mX, this.mY, Laya.Browser.width, Laya.Browser.height);
+        };
+        return TiledMap;
+    }());
+    Tape.TiledMap = TiledMap;
 })(Tape || (Tape = {}));
 
 var Tape;
