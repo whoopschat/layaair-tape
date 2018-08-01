@@ -368,21 +368,17 @@ var Tape;
     var MiniButton;
     (function (MiniButton) {
         var clubButton = null;
-        var clubIcon = null;
         var userButton = null;
-        var userIcon = null;
         var feedbackButton = null;
-        var feedbackIcon = null;
         function showFeedbackButton(image, x, y, w, h) {
             var left = fixWidth(x + Tape.Screen.getOffestX());
             var top = fixHeight(y + Tape.Screen.getOffestY());
             var width = fixWidth(w);
             var height = fixHeight(h);
-            if (feedbackButton && feedbackIcon !== image) {
+            if (feedbackButton) {
                 feedbackButton.destroy();
                 feedbackButton = null;
             }
-            feedbackIcon = image;
             if (!feedbackButton) {
                 feedbackButton = __exec_wx__('createFeedbackButton', {
                     type: 'image',
@@ -420,11 +416,10 @@ var Tape;
             var width = fixWidth(w);
             var height = fixHeight(h);
             var icons = ['green', 'white', 'dark', 'light'];
-            if (clubButton && clubIcon !== icon) {
+            if (clubButton) {
                 clubButton.destroy();
                 clubButton = null;
             }
-            clubIcon = icon;
             if (!clubButton) {
                 clubButton = __exec_wx__('createGameClubButton', {
                     icon: icons.indexOf(icon) < 0 ? icons[0] : icon,
@@ -435,11 +430,11 @@ var Tape;
                         height: height
                     }
                 });
-            }
-            if (clubButton) {
-                if (icons.indexOf(icon) < 0) {
+                if (clubButton && icons.indexOf(icon) < 0) {
                     clubButton.image = icon;
                 }
+            }
+            if (clubButton) {
                 clubButton.style.left = left;
                 clubButton.style.top = top;
                 clubButton.style.width = width;
@@ -471,11 +466,10 @@ var Tape;
             var top = fixHeight(y + Tape.Screen.getOffestY());
             var width = fixWidth(w);
             var height = fixHeight(h);
-            if (userButton && userIcon !== image) {
+            if (userButton) {
                 userButton.destroy();
                 userButton = null;
             }
-            userIcon = image;
             if (!userButton) {
                 userButton = __exec_wx__('createUserInfoButton', {
                     withCredentials: true,

@@ -174,22 +174,18 @@ module Tape {
     export module MiniButton {
 
         let clubButton = null;
-        let clubIcon = null;
         let userButton = null;
-        let userIcon = null;
         let feedbackButton = null;
-        let feedbackIcon = null;
 
         export function showFeedbackButton(image: string, x: number, y: number, w: number, h: number) {
             let left = fixWidth(x + Screen.getOffestX());
             let top = fixHeight(y + Screen.getOffestY());
             let width = fixWidth(w);
             let height = fixHeight(h);
-            if (feedbackButton && feedbackIcon !== image) {
+            if (feedbackButton) {
                 feedbackButton.destroy();
                 feedbackButton = null;
             }
-            feedbackIcon = image;
             if (!feedbackButton) {
                 feedbackButton = __exec_wx__('createFeedbackButton', {
                     type: 'image',
@@ -227,11 +223,10 @@ module Tape {
             let width = fixWidth(w);
             let height = fixHeight(h);
             let icons = ['green', 'white', 'dark', 'light'];
-            if (clubButton && clubIcon !== icon) {
+            if (clubButton) {
                 clubButton.destroy();
                 clubButton = null;
             }
-            clubIcon = icon;
             if (!clubButton) {
                 clubButton = __exec_wx__('createGameClubButton', {
                     icon: icons.indexOf(icon) < 0 ? icons[0] : icon,
@@ -242,11 +237,11 @@ module Tape {
                         height
                     }
                 });
-            }
-            if (clubButton) {
-                if (icons.indexOf(icon) < 0) {
+                if (clubButton && icons.indexOf(icon) < 0) {
                     clubButton.image = icon;
                 }
+            }
+            if (clubButton) {
                 clubButton.style.left = left;
                 clubButton.style.top = top;
                 clubButton.style.width = width;
@@ -278,11 +273,10 @@ module Tape {
             let top = fixHeight(y + Screen.getOffestY());
             let width = fixWidth(w);
             let height = fixHeight(h);
-            if (userButton && userIcon !== image) {
+            if (userButton) {
                 userButton.destroy();
                 userButton = null;
             }
-            userIcon = image;
             if (!userButton) {
                 userButton = __exec_wx__('createUserInfoButton', {
                     withCredentials: true,
