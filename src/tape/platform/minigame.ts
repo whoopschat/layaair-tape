@@ -182,10 +182,7 @@ module Tape {
             let top = fixHeight(y + Screen.getOffestY());
             let width = fixWidth(w);
             let height = fixHeight(h);
-            if (feedbackButton) {
-                feedbackButton.destroy();
-                feedbackButton = null;
-            }
+            hideFeedbackButton();
             if (!feedbackButton) {
                 feedbackButton = __exec_wx__('createFeedbackButton', {
                     type: 'image',
@@ -205,16 +202,19 @@ module Tape {
                 feedbackButton.style.height = height;
                 feedbackButton.show();
             }
-            return feedbackButton;
         }
 
         export function hideFeedbackButton() {
             if (feedbackButton) {
-                feedbackButton.style.left = -feedbackButton.style.width;
-                feedbackButton.style.top = -feedbackButton.style.height;
-                feedbackButton.hide();
+                try {
+                    feedbackButton.style.left = -feedbackButton.style.width;
+                    feedbackButton.style.top = -feedbackButton.style.height;
+                    feedbackButton.hide();
+                    feedbackButton.destroy();
+                    feedbackButton = null;
+                } catch (error) {
+                }
             }
-            return feedbackButton;
         }
 
         export function showGameClubButton(icon: string, x: number, y: number, w: number, h: number) {
@@ -223,10 +223,7 @@ module Tape {
             let width = fixWidth(w);
             let height = fixHeight(h);
             let icons = ['green', 'white', 'dark', 'light'];
-            if (clubButton) {
-                clubButton.destroy();
-                clubButton = null;
-            }
+            hideGameClubButton();
             if (!clubButton) {
                 clubButton = __exec_wx__('createGameClubButton', {
                     icon: icons.indexOf(icon) < 0 ? icons[0] : icon,
@@ -248,16 +245,19 @@ module Tape {
                 clubButton.style.height = height;
                 clubButton.show();
             }
-            return clubButton;
         }
 
         export function hideGameClubButton() {
             if (clubButton) {
-                clubButton.style.left = -clubButton.style.width;
-                clubButton.style.top = -clubButton.style.height;
-                clubButton.hide();
+                try {
+                    clubButton.style.left = -clubButton.style.width;
+                    clubButton.style.top = -clubButton.style.height;
+                    clubButton.hide();
+                    clubButton.destroy();
+                    clubButton = null;
+                } catch (error) {
+                }
             }
-            return clubButton;
         }
 
         export function checkGetUserInfo(onSuccess, onFail) {
@@ -273,10 +273,7 @@ module Tape {
             let top = fixHeight(y + Screen.getOffestY());
             let width = fixWidth(w);
             let height = fixHeight(h);
-            if (userButton) {
-                userButton.destroy();
-                userButton = null;
-            }
+            hideGetUserInfoButton();
             if (!userButton) {
                 userButton = __exec_wx__('createUserInfoButton', {
                     withCredentials: true,
@@ -296,7 +293,7 @@ module Tape {
                 userButton.style.width = width;
                 userButton.style.height = height;
                 userButton.onTap((res) => {
-                    if (res.errMsg.indexOf(':ok') > 0) {
+                    if (res.errMsg.indexOf(':ok') >= 0) {
                         onSuccess && onSuccess(res);
                     } else {
                         onFail && onFail(res);
@@ -304,16 +301,19 @@ module Tape {
                 });
                 userButton.show();
             }
-            return userButton;
         }
 
         export function hideGetUserInfoButton() {
             if (userButton) {
-                userButton.style.left = -userButton.style.width;
-                userButton.style.top = -userButton.style.height;
-                userButton.hide();
+                try {
+                    userButton.style.left = -userButton.style.width;
+                    userButton.style.top = -userButton.style.height;
+                    userButton.hide();
+                    userButton.destroy();
+                    userButton = null;
+                } catch (error) {
+                }
             }
-            return userButton;
         }
 
     }

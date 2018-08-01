@@ -272,11 +272,11 @@ declare module Tape {
          * @param w 
          * @param h 
          */
-        export function showFeedbackButton(image: string, x: number, y: number, w: number, h: number): any;
+        export function showFeedbackButton(image: string, x: number, y: number, w: number, h: number): void;
         /**
          * hideFeedbackButton
          */
-        export function hideFeedbackButton(): any;
+        export function hideFeedbackButton(): void;
         /**
          * showGameClubButton
          * @param icon 
@@ -285,11 +285,11 @@ declare module Tape {
          * @param w 
          * @param h 
          */
-        export function showGameClubButton(icon: string, x: number, y: number, w: number, h: number): any;
+        export function showGameClubButton(icon: string, x: number, y: number, w: number, h: number): void;
         /**
          * hideGameClubButton
          */
-        export function hideGameClubButton(): any;
+        export function hideGameClubButton(): void;
         /**
          * checkGetUserInfo
          * @param onSuccess 
@@ -306,11 +306,11 @@ declare module Tape {
          * @param onSuccess 
          * @param onFail 
          */
-        export function showGetUserInfoButton(image: string, x: number, y: number, w: number, h: number, onSuccess: Function, onFail?: Function): any;
+        export function showGetUserInfoButton(image: string, x: number, y: number, w: number, h: number, onSuccess: Function, onFail?: Function): void;
         /**
          * hideGetUserInfoButton
          */
-        export function hideGetUserInfoButton(): any;
+        export function hideGetUserInfoButton(): void;
 
     }
 

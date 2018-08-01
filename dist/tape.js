@@ -375,10 +375,7 @@ var Tape;
             var top = fixHeight(y + Tape.Screen.getOffestY());
             var width = fixWidth(w);
             var height = fixHeight(h);
-            if (feedbackButton) {
-                feedbackButton.destroy();
-                feedbackButton = null;
-            }
+            hideFeedbackButton();
             if (!feedbackButton) {
                 feedbackButton = __exec_wx__('createFeedbackButton', {
                     type: 'image',
@@ -398,16 +395,20 @@ var Tape;
                 feedbackButton.style.height = height;
                 feedbackButton.show();
             }
-            return feedbackButton;
         }
         MiniButton.showFeedbackButton = showFeedbackButton;
         function hideFeedbackButton() {
             if (feedbackButton) {
-                feedbackButton.style.left = -feedbackButton.style.width;
-                feedbackButton.style.top = -feedbackButton.style.height;
-                feedbackButton.hide();
+                try {
+                    feedbackButton.style.left = -feedbackButton.style.width;
+                    feedbackButton.style.top = -feedbackButton.style.height;
+                    feedbackButton.hide();
+                    feedbackButton.destroy();
+                    feedbackButton = null;
+                }
+                catch (error) {
+                }
             }
-            return feedbackButton;
         }
         MiniButton.hideFeedbackButton = hideFeedbackButton;
         function showGameClubButton(icon, x, y, w, h) {
@@ -416,10 +417,7 @@ var Tape;
             var width = fixWidth(w);
             var height = fixHeight(h);
             var icons = ['green', 'white', 'dark', 'light'];
-            if (clubButton) {
-                clubButton.destroy();
-                clubButton = null;
-            }
+            hideGameClubButton();
             if (!clubButton) {
                 clubButton = __exec_wx__('createGameClubButton', {
                     icon: icons.indexOf(icon) < 0 ? icons[0] : icon,
@@ -441,16 +439,20 @@ var Tape;
                 clubButton.style.height = height;
                 clubButton.show();
             }
-            return clubButton;
         }
         MiniButton.showGameClubButton = showGameClubButton;
         function hideGameClubButton() {
             if (clubButton) {
-                clubButton.style.left = -clubButton.style.width;
-                clubButton.style.top = -clubButton.style.height;
-                clubButton.hide();
+                try {
+                    clubButton.style.left = -clubButton.style.width;
+                    clubButton.style.top = -clubButton.style.height;
+                    clubButton.hide();
+                    clubButton.destroy();
+                    clubButton = null;
+                }
+                catch (error) {
+                }
             }
-            return clubButton;
         }
         MiniButton.hideGameClubButton = hideGameClubButton;
         function checkGetUserInfo(onSuccess, onFail) {
@@ -466,10 +468,7 @@ var Tape;
             var top = fixHeight(y + Tape.Screen.getOffestY());
             var width = fixWidth(w);
             var height = fixHeight(h);
-            if (userButton) {
-                userButton.destroy();
-                userButton = null;
-            }
+            hideGetUserInfoButton();
             if (!userButton) {
                 userButton = __exec_wx__('createUserInfoButton', {
                     withCredentials: true,
@@ -489,7 +488,7 @@ var Tape;
                 userButton.style.width = width;
                 userButton.style.height = height;
                 userButton.onTap(function (res) {
-                    if (res.errMsg.indexOf(':ok') > 0) {
+                    if (res.errMsg.indexOf(':ok') >= 0) {
                         onSuccess && onSuccess(res);
                     }
                     else {
@@ -498,16 +497,20 @@ var Tape;
                 });
                 userButton.show();
             }
-            return userButton;
         }
         MiniButton.showGetUserInfoButton = showGetUserInfoButton;
         function hideGetUserInfoButton() {
             if (userButton) {
-                userButton.style.left = -userButton.style.width;
-                userButton.style.top = -userButton.style.height;
-                userButton.hide();
+                try {
+                    userButton.style.left = -userButton.style.width;
+                    userButton.style.top = -userButton.style.height;
+                    userButton.hide();
+                    userButton.destroy();
+                    userButton = null;
+                }
+                catch (error) {
+                }
             }
-            return userButton;
         }
         MiniButton.hideGetUserInfoButton = hideGetUserInfoButton;
     })(MiniButton = Tape.MiniButton || (Tape.MiniButton = {}));
