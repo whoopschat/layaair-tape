@@ -3,6 +3,14 @@ module Tape {
     /** Activity */
     export class Activity extends Laya.Component {
 
+        static open(params, action?: Function) {
+            NavigatorStack.navigate(this, params, action);
+        }
+
+        static finish() {
+            NavigatorStack.finish(this);
+        }
+
         /** res */
         public static res: ResourceOptions[] = [];
 

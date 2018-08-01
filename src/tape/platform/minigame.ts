@@ -72,6 +72,26 @@ module Tape {
 
     }
 
+    function fixWidth(width) {
+        let systemInfo = __exec_wx__('getSystemInfoSync');
+        if (systemInfo) {
+            let windowWidth = systemInfo.windowWidth;
+            let stageWidth = Laya.stage.width;
+            return width * windowWidth / stageWidth;
+        }
+        return width;
+    }
+
+    function fixHeight(height) {
+        let systemInfo = __exec_wx__('getSystemInfoSync');
+        if (systemInfo) {
+            let windowHeight = systemInfo.windowHeight;
+            let stageHeight = Laya.stage.height;
+            return height * windowHeight / stageHeight;
+        }
+        return height;
+    }
+
     /** MiniAd */
     export module MiniAd {
 
@@ -79,46 +99,32 @@ module Tape {
         let __rewardedVideoAd__ = null;
         let __rewardedVideoCallback__ = null;
 
-        export const showBannerAd = (adUnitId: string, x: number, y: number, w: number, h: number, onError: Function = null) => {
+        export function showBannerAd(adUnitId: string, x: number, y: number, w: number, h: number, onError: Function = null) {
             hideBannerAd(adUnitId);
-            let systemInfo = __exec_wx__('getSystemInfoSync');
-            if (systemInfo) {
-                let windowWidth = systemInfo.windowWidth;
-                let windowHeight = systemInfo.windowHeight;
-                let stageWidth = Laya.stage.width;
-                let stageHeight = Laya.stage.height;
-
-                let left = (x + Screen.getOffestX()) * windowWidth / stageWidth;
-                let top = (y + Screen.getOffestY()) * windowHeight / stageHeight;
-                let width = w * windowWidth / stageWidth;
-                let height = h * windowHeight / stageHeight;
-
-                let bannerAd = __exec_wx__('createBannerAd', {
-                    adUnitId,
-                    style: {
-                        left,
-                        top,
-                        width,
-                        height
-                    }
-                });
-                if (bannerAd) {
-                    (<any>Object).assign(__bannerStack__, {
-                        [adUnitId]: bannerAd
-                    });
-                    bannerAd.onResize(res => {
-                        bannerAd.style.top = bannerAd.style.top + height - res.height
-                    });
-                    bannerAd.onError(err => {
-                        onError && onError(err);
-                    });
-                    bannerAd.show();
-                } else {
-                    onError && onError({
-                        errMsg: 'showBannerAd:fail',
-                        err_code: -1
-                    });
+            let left = fixWidth(x + Screen.getOffestX());
+            let top = fixHeight(y + Screen.getOffestY());
+            let width = fixWidth(w);
+            let height = fixHeight(h);
+            let bannerAd = __exec_wx__('createBannerAd', {
+                adUnitId,
+                style: {
+                    left,
+                    top,
+                    width,
+                    height
                 }
+            });
+            if (bannerAd) {
+                (<any>Object).assign(__bannerStack__, {
+                    [adUnitId]: bannerAd
+                });
+                bannerAd.onResize(res => {
+                    bannerAd.style.top = bannerAd.style.top + height - res.height
+                });
+                bannerAd.onError(err => {
+                    onError && onError(err);
+                });
+                bannerAd.show();
             } else {
                 onError && onError({
                     errMsg: 'showBannerAd:fail',
@@ -127,7 +133,7 @@ module Tape {
             }
         }
 
-        export const hideBannerAd = (adUnitId: string) => {
+        export function hideBannerAd(adUnitId: string) {
             if (__bannerStack__.hasOwnProperty(adUnitId)) {
                 let bannerAd = __bannerStack__[adUnitId];
                 bannerAd.destroy();
@@ -135,7 +141,7 @@ module Tape {
             }
         }
 
-        export const showRewardedVideoAd = (adUnitId: string, onRewarded: Function, onCancal: Function, onError: Function = null) => {
+        export function showRewardedVideoAd(adUnitId: string, onRewarded: Function, onCancal: Function, onError: Function = null) {
             __rewardedVideoAd__ = __exec_wx__('createRewardedVideoAd', {
                 adUnitId
             });
@@ -164,6 +170,160 @@ module Tape {
 
     }
 
+    /** MiniButton */
+    export module MiniButton {
+
+        let clubButton = null;
+        let clubIcon = null;
+        let userButton = null;
+        let userIcon = null;
+        let feedbackButton = null;
+        let feedbackIcon = null;
+
+        export function showFeedbackButton(image: string, x: number, y: number, w: number, h: number) {
+            let left = fixWidth(x + Screen.getOffestX());
+            let top = fixHeight(y + Screen.getOffestY());
+            let width = fixWidth(w);
+            let height = fixHeight(h);
+            if (feedbackButton && feedbackIcon !== image) {
+                feedbackButton.destroy();
+                feedbackButton = null;
+            }
+            feedbackIcon = image;
+            if (!feedbackButton) {
+                feedbackButton = __exec_wx__('createFeedbackButton', {
+                    type: 'image',
+                    image,
+                    style: {
+                        left,
+                        top,
+                        width,
+                        height
+                    }
+                });
+            }
+            if (feedbackButton) {
+                feedbackButton.style.left = left;
+                feedbackButton.style.top = top;
+                feedbackButton.style.width = width;
+                feedbackButton.style.height = height;
+                feedbackButton.show();
+            }
+            return feedbackButton;
+        }
+
+        export function hideFeedbackButton() {
+            if (feedbackButton) {
+                feedbackButton.style.left = -feedbackButton.style.width;
+                feedbackButton.style.top = -feedbackButton.style.height;
+                feedbackButton.hide();
+            }
+            return feedbackButton;
+        }
+
+        export function showGameClubButton(icon: string, x: number, y: number, w: number, h: number) {
+            let left = fixWidth(x + Screen.getOffestX());
+            let top = fixHeight(y + Screen.getOffestY());
+            let width = fixWidth(w);
+            let height = fixHeight(h);
+            let icons = ['green', 'white', 'dark', 'light'];
+            if (clubButton && clubIcon !== icon) {
+                clubButton.destroy();
+                clubButton = null;
+            }
+            clubIcon = icon;
+            if (!clubButton) {
+                clubButton = __exec_wx__('createGameClubButton', {
+                    icon: icons.indexOf(icon) < 0 ? icons[0] : icon,
+                    style: {
+                        left,
+                        top,
+                        width,
+                        height
+                    }
+                });
+            }
+            if (clubButton) {
+                if (icons.indexOf(icon) < 0) {
+                    clubButton.image = icon;
+                }
+                clubButton.style.left = left;
+                clubButton.style.top = top;
+                clubButton.style.width = width;
+                clubButton.style.height = height;
+                clubButton.show();
+            }
+            return clubButton;
+        }
+
+        export function hideGameClubButton() {
+            if (clubButton) {
+                clubButton.style.left = -clubButton.style.width;
+                clubButton.style.top = -clubButton.style.height;
+                clubButton.hide();
+            }
+            return clubButton;
+        }
+
+        export function checkGetUserInfo(onSuccess, onFail) {
+            __exec_wx__('getUserInfo', {
+                withCredentials: true,
+                success: onSuccess,
+                fail: onFail
+            });
+        }
+
+        export function showGetUserInfoButton(image: string, x: number, y: number, w: number, h: number, onSuccess: Function, onFail: Function) {
+            let left = fixWidth(x + Screen.getOffestX());
+            let top = fixHeight(y + Screen.getOffestY());
+            let width = fixWidth(w);
+            let height = fixHeight(h);
+            if (userButton && userIcon !== image) {
+                userButton.destroy();
+                userButton = null;
+            }
+            userIcon = image;
+            if (!userButton) {
+                userButton = __exec_wx__('createUserInfoButton', {
+                    withCredentials: true,
+                    type: 'image',
+                    image,
+                    style: {
+                        left,
+                        top,
+                        width,
+                        height
+                    }
+                });
+            }
+            if (userButton) {
+                userButton.style.left = left;
+                userButton.style.top = top;
+                userButton.style.width = width;
+                userButton.style.height = height;
+                userButton.onTap((res) => {
+                    if (res.errMsg.indexOf(':ok') > 0) {
+                        onSuccess && onSuccess(res);
+                    } else {
+                        onFail && onFail(res);
+                    }
+                });
+                userButton.show();
+            }
+            return userButton;
+        }
+
+        export function hideGetUserInfoButton() {
+            if (userButton) {
+                userButton.style.left = -userButton.style.width;
+                userButton.style.top = -userButton.style.height;
+                userButton.hide();
+            }
+            return userButton;
+        }
+
+    }
+
     /** MiniRank */
     export module MiniRank {
 
@@ -180,11 +340,11 @@ module Tape {
             return sharedCanvasView;
         }
 
-        export const showRank = (uiView: Object | Object[], options: Object = {}, onlyRefreshData: boolean = false) => {
+        export const showRank = (ui: Object | Object[], options: Object = {}, onlyRefreshData: boolean = false) => {
             __post_message_to_sub_context__({
                 action: onlyRefreshData ? "refreshData" : "showUI",
                 data: onlyRefreshData ? options : (<any>Object).assign({
-                    ui: JSON.stringify(uiView || {}),
+                    ui: JSON.stringify(ui || {}),
                 }, options)
             });
         }

@@ -83,34 +83,6 @@ var Tape;
 
 var Tape;
 (function (Tape) {
-    function addHook(target, methodName, hook, upsert) {
-        if (upsert === void 0) { upsert = false; }
-        var method = target[methodName];
-        if (!method && !upsert) {
-            return;
-        }
-        if (method) {
-            // bind original method to target
-            method = method.bind(target);
-        }
-        Object.defineProperty(target, methodName, {
-            value: function () {
-                var params = [];
-                for (var _i = 0; _i < arguments.length; _i++) {
-                    params[_i] = arguments[_i];
-                }
-                return hook.apply(void 0, [target, methodName, method].concat(params));
-            },
-            enumerable: true,
-            writable: true,
-            configurable: true,
-        });
-    }
-    Tape.addHook = addHook;
-})(Tape || (Tape = {}));
-
-var Tape;
-(function (Tape) {
     var Platform;
     (function (Platform) {
         Platform.isWechatApp = function () {
@@ -292,53 +264,58 @@ var Tape;
             __exec_wx__('exitMiniProgram');
         };
     })(MiniHandler = Tape.MiniHandler || (Tape.MiniHandler = {}));
+    function fixWidth(width) {
+        var systemInfo = __exec_wx__('getSystemInfoSync');
+        if (systemInfo) {
+            var windowWidth = systemInfo.windowWidth;
+            var stageWidth = Laya.stage.width;
+            return width * windowWidth / stageWidth;
+        }
+        return width;
+    }
+    function fixHeight(height) {
+        var systemInfo = __exec_wx__('getSystemInfoSync');
+        if (systemInfo) {
+            var windowHeight = systemInfo.windowHeight;
+            var stageHeight = Laya.stage.height;
+            return height * windowHeight / stageHeight;
+        }
+        return height;
+    }
     /** MiniAd */
     var MiniAd;
     (function (MiniAd) {
         var __bannerStack__ = {};
         var __rewardedVideoAd__ = null;
         var __rewardedVideoCallback__ = null;
-        MiniAd.showBannerAd = function (adUnitId, x, y, w, h, onError) {
+        function showBannerAd(adUnitId, x, y, w, h, onError) {
             if (onError === void 0) { onError = null; }
             var _a;
-            MiniAd.hideBannerAd(adUnitId);
-            var systemInfo = __exec_wx__('getSystemInfoSync');
-            if (systemInfo) {
-                var windowWidth = systemInfo.windowWidth;
-                var windowHeight = systemInfo.windowHeight;
-                var stageWidth = Laya.stage.width;
-                var stageHeight = Laya.stage.height;
-                var left = (x + Tape.Screen.getOffestX()) * windowWidth / stageWidth;
-                var top_1 = (y + Tape.Screen.getOffestY()) * windowHeight / stageHeight;
-                var width = w * windowWidth / stageWidth;
-                var height_1 = h * windowHeight / stageHeight;
-                var bannerAd_1 = __exec_wx__('createBannerAd', {
-                    adUnitId: adUnitId,
-                    style: {
-                        left: left,
-                        top: top_1,
-                        width: width,
-                        height: height_1
-                    }
+            hideBannerAd(adUnitId);
+            var left = fixWidth(x + Tape.Screen.getOffestX());
+            var top = fixHeight(y + Tape.Screen.getOffestY());
+            var width = fixWidth(w);
+            var height = fixHeight(h);
+            var bannerAd = __exec_wx__('createBannerAd', {
+                adUnitId: adUnitId,
+                style: {
+                    left: left,
+                    top: top,
+                    width: width,
+                    height: height
+                }
+            });
+            if (bannerAd) {
+                Object.assign(__bannerStack__, (_a = {},
+                    _a[adUnitId] = bannerAd,
+                    _a));
+                bannerAd.onResize(function (res) {
+                    bannerAd.style.top = bannerAd.style.top + height - res.height;
                 });
-                if (bannerAd_1) {
-                    Object.assign(__bannerStack__, (_a = {},
-                        _a[adUnitId] = bannerAd_1,
-                        _a));
-                    bannerAd_1.onResize(function (res) {
-                        bannerAd_1.style.top = bannerAd_1.style.top + height_1 - res.height;
-                    });
-                    bannerAd_1.onError(function (err) {
-                        onError && onError(err);
-                    });
-                    bannerAd_1.show();
-                }
-                else {
-                    onError && onError({
-                        errMsg: 'showBannerAd:fail',
-                        err_code: -1
-                    });
-                }
+                bannerAd.onError(function (err) {
+                    onError && onError(err);
+                });
+                bannerAd.show();
             }
             else {
                 onError && onError({
@@ -346,15 +323,17 @@ var Tape;
                     err_code: -1
                 });
             }
-        };
-        MiniAd.hideBannerAd = function (adUnitId) {
+        }
+        MiniAd.showBannerAd = showBannerAd;
+        function hideBannerAd(adUnitId) {
             if (__bannerStack__.hasOwnProperty(adUnitId)) {
                 var bannerAd = __bannerStack__[adUnitId];
                 bannerAd.destroy();
                 delete __bannerStack__[adUnitId];
             }
-        };
-        MiniAd.showRewardedVideoAd = function (adUnitId, onRewarded, onCancal, onError) {
+        }
+        MiniAd.hideBannerAd = hideBannerAd;
+        function showRewardedVideoAd(adUnitId, onRewarded, onCancal, onError) {
             if (onError === void 0) { onError = null; }
             __rewardedVideoAd__ = __exec_wx__('createRewardedVideoAd', {
                 adUnitId: adUnitId
@@ -382,8 +361,162 @@ var Tape;
                     err_code: -1
                 });
             }
-        };
+        }
+        MiniAd.showRewardedVideoAd = showRewardedVideoAd;
     })(MiniAd = Tape.MiniAd || (Tape.MiniAd = {}));
+    /** MiniButton */
+    var MiniButton;
+    (function (MiniButton) {
+        var clubButton = null;
+        var clubIcon = null;
+        var userButton = null;
+        var userIcon = null;
+        var feedbackButton = null;
+        var feedbackIcon = null;
+        function showFeedbackButton(image, x, y, w, h) {
+            var left = fixWidth(x + Tape.Screen.getOffestX());
+            var top = fixHeight(y + Tape.Screen.getOffestY());
+            var width = fixWidth(w);
+            var height = fixHeight(h);
+            if (feedbackButton && feedbackIcon !== image) {
+                feedbackButton.destroy();
+                feedbackButton = null;
+            }
+            feedbackIcon = image;
+            if (!feedbackButton) {
+                feedbackButton = __exec_wx__('createFeedbackButton', {
+                    type: 'image',
+                    image: image,
+                    style: {
+                        left: left,
+                        top: top,
+                        width: width,
+                        height: height
+                    }
+                });
+            }
+            if (feedbackButton) {
+                feedbackButton.style.left = left;
+                feedbackButton.style.top = top;
+                feedbackButton.style.width = width;
+                feedbackButton.style.height = height;
+                feedbackButton.show();
+            }
+            return feedbackButton;
+        }
+        MiniButton.showFeedbackButton = showFeedbackButton;
+        function hideFeedbackButton() {
+            if (feedbackButton) {
+                feedbackButton.style.left = -feedbackButton.style.width;
+                feedbackButton.style.top = -feedbackButton.style.height;
+                feedbackButton.hide();
+            }
+            return feedbackButton;
+        }
+        MiniButton.hideFeedbackButton = hideFeedbackButton;
+        function showGameClubButton(icon, x, y, w, h) {
+            var left = fixWidth(x + Tape.Screen.getOffestX());
+            var top = fixHeight(y + Tape.Screen.getOffestY());
+            var width = fixWidth(w);
+            var height = fixHeight(h);
+            var icons = ['green', 'white', 'dark', 'light'];
+            if (clubButton && clubIcon !== icon) {
+                clubButton.destroy();
+                clubButton = null;
+            }
+            clubIcon = icon;
+            if (!clubButton) {
+                clubButton = __exec_wx__('createGameClubButton', {
+                    icon: icons.indexOf(icon) < 0 ? icons[0] : icon,
+                    style: {
+                        left: left,
+                        top: top,
+                        width: width,
+                        height: height
+                    }
+                });
+            }
+            if (clubButton) {
+                if (icons.indexOf(icon) < 0) {
+                    clubButton.image = icon;
+                }
+                clubButton.style.left = left;
+                clubButton.style.top = top;
+                clubButton.style.width = width;
+                clubButton.style.height = height;
+                clubButton.show();
+            }
+            return clubButton;
+        }
+        MiniButton.showGameClubButton = showGameClubButton;
+        function hideGameClubButton() {
+            if (clubButton) {
+                clubButton.style.left = -clubButton.style.width;
+                clubButton.style.top = -clubButton.style.height;
+                clubButton.hide();
+            }
+            return clubButton;
+        }
+        MiniButton.hideGameClubButton = hideGameClubButton;
+        function checkGetUserInfo(onSuccess, onFail) {
+            __exec_wx__('getUserInfo', {
+                withCredentials: true,
+                success: onSuccess,
+                fail: onFail
+            });
+        }
+        MiniButton.checkGetUserInfo = checkGetUserInfo;
+        function showGetUserInfoButton(image, x, y, w, h, onSuccess, onFail) {
+            var left = fixWidth(x + Tape.Screen.getOffestX());
+            var top = fixHeight(y + Tape.Screen.getOffestY());
+            var width = fixWidth(w);
+            var height = fixHeight(h);
+            if (userButton && userIcon !== image) {
+                userButton.destroy();
+                userButton = null;
+            }
+            userIcon = image;
+            if (!userButton) {
+                userButton = __exec_wx__('createUserInfoButton', {
+                    withCredentials: true,
+                    type: 'image',
+                    image: image,
+                    style: {
+                        left: left,
+                        top: top,
+                        width: width,
+                        height: height
+                    }
+                });
+            }
+            if (userButton) {
+                userButton.style.left = left;
+                userButton.style.top = top;
+                userButton.style.width = width;
+                userButton.style.height = height;
+                userButton.onTap(function (res) {
+                    if (res.errMsg.indexOf(':ok') > 0) {
+                        onSuccess && onSuccess(res);
+                    }
+                    else {
+                        onFail && onFail(res);
+                    }
+                });
+                userButton.show();
+            }
+            return userButton;
+        }
+        MiniButton.showGetUserInfoButton = showGetUserInfoButton;
+        function hideGetUserInfoButton() {
+            if (userButton) {
+                userButton.style.left = -userButton.style.width;
+                userButton.style.top = -userButton.style.height;
+                userButton.hide();
+            }
+            return userButton;
+        }
+        MiniButton.hideGetUserInfoButton = hideGetUserInfoButton;
+    })(MiniButton = Tape.MiniButton || (Tape.MiniButton = {}));
     /** MiniRank */
     var MiniRank;
     (function (MiniRank) {
@@ -403,13 +536,13 @@ var Tape;
             }
             return sharedCanvasView;
         };
-        MiniRank.showRank = function (uiView, options, onlyRefreshData) {
+        MiniRank.showRank = function (ui, options, onlyRefreshData) {
             if (options === void 0) { options = {}; }
             if (onlyRefreshData === void 0) { onlyRefreshData = false; }
             __post_message_to_sub_context__({
                 action: onlyRefreshData ? "refreshData" : "showUI",
                 data: onlyRefreshData ? options : Object.assign({
-                    ui: JSON.stringify(uiView || {}),
+                    ui: JSON.stringify(ui || {}),
                 }, options)
             });
         };
@@ -460,6 +593,12 @@ var Tape;
             _this.page = options.page;
             return _this;
         }
+        Activity.open = function (params, action) {
+            Tape.NavigatorStack.navigate(this, params, action);
+        };
+        Activity.finish = function () {
+            Tape.NavigatorStack.finish(this);
+        };
         Object.defineProperty(Activity.prototype, "ui", {
             get: function () {
                 return this.getChildByName('_contentView');
@@ -659,6 +798,12 @@ var Tape;
             _this.initBg();
             return _this;
         }
+        PopView.show = function (params, onHide) {
+            Tape.PopManager.showPop(this, params, onHide);
+        };
+        PopView.hide = function () {
+            Tape.PopManager.hidePop(this);
+        };
         Object.defineProperty(PopView.prototype, "ui", {
             get: function () {
                 return this.getChildByName('_contentView');
@@ -718,7 +863,7 @@ var Tape;
             var to = toProps || { alpha: 1 };
             Object.assign(view, from);
             Laya.Tween.to(view, to, duration, Laya.Ease.quintOut, null, 0);
-            Laya.Tween.to(view, to, duration, Laya.Ease.quintOut, Laya.Handler.create(this, function () {
+            Laya.Tween.to(view, from, duration, Laya.Ease.quintOut, Laya.Handler.create(this, function () {
                 _toast_list_.splice(_toast_list_.indexOf(view), 1);
                 view.destroy();
             }), duration);
@@ -744,14 +889,17 @@ var Tape;
         var mainUILayer;
         var popUILayer;
         var topUILayer;
-        function init() {
+        function checkInit() {
             if (inited) {
                 return;
             }
             var uiManager = new Laya.Sprite();
             mainUILayer = new Laya.Sprite();
+            mainUILayer.name = 'tape_main_ui_layer';
             popUILayer = new Laya.Sprite();
+            mainUILayer.name = 'tape_pop_ui_layer';
             topUILayer = new Laya.Sprite();
+            mainUILayer.name = 'tape_top_ui_layer';
             uiManager.addChild(mainUILayer);
             uiManager.addChild(popUILayer);
             uiManager.addChild(topUILayer);
@@ -759,32 +907,32 @@ var Tape;
             inited = true;
         }
         function addMainUI(view) {
-            init();
+            checkInit();
             view && mainUILayer.addChild(view);
         }
         UIManager.addMainUI = addMainUI;
         function clearMainUI() {
-            init();
+            checkInit();
             mainUILayer.removeChildren();
         }
         UIManager.clearMainUI = clearMainUI;
         function addPopUI(view) {
-            init();
+            checkInit();
             view && popUILayer.addChild(view);
         }
         UIManager.addPopUI = addPopUI;
         function clearPopUI() {
-            init();
+            checkInit();
             popUILayer.removeChildren();
         }
         UIManager.clearPopUI = clearPopUI;
         function addTopUI(view) {
-            init();
+            checkInit();
             view && topUILayer.addChild(view);
         }
         UIManager.addTopUI = addTopUI;
         function clearTopUI() {
-            init();
+            checkInit();
             topUILayer.removeChildren();
         }
         UIManager.clearTopUI = clearTopUI;

@@ -2,6 +2,14 @@ module Tape {
 
     export class PopView extends Laya.Sprite {
 
+        static show(params, onHide?: Function) {
+            PopManager.showPop(this, params, onHide);
+        }
+
+        static hide() {
+            PopManager.hidePop(this);
+        }
+
         public pop: any;
         public params: any;
         public bgAlpha: number = 0.5;

@@ -98,26 +98,10 @@ declare module Tape {
         function popToTop(): void;
     }
 
-    /** UIManager */
-    module UIManager {
-        /** addMainUI */
-        function addMainUI(view): void;
-        /** addPopUI */
-        function addPopUI(view): void;
-        /** addTopUI */
-        function addTopUI(view): void;
-        /** clearMainUI */
-        function clearMainUI(): void;
-        /** clearPopUI */
-        function clearPopUI(): void;
-        /** clearTopUI */
-        function clearTopUI(): void;
-    }
-
     /** PopManager */
     module PopManager {
         /** showPop */
-        function showPop(pop, data?, onHide?: (pop) => void): void;
+        function showPop(pop, params?, onHide?: (pop) => void): void;
         /** hidePop */
         function hidePop(pop): void;
         /** refreshPos */
@@ -137,6 +121,11 @@ declare module Tape {
 
     /** PopView */
     class PopView extends Laya.Sprite {
+        /** show */
+        static show(params?: any, onHide?: (pop) => void): void;
+        /** hide */
+        static hide(): void;
+
         /** pop */
         protected pop: any;
         /** ui */
@@ -163,6 +152,12 @@ declare module Tape {
 
     /** Activity */
     class Activity extends Laya.Component {
+
+        /** open */
+        static open(params?: any, action?: Function): void;
+        /** finish */
+        static finish(): void;
+
         /** page type */
         protected page: any;
         /** ui */
@@ -241,6 +236,7 @@ declare module Tape {
 
     /** MiniAd */
     module MiniAd {
+        
         /**
          * showBannerAd
          * @param adUnitId 
@@ -262,6 +258,60 @@ declare module Tape {
          * @param onCancal 
          */
         function showRewardedVideoAd(adUnitId: string, onRewarded: Function, onCancal: Function, onError?: Function): void;
+
+    }
+
+    /** MiniButton */
+    module MiniButton {
+
+        /**
+         * showFeedbackButton
+         * @param image 
+         * @param x 
+         * @param y 
+         * @param w 
+         * @param h 
+         */
+        export function showFeedbackButton(image: string, x: number, y: number, w: number, h: number): any;
+        /**
+         * hideFeedbackButton
+         */
+        export function hideFeedbackButton(): any;
+        /**
+         * showGameClubButton
+         * @param icon 
+         * @param x 
+         * @param y 
+         * @param w 
+         * @param h 
+         */
+        export function showGameClubButton(icon: string, x: number, y: number, w: number, h: number): any;
+        /**
+         * hideGameClubButton
+         */
+        export function hideGameClubButton(): any;
+        /**
+         * checkGetUserInfo
+         * @param onSuccess 
+         * @param onFail 
+         */
+        export function checkGetUserInfo(onSuccess: Function, onFail?: Function): void;
+        /**
+         * showGetUserInfoButton
+         * @param image 
+         * @param x 
+         * @param y 
+         * @param w 
+         * @param h 
+         * @param onSuccess 
+         * @param onFail 
+         */
+        export function showGetUserInfoButton(image: string, x: number, y: number, w: number, h: number, onSuccess: Function, onFail?: Function): any;
+        /**
+         * hideGetUserInfoButton
+         */
+        export function hideGetUserInfoButton(): any;
+
     }
 
     /** MiniRank */
@@ -276,11 +326,11 @@ declare module Tape {
         function createRankView(x?: number, y?: number, width?: number, height?: number): Laya.Sprite;
         /**
          * showRank
-         * @param uiView
+         * @param ui
          * @param options 
          * @param onlyRefreshData 
          */
-        function showRank(uiView: Object | Object[], options?: Object, onlyRefreshData?: boolean): void;
+        function showRank(ui: Object | Object[], options?: Object, onlyRefreshData?: boolean): void;
         /**
          * hideRank
          */
@@ -296,5 +346,4 @@ declare module Tape {
          */
         function setDebug(debug: boolean): void;
     }
-
 }

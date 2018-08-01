@@ -9,7 +9,7 @@ module Tape {
             let to = toProps || { alpha: 1 };
             (<any>Object).assign(view, from);
             Laya.Tween.to(view, to, duration, Laya.Ease.quintOut, null, 0);
-            Laya.Tween.to(view, to, duration, Laya.Ease.quintOut, Laya.Handler.create(this, () => {
+            Laya.Tween.to(view, from, duration, Laya.Ease.quintOut, Laya.Handler.create(this, () => {
                 _toast_list_.splice(_toast_list_.indexOf(view), 1);
                 view.destroy();
             }), duration);
@@ -23,6 +23,7 @@ module Tape {
                 view.destroy();
             });
         }
+
 
     }
 

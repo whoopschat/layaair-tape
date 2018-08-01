@@ -5,14 +5,15 @@ class GameMain {
         //调用DebugPanel调试面板
         Laya.Stat.show();
         Tape.Background.setBgColor('#3399ff');
-        Tape.Navigator.init({
-            mainPage: LoadingActivity,
-            commonRes: [
-            ]
-        });
-        Tape.NavigatorRouter.configRoutes({
-            'page/loading/:abc/:ccc/': MainActivity
-        });
+        LoadingActivity.open({});
+        // Tape.Navigator.init({
+        //     mainPage: LoadingActivity,
+        //     commonRes: [
+        //     ]
+        // });
+        // Tape.NavigatorRouter.configRoutes({
+        //     'page/loading/:abc/:ccc/': MainActivity
+        // });
     }
 }
 window.onerror = (error) => {
