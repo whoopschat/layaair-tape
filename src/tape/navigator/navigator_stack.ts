@@ -88,7 +88,7 @@ module Tape {
                 },
                 onLoaded: (loader) => {
                     __loading__ = false;
-                    UILayerManager.addMainUI(loader);
+                    UIManager.addMainUI(loader);
                     pushStack(loader);
                 },
                 onLoadProgress: (loader, progress) => {

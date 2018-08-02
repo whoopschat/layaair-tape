@@ -81,6 +81,7 @@ module Tape {
                 this.visible = true;
                 callback && callback();
             }
+            UIManager.refreshFocus();
         }
 
         public hide() {
@@ -93,6 +94,7 @@ module Tape {
             this.__is_show__ = false;
             this.__activity__._pause();
             this.visible = false;
+            this.focus(false);
         }
 
         public exit() {

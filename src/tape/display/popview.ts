@@ -2,8 +2,8 @@ module Tape {
 
     export class PopView extends Laya.Sprite {
 
-        static show(params = null) {
-            PopManager.showPop(this, params);
+        static show(params = null, onHide = null) {
+            PopManager.showPop(this, params, onHide);
         }
 
         static hide() {
@@ -62,7 +62,7 @@ module Tape {
             super();
             this.width = Laya.stage.width;
             this.height = Laya.stage.height;
-            setTimeout(this.initBackground, 0);
+            setTimeout(() => this.initBackground(), 0);
         }
 
     }

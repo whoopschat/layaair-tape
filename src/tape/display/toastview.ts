@@ -2,8 +2,8 @@ module Tape {
 
     export class ToastView extends Laya.Sprite {
 
-        static show(params?: any) {
-            ToastManager.showToast(this, params);
+        static show(params?: any, onHide?: Function) {
+            ToastManager.showToast(this, params, onHide);
         }
 
         public toast: any;

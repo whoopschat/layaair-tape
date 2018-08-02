@@ -1,6 +1,6 @@
 module Tape {
 
-    export module UILayerManager {
+    export module UIManager {
 
         let inited = false;
         let mainUILayer: Laya.Sprite;
@@ -25,7 +25,7 @@ module Tape {
             inited = true;
         }
 
-        function checkFocus() {
+        export function refreshFocus() {
             if (popUILayer.numChildren > 0) {
                 NavigatorStack.focus(false);
             } else {
@@ -36,37 +36,37 @@ module Tape {
         export function addMainUI(view) {
             checkInit();
             view && mainUILayer.addChild(view);
-            checkFocus();
+            refreshFocus();
         }
 
         export function clearMainUI() {
             checkInit();
             mainUILayer.removeChildren();
-            checkFocus();
+            refreshFocus();
         }
 
         export function addPopUI(view) {
             checkInit();
             view && popUILayer.addChild(view);
-            checkFocus();
+            refreshFocus();
         }
 
         export function clearPopUI() {
             checkInit();
             popUILayer.removeChildren();
-            checkFocus();
+            refreshFocus();
         }
 
         export function addTopUI(view) {
             checkInit();
             view && topUILayer.addChild(view);
-            checkFocus();
+            refreshFocus();
         }
 
         export function clearTopUI() {
             checkInit();
             topUILayer.removeChildren();
-            checkFocus();
+            refreshFocus();
         }
 
     }

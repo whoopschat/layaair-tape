@@ -27,4 +27,8 @@ class PageActivity extends Tape.Activity {
         });
     }
 
+    onFocus(focus) {
+        console.log(' --------onFocus---------- ', focus);
+    }
+
 }

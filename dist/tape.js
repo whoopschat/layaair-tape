@@ -710,29 +710,34 @@ var Tape;
     var PopManager;
     (function (PopManager) {
         var pops = {};
-        function showPop(pop, params) {
+        function showPop(pop, params, onHide) {
             if (params === void 0) { params = null; }
+            if (onHide === void 0) { onHide = null; }
             var view = pops[pop];
             if (view) {
                 view.pop = pop;
                 view.params = params || {};
+                view._on_hide = onHide;
             }
             else {
                 view = new pop();
                 view.pop = pop;
                 view.params = params || {};
+                view._on_hide = onHide;
                 pops[pop] = view;
             }
             view.onShow && view.onShow();
-            Tape.UILayerManager.addPopUI(view);
+            Tape.UIManager.addPopUI(view);
         }
         PopManager.showPop = showPop;
         function hidePop(pop) {
             var view = pops[pop];
             if (view) {
+                view._on_hide && view._on_hide(view.pop);
                 view.onHide && view.onHide();
                 view.removeSelf && view.removeSelf();
             }
+            Tape.UIManager.refreshFocus();
         }
         PopManager.hidePop = hidePop;
         function refreshPos() {
@@ -769,12 +774,13 @@ var Tape;
             _this.canceledOnTouchOutside = false;
             _this.width = Laya.stage.width;
             _this.height = Laya.stage.height;
-            setTimeout(_this.initBackground, 0);
+            setTimeout(function () { return _this.initBackground(); }, 0);
             return _this;
         }
-        PopView.show = function (params) {
+        PopView.show = function (params, onHide) {
             if (params === void 0) { params = null; }
-            Tape.PopManager.showPop(this, params);
+            if (onHide === void 0) { onHide = null; }
+            Tape.PopManager.showPop(this, params, onHide);
         };
         PopView.hide = function () {
             Tape.PopManager.hidePop(this);
@@ -828,9 +834,11 @@ var Tape;
     var ToastManager;
     (function (ToastManager) {
         var _toasts = [];
-        function showToast(toast, params) {
+        function showToast(toast, params, onHide) {
             if (params === void 0) { params = null; }
+            if (onHide === void 0) { onHide = null; }
             var toastView = new toast;
+            toastView._on_hide = onHide;
             toastView.toast = toast;
             toastView.params = params || {};
             var from = toastView.fromProps || { alpha: 0 };
@@ -840,21 +848,26 @@ var Tape;
             toastView.onShow && toastView.onShow();
             Laya.Tween.to(toastView, to, duration, Laya.Ease.quintOut, null, 0);
             Laya.Tween.to(toastView, from, duration, Laya.Ease.quintOut, Laya.Handler.create(this, function () {
-                _toasts.splice(_toasts.indexOf(toastView), 1);
-                toastView.destroy();
+                if (toastView) {
+                    _toasts.splice(_toasts.indexOf(toastView), 1);
+                    toastView._on_hide && toastView._on_hide(toastView.toast);
+                    toastView.onHide && toastView.onHide();
+                    toastView.destroy();
+                }
             }), duration);
             _toasts.push(toastView);
-            Tape.UILayerManager.addTopUI(toastView);
+            Tape.UIManager.addTopUI(toastView);
         }
         ToastManager.showToast = showToast;
-        function clear() {
+        function clearAll() {
             var list = _toasts.splice(0, _toasts.length);
             list.forEach(function (view) {
+                view._on_hide && view._on_hide(view.toast);
                 view.onHide && view.onHide();
                 view.destroy();
             });
         }
-        ToastManager.clear = clear;
+        ToastManager.clearAll = clearAll;
     })(ToastManager = Tape.ToastManager || (Tape.ToastManager = {}));
 })(Tape || (Tape = {}));
 
@@ -881,8 +894,8 @@ var Tape;
             _this.height = Laya.stage.height;
             return _this;
         }
-        ToastView.show = function (params) {
-            Tape.ToastManager.showToast(this, params);
+        ToastView.show = function (params, onHide) {
+            Tape.ToastManager.showToast(this, params, onHide);
         };
         Object.defineProperty(ToastView.prototype, "ui", {
             get: function () {
@@ -903,8 +916,8 @@ var Tape;
 
 var Tape;
 (function (Tape) {
-    var UILayerManager;
-    (function (UILayerManager) {
+    var UIManager;
+    (function (UIManager) {
         var inited = false;
         var mainUILayer;
         var popUILayer;
@@ -926,7 +939,7 @@ var Tape;
             Laya.stage.addChild(uiManager);
             inited = true;
         }
-        function checkFocus() {
+        function refreshFocus() {
             if (popUILayer.numChildren > 0) {
                 Tape.NavigatorStack.focus(false);
             }
@@ -934,43 +947,44 @@ var Tape;
                 Tape.NavigatorStack.focus(true);
             }
         }
+        UIManager.refreshFocus = refreshFocus;
         function addMainUI(view) {
             checkInit();
             view && mainUILayer.addChild(view);
-            checkFocus();
+            refreshFocus();
         }
-        UILayerManager.addMainUI = addMainUI;
+        UIManager.addMainUI = addMainUI;
         function clearMainUI() {
             checkInit();
             mainUILayer.removeChildren();
-            checkFocus();
+            refreshFocus();
         }
-        UILayerManager.clearMainUI = clearMainUI;
+        UIManager.clearMainUI = clearMainUI;
         function addPopUI(view) {
             checkInit();
             view && popUILayer.addChild(view);
-            checkFocus();
+            refreshFocus();
         }
-        UILayerManager.addPopUI = addPopUI;
+        UIManager.addPopUI = addPopUI;
         function clearPopUI() {
             checkInit();
             popUILayer.removeChildren();
-            checkFocus();
+            refreshFocus();
         }
-        UILayerManager.clearPopUI = clearPopUI;
+        UIManager.clearPopUI = clearPopUI;
         function addTopUI(view) {
             checkInit();
             view && topUILayer.addChild(view);
-            checkFocus();
+            refreshFocus();
         }
-        UILayerManager.addTopUI = addTopUI;
+        UIManager.addTopUI = addTopUI;
         function clearTopUI() {
             checkInit();
             topUILayer.removeChildren();
-            checkFocus();
+            refreshFocus();
         }
-        UILayerManager.clearTopUI = clearTopUI;
-    })(UILayerManager = Tape.UILayerManager || (Tape.UILayerManager = {}));
+        UIManager.clearTopUI = clearTopUI;
+    })(UIManager = Tape.UIManager || (Tape.UIManager = {}));
 })(Tape || (Tape = {}));
 
 var Tape;
@@ -1179,6 +1193,7 @@ var Tape;
                 this.visible = true;
                 callback && callback();
             }
+            Tape.UIManager.refreshFocus();
         };
         NavigatorLoader.prototype.hide = function () {
             if (!this.visible) {
@@ -1190,6 +1205,7 @@ var Tape;
             this.__is_show__ = false;
             this.__activity__._pause();
             this.visible = false;
+            this.focus(false);
         };
         NavigatorLoader.prototype.exit = function () {
             this.__activity__._destroy();
@@ -1295,7 +1311,7 @@ var Tape;
                 },
                 onLoaded: function (loader) {
                     __loading__ = false;
-                    Tape.UILayerManager.addMainUI(loader);
+                    Tape.UIManager.addMainUI(loader);
                     pushStack(loader);
                 },
                 onLoadProgress: function (loader, progress) {

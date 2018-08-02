@@ -101,7 +101,7 @@ declare module Tape {
     /** PopManager */
     module PopManager {
         /** showPop */
-        function showPop(pop, params?): void;
+        function showPop(pop, params?, onHide?: (pop) => void): void;
         /** hidePop */
         function hidePop(pop): void;
         /** refreshPos */
@@ -112,16 +112,16 @@ declare module Tape {
     module ToastManager {
 
         /** showToast */
-        function showToast(toast, params?): void;
+        function showToast(toast, params?, onHide?: (pop) => void): void;
         /** clear */
-        function clear(): void;
+        function clearAll(): void;
 
     }
 
     /** PopView */
     class PopView extends Laya.Sprite {
         /** show */
-        static show(params?: any): void;
+        static show(params?: any, onHide?: (pop) => void): void;
         /** hide */
         static hide(): void;
 
@@ -153,7 +153,7 @@ declare module Tape {
     class ToastView extends Laya.Sprite {
 
         /** show */
-        static show(params?: any): void;
+        static show(params?: any, onHide?: (toast) => void): void;
 
         /** toast */
         protected toast: any;
