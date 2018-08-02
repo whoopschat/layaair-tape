@@ -6,10 +6,10 @@ module Tape {
         let bgColor: string = '#000000';
 
         export function init() {
-            bgSprite = Laya.stage.getChildByName('BackgroundSprite') as Laya.Sprite;
+            bgSprite = Laya.stage.getChildByName('tape_background_layer') as Laya.Sprite;
             if (!bgSprite) {
                 bgSprite = new Laya.Sprite;
-                bgSprite.name = 'BackgroundSprite';
+                bgSprite.name = 'tape_background_layer';
                 Laya.stage.addChild(bgSprite);
             }
             bgSprite.x = -Screen.getOffestX();

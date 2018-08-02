@@ -4,9 +4,12 @@ module Tape {
 
         public __options__: LoaderOptions = null;
         public __activity__: Activity = null;
+        public __is_show__: boolean = false;
+        public __is_focus__: boolean = false;
 
         constructor(options: LoaderOptions) {
             super();
+            this.visible = false;
             this.__options__ = options;
             let res = this.__options__.page.res;
             if (res && res.length > 0) {
@@ -55,6 +58,13 @@ module Tape {
         }
 
         public show(anim: boolean, callback: Function) {
+            if (this.visible) {
+                return;
+            }
+            if (this.__is_show__) {
+                return;
+            }
+            this.__is_show__ = true;
             var ease = this.__activity__.inEase || Laya.Ease.linearIn;
             var duration = this.__activity__.inEaseDuration || 0;
             var fromProps = this.__activity__.inEaseFromProps || {};
@@ -77,6 +87,10 @@ module Tape {
             if (!this.visible) {
                 return;
             }
+            if (!this.__is_show__) {
+                return;
+            }
+            this.__is_show__ = false;
             this.__activity__._pause();
             this.visible = false;
         }
@@ -84,6 +98,14 @@ module Tape {
         public exit() {
             this.__activity__._destroy();
             this.destroy();
+        }
+
+        public focus(focus) {
+            if (this.__is_focus__ === focus) {
+                return;
+            }
+            this.__is_focus__ = focus;
+            this.__activity__._focus(focus);
         }
 
     }

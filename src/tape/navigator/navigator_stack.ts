@@ -69,10 +69,10 @@ module Tape {
             showStack(0);
         }
 
-        export function link(path) {
-            let {page, params} = NavigatorRouter.getRoute(path);
-            if (page) {
-                navigate(page, params);
+        export function focus(focus) {
+            let stack = getStack();
+            if (stack) {
+                stack.focus(focus);
             }
         }
 
@@ -88,7 +88,7 @@ module Tape {
                 },
                 onLoaded: (loader) => {
                     __loading__ = false;
-                    UIManager.addMainUI(loader);
+                    UILayerManager.addMainUI(loader);
                     pushStack(loader);
                 },
                 onLoadProgress: (loader, progress) => {

@@ -77,15 +77,15 @@ declare module Tape {
     }
 
     /** NavigatorRouter */
-    module NavigatorRouter {
-        /** configRoutes */
-        function configRoutes(routes: Object): void;
+    module NavigatorLink {
+        /** config */
+        function config(routes: Object): void;
+        /** link */
+        function link(path: string): void;
     }
 
     /** NavigatorStack */
     module NavigatorStack {
-        /** link */
-        function link(path: string): void;
         /** redirectTo */
         function redirectTo(page, params?: any): void;
         /** navigate */
@@ -101,7 +101,7 @@ declare module Tape {
     /** PopManager */
     module PopManager {
         /** showPop */
-        function showPop(pop, params?, onHide?: (pop) => void): void;
+        function showPop(pop, params?): void;
         /** hidePop */
         function hidePop(pop): void;
         /** refreshPos */
@@ -112,17 +112,16 @@ declare module Tape {
     module ToastManager {
 
         /** showToast */
-        function showToast(view: Laya.Sprite, duration?: number, fromProps?: Object, toProps?: Object): void;
-
-        /** hideAll */
-        function hideAll(): void;
+        function showToast(toast, params?): void;
+        /** clear */
+        function clear(): void;
 
     }
 
     /** PopView */
     class PopView extends Laya.Sprite {
         /** show */
-        static show(params?: any, onHide?: (pop) => void): void;
+        static show(params?: any): void;
         /** hide */
         static hide(): void;
 
@@ -150,6 +149,33 @@ declare module Tape {
         constructor();
     }
 
+    /** ToastView */
+    class ToastView extends Laya.Sprite {
+
+        /** show */
+        static show(params?: any): void;
+
+        /** toast */
+        protected toast: any;
+        /** params */
+        protected params: any;
+        /** duration */
+        protected duration: number;
+        /** fromProps */
+        protected fromProps: Object;
+        /** toProps */
+        protected toProps: Object;
+        /** ui */
+        protected ui: any;
+        /** toast on show */
+        protected onShow?(): void;
+        /** toast on hide */
+        protected onHide?(): void;
+        /** constructor */
+        constructor();
+
+    }
+
     /** Activity */
     class Activity extends Laya.Component {
 
@@ -174,6 +200,8 @@ declare module Tape {
         protected inEaseFromProps: Object;
         /** inEaseToProps */
         protected inEaseToProps: Object;
+        /** activity on focus change */
+        protected onFocus?(focus: boolean): void;
         /** activity on create */
         protected onCreate?(): void;
         /** activity on resume */
@@ -183,7 +211,7 @@ declare module Tape {
         /** activity on destroy */
         protected onDestroy?(): void;
         /** activity on next page load progress */
-        protected onNextProgress?(progress): void;
+        protected onNextProgress?(progress: number): void;
         /** constructor */
         constructor(options: ActivityOptions);
         /** link */
@@ -236,7 +264,7 @@ declare module Tape {
 
     /** MiniAd */
     module MiniAd {
-        
+
         /**
          * showBannerAd
          * @param adUnitId 
@@ -272,11 +300,11 @@ declare module Tape {
          * @param w 
          * @param h 
          */
-        export function showFeedbackButton(image: string, x: number, y: number, w: number, h: number): void;
+        function showFeedbackButton(image: string, x: number, y: number, w: number, h: number): void;
         /**
          * hideFeedbackButton
          */
-        export function hideFeedbackButton(): void;
+        function hideFeedbackButton(): void;
         /**
          * showGameClubButton
          * @param icon 
@@ -285,17 +313,17 @@ declare module Tape {
          * @param w 
          * @param h 
          */
-        export function showGameClubButton(icon: string, x: number, y: number, w: number, h: number): void;
+        function showGameClubButton(icon: string, x: number, y: number, w: number, h: number): void;
         /**
          * hideGameClubButton
          */
-        export function hideGameClubButton(): void;
+        function hideGameClubButton(): void;
         /**
          * checkGetUserInfo
          * @param onSuccess 
          * @param onFail 
          */
-        export function checkGetUserInfo(onSuccess: Function, onFail?: Function): void;
+        function checkGetUserInfo(onSuccess: Function, onFail?: Function): void;
         /**
          * showGetUserInfoButton
          * @param image 
@@ -306,16 +334,17 @@ declare module Tape {
          * @param onSuccess 
          * @param onFail 
          */
-        export function showGetUserInfoButton(image: string, x: number, y: number, w: number, h: number, onSuccess: Function, onFail?: Function): void;
+        function showGetUserInfoButton(image: string, x: number, y: number, w: number, h: number, onSuccess: Function, onFail?: Function): void;
         /**
          * hideGetUserInfoButton
          */
-        export function hideGetUserInfoButton(): void;
+        function hideGetUserInfoButton(): void;
 
     }
 
     /** MiniRank */
     module MiniRank {
+
         /**
          * createRankView
          * @param x 
@@ -345,5 +374,6 @@ declare module Tape {
          * @param debug 
          */
         function setDebug(debug: boolean): void;
+
     }
 }

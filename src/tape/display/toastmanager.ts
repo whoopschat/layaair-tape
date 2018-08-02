@@ -2,28 +2,33 @@ module Tape {
 
     export module ToastManager {
 
-        let _toast_list_ = [];
+        let _toasts = [];
 
-        export function showToast(view, duration: number = 500, fromProps = null, toProps = null) {
-            let from = fromProps || { alpha: 0 };
-            let to = toProps || { alpha: 1 };
-            (<any>Object).assign(view, from);
-            Laya.Tween.to(view, to, duration, Laya.Ease.quintOut, null, 0);
-            Laya.Tween.to(view, from, duration, Laya.Ease.quintOut, Laya.Handler.create(this, () => {
-                _toast_list_.splice(_toast_list_.indexOf(view), 1);
-                view.destroy();
+        export function showToast(toast, params = null) {
+            var toastView = new toast;
+            toastView.toast = toast;
+            toastView.params = params || {};
+            let from = toastView.fromProps || { alpha: 0 };
+            let to = toastView.toProps || { alpha: 1 };
+            let duration = toastView.duration || 800;
+            (<any>Object).assign(toastView, from);
+            toastView.onShow && toastView.onShow();
+            Laya.Tween.to(toastView, to, duration, Laya.Ease.quintOut, null, 0);
+            Laya.Tween.to(toastView, from, duration, Laya.Ease.quintOut, Laya.Handler.create(this, () => {
+                _toasts.splice(_toasts.indexOf(toastView), 1);
+                toastView.destroy();
             }), duration);
-            UIManager.addTopUI(view);
-            _toast_list_.push(view);
+            _toasts.push(toastView);
+            UILayerManager.addTopUI(toastView);
         }
 
-        export function hideAll() {
-            let list = _toast_list_.splice(0, _toast_list_.length);
+        export function clear() {
+            let list = _toasts.splice(0, _toasts.length);
             list.forEach(view => {
+                view.onHide && view.onHide();
                 view.destroy();
             });
         }
-
 
     }
 

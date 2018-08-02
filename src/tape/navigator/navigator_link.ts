@@ -1,6 +1,6 @@
 module Tape {
 
-    export module NavigatorRouter {
+    export module NavigatorLink {
 
         let __routes__ = {
         };
@@ -36,11 +36,7 @@ module Tape {
             }
         }
 
-        export function configRoutes(routes) {
-            __routes__ = routes;
-        }
-
-        export function getRoute(path: string) {
+        function getRoute(path: string) {
             if (!path) {
                 return {
                     page: null,
@@ -61,6 +57,17 @@ module Tape {
             return {
                 page,
                 params
+            }
+        }
+
+        export function config(routes) {
+            __routes__ = routes;
+        }
+
+        export function link(path) {
+            let {page, params} = getRoute(path);
+            if (page) {
+                NavigatorStack.navigate(page, params);
             }
         }
 

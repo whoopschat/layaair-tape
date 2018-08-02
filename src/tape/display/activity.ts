@@ -24,6 +24,7 @@ module Tape {
         public inEaseFromProps: Object = null;
         public inEaseToProps: Object = null;
 
+        public onFocus?(focus): void;
         public onCreate?(): void;
         public onResume?(): void;
         public onPause?(): void;
@@ -48,6 +49,9 @@ module Tape {
             return this.getChildByName('_contentView');
         }
 
+        public _focus(focus) {
+            this.onFocus && this.onFocus(focus);
+        }
         public _create() {
             this.onCreate && this.onCreate();
         }
@@ -75,7 +79,7 @@ module Tape {
         }
 
         protected link(path) {
-            NavigatorStack.link(path);
+            NavigatorLink.link(path);
         }
 
         protected navigate(page, params: any = {}, action: Function = null) {

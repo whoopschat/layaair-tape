@@ -608,6 +608,9 @@ var Tape;
             enumerable: true,
             configurable: true
         });
+        Activity.prototype._focus = function (focus) {
+            this.onFocus && this.onFocus(focus);
+        };
         Activity.prototype._create = function () {
             this.onCreate && this.onCreate();
         };
@@ -634,7 +637,7 @@ var Tape;
             });
         };
         Activity.prototype.link = function (path) {
-            Tape.NavigatorStack.link(path);
+            Tape.NavigatorLink.link(path);
         };
         Activity.prototype.navigate = function (page, params, action) {
             if (params === void 0) { params = {}; }
@@ -668,10 +671,10 @@ var Tape;
         var bgSprite = null;
         var bgColor = '#000000';
         function init() {
-            bgSprite = Laya.stage.getChildByName('BackgroundSprite');
+            bgSprite = Laya.stage.getChildByName('tape_background_layer');
             if (!bgSprite) {
                 bgSprite = new Laya.Sprite;
-                bgSprite.name = 'BackgroundSprite';
+                bgSprite.name = 'tape_background_layer';
                 Laya.stage.addChild(bgSprite);
             }
             bgSprite.x = -Tape.Screen.getOffestX();
@@ -707,31 +710,8 @@ var Tape;
     var PopManager;
     (function (PopManager) {
         var pops = {};
-        var onhides = {};
-        function registerOnHide(pop, onHide) {
-            if (!onHide || typeof onHide !== 'function') {
-                return;
-            }
-            var arr = onhides[pop];
-            if (arr) {
-                arr.push(onHide);
-            }
-            else {
-                onhides[pop] = [onHide];
-            }
-        }
-        function callOnHide(pop) {
-            var arr = onhides[pop];
-            if (arr && arr.length > 0) {
-                arr.forEach(function (element) {
-                    element && element(pop);
-                });
-                arr.splice(0, arr.length);
-            }
-        }
-        function showPop(pop, params, onHide) {
+        function showPop(pop, params) {
             if (params === void 0) { params = null; }
-            if (onHide === void 0) { onHide = null; }
             var view = pops[pop];
             if (view) {
                 view.pop = pop;
@@ -744,8 +724,7 @@ var Tape;
                 pops[pop] = view;
             }
             view.onShow && view.onShow();
-            Tape.UIManager.addPopUI(view);
-            registerOnHide(pop, onHide);
+            Tape.UILayerManager.addPopUI(view);
         }
         PopManager.showPop = showPop;
         function hidePop(pop) {
@@ -753,9 +732,7 @@ var Tape;
             if (view) {
                 view.onHide && view.onHide();
                 view.removeSelf && view.removeSelf();
-                delete pops[pop];
             }
-            callOnHide(pop);
         }
         PopManager.hidePop = hidePop;
         function refreshPos() {
@@ -792,11 +769,12 @@ var Tape;
             _this.canceledOnTouchOutside = false;
             _this.width = Laya.stage.width;
             _this.height = Laya.stage.height;
-            _this.initBg();
+            setTimeout(_this.initBackground, 0);
             return _this;
         }
-        PopView.show = function (params, onHide) {
-            Tape.PopManager.showPop(this, params, onHide);
+        PopView.show = function (params) {
+            if (params === void 0) { params = null; }
+            Tape.PopManager.showPop(this, params);
         };
         PopView.hide = function () {
             Tape.PopManager.hidePop(this);
@@ -813,31 +791,29 @@ var Tape;
             enumerable: true,
             configurable: true
         });
-        PopView.prototype.initBg = function () {
+        PopView.prototype.initBackground = function () {
             var _this = this;
-            setTimeout(function () {
-                if (_this.isTranslucent) {
-                    return;
+            if (this.isTranslucent) {
+                return;
+            }
+            var bgSprite = new Laya.Sprite();
+            bgSprite.alpha = this.bgAlpha;
+            bgSprite.graphics.clear();
+            bgSprite.graphics.drawRect(0, 0, Laya.stage.width, Laya.stage.height, this.bgColor);
+            bgSprite.x = -Tape.Screen.getOffestX();
+            bgSprite.y = -Tape.Screen.getOffestY();
+            bgSprite.width = Laya.stage.width;
+            bgSprite.height = Laya.stage.height;
+            bgSprite.on(Laya.Event.CLICK, this, function (e) {
+                if (_this.canceledOnTouchOutside) {
+                    _this.finish();
                 }
-                var bgSprite = new Laya.Sprite();
-                bgSprite.alpha = _this.bgAlpha;
-                bgSprite.graphics.clear();
-                bgSprite.graphics.drawRect(0, 0, Laya.stage.width, Laya.stage.height, _this.bgColor);
-                bgSprite.x = -Tape.Screen.getOffestX();
-                bgSprite.y = -Tape.Screen.getOffestY();
-                bgSprite.width = Laya.stage.width;
-                bgSprite.height = Laya.stage.height;
-                bgSprite.on(Laya.Event.CLICK, _this, function (e) {
-                    if (_this.canceledOnTouchOutside) {
-                        _this.finish();
-                    }
-                    e.stopPropagation();
-                });
-                if (_this.canceledOnTouchOutside && _this.ui) {
-                    _this.ui.mouseThrough = true;
-                }
-                _this.addChildAt(bgSprite, 0);
-            }, 0);
+                e.stopPropagation();
+            });
+            if (this.canceledOnTouchOutside && this.ui) {
+                this.ui.mouseThrough = true;
+            }
+            this.addChildAt(bgSprite, 0);
         };
         PopView.prototype.finish = function () {
             Tape.PopManager.hidePop(this.pop);
@@ -851,37 +827,84 @@ var Tape;
 (function (Tape) {
     var ToastManager;
     (function (ToastManager) {
-        var _toast_list_ = [];
-        function showToast(view, duration, fromProps, toProps) {
-            if (duration === void 0) { duration = 500; }
-            if (fromProps === void 0) { fromProps = null; }
-            if (toProps === void 0) { toProps = null; }
-            var from = fromProps || { alpha: 0 };
-            var to = toProps || { alpha: 1 };
-            Object.assign(view, from);
-            Laya.Tween.to(view, to, duration, Laya.Ease.quintOut, null, 0);
-            Laya.Tween.to(view, from, duration, Laya.Ease.quintOut, Laya.Handler.create(this, function () {
-                _toast_list_.splice(_toast_list_.indexOf(view), 1);
-                view.destroy();
+        var _toasts = [];
+        function showToast(toast, params) {
+            if (params === void 0) { params = null; }
+            var toastView = new toast;
+            toastView.toast = toast;
+            toastView.params = params || {};
+            var from = toastView.fromProps || { alpha: 0 };
+            var to = toastView.toProps || { alpha: 1 };
+            var duration = toastView.duration || 800;
+            Object.assign(toastView, from);
+            toastView.onShow && toastView.onShow();
+            Laya.Tween.to(toastView, to, duration, Laya.Ease.quintOut, null, 0);
+            Laya.Tween.to(toastView, from, duration, Laya.Ease.quintOut, Laya.Handler.create(this, function () {
+                _toasts.splice(_toasts.indexOf(toastView), 1);
+                toastView.destroy();
             }), duration);
-            Tape.UIManager.addTopUI(view);
-            _toast_list_.push(view);
+            _toasts.push(toastView);
+            Tape.UILayerManager.addTopUI(toastView);
         }
         ToastManager.showToast = showToast;
-        function hideAll() {
-            var list = _toast_list_.splice(0, _toast_list_.length);
+        function clear() {
+            var list = _toasts.splice(0, _toasts.length);
             list.forEach(function (view) {
+                view.onHide && view.onHide();
                 view.destroy();
             });
         }
-        ToastManager.hideAll = hideAll;
+        ToastManager.clear = clear;
     })(ToastManager = Tape.ToastManager || (Tape.ToastManager = {}));
+})(Tape || (Tape = {}));
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var Tape;
+(function (Tape) {
+    var ToastView = /** @class */ (function (_super) {
+        __extends(ToastView, _super);
+        function ToastView() {
+            var _this = _super.call(this) || this;
+            _this.duration = 800;
+            _this.fromProps = null;
+            _this.toProps = null;
+            _this.width = Laya.stage.width;
+            _this.height = Laya.stage.height;
+            return _this;
+        }
+        ToastView.show = function (params) {
+            Tape.ToastManager.showToast(this, params);
+        };
+        Object.defineProperty(ToastView.prototype, "ui", {
+            get: function () {
+                return this.getChildByName('_contentView');
+            },
+            set: function (view) {
+                this.removeChildren();
+                view.name = '_contentView';
+                this.addChild(view);
+            },
+            enumerable: true,
+            configurable: true
+        });
+        return ToastView;
+    }(Laya.Sprite));
+    Tape.ToastView = ToastView;
 })(Tape || (Tape = {}));
 
 var Tape;
 (function (Tape) {
-    var UIManager;
-    (function (UIManager) {
+    var UILayerManager;
+    (function (UILayerManager) {
         var inited = false;
         var mainUILayer;
         var popUILayer;
@@ -903,37 +926,51 @@ var Tape;
             Laya.stage.addChild(uiManager);
             inited = true;
         }
+        function checkFocus() {
+            if (popUILayer.numChildren > 0) {
+                Tape.NavigatorStack.focus(false);
+            }
+            else {
+                Tape.NavigatorStack.focus(true);
+            }
+        }
         function addMainUI(view) {
             checkInit();
             view && mainUILayer.addChild(view);
+            checkFocus();
         }
-        UIManager.addMainUI = addMainUI;
+        UILayerManager.addMainUI = addMainUI;
         function clearMainUI() {
             checkInit();
             mainUILayer.removeChildren();
+            checkFocus();
         }
-        UIManager.clearMainUI = clearMainUI;
+        UILayerManager.clearMainUI = clearMainUI;
         function addPopUI(view) {
             checkInit();
             view && popUILayer.addChild(view);
+            checkFocus();
         }
-        UIManager.addPopUI = addPopUI;
+        UILayerManager.addPopUI = addPopUI;
         function clearPopUI() {
             checkInit();
             popUILayer.removeChildren();
+            checkFocus();
         }
-        UIManager.clearPopUI = clearPopUI;
+        UILayerManager.clearPopUI = clearPopUI;
         function addTopUI(view) {
             checkInit();
             view && topUILayer.addChild(view);
+            checkFocus();
         }
-        UIManager.addTopUI = addTopUI;
+        UILayerManager.addTopUI = addTopUI;
         function clearTopUI() {
             checkInit();
             topUILayer.removeChildren();
+            checkFocus();
         }
-        UIManager.clearTopUI = clearTopUI;
-    })(UIManager = Tape.UIManager || (Tape.UIManager = {}));
+        UILayerManager.clearTopUI = clearTopUI;
+    })(UILayerManager = Tape.UILayerManager || (Tape.UILayerManager = {}));
 })(Tape || (Tape = {}));
 
 var Tape;
@@ -980,6 +1017,79 @@ var Tape;
     })(Navigator = Tape.Navigator || (Tape.Navigator = {}));
 })(Tape || (Tape = {}));
 
+var Tape;
+(function (Tape) {
+    var NavigatorLink;
+    (function (NavigatorLink) {
+        var __routes__ = {};
+        function findRoute(path) {
+            var keys = Object.keys(__routes__);
+            for (var index = 0; index < keys.length; index++) {
+                var p = keys[index];
+                var ps = p.split('\/');
+                var paths = path.split('\/');
+                var flag = true;
+                var len = Math.max(ps.length, paths.length);
+                var params = {};
+                for (var i = 0; i < len; i++) {
+                    var l = ps.length > i ? ps[i] : '';
+                    var t = paths.length > i ? paths[i] : '';
+                    if (l.indexOf(':') === 0) {
+                        params[l.substr(1)] = t;
+                    }
+                    else {
+                        flag = flag && l === t;
+                    }
+                }
+                if (flag) {
+                    return {
+                        page: __routes__[p],
+                        params: params
+                    };
+                }
+            }
+            return {
+                page: null,
+                params: {}
+            };
+        }
+        function getRoute(path) {
+            if (!path) {
+                return {
+                    page: null,
+                    params: {}
+                };
+            }
+            var qs = path.split('?');
+            var _a = findRoute(qs[0]), page = _a.page, params = _a.params;
+            if (qs.length > 1) {
+                var strs = qs[1].split("&");
+                for (var i = 0; i < strs.length; i++) {
+                    var ps = strs[i].split("=")[0];
+                    if (ps.length > 1) {
+                        params[ps[0]] = ps[1];
+                    }
+                }
+            }
+            return {
+                page: page,
+                params: params
+            };
+        }
+        function config(routes) {
+            __routes__ = routes;
+        }
+        NavigatorLink.config = config;
+        function link(path) {
+            var _a = getRoute(path), page = _a.page, params = _a.params;
+            if (page) {
+                Tape.NavigatorStack.navigate(page, params);
+            }
+        }
+        NavigatorLink.link = link;
+    })(NavigatorLink = Tape.NavigatorLink || (Tape.NavigatorLink = {}));
+})(Tape || (Tape = {}));
+
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -998,6 +1108,9 @@ var Tape;
             var _this = _super.call(this) || this;
             _this.__options__ = null;
             _this.__activity__ = null;
+            _this.__is_show__ = false;
+            _this.__is_focus__ = false;
+            _this.visible = false;
             _this.__options__ = options;
             var res = _this.__options__.page.res;
             if (res && res.length > 0) {
@@ -1042,6 +1155,13 @@ var Tape;
             return false;
         };
         NavigatorLoader.prototype.show = function (anim, callback) {
+            if (this.visible) {
+                return;
+            }
+            if (this.__is_show__) {
+                return;
+            }
+            this.__is_show__ = true;
             var ease = this.__activity__.inEase || Laya.Ease.linearIn;
             var duration = this.__activity__.inEaseDuration || 0;
             var fromProps = this.__activity__.inEaseFromProps || {};
@@ -1064,6 +1184,10 @@ var Tape;
             if (!this.visible) {
                 return;
             }
+            if (!this.__is_show__) {
+                return;
+            }
+            this.__is_show__ = false;
             this.__activity__._pause();
             this.visible = false;
         };
@@ -1071,78 +1195,18 @@ var Tape;
             this.__activity__._destroy();
             this.destroy();
         };
+        NavigatorLoader.prototype.focus = function (focus) {
+            if (this.__is_focus__ === focus) {
+                return;
+            }
+            this.__is_focus__ = focus;
+            this.__activity__._focus(focus);
+        };
         return NavigatorLoader;
     }(Laya.Component));
     Tape.NavigatorLoader = NavigatorLoader;
 })(Tape || (Tape = {}));
 
-
-var Tape;
-(function (Tape) {
-    var NavigatorRouter;
-    (function (NavigatorRouter) {
-        var __routes__ = {};
-        function findRoute(path) {
-            var keys = Object.keys(__routes__);
-            for (var index = 0; index < keys.length; index++) {
-                var p = keys[index];
-                var ps = p.split('\/');
-                var paths = path.split('\/');
-                var flag = true;
-                var len = Math.max(ps.length, paths.length);
-                var params = {};
-                for (var i = 0; i < len; i++) {
-                    var l = ps.length > i ? ps[i] : '';
-                    var t = paths.length > i ? paths[i] : '';
-                    if (l.indexOf(':') === 0) {
-                        params[l.substr(1)] = t;
-                    }
-                    else {
-                        flag = flag && l === t;
-                    }
-                }
-                if (flag) {
-                    return {
-                        page: __routes__[p],
-                        params: params
-                    };
-                }
-            }
-            return {
-                page: null,
-                params: {}
-            };
-        }
-        function configRoutes(routes) {
-            __routes__ = routes;
-        }
-        NavigatorRouter.configRoutes = configRoutes;
-        function getRoute(path) {
-            if (!path) {
-                return {
-                    page: null,
-                    params: {}
-                };
-            }
-            var qs = path.split('?');
-            var _a = findRoute(qs[0]), page = _a.page, params = _a.params;
-            if (qs.length > 1) {
-                var strs = qs[1].split("&");
-                for (var i = 0; i < strs.length; i++) {
-                    var ps = strs[i].split("=")[0];
-                    if (ps.length > 1) {
-                        params[ps[0]] = ps[1];
-                    }
-                }
-            }
-            return {
-                page: page,
-                params: params
-            };
-        }
-        NavigatorRouter.getRoute = getRoute;
-    })(NavigatorRouter = Tape.NavigatorRouter || (Tape.NavigatorRouter = {}));
-})(Tape || (Tape = {}));
 
 var Tape;
 (function (Tape) {
@@ -1210,13 +1274,13 @@ var Tape;
             });
             showStack(0);
         }
-        function link(path) {
-            var _a = Tape.NavigatorRouter.getRoute(path), page = _a.page, params = _a.params;
-            if (page) {
-                navigate(page, params);
+        function focus(focus) {
+            var stack = getStack();
+            if (stack) {
+                stack.focus(focus);
             }
         }
-        NavigatorStack.link = link;
+        NavigatorStack.focus = focus;
         /** navigate */
         function navigate(page, params, action) {
             if (params === void 0) { params = {}; }
@@ -1231,7 +1295,7 @@ var Tape;
                 },
                 onLoaded: function (loader) {
                     __loading__ = false;
-                    Tape.UIManager.addMainUI(loader);
+                    Tape.UILayerManager.addMainUI(loader);
                     pushStack(loader);
                 },
                 onLoadProgress: function (loader, progress) {

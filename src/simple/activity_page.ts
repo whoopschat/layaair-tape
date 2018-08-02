@@ -10,13 +10,14 @@ class PageActivity extends Tape.Activity {
             this.finish(PageActivity);
         })
         this.ui.pop.on(Laya.Event.CLICK, this, () => {
-            Tape.PopManager.showPop(TestPop, {}, () => {
-                console.log(' ------------------ ');
+            Tape.PopManager.showPop(TestPop, {
+                onHide: () => {
+                    console.log(' ------------------ ');
+                }
             });
         });
         this.ui.toast.on(Laya.Event.CLICK, this, () => {
-            Tape.ToastManager.showToast(new ui.test_toastUI);
-            // Tape.ToastManager.hideAll();
+            testToast.show();
         });
         this.ui.popToTop.on(Laya.Event.CLICK, this, () => {
             this.popToTop();
