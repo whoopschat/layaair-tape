@@ -118,8 +118,28 @@ module Tape {
                 (<any>Object).assign(__bannerStack__, {
                     [adUnitId]: bannerAd
                 });
+                bannerAd.style.left = left;
+                bannerAd.style.top = top;
+                bannerAd.style.width = width;
+                bannerAd.style.height = height;
                 bannerAd.onResize(res => {
-                    bannerAd.style.top = bannerAd.style.top + height - res.height
+                    let oSc = width / height;
+                    let nSc = res.width / res.height;
+                    let newL = left;
+                    let newT = top;
+                    let newW = width;
+                    let newH = height;
+                    if (oSc < nSc) {
+                        newH = width / nSc;
+                        newT = (height - newH) / 2;
+                    } else {
+                        newW = height * nSc;
+                        newL = (width - newW) / 2;
+                    }
+                    bannerAd.style.left = newL;
+                    bannerAd.style.top = newT;
+                    bannerAd.style.width = newW;
+                    bannerAd.style.height = newH;
                 });
                 bannerAd.onError(err => {
                     onError && onError(err);
