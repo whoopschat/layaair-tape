@@ -1,9 +1,12 @@
 module Tape {
-    
-   export module ArrayUtil {
+
+    export module ArrayUtil {
 
         export function random(source: any[]): Object {
-            return source[Math.floor(Math.random() * source.length)];
+            if (source.length > 0) {
+                return source[Math.floor(Math.random() * source.length)];
+            }
+            return undefined;
         }
 
         export function randomArr(source: any[], length: number = -1): Array<any> {

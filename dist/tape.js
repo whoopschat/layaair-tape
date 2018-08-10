@@ -31,7 +31,10 @@ var Tape;
     var ArrayUtil;
     (function (ArrayUtil) {
         function random(source) {
-            return source[Math.floor(Math.random() * source.length)];
+            if (source.length > 0) {
+                return source[Math.floor(Math.random() * source.length)];
+            }
+            return undefined;
         }
         ArrayUtil.random = random;
         function randomArr(source, length) {
@@ -113,7 +116,7 @@ var Tape;
                 options[_i - 2] = arguments[_i];
             }
             __design_width__ = width;
-            __design_width__ = height;
+            __design_height__ = height;
             var screenRatio = Tape.Platform.getScreenHeightWidthRatio();
             var initRatio = height / width;
             var initWidth = width;
@@ -309,8 +312,29 @@ var Tape;
                 Object.assign(__bannerStack__, (_a = {},
                     _a[adUnitId] = bannerAd,
                     _a));
+                bannerAd.style.left = left;
+                bannerAd.style.top = top;
+                bannerAd.style.width = width;
+                bannerAd.style.height = height;
                 bannerAd.onResize(function (res) {
-                    bannerAd.style.top = bannerAd.style.top + height - res.height;
+                    var oSc = width / height;
+                    var nSc = res.width / res.height;
+                    var newL = left;
+                    var newT = top;
+                    var newW = width;
+                    var newH = height;
+                    if (oSc < nSc) {
+                        newH = width / nSc;
+                        newT = (height - newH) / 2;
+                    }
+                    else {
+                        newW = height * nSc;
+                        newL = (width - newW) / 2;
+                    }
+                    bannerAd.style.left = newL;
+                    bannerAd.style.top = newT;
+                    bannerAd.style.width = newW;
+                    bannerAd.style.height = newH;
                 });
                 bannerAd.onError(function (err) {
                     onError && onError(err);
@@ -333,6 +357,12 @@ var Tape;
             }
         }
         MiniAd.hideBannerAd = hideBannerAd;
+        function hideAll() {
+            Object.keys(__bannerStack__).forEach(function (adUnitId) {
+                hideBannerAd(adUnitId);
+            });
+        }
+        MiniAd.hideAll = hideAll;
         function showRewardedVideoAd(adUnitId, onRewarded, onCancal, onError) {
             if (onError === void 0) { onError = null; }
             __rewardedVideoAd__ = __exec_wx__('createRewardedVideoAd', {
@@ -1362,20 +1392,19 @@ var __extends = (this && this.__extends) || (function () {
 var runtime;
 (function (runtime) {
     runtime.clickSound = null;
-    var scaleTime = 100;
-    function center(view) {
+    runtime.scaleTime = 100;
+    runtime.scaleSmalValue = 0.8;
+    runtime.scaleBigValue = 1;
+    function pivotCenter(view) {
         view.x = view.x + view.width / 2 - view.pivotX;
         view.y = view.y + view.height / 2 - view.pivotY;
         view.pivot(view.width / 2, view.height / 2);
     }
-    function scaleSmal(view) {
-        center(view);
-        Laya.Tween.to(view, { scaleX: 0.8, scaleY: 0.8 }, scaleTime);
+    function viewScale(view, scale) {
+        pivotCenter(view);
+        Laya.Tween.to(view, { scaleX: scale, scaleY: scale }, runtime.scaleTime);
     }
-    function scaleBig(view) {
-        Laya.Tween.to(view, { scaleX: 1, scaleY: 1 }, scaleTime);
-    }
-    function playSound(view, sound) {
+    function playClickSound(view, sound) {
         if (sound) {
             Laya.SoundManager.playSound(sound, 1);
         }
@@ -1383,15 +1412,20 @@ var runtime;
             Laya.SoundManager.playSound(runtime.clickSound, 1);
         }
     }
+    function bindClick(view) {
+        view.offAll();
+        view.on(Laya.Event.MOUSE_DOWN, view, function () { return viewScale(view, runtime.scaleSmalValue); });
+        view.on(Laya.Event.MOUSE_UP, view, function () { return viewScale(view, runtime.scaleBigValue); });
+        view.on(Laya.Event.MOUSE_OUT, view, function () { return viewScale(view, runtime.scaleBigValue); });
+        view.on(Laya.Event.CLICK, view, function () { return playClickSound(view, view.sound); });
+    }
+    runtime.bindClick = bindClick;
     var btn = /** @class */ (function (_super) {
         __extends(btn, _super);
         function btn() {
             var _this = _super.call(this) || this;
             _this.sound = null;
-            _this.on(Laya.Event.MOUSE_DOWN, _this, function () { return scaleSmal(_this); });
-            _this.on(Laya.Event.MOUSE_UP, _this, function () { return scaleBig(_this); });
-            _this.on(Laya.Event.MOUSE_OUT, _this, function () { return scaleBig(_this); });
-            _this.on(Laya.Event.CLICK, _this, function () { return playSound(_this, _this.sound); });
+            bindClick(_this);
             return _this;
         }
         return btn;
@@ -1402,10 +1436,7 @@ var runtime;
         function btn_img() {
             var _this = _super.call(this) || this;
             _this.sound = null;
-            _this.on(Laya.Event.MOUSE_DOWN, _this, function () { return scaleSmal(_this); });
-            _this.on(Laya.Event.MOUSE_UP, _this, function () { return scaleBig(_this); });
-            _this.on(Laya.Event.MOUSE_OUT, _this, function () { return scaleBig(_this); });
-            _this.on(Laya.Event.CLICK, _this, function () { return playSound(_this, _this.sound); });
+            bindClick(_this);
             return _this;
         }
         return btn_img;
@@ -1416,10 +1447,7 @@ var runtime;
         function btn_label() {
             var _this = _super.call(this) || this;
             _this.sound = null;
-            _this.on(Laya.Event.MOUSE_DOWN, _this, function () { return scaleSmal(_this); });
-            _this.on(Laya.Event.MOUSE_UP, _this, function () { return scaleBig(_this); });
-            _this.on(Laya.Event.MOUSE_OUT, _this, function () { return scaleBig(_this); });
-            _this.on(Laya.Event.CLICK, _this, function () { return playSound(_this, _this.sound); });
+            bindClick(_this);
             return _this;
         }
         return btn_label;

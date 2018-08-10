@@ -161,6 +161,12 @@ module Tape {
             }
         }
 
+        export function hideAll() {
+            Object.keys(__bannerStack__).forEach(adUnitId => {
+                hideBannerAd(adUnitId)
+            });
+        }
+
         export function showRewardedVideoAd(adUnitId: string, onRewarded: Function, onCancal: Function, onError: Function = null) {
             __rewardedVideoAd__ = __exec_wx__('createRewardedVideoAd', {
                 adUnitId

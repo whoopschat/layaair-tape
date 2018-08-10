@@ -1,30 +1,35 @@
 module runtime {
 
     export let clickSound = null;
+    export let scaleTime: number = 100;
+    export let scaleSmalValue: number = 0.8;
+    export let scaleBigValue: number = 1;
 
-    let scaleTime: number = 100;
-
-    function center(view) {
+    function pivotCenter(view) {
         view.x = view.x + view.width / 2 - view.pivotX;
         view.y = view.y + view.height / 2 - view.pivotY;
         view.pivot(view.width / 2, view.height / 2);
     }
 
-    function scaleSmal(view) {
-        center(view);
-        Laya.Tween.to(view, { scaleX: 0.8, scaleY: 0.8 }, scaleTime);
+    function viewScale(view, scale) {
+        pivotCenter(view);
+        Laya.Tween.to(view, { scaleX: scale, scaleY: scale }, scaleTime);
     }
 
-    function scaleBig(view) {
-        Laya.Tween.to(view, { scaleX: 1, scaleY: 1 }, scaleTime);
-    }
-
-    function playSound(view, sound) {
+    function playClickSound(view, sound) {
         if (sound) {
             Laya.SoundManager.playSound(sound, 1);
         } else if (clickSound) {
             Laya.SoundManager.playSound(clickSound, 1);
         }
+    }
+
+    export function bindClick(view) {
+        view.offAll();
+        view.on(Laya.Event.MOUSE_DOWN, view, () => viewScale(view, scaleSmalValue));
+        view.on(Laya.Event.MOUSE_UP, view, () => viewScale(view, scaleBigValue));
+        view.on(Laya.Event.MOUSE_OUT, view, () => viewScale(view, scaleBigValue));
+        view.on(Laya.Event.CLICK, view, () => playClickSound(view, view.sound));
     }
 
     export class btn extends Laya.Button {
@@ -33,10 +38,7 @@ module runtime {
 
         constructor() {
             super();
-            this.on(Laya.Event.MOUSE_DOWN, this, () => scaleSmal(this));
-            this.on(Laya.Event.MOUSE_UP, this, () => scaleBig(this));
-            this.on(Laya.Event.MOUSE_OUT, this, () => scaleBig(this));
-            this.on(Laya.Event.CLICK, this, () => playSound(this, this.sound));
+            bindClick(this);
         }
 
     }
@@ -47,10 +49,7 @@ module runtime {
 
         constructor() {
             super();
-            this.on(Laya.Event.MOUSE_DOWN, this, () => scaleSmal(this));
-            this.on(Laya.Event.MOUSE_UP, this, () => scaleBig(this));
-            this.on(Laya.Event.MOUSE_OUT, this, () => scaleBig(this));
-            this.on(Laya.Event.CLICK, this, () => playSound(this, this.sound));
+            bindClick(this);
         }
 
     }
@@ -58,13 +57,9 @@ module runtime {
     export class btn_label extends Laya.Label {
 
         public sound = null;
-
         constructor() {
             super();
-            this.on(Laya.Event.MOUSE_DOWN, this, () => scaleSmal(this));
-            this.on(Laya.Event.MOUSE_UP, this, () => scaleBig(this));
-            this.on(Laya.Event.MOUSE_OUT, this, () => scaleBig(this));
-            this.on(Laya.Event.CLICK, this, () => playSound(this, this.sound));
+            bindClick(this);
         }
 
     }

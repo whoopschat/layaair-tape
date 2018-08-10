@@ -1,6 +1,11 @@
 declare module runtime {
 
     let clickSound: string;
+    let scaleTime: number;
+    let scaleSmalValue: number;
+    let scaleBigValue: number;
+
+    function bindClick(view): void;
 
     class btn extends Laya.Button {
         public sound: string;
