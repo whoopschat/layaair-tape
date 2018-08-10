@@ -9,7 +9,7 @@ module Tape {
 
         export function init(width, height, ...options) {
             __design_width__ = width;
-            __design_width__ = height;
+            __design_height__ = height;
             let screenRatio = Platform.getScreenHeightWidthRatio();
             let initRatio = height / width;
             let initWidth = width;
