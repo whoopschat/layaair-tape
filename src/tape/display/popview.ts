@@ -1,13 +1,13 @@
 module Tape {
 
     export class PopView extends Laya.Sprite {
-
+        
         static show(params = null, onHide = null) {
             PopManager.showPop(this, params, onHide);
         }
 
-        static hide() {
-            PopManager.hidePop(this);
+        static hide(result?: any) {
+            PopManager.hidePop(this, null, result);
         }
 
         public pop: any;
@@ -54,8 +54,8 @@ module Tape {
             this.addChildAt(bgSprite, 0);
         }
 
-        protected finish() {
-            PopManager.hidePop(this.pop);
+        protected finish(result?: any) {
+            PopManager.hidePop(this.pop, this, result);
         }
 
         constructor() {

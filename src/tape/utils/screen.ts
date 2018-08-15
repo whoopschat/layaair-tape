@@ -31,7 +31,7 @@ module Tape {
             Background.init();
             Laya.stage.x = __offset_x__;
             Laya.stage.y = __offset_y__;
-            Laya.stage.scaleMode = Laya.Stage.SCALE_FIXED_WIDTH;
+            Laya.stage.scaleMode = Laya.Stage.SCALE_SHOWALL;
             Laya.stage.alignH = Laya.Stage.ALIGN_CENTER;
             Laya.stage.alignV = Laya.Stage.ALIGN_MIDDLE;
         }

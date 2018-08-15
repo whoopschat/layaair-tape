@@ -10,10 +10,8 @@ class PageActivity extends Tape.Activity {
             this.finish(PageActivity);
         })
         this.ui.pop.on(Laya.Event.CLICK, this, () => {
-            Tape.PopManager.showPop(TestPop, {
-                onHide: () => {
-                    console.log(' ------------------ ');
-                }
+            Tape.PopManager.showPop(TestPop, {}, (pop, res) => {
+                console.log('TestPop onHide ---------------------------------', res);
             });
         });
         this.ui.toast.on(Laya.Event.CLICK, this, () => {
@@ -28,7 +26,7 @@ class PageActivity extends Tape.Activity {
     }
 
     onFocus(focus) {
-        console.log(' --------onFocus---------- ', focus);
+        console.log('PageActivity onFocus ---------------------------------', focus);
     }
 
 }

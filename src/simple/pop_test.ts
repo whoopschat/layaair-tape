@@ -5,11 +5,12 @@ class TestPop extends Tape.PopView {
     constructor() {
         super();
         this.isTranslucent = false;
-        this.canceledOnTouchOutside = true;
+        this.canceledOnTouchOutside = false;
     }
 
     onShow() {
         console.log('onShow', this);
+        this.finish(false)
     }
 
     onHide() {

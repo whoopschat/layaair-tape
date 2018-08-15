@@ -21,32 +21,29 @@ module Tape {
     const __create_rank_texture__ = () => {
         if (window.hasOwnProperty('sharedCanvas')) {
             var sharedCanvas = window['sharedCanvas'];
-            sharedCanvas.width = 1500;
-            sharedCanvas.height = 3000;
             if (!sharedCanvas.hasOwnProperty('_addReference')) {
                 sharedCanvas['_addReference'] = () => {
                 };
             }
             if (!__rank_texture__) {
                 __rank_texture__ = new Laya.Texture(sharedCanvas, null);
-                __rank_texture__.bitmap.alwaysChange = true;
+                __rank_texture__.bitmap.alwaysChange = false;
             }
         }
         return __rank_texture__;
     }
 
-    const __init_rank__ = () => {
+    const __init_rank__ = (width, height) => {
         if (window.hasOwnProperty('sharedCanvas')) {
             var sharedCanvas = window['sharedCanvas'];
-            sharedCanvas.width = 1500;
-            sharedCanvas.height = 3000;
+            sharedCanvas.width = width;
+            sharedCanvas.height = height;
         }
         __post_message_to_sub_context__({
             action: 'init',
             data: {
-                width: Laya.stage.width,
-                height: Laya.stage.height,
-                matrix: Laya.stage._canvasTransform
+                width: width,
+                height: height
             }
         });
         __post_message_to_sub_context__({
@@ -63,7 +60,7 @@ module Tape {
         export const init = (width: number, height: number, ...options) => {
             Laya.MiniAdpter.init(true);
             Screen.init(width, height, ...options);
-            __init_rank__();
+            __init_rank__(width * 2, height);
         }
 
         export const exit = () => {
@@ -352,7 +349,7 @@ module Tape {
             var rankTexture = __create_rank_texture__();
             if (rankTexture) {
                 var newTexture = Laya.Texture.createFromTexture(rankTexture, x, y, width, height);
-                newTexture.bitmap.alwaysChange = true;
+                newTexture.bitmap.alwaysChange = false;
                 sharedCanvasView.width = width;
                 sharedCanvasView.height = height;
                 sharedCanvasView.graphics.drawTexture(newTexture, 0, 0, newTexture.width, newTexture.height);

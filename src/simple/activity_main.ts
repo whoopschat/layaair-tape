@@ -21,8 +21,12 @@ class MainActivity extends Tape.Activity {
         console.log(this.params);
     }
 
-    onResume(){
+    onResume() {
         console.log('MainActivity onResume ---------------------------------');
+    }
+
+    onFocus(focus) {
+        console.log('MainActivity onFocus ---------------------------------', focus);
     }
 
 
