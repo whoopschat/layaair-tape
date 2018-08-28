@@ -19,6 +19,14 @@ declare module runtime {
         public sound: string;
     }
 
+    class btn_sprite extends Laya.Sprite {
+        public sound: string;
+    }
+
+    class btn_box extends Laya.Box {
+        public sound: string;
+    }
+
 }
 
 declare module Tape {
@@ -91,8 +99,6 @@ declare module Tape {
 
     /** NavigatorStack */
     module NavigatorStack {
-        /** redirectTo */
-        function redirectTo(page, params?: any): void;
         /** navigate */
         function navigate(page, params?: any, action?: Function): void;
         /** finish activity */

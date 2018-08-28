@@ -16,7 +16,7 @@ module Tape {
             let initHeight = height;
             __offset_x__ = 0;
             __offset_y__ = 0;
-            
+
             if (Math.abs(screenRatio / initRatio - 1) > 0.1) {
                 if (screenRatio > initRatio) {
                     initHeight = width * screenRatio;
@@ -31,7 +31,7 @@ module Tape {
             Background.init();
             Laya.stage.x = __offset_x__;
             Laya.stage.y = __offset_y__;
-            Laya.stage.scaleMode = Laya.Stage.SCALE_SHOWALL;
+            Laya.stage.scaleMode = Laya.Stage.SCALE_EXACTFIT;
             Laya.stage.alignH = Laya.Stage.ALIGN_CENTER;
             Laya.stage.alignV = Laya.Stage.ALIGN_MIDDLE;
         }

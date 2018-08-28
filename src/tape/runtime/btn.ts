@@ -64,4 +64,24 @@ module runtime {
 
     }
 
+    export class btn_sprite extends Laya.Sprite {
+
+        public sound = null;
+        constructor() {
+            super();
+            bindClick(this);
+        }
+
+    }
+
+    export class btn_box extends Laya.Box {
+
+        public sound = null;
+        constructor() {
+            super();
+            bindClick(this);
+        }
+
+    }
+
 }

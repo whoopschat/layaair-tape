@@ -137,7 +137,7 @@ var Tape;
             Tape.Background.init();
             Laya.stage.x = __offset_x__;
             Laya.stage.y = __offset_y__;
-            Laya.stage.scaleMode = Laya.Stage.SCALE_SHOWALL;
+            Laya.stage.scaleMode = Laya.Stage.SCALE_EXACTFIT;
             Laya.stage.alignH = Laya.Stage.ALIGN_CENTER;
             Laya.stage.alignV = Laya.Stage.ALIGN_MIDDLE;
         }
@@ -1436,6 +1436,28 @@ var runtime;
         return btn_label;
     }(Laya.Label));
     runtime.btn_label = btn_label;
+    var btn_sprite = /** @class */ (function (_super) {
+        __extends(btn_sprite, _super);
+        function btn_sprite() {
+            var _this = _super.call(this) || this;
+            _this.sound = null;
+            bindClick(_this);
+            return _this;
+        }
+        return btn_sprite;
+    }(Laya.Sprite));
+    runtime.btn_sprite = btn_sprite;
+    var btn_box = /** @class */ (function (_super) {
+        __extends(btn_box, _super);
+        function btn_box() {
+            var _this = _super.call(this) || this;
+            _this.sound = null;
+            bindClick(_this);
+            return _this;
+        }
+        return btn_box;
+    }(Laya.Box));
+    runtime.btn_box = btn_box;
 })(runtime || (runtime = {}));
 
 var Tape;
