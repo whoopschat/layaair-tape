@@ -10,7 +10,6 @@ class TestPop extends Tape.PopView {
 
     onShow() {
         console.log('onShow', this);
-        this.finish(false)
     }
 
     onHide() {

@@ -7,7 +7,7 @@ module Tape {
         let __design_width__ = 0;
         let __design_height__ = 0;
 
-        export function init(width, height, ...options) {
+        export function init(is3D, width, height, ...options) {
             __design_width__ = width;
             __design_height__ = height;
             let screenRatio = Platform.getScreenHeightWidthRatio();
@@ -27,7 +27,12 @@ module Tape {
                 }
             }
 
-            Laya.init(initWidth, initHeight, ...options);
+            if (is3D) {
+                Laya3D.init.apply(this, [initWidth, initHeight, ...options]);
+            } else {
+                Laya.init.apply(this, [initWidth, initHeight, ...options]);
+            }
+
             Background.init();
             Laya.stage.x = __offset_x__;
             Laya.stage.y = __offset_y__;

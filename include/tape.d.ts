@@ -51,6 +51,14 @@ declare module Tape {
      */
     function init(width: number, height: number, ...options): void;
 
+    /**
+     * init for 3d
+     * @param width
+     * @param height
+     * @param options
+     */
+    function init3D(width: number, height: number, ...options): void;
+    
     /** exit */
     function exit(): void;
 

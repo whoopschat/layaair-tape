@@ -59,7 +59,6 @@ module Tape {
 
         export const init = (width: number, height: number, ...options) => {
             Laya.MiniAdpter.init(true);
-            Screen.init(width, height, ...options);
             __init_rank__(width * 2, height);
         }
 

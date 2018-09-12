@@ -110,10 +110,10 @@ var Tape;
         var __offset_y__ = 0;
         var __design_width__ = 0;
         var __design_height__ = 0;
-        function init(width, height) {
+        function init(is3D, width, height) {
             var options = [];
-            for (var _i = 2; _i < arguments.length; _i++) {
-                options[_i - 2] = arguments[_i];
+            for (var _i = 3; _i < arguments.length; _i++) {
+                options[_i - 3] = arguments[_i];
             }
             __design_width__ = width;
             __design_height__ = height;
@@ -133,7 +133,12 @@ var Tape;
                     __offset_x__ = (initWidth - width) / 2;
                 }
             }
-            Laya.init.apply(Laya, [initWidth, initHeight].concat(options));
+            if (is3D) {
+                Laya3D.init.apply(this, [initWidth, initHeight].concat(options));
+            }
+            else {
+                Laya.init.apply(this, [initWidth, initHeight].concat(options));
+            }
             Tape.Background.init();
             Laya.stage.x = __offset_x__;
             Laya.stage.y = __offset_y__;
@@ -173,23 +178,6 @@ var Tape;
             return (_s4() + _s4() + "-" + _s4() + "-" + _s4() + "-" + _s4() + "-" + _s4() + _s4() + _s4());
         };
     })(UUID = Tape.UUID || (Tape.UUID = {}));
-})(Tape || (Tape = {}));
-
-var Tape;
-(function (Tape) {
-    /** BrowserHandler  */
-    var BrowserHandler;
-    (function (BrowserHandler) {
-        BrowserHandler.init = function (width, height) {
-            var options = [];
-            for (var _i = 2; _i < arguments.length; _i++) {
-                options[_i - 2] = arguments[_i];
-            }
-            Tape.Screen.init.apply(Tape.Screen, [width, height].concat(options));
-        };
-        BrowserHandler.exit = function () {
-        };
-    })(BrowserHandler = Tape.BrowserHandler || (Tape.BrowserHandler = {}));
 })(Tape || (Tape = {}));
 
 var Tape;
@@ -257,7 +245,6 @@ var Tape;
                 options[_i - 2] = arguments[_i];
             }
             Laya.MiniAdpter.init(true);
-            Tape.Screen.init.apply(Tape.Screen, [width, height].concat(options));
             __init_rank__(width * 2, height);
         };
         MiniHandler.exit = function () {
@@ -1462,6 +1449,16 @@ var runtime;
 
 var Tape;
 (function (Tape) {
+    function _init(is3D, width, height) {
+        var options = [];
+        for (var _i = 3; _i < arguments.length; _i++) {
+            options[_i - 3] = arguments[_i];
+        }
+        if (Tape.Platform.isWechatApp()) {
+            Tape.MiniHandler.init.apply(Tape.MiniHandler, [width, height].concat(options));
+        }
+        Tape.Screen.init.apply(Tape.Screen, [is3D, width, height].concat(options));
+    }
     /**
      * 初始化APP
      * @param width 宽度
@@ -1473,12 +1470,20 @@ var Tape;
         for (var _i = 2; _i < arguments.length; _i++) {
             options[_i - 2] = arguments[_i];
         }
-        if (Tape.Platform.isWechatApp()) {
-            Tape.MiniHandler.init.apply(Tape.MiniHandler, [width, height].concat(options));
+        _init.apply(void 0, [false, width, height].concat(options));
+    };
+    /**
+     * 初始化APP for 3D
+     * @param width 宽度
+     * @param height 高度
+     * @param options 其他拓展
+     */
+    Tape.init3D = function (width, height) {
+        var options = [];
+        for (var _i = 2; _i < arguments.length; _i++) {
+            options[_i - 2] = arguments[_i];
         }
-        else {
-            Tape.BrowserHandler.init.apply(Tape.BrowserHandler, [width, height].concat(options));
-        }
+        _init.apply(void 0, [true, width, height].concat(options));
     };
     /**
      * 退出APP
@@ -1486,9 +1491,6 @@ var Tape;
     Tape.exit = function () {
         if (Tape.Platform.isWechatApp()) {
             Tape.MiniHandler.exit();
-        }
-        else {
-            Tape.BrowserHandler.exit();
         }
     };
 })(Tape || (Tape = {}));
