@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "outDir": "bin/js/",
+    "module": "commonjs",
     "target": "es5",
     "lib": [
       "dom",
@@ -8,11 +10,13 @@
       "es2016",
       "es2017"
     ],
-    "sourceMap": true,
+    "sourceMap": false,
     "allowJs": true
   },
   "include": [
-    "libs/**.d.ts",
-    "src/**/*.*"
+    "libs/**/*.d.ts",
+    "bin/tape/**/*.d.ts",
+    "src/**/*.js",
+    "src/**/*.ts"
   ]
 }

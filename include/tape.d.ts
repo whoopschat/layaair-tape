@@ -31,39 +31,39 @@ declare module runtime {
 
 declare module Tape {
 
-    /** ActivityOptions */
-    interface ActivityOptions {
-        page: any,
-        params: any
+    /** obj */
+    type obj = {
+        [key: string]: any
     }
 
-    /** ResourceOptions */
-    interface ResourceOptions {
-        url: string,
-        type: string
+    /** startOptions */
+    interface startOptions {
+        mainPage: any;
+        commonRes?: { url: string, type: string }[];
+        fileVersion?: string;
+        onLoadProgress?: (progress: number) => void;
+        onLoaded?: () => void;
     }
 
-    /**
-     * init
-     * @param width
-     * @param height
-     * @param options
-     */
+    /** shareOptions */
+    interface shareOptions {
+        intent: "INVITE" | "REQUEST" | "CHALLENGE" | "SHARE",
+        image: string,
+        text: string,
+        data?: obj
+    }
+
+    /** init for 2D */
     function init(width: number, height: number, ...options): void;
-
-    /**
-     * init for 3d
-     * @param width
-     * @param height
-     * @param options
-     */
+    /** init for 3D */
     function init3D(width: number, height: number, ...options): void;
-    
+    /** start */
+    function start(options: startOptions): void;
     /** exit */
     function exit(): void;
 
-    /** Background */
-    module Background {
+    /** bg */
+    module bg {
         /** getBgSprite */
         function getBgSprite(): Laya.Sprite;
         /** setBgColor */
@@ -72,8 +72,8 @@ declare module Tape {
         function getBgColor(): string;
     }
 
-    /** Screen */
-    module Screen {
+    /** screen */
+    module screen {
         /** getOffestX */
         function getOffestX(): number;
         /** getOffestY */
@@ -84,29 +84,34 @@ declare module Tape {
         function getDesignHeight(): number;
     }
 
-    /** NavigatorOptions */
-    interface NavigatorOptions {
-        mainPage: any;
-        commonRes?: ResourceOptions[];
-        fileVersion?: string;
+    /** platform */
+    module platform {
+        /** isFacebookApp */
+        function isFacebookApp(): boolean;
+        /** execFB */
+        function execFB(func, ...options): any;
+        /** isWechatApp */
+        function isWechatApp(): boolean;
+        /** execWX */
+        function execWX(func, ...options): any;
+        /** getVersion */
+        function getVersion(): string;
+        /** setDebug */
+        function setDebug(debug: boolean): void;
+        /** printDebug */
+        function printDebug(message: any, ...options): void;
+        /** getEnv */
+        function getEnv(): string;
+        /** setEnv */
+        function setEnv(env): void;
+        /** isDev */
+        function isDev(): boolean;
+        /** isProd */
+        function isProd(): boolean;
     }
 
-    /** Navigator */
-    module Navigator {
-        /** init */
-        function init(options: NavigatorOptions): void;
-    }
-
-    /** NavigatorRouter */
-    module NavigatorLink {
-        /** config */
-        function config(routes: Object): void;
-        /** link */
-        function link(path: string): void;
-    }
-
-    /** NavigatorStack */
-    module NavigatorStack {
+    /** navigator */
+    module navigator {
         /** navigate */
         function navigate(page, params?: any, action?: Function): void;
         /** finish activity */
@@ -117,39 +122,124 @@ declare module Tape {
         function popToTop(): void;
     }
 
-    /** PopManager */
-    module PopManager {
-        /** showPop */
-        function showPop(pop, params?, onHide?: (pop, result?: any) => void): void;
-        /** hidePop */
-        function hidePop(pop, view?: any, result?: any): void;
-        /** refreshPos */
-        function refreshPos(): void;
+    /** rank */
+    module rank {
+        /** createRankView */
+        function createRankView(x?: number, y?: number, width?: number, height?: number): Laya.Sprite;
+        /** setRankKey */
+        function setRankKey(key: string, count?: number, offset?: number): void;
+        /** setRankScore */
+        function setRankScore(key: string, score: number, extraData?: string): void;
+        /** showRank */
+        function showRank(ui: obj | obj[]): void;
+        /** hideRank */
+        function hideRank(): void;
     }
 
-    /** ToastManager　*/
-    module ToastManager {
+    /** app */
+    module app {
+        /** shareAsync */
+        function shareAsync(options: shareOptions): Promise<any>;
+        /** onShare */
+        function onShare(callback: () => obj): void;
+        /** onLaunch */
+        function onLaunch(callback: (options: obj) => void);
+        /** onPause */
+        function onPause(callback: () => void): void;
+    }
 
+    /** popup */
+    module popup {
+        /** showPop */
+        function showPopup(pop, params?, onHide?: (pop, result?: any) => void): void;
+        /** hidePop */
+        function hidePopup(pop, view?: any, result?: any): void;
+    }
+
+    /** toast*/
+    module toast {
         /** showToast */
         function showToast(toast, params?, onHide?: (toast) => void): void;
-        /** clear */
-        function clearAll(): void;
-
+        /** hideAll */
+        function hideAll(): void;
     }
 
-    /** PopView */
-    class PopView extends Laya.Sprite {
+    /** Activity */
+    class Activity extends Laya.Component {
+
+        /** open */
+        static open(params?: any, action?: () => void): void;
+        /** finish */
+        static finish(): void;
+        /** res */
+        static res: { url: string, type: string }[];
+
+        /** page */
+        protected page: any;
+        /** ui */
+        protected ui: any;
+        /** params */
+        protected params: any;
+        /** duration */
+        protected duration: number;
+        /** easeIn */
+        protected easeIn: Function;
+        /** easeOut */
+        protected easeOut: Function;
+        /** fromProps */
+        protected fromProps: obj;
+        /** toProps */
+        protected toProps: obj;
+        /** activity on focus change */
+        protected onFocus?(focus: boolean): void;
+        /** activity on create */
+        protected onCreate?(): void;
+        /** activity on resume */
+        protected onResume?(): void;
+        /** activity on pause */
+        protected onPause?(): void;
+        /** activity on destroy */
+        protected onDestroy?(): void;
+        /** activity on next page load progress */
+        protected onNextProgress?(progress: number): void;
+        /** constructor */
+        constructor(options: obj);
+        /** redirectTo */
+        protected redirectTo(page, params?: any): void;
+        /** navigate */
+        protected navigate(page, params?: any, action?: () => void): void;
+        /** finish self */
+        protected back(): void;
+        /** finish activity */
+        protected finish(page, instance?: any): void;
+        /** pop */
+        protected pop(num?: number): void;
+        /** pop to top */
+        protected popToTop(): void;
+    }
+
+    /** PopupView */
+    class PopupView extends Laya.Sprite {
         /** show */
         static show(params?: any, onHide?: (pop, result?: any) => void): void;
         /** hide */
         static hide(): void;
-
         /** pop */
         protected pop: any;
         /** ui */
         protected ui: any;
         /** params */
         protected params: any;
+        /** duration */
+        protected duration: number;
+        /** easeIn */
+        protected easeIn: Function;
+        /** easeOut */
+        protected easeOut: Function;
+        /** fromProps */
+        protected fromProps: obj;
+        /** toProps */
+        protected toProps: obj;
         /** bgAlpha */
         protected bgAlpha: number;
         /** bgColor */
@@ -173,19 +263,22 @@ declare module Tape {
 
         /** show */
         static show(params?: any, onHide?: (toast) => void): void;
-
         /** toast */
         protected toast: any;
+        /** ui */
+        protected ui: any;
         /** params */
         protected params: any;
         /** duration */
         protected duration: number;
+        /** easeIn */
+        protected easeIn: Function;
+        /** easeOut */
+        protected easeOut: Function;
         /** fromProps */
-        protected fromProps: Object;
+        protected fromProps: obj;
         /** toProps */
-        protected toProps: Object;
-        /** ui */
-        protected ui: any;
+        protected toProps: obj;
         /** toast on show */
         protected onShow?(): void;
         /** toast on hide */
@@ -195,204 +288,4 @@ declare module Tape {
 
     }
 
-    /** Activity */
-    class Activity extends Laya.Component {
-
-        /** open */
-        static open(params?: any, action?: Function): void;
-        /** finish */
-        static finish(): void;
-
-        /** page type */
-        protected page: any;
-        /** ui */
-        protected ui: any;
-        /** params */
-        protected params: any;
-        /** res */
-        protected res: ResourceOptions[];
-        /** inEase */
-        protected inEase: Function;
-        /** inEaseDuration */
-        protected inEaseDuration: number;
-        /** inEaseFromProps */
-        protected inEaseFromProps: Object;
-        /** inEaseToProps */
-        protected inEaseToProps: Object;
-        /** activity on focus change */
-        protected onFocus?(focus: boolean): void;
-        /** activity on create */
-        protected onCreate?(): void;
-        /** activity on resume */
-        protected onResume?(): void;
-        /** activity on pause */
-        protected onPause?(): void;
-        /** activity on destroy */
-        protected onDestroy?(): void;
-        /** activity on next page load progress */
-        protected onNextProgress?(progress: number): void;
-        /** constructor */
-        constructor(options: ActivityOptions);
-        /** link */
-        protected link(path: string): void;
-        /** redirectTo */
-        protected redirectTo(page, params?: any): void;
-        /** navigate */
-        protected navigate(page, params?: any, action?: Function): void;
-        /** finish self */
-        protected back(): void;
-        /** finish activity */
-        protected finish(page, instance?: any): void;
-        /** pop */
-        protected pop(num?: number): void;
-        /** pop to top */
-        protected popToTop(): void;
-    }
-
-    /** Platform */
-    module Platform {
-        /** isLongPhone */
-        function isLongPhone(): boolean;
-        /** isWechatApp */
-        function isWechatApp(): boolean;
-    }
-
-    /** Env */
-    module Env {
-        /** get build env @return env mode : development or production */
-        function getEnv(): string;
-        /** isDev */
-        function isDev(): boolean;
-        /** isProd */
-        function isProd(): boolean;
-    }
-
-    /** ArrayUtil */
-    module ArrayUtil {
-        /** random */
-        function random(source: any[]): any;
-        /** randomArr */
-        function randomArr(source: any[], length?: number): any[];
-    }
-
-    /** UUID */
-    module UUID {
-        /** randomUUID */
-        function randomUUID(): string;
-    }
-
-    /** MiniAd */
-    module MiniAd {
-
-        /**
-         * showBannerAd
-         * @param adUnitId 
-         * @param x 
-         * @param y 
-         * @param width 
-         * @param height 
-         */
-        function showBannerAd(adUnitId: string, x: number, y: number, width: number, height: number, onError?: Function): void;
-        /**
-         * hideBannerAd
-         * @param adUnitId 
-         */
-        function hideBannerAd(adUnitId: string): void;
-        /**
-         * showRewardedVideoAd
-         * @param adUnitId 
-         * @param onRewarded 
-         * @param onCancal 
-         */
-        function showRewardedVideoAd(adUnitId: string, onRewarded: Function, onCancal: Function, onError?: Function): void;
-
-    }
-
-    /** MiniButton */
-    module MiniButton {
-
-        /**
-         * showFeedbackButton
-         * @param image 
-         * @param x 
-         * @param y 
-         * @param w 
-         * @param h 
-         */
-        function showFeedbackButton(image: string, x: number, y: number, w: number, h: number): void;
-        /**
-         * hideFeedbackButton
-         */
-        function hideFeedbackButton(): void;
-        /**
-         * showGameClubButton
-         * @param icon 
-         * @param x 
-         * @param y 
-         * @param w 
-         * @param h 
-         */
-        function showGameClubButton(icon: string, x: number, y: number, w: number, h: number): void;
-        /**
-         * hideGameClubButton
-         */
-        function hideGameClubButton(): void;
-        /**
-         * checkGetUserInfo
-         * @param onSuccess 
-         * @param onFail 
-         */
-        function checkGetUserInfo(onSuccess: Function, onFail?: Function): void;
-        /**
-         * showGetUserInfoButton
-         * @param image 
-         * @param x 
-         * @param y 
-         * @param w 
-         * @param h 
-         * @param onSuccess 
-         * @param onFail 
-         */
-        function showGetUserInfoButton(image: string, x: number, y: number, w: number, h: number, onSuccess: Function, onFail?: Function): void;
-        /**
-         * hideGetUserInfoButton
-         */
-        function hideGetUserInfoButton(): void;
-
-    }
-
-    /** MiniRank */
-    module MiniRank {
-
-        /**
-         * createRankView
-         * @param x 
-         * @param y 
-         * @param width 
-         * @param height 
-         */
-        function createRankView(x?: number, y?: number, width?: number, height?: number): Laya.Sprite;
-        /**
-         * showRank
-         * @param ui
-         * @param options 
-         * @param onlyRefreshData 
-         */
-        function showRank(ui: Object | Object[], options?: Object, onlyRefreshData?: boolean): void;
-        /**
-         * hideRank
-         */
-        function hideRank(): void;
-        /**
-         * setRankData
-         * @param kv_data_list 
-         */
-        function setRankData(kv_data_list: Object[]): void;
-        /**
-         * setDebug
-         * @param debug 
-         */
-        function setDebug(debug: boolean): void;
-
-    }
 }

@@ -1,38 +1,38 @@
 {
   "name": "layaair-tape",
-  "version": "1.8.4",
+  "version": "2.0.0",
   "description": "A layaair game library",
+  "scripts": {
+    "start": "webpack --watch",
+    "build-dev": "webpack",
+    "build": "webpack --config webpack.prod.js"
+  },
   "author": "liangmayong",
-  "license": "ISC",
+  "license": "UNLICENSED",
   "engines": {
     "node": ">= 0.10"
-  },
-  "scripts": {
-    "dev": "http-server ./",
-    "clean": "gulp build:clean",
-    "tsc": "gulp build:tsc",
-    "build": "gulp build",
-    "test": "echo 'no tests'",
-    "preversion": "npm test",
-    "version": "npm run build && git add -A dist",
-    "postversion": "git push origin master && git push origin --tags && npm publish"
-  },
-  "files": [
-    "dist",
-    "include"
-  ],
-  "dependencies": {},
-  "devDependencies": {
-    "del": "*",
-    "gulp": "^4.0.0",
-    "typescript": "^2.8.1",
-    "gulp-concat": "^2.6.1",
-    "gulp-typescript": "^4.0.2",
-    "http-server": "*"
   },
   "keywords": [
     "layaair",
     "tape",
     "layaair-tape"
-  ]
+  ],
+  "files": [
+    "dist",
+    "include"
+  ],
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.4",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-preset-env": "^1.7.0",
+    "es6-promise": "^4.2.4",
+    "fs-extra": "^6.0.1",
+    "string-replace-loader": "^2.1.1",
+    "uglifyjs-webpack-plugin": "^1.2.2",
+    "ts-loader": "^4.4.1",
+    "typescript": "^2.9.2",
+    "webpack": "^4.19.1",
+    "webpack-cli": "^3.1.0"
+  }
 }

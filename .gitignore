@@ -2,16 +2,19 @@
 #
 .DS_Store
 
-# lock
-yarn.lock
-package-lock.json
-
-.laya/chrome/
-build/
-bin/js/
-.idea
-
 # node.js
 node_modules/
 npm-debug.log
 yarn-error.log
+
+# vim
+*.swp
+
+# idea
+.idea
+
+# dev
+dist-dev/
+
+# examples package-lock
+examples/*/package-lock.json
