@@ -20,10 +20,6 @@ export interface IRank {
     hideRank(): void;
 }
 
-export interface IAds {
-
-}
-
-export interface IButton {
+export interface IAd {
 
 }
