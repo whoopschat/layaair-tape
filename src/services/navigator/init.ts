@@ -2,6 +2,12 @@ import NavStack from "./stack";
 
 let _options = null;
 let _inited = false;
+let _isReady = false;
+let _readyResolve = null;
+let _readyPromise: Promise<any> = new Promise((resolve) => {
+    _readyResolve = resolve;
+});
+
 
 function _enableResourceVersion() {
     if (_options && _options.fileVersion) {
@@ -41,4 +47,21 @@ export function initNavigator(options) {
     _options = options;
     _enableResourceVersion();
     _inited = true;
+}
+
+export function onNavigatorReady(): Promise<any> {
+    if (_isReady) {
+        return Promise.resolve();
+    }
+    return _readyPromise;
+}
+
+export function setNavigatorReady(): void {
+    if (_isReady) {
+        return;
+    }
+    _isReady = true;
+    _readyResolve();
+    _readyResolve = null;
+    _readyPromise = null;
 }

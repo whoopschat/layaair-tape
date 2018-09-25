@@ -15,7 +15,7 @@ import Activity from "./services/display/activity";
 import PopupView from "./services/display/popupview";
 import ToastView from "./services/display/toastview";
 
-import { init, init3D, start, exit } from './services/initialize';
+import { init, init3D, start, exit } from './services/init';
 
 const Tape = {
     init,

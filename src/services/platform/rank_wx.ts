@@ -6,9 +6,6 @@ class WXRank implements IRank {
 
     private _rank_texture = null;
 
-    constructor() {
-    }
-
     private _createRankTexture() {
         if (window.hasOwnProperty('sharedCanvas')) {
             var sharedCanvas = window['sharedCanvas'];

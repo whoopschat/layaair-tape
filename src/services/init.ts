@@ -1,6 +1,6 @@
 import platform from "../utils/platform";
 import { initScreen } from "./manager/screen";
-import { initNavigator } from "./navigator/init";
+import { initNavigator, setNavigatorReady } from "./navigator/init";
 import { wxPlatform } from "./platform/initialize_wx";
 import { fbPlatform } from "./platform/initialize_fb";
 
@@ -25,19 +25,14 @@ export function start(options) {
         mainPage: options.mainPage,
         commonRes: options.commonRes,
         fileVersion: options.fileVersion,
-        onLoadProgress: (progress) => {
-            if (platform.isFacebookApp()) {
-                fbPlatform.setLoadingProgress(progress * 100);
-            } else if (platform.isWechatApp()) {
-                wxPlatform.setLoadingProgress(progress * 100);
-            }
-            options.onLoadProgress && options.onLoadProgress(progress);
-        },
+        onLoadProgress: options.onLoadProgress,
         onLoaded: () => {
             if (platform.isFacebookApp()) {
                 fbPlatform.onLoaded();
             } else if (platform.isWechatApp()) {
                 wxPlatform.onLoaded();
+            } else {
+                setNavigatorReady();
             }
             options.onLoaded && options.onLoaded();
         }

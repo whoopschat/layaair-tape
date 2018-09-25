@@ -23,7 +23,7 @@ class FBRank implements IRank {
                     let selfInfo = {
                         playerId: platform.execFB('player.getID'),
                         nickname: platform.execFB('player.getName'),
-                        avatarUrl: platform.execFB('player.getPhoto')
+                        avatarUrl: platform.execFB('player.getPhoto'),
                     };
                     let selfIndex = -1;
                     let selfData = {};

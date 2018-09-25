@@ -2,12 +2,12 @@ export interface IInitialize {
     start(callback: () => void): void;
     exit(): void;
     onLoaded(): void;
-    setLoadingProgress(percentage: number): void;
 }
 
 export interface IApp {
     shareAsync(options: object): Promise<any>;
     onShare(callback: () => object): void;
+    getUserInfo(callback: (userinfo: object) => void): void;
     onPause(callback: () => void): void;
     onLaunch(callback: (options: object) => void);
 }

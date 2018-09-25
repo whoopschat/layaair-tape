@@ -19,6 +19,16 @@ function onShare(callback) {
     }
 }
 
+function getUserInfo(callback) {
+    if (platform.isFacebookApp()) {
+        return fbApp.getUserInfo(callback);
+    } else if (platform.isWechatApp()) {
+        return wxApp.getUserInfo(callback);
+    } else {
+        callback && callback(null);
+    }
+}
+
 function onLaunch(callback) {
     if (platform.isFacebookApp()) {
         return fbApp.onLaunch(callback);
@@ -38,6 +48,7 @@ function onPause(callback) {
 export default {
     shareAsync,
     onShare,
+    getUserInfo,
     onPause,
     onLaunch,
 }

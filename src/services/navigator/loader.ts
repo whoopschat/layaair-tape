@@ -1,7 +1,8 @@
 import UIMgr from "../manager/uimgr";
 import Activity from "../display/activity";
+import { onNavigatorReady } from "./init";
 
-export default class NavLoader extends Laya.Component {
+export default class extends Laya.Component {
 
     private _options = null;
     private _activity: Activity = null;
@@ -37,10 +38,12 @@ export default class NavLoader extends Laya.Component {
     }
 
     _onLoaded() {
-        this._options.onLoaded && this._options.onLoaded(this);
-        this.addChild(this._activity);
-        this._activity.onCreate && this._activity.onCreate();
-        this._options.onShow && this._options.onShow();
+        onNavigatorReady().then(() => {
+            this._options.onLoaded && this._options.onLoaded(this);
+            this.addChild(this._activity);
+            this._activity.onCreate && this._activity.onCreate();
+            this._options.onShow && this._options.onShow();
+        });
     }
 
     _onLoadProgress(progress) {

@@ -37,7 +37,7 @@ declare module Tape {
     }
 
     /** startOptions */
-    interface startOptions {
+    interface startPayload {
         mainPage: any;
         commonRes?: { url: string, type: string }[];
         fileVersion?: string;
@@ -46,11 +46,24 @@ declare module Tape {
     }
 
     /** shareOptions */
-    interface shareOptions {
+    interface sharePayload {
         intent: "INVITE" | "REQUEST" | "CHALLENGE" | "SHARE",
         image: string,
         text: string,
         data?: obj
+    }
+
+    /** userinfoPayload */
+    interface userinfoPayload {
+        platform: string,
+        playerId: string,
+        nickname: string,
+        avatarUrl: string,
+        gender: number,
+        country: string,
+        city: string,
+        province: string,
+        raw: obj
     }
 
     /** init for 2D */
@@ -58,7 +71,7 @@ declare module Tape {
     /** init for 3D */
     function init3D(width: number, height: number, ...options): void;
     /** start */
-    function start(options: startOptions): void;
+    function start(options: startPayload): void;
     /** exit */
     function exit(): void;
 
@@ -139,9 +152,11 @@ declare module Tape {
     /** app */
     module app {
         /** shareAsync */
-        function shareAsync(options: shareOptions): Promise<any>;
+        function shareAsync(options: sharePayload): Promise<any>;
         /** onShare */
         function onShare(callback: () => obj): void;
+        /** getUserInfo, use img for wx: res/unpack/get_user_info.png */
+        function getUserInfo(callback: (userinfo: userinfoPayload) => void): void;
         /** onLaunch */
         function onLaunch(callback: (options: obj) => void);
         /** onPause */

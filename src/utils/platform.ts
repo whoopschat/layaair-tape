@@ -1,5 +1,6 @@
 let _debugOn = true;
 let _env = '${env}';
+let _promises = {};
 
 const isFacebookApp = () => {
     return window.hasOwnProperty("FBInstant");
@@ -77,6 +78,27 @@ function isProd() {
     return getEnv() === 'production';
 }
 
+function promiseTimeout(promise, type = '', timeout = 3000) {
+    if (!promise || !promise.then) {
+        return Promise.reject();
+    }
+    return Promise.race([
+        new Promise((_, reject) => {
+            _promises[promise] = setTimeout(() => {
+                delete _promises[promise];
+                reject && reject(`${type}:fail timeout ms:${timeout}`);
+            }, timeout);
+        }),
+        new Promise((resolve, _) => {
+            promise.then((res) => {
+                clearTimeout(_promises[promise]);
+                delete _promises[promise];
+                resolve && resolve(res);
+            });
+        })
+    ]);
+}
+
 export default {
     getVersion,
     isFacebookApp,
@@ -89,5 +111,6 @@ export default {
     getEnv,
     setEnv,
     isDev,
-    isProd
+    isProd,
+    promiseTimeout,
 }

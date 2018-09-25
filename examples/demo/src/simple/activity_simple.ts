@@ -32,11 +32,11 @@ class SimpleActivity extends Tape.Activity {
                 }
             });
         });
-        Tape.app.onPause(() => {
-            this.ui.output.text = 'onPause --------------------';
-        });
         Tape.app.onLaunch((options) => {
             this.ui.output.text = `onLaunch --------------------\n${JSON.stringify(options)}`;
+        });
+        Tape.app.onPause(() => {
+            this.ui.output.text = 'onPause --------------------';
         });
     }
 
