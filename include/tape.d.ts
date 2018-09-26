@@ -47,7 +47,6 @@ declare module Tape {
 
     /** shareOptions */
     interface sharePayload {
-        intent: "INVITE" | "REQUEST" | "CHALLENGE" | "SHARE",
         image: string,
         text: string,
         data?: obj
@@ -147,6 +146,14 @@ declare module Tape {
         function showRank(ui: obj | obj[]): void;
         /** hideRank */
         function hideRank(): void;
+    }
+
+    /** ad */
+    module ad {
+        /** setRewardedVideoAd */
+        function configRewardedVideoAd(platform: string, adId: string): void;
+        /** watchRewardedVideoAd */
+        function watchRewardedVideoAd(onRewarded?: () => void, onCancal?: () => void, onError?: (error: any) => void): void;
     }
 
     /** app */

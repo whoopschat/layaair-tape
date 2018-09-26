@@ -1,9 +1,8 @@
-import platform from "../../utils/platform";
-import { IApp } from "./interfaces";
+import platform from "../../../utils/platform";
+import { IApp } from "../interfaces";
 
 class WXApp implements IApp {
 
-    private _launchOptions = null;
     private _shareCallback = null;
     private _pauseCallback = null;
     private _launchCallback = null;
@@ -13,14 +12,18 @@ class WXApp implements IApp {
         if (!platform.isWechatApp()) {
             return;
         }
-        let options = platform.execWX('getLaunchOptionsSync') || {};
-        this._launchOptions = { entry: options.scene || 1000, query: options.query || {}, platform: 'wechat' };
+        this._init();
+    }
+
+    private _init() {
         platform.execWX('onHide', () => {
             this._pauseCallback && this._pauseCallback();
         });
         platform.execWX('onShow', (options) => {
-            this._launchOptions = { entry: options.scene || 1000, query: options.query || {}, platform: 'wechat' };
-            this._launchCallback && this._launchCallback(this._launchOptions);
+            this._launchCallback && this._launchCallback({ entry: options.scene || 1000, query: options.query || {}, platform: 'wechat' });
+        });
+        platform.execWX('showShareMenu', {
+            withShareTicket: true
         });
         platform.execWX('onShareAppMessage', () => {
             return this._shareCallback ? this._shareCallback() : {};
@@ -116,7 +119,12 @@ class WXApp implements IApp {
 
     public onLaunch(callback: (data: object) => void) {
         this._launchCallback = callback;
-        this._launchOptions && this._launchCallback && this._launchCallback(this._launchOptions);
+        this._checkOnLaunch();
+    }
+
+    private _checkOnLaunch() {
+        let options = platform.execWX('getLaunchOptionsSync') || {};
+        this._launchCallback && this._launchCallback({ entry: options.scene || 1000, query: options.query || {}, platform: 'wechat' });
     }
 
     public onPause(callback: () => void) {

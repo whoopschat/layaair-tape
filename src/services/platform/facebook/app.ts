@@ -1,11 +1,9 @@
-import platform from "../../utils/platform";
-import { IApp } from "./interfaces";
-import { convertImgToBase64Async } from "../../utils/image";
+import platform from "../../../utils/platform";
+import { IApp } from "../interfaces";
+import { convertImgToBase64Async } from "../../../utils/image";
 
 class FBApp implements IApp {
 
-
-    private _launchOptions = null;
     private _launchCallback = null;
     private _pauseCallback = null;
 
@@ -13,6 +11,10 @@ class FBApp implements IApp {
         if (!platform.isFacebookApp()) {
             return;
         }
+        this._init();
+    }
+
+    private _init() {
         platform.execFB('onPause', () => {
             this._pauseCallback && this._pauseCallback();
         });
@@ -20,7 +22,7 @@ class FBApp implements IApp {
 
     public shareAsync(options) {
         return convertImgToBase64Async(options.image).then(image => {
-            return platform.execFB('shareAsync', Object.assign({}, options, { image }));
+            return platform.execFB('shareAsync', Object.assign({}, options, { image, intent: 'SHARE' }));
         });
     }
 
@@ -46,8 +48,7 @@ class FBApp implements IApp {
     private _checkOnLaunch() {
         platform.execFB('getEntryPointAsync').then(entry => {
             let query = platform.execFB('getEntryPointData') || {};
-            this._launchOptions = { entry, query, platform: 'facebook' };
-            this._launchCallback && this._launchCallback(this._launchOptions);
+            this._launchCallback && this._launchCallback({ entry, query, platform: 'facebook' });
         });
     }
 

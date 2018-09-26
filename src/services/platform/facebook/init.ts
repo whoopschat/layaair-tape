@@ -1,6 +1,6 @@
-import platform from "../../utils/platform";
-import { IInitialize } from "./interfaces";
-import { setNavigatorReady } from "../navigator/init";
+import platform from "../../../utils/platform";
+import { IInitialize } from "../interfaces";
+import { setNavigatorReady } from "../../navigator/init";
 
 let _isLoaded = false;
 let _percentage = 0;
@@ -13,7 +13,7 @@ function runMockLoading() {
     if (_percentage > 99) {
         _percentage = 99;
     } else {
-        setTimeout(runMockLoading, 12);
+        setTimeout(runMockLoading, 50);
     }
     platform.execFB('setLoadingProgress', _percentage);
 }

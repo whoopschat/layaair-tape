@@ -1,6 +1,6 @@
 import platform from "../utils/platform";
-import { wxRank } from "./platform/rank_wx";
-import { fbRank } from "./platform/rank_fb";
+import { wxRank } from "./platform/wechat/rank";
+import { fbRank } from "./platform/facebook/rank";
 
 function createRankView(x?: number, y?: number, width?: number, height?: number) {
     if (platform.isFacebookApp()) {

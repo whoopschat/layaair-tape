@@ -9,7 +9,7 @@ class RankActivity extends Tape.Activity {
         });
         Tape.rank.showRank(ui.test_rankUI.uiView);
         Tape.rank.setRankKey('score');
-        Tape.rank.setRankScore('score', 0, '---------');
+        Tape.rank.setRankScore('score', 1024, '---------');
     }
 
 }

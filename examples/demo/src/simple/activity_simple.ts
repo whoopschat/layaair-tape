@@ -23,7 +23,6 @@ class SimpleActivity extends Tape.Activity {
         });
         this.ui.btnShare.on(Laya.Event.CLICK, this, () => {
             Tape.app.shareAsync({
-                intent: 'SHARE',
                 text: '快来一起玩游戏吧',
                 image: 'res/atlas/comp.png',
                 data: {
@@ -31,6 +30,17 @@ class SimpleActivity extends Tape.Activity {
                     value: '222'
                 }
             });
+        });
+        this.ui.btnRewardedVideo.on(Laya.Event.CLICK, this, () => {
+            Tape.ad.configRewardedVideoAd('facebook', '456456456456_456456456456');
+            Tape.ad.configRewardedVideoAd('wechat', 'adunit-5cf669a77cf5a440');
+            Tape.ad.watchRewardedVideoAd(() => {
+                this.ui.output.text = `onRewarded --------------------`;
+            }, () => {
+                this.ui.output.text = `onCancel --------------------`;
+            }, (err) => {
+                this.ui.output.text = `onError --------------------\n${JSON.stringify(err)}`;
+            })
         });
         Tape.app.onLaunch((options) => {
             this.ui.output.text = `onLaunch --------------------\n${JSON.stringify(options)}`;

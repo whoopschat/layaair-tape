@@ -2,7 +2,7 @@
     "x":0,
     "type":"View",
     "selectedBox":1,
-    "selecteID":4,
+    "selecteID":16,
     "props":{"width":600,"sceneColor":"#000000","height":400},
     "nodeParent":-1,
     "label":"View",
@@ -127,6 +127,32 @@
             "isAniNode":true,
             "hasChild":false,
             "compId":14,
+            "child":[
+                ]
+        },
+        {
+            "x":15,
+            "type":"Button",
+            "props":{"y":190,"x":20,"width":179,"var":"btnRewardedVideo","skin":"comp/button.png","label":"RewardedVideo","height":42},
+            "nodeParent":1,
+            "label":"Button(btnRewardedVideo)",
+            "isDirectory":false,
+            "isAniNode":true,
+            "hasChild":false,
+            "compId":15,
+            "child":[
+                ]
+        },
+        {
+            "x":15,
+            "type":"FontClip",
+            "props":{"y":162,"x":232,"value":"你好他","skin":"comp/clip_num.png","sheet":"你好他说我是"},
+            "nodeParent":1,
+            "label":"FontClip",
+            "isDirectory":false,
+            "isAniNode":true,
+            "hasChild":false,
+            "compId":16,
             "child":[
                 ]
         }],

@@ -1,11 +1,12 @@
 import './polyfill'
 
-import screen from "./services/manager/screen";
 import bg from "./services/manager/bg";
+import screen from "./services/manager/screen";
 import platform from "./utils/platform";
 import runtime from "./utils/runtime";
 import rank from './services/rank';
 import app from './services/app';
+import ad from './services/ad';
 
 import navigator from "./services/navigator/stack";
 import popup from "./services/display/popupmanager";
@@ -26,6 +27,7 @@ const Tape = {
     bg,
     screen,
     platform,
+    ad,
     rank,
     app,
     navigator,

@@ -1,6 +1,6 @@
-import platform from "../../utils/platform";
-import { IRank } from "./interfaces";
-import { bindView } from "../../utils/bind";
+import platform from "../../../utils/platform";
+import { IRank } from "../interfaces";
+import { bindView } from "../../../utils/bind";
 
 class FBRank implements IRank {
 

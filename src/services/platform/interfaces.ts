@@ -21,5 +21,6 @@ export interface IRank {
 }
 
 export interface IAd {
-
+    configRewardedVideoAd(platform: string, adId: string): void;
+    watchRewardedVideoAd(onRewarded?: () => void, onCancal?: () => void, onError?: (error: any) => void): void;
 }

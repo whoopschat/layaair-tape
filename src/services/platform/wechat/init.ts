@@ -1,7 +1,7 @@
-import platform from "../../utils/platform";
-import screen from "../manager/screen";
-import { IInitialize } from "./interfaces";
-import { setNavigatorReady } from "../navigator/init";
+import platform from "../../../utils/platform";
+import screen from "../../manager/screen";
+import { IInitialize } from "../interfaces";
+import { setNavigatorReady } from "../../navigator/init";
 
 class WXPlatform implements IInitialize {
 

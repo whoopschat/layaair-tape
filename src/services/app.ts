@@ -1,6 +1,6 @@
 import platform from "../utils/platform";
-import { fbApp } from "./platform/app_fb";
-import { wxApp } from "./platform/app_wx";
+import { fbApp } from "./platform/facebook/app";
+import { wxApp } from "./platform/wechat/app";
 
 function shareAsync(options) {
     if (platform.isFacebookApp()) {

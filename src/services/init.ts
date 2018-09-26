@@ -1,8 +1,8 @@
 import platform from "../utils/platform";
 import { initScreen } from "./manager/screen";
 import { initNavigator, setNavigatorReady } from "./navigator/init";
-import { wxPlatform } from "./platform/initialize_wx";
-import { fbPlatform } from "./platform/initialize_fb";
+import { wxPlatform } from "./platform/wechat/init";
+import { fbPlatform } from "./platform/facebook/init";
 
 export function init(width: number, height: number, ...options) {
     platform.printDebug(`init version:${platform.getVersion()}`);

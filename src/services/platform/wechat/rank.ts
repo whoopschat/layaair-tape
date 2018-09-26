@@ -1,6 +1,6 @@
-import platform from "../../utils/platform";
-import screen from "../manager/screen";
-import { IRank } from "./interfaces";
+import platform from "../../../utils/platform";
+import screen from "../../manager/screen";
+import { IRank } from "../interfaces";
 
 class WXRank implements IRank {
 
