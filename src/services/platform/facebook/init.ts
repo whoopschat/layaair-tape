@@ -1,5 +1,5 @@
 import platform from "../../../utils/platform";
-import { IInitialize } from "../interfaces";
+import { IInit } from "../interfaces";
 import { setNavigatorReady } from "../../navigator/init";
 
 let _isLoaded = false;
@@ -18,7 +18,7 @@ function runMockLoading() {
     platform.execFB('setLoadingProgress', _percentage);
 }
 
-class FBPlatform implements IInitialize {
+class FBInit implements IInit {
 
     public start(callback: () => void) {
         runMockLoading();
@@ -39,6 +39,10 @@ class FBPlatform implements IInitialize {
         });
     }
 
+    public onLoadProgress(progress) {
+
+    }
+
 }
 
-export const fbPlatform = new FBPlatform;
+export const fbInit = new FBInit;

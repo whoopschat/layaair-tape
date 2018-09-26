@@ -2,6 +2,25 @@ let _debugOn = true;
 let _env = '${env}';
 let _promises = {};
 
+const isConchApp = () => {
+    return window.hasOwnProperty('conch');
+}
+
+function execConch(func: string, ...options) {
+    if (window.hasOwnProperty("conch")) {
+        let funcs = func.split('.');
+        let instant = window['conch'];
+        while (funcs.length > 1) {
+            instant = instant[funcs.shift()];
+        }
+        if (instant && funcs.length == 1) {
+            if (instant.hasOwnProperty(funcs[0])) {
+                return instant[funcs[0]](...options);
+            }
+        }
+    }
+}
+
 const isFacebookApp = () => {
     return window.hasOwnProperty("FBInstant");
 }
@@ -101,6 +120,8 @@ function promiseTimeout(promise, type = '', timeout = 3000) {
 
 export default {
     getVersion,
+    isConchApp,
+    execConch,
     isFacebookApp,
     execFB,
     isWechatApp,

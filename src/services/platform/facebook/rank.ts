@@ -126,6 +126,10 @@ class FBRank implements IRank {
         }, 200);
     }
 
+    public canSupportRank() {
+        return true;
+    }
+
     public createRankView(x = 0, y = 0, width = Laya.stage.width, height = Laya.stage.height) {
         var rankView = new Laya.Sprite();
         rankView.scrollRect = new Laya.Rectangle(x, y, width, height);

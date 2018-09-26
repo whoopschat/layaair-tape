@@ -20,6 +20,10 @@ class WXRank implements IRank {
         return this._rank_texture;
     }
 
+    public canSupportRank(){
+        return true;
+    }
+
     public createRankView(x = 0, y = 0, width = screen.getDesignWidth(), height = screen.getDesignHeight()) {
         var rankView = new Laya.Sprite();
         var rankTexture = this._createRankTexture();

@@ -1,8 +1,23 @@
 import platform from "../utils/platform";
+import { wxInit } from "./platform/wechat/init";
+import { fbInit } from "./platform/facebook/init";
+import { conchInit } from "./platform/conch/init";
+import { h5Init } from "./platform/h5/init";
+
 import { initScreen } from "./manager/screen";
-import { initNavigator, setNavigatorReady } from "./navigator/init";
-import { wxPlatform } from "./platform/wechat/init";
-import { fbPlatform } from "./platform/facebook/init";
+import { initNavigator } from "./navigator/init";
+
+function _get() {
+    if (platform.isFacebookApp()) {
+        return fbInit;
+    } else if (platform.isWechatApp()) {
+        return wxInit;
+    } else if (platform.isConchApp()) {
+        return conchInit;
+    } else {
+        return h5Init;
+    }
+}
 
 export function init(width: number, height: number, ...options) {
     platform.printDebug(`init version:${platform.getVersion()}`);
@@ -25,34 +40,21 @@ export function start(options) {
         mainPage: options.mainPage,
         commonRes: options.commonRes,
         fileVersion: options.fileVersion,
-        onLoadProgress: options.onLoadProgress,
+        onLoadProgress: (progress) => {
+            _get().onLoadProgress(progress);
+            options.onLoaded && options.onLoadProgress(progress);
+        },
         onLoaded: () => {
-            if (platform.isFacebookApp()) {
-                fbPlatform.onLoaded();
-            } else if (platform.isWechatApp()) {
-                wxPlatform.onLoaded();
-            } else {
-                setNavigatorReady();
-            }
+            _get().onLoaded();
             options.onLoaded && options.onLoaded();
         }
     }
     let onStart = () => {
         initNavigator(newOptions);
     }
-    if (platform.isFacebookApp()) {
-        fbPlatform.start(onStart);
-    } else if (platform.isWechatApp()) {
-        wxPlatform.start(onStart);
-    } else {
-        onStart && onStart();
-    }
+    _get().start(onStart);
 }
 
 export function exit() {
-    if (platform.isFacebookApp()) {
-        fbPlatform.exit();
-    } else if (platform.isWechatApp()) {
-        wxPlatform.exit();
-    }
+    _get().exit();
 }

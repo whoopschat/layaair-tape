@@ -1,9 +1,9 @@
 import platform from "../../../utils/platform";
 import screen from "../../manager/screen";
-import { IInitialize } from "../interfaces";
+import { IInit } from "../interfaces";
 import { setNavigatorReady } from "../../navigator/init";
 
-class WXPlatform implements IInitialize {
+class WXInit implements IInit {
 
     start(callback: () => void) {
         if (window.hasOwnProperty('sharedCanvas')) {
@@ -33,6 +33,9 @@ class WXPlatform implements IInitialize {
         });
     }
 
+    public onLoadProgress(progress) {
+    }
+
 }
 
-export const wxPlatform = new WXPlatform;
+export const wxInit = new WXInit;

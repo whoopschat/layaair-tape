@@ -1,7 +1,8 @@
-export interface IInitialize {
+export interface IInit {
     start(callback: () => void): void;
     exit(): void;
     onLoaded(): void;
+    onLoadProgress(progress): void;
 }
 
 export interface IApp {
@@ -13,6 +14,7 @@ export interface IApp {
 }
 
 export interface IRank {
+    canSupportRank(): boolean;
     createRankView(x?: number, y?: number, width?: number, height?: number): Laya.Sprite;
     setRankKey(key: string, count?: number, offset?: number): void;
     setRankScore(key: string, score: number, extraData?: string): void;

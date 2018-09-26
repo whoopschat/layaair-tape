@@ -1,54 +1,19 @@
 import platform from "../utils/platform";
 import { fbApp } from "./platform/facebook/app";
 import { wxApp } from "./platform/wechat/app";
+import { conchApp } from "./platform/conch/app";
+import { h5App } from "./platform/h5/app";
 
-function shareAsync(options) {
+function _get() {
     if (platform.isFacebookApp()) {
-        return fbApp.shareAsync(options);
+        return fbApp;
     } else if (platform.isWechatApp()) {
-        return wxApp.shareAsync(options);
-    }
-    return Promise.reject();
-}
-
-function onShare(callback) {
-    if (platform.isFacebookApp()) {
-        return fbApp.onShare(callback);
-    } else if (platform.isWechatApp()) {
-        return wxApp.onShare(callback);
-    }
-}
-
-function getUserInfo(callback) {
-    if (platform.isFacebookApp()) {
-        return fbApp.getUserInfo(callback);
-    } else if (platform.isWechatApp()) {
-        return wxApp.getUserInfo(callback);
+        return wxApp;
+    } else if (platform.isConchApp()) {
+        return conchApp;
     } else {
-        callback && callback(null);
+        return h5App;
     }
 }
 
-function onLaunch(callback) {
-    if (platform.isFacebookApp()) {
-        return fbApp.onLaunch(callback);
-    } else if (platform.isWechatApp()) {
-        return wxApp.onLaunch(callback);
-    }
-}
-
-function onPause(callback) {
-    if (platform.isFacebookApp()) {
-        return fbApp.onPause(callback);
-    } else if (platform.isWechatApp()) {
-        return wxApp.onPause(callback);
-    }
-}
-
-export default {
-    shareAsync,
-    onShare,
-    getUserInfo,
-    onPause,
-    onLaunch,
-}
+export default _get();

@@ -1,29 +1,19 @@
 import platform from "../utils/platform";
 import { wxAd } from "./platform/wechat/ad";
 import { fbAd } from "./platform/facebook/ad";
+import { conchAd } from "./platform/conch/ad";
+import { h5Ad } from "./platform/h5/ad";
 
-function configRewardedVideoAd(platformStr: string, adId: string) {
+function _get() {
     if (platform.isFacebookApp()) {
-        return fbAd.configRewardedVideoAd(platformStr, adId);
+        return fbAd;
     } else if (platform.isWechatApp()) {
-        return wxAd.configRewardedVideoAd(platformStr, adId);
-    }
-}
-
-function watchRewardedVideoAd(onRewarded, onCancal, onError) {
-    if (platform.isFacebookApp()) {
-        return fbAd.watchRewardedVideoAd(onRewarded, onCancal, onError);
-    } else if (platform.isWechatApp()) {
-        return wxAd.watchRewardedVideoAd(onRewarded, onCancal, onError);
+        return wxAd;
+    } else if (platform.isConchApp()) {
+        return conchAd;
     } else {
-        onError && onError({
-            errMsg: 'not support rewardedVideo ad',
-            err_code: -1
-        });
+        return h5Ad;
     }
 }
 
-export default {
-    configRewardedVideoAd,
-    watchRewardedVideoAd
-}
+export default _get();
