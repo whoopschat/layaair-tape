@@ -98,6 +98,14 @@ declare module Tape {
 
     /** platform */
     module platform {
+        /** getVersion */
+        function getAppVersion(): string;
+        /** getVersion */
+        function getVersion(): string;
+        /** isConchApp */
+        function isConchApp(): boolean;
+        /** execConch */
+        function execConch(func, ...options): any;
         /** isFacebookApp */
         function isFacebookApp(): boolean;
         /** execFB */
@@ -106,8 +114,6 @@ declare module Tape {
         function isWechatApp(): boolean;
         /** execWX */
         function execWX(func, ...options): any;
-        /** getVersion */
-        function getVersion(): string;
         /** setDebug */
         function setDebug(debug: boolean): void;
         /** printDebug */
@@ -136,6 +142,8 @@ declare module Tape {
 
     /** rank */
     module rank {
+        /** canSupportRank */
+        function supportRank(): boolean;
         /** createRankView */
         function createRankView(x?: number, y?: number, width?: number, height?: number): Laya.Sprite;
         /** setRankKey */
@@ -150,8 +158,10 @@ declare module Tape {
 
     /** ad */
     module ad {
+        /** canSupportRewardedVideo */
+        function supportRewardedVideo(): boolean;
         /** setRewardedVideoAd */
-        function configRewardedVideoAd(platform: string, adId: string): void;
+        function configRewardedVideoAd(platform: 'h5' | 'conch' | 'wechat' | 'facebook', adId: string): void;
         /** watchRewardedVideoAd */
         function watchRewardedVideoAd(onRewarded?: () => void, onCancal?: () => void, onError?: (error: any) => void): void;
     }

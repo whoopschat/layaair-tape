@@ -49,8 +49,8 @@ function findDataByWhere(data, where) {
                 || (action === 'like' && findValue.toString().indexOf(target) < 0)) {
                 findValue = null;
             } else if (action === 'sub') {
-                if (target * 1 > 0) {
-                    findValue = findValue.toString().substr(0, target * 1);
+                if (findValue.toString().length > Number(target)) {
+                    findValue = findValue.toString().substr(0, Number(target)) + '...';
                 }
             } else if (action === 'append') {
                 findValue = findValue.toString() + target;

@@ -20,7 +20,9 @@ function _get() {
 }
 
 export function init(width: number, height: number, ...options) {
-    platform.printDebug(`init version:${platform.getVersion()}`);
+    platform.printDebug(`init...`);
+    platform.printDebug(`tape version:${platform.getVersion()}`);
+    platform.printDebug(`app version:${platform.getAppVersion()}`);
     if (platform.isWechatApp()) {
         Laya.MiniAdpter.init(true);
     }
@@ -28,7 +30,9 @@ export function init(width: number, height: number, ...options) {
 }
 
 export function init3D(width: number, height: number, ...options) {
-    platform.printDebug(`init3D version:${platform.getVersion()}`);
+    platform.printDebug(`init3D...`);
+    platform.printDebug(`tape version:${platform.getVersion()}`);
+    platform.printDebug(`app version:${platform.getAppVersion()}`);
     if (platform.isWechatApp()) {
         Laya.MiniAdpter.init(true);
     }

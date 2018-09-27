@@ -20,7 +20,7 @@ class WXRank implements IRank {
         return this._rank_texture;
     }
 
-    public canSupportRank(){
+    public supportRank(){
         return true;
     }
 

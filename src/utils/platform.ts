@@ -1,6 +1,6 @@
-let _debugOn = true;
-let _env = '${env}';
-let _promises = {};
+//////////////////////////
+/////  Conch
+//////////////////////////
 
 const isConchApp = () => {
     return window.hasOwnProperty('conch');
@@ -21,6 +21,10 @@ function execConch(func: string, ...options) {
     }
 }
 
+//////////////////////////
+/////  Facebook
+//////////////////////////
+
 const isFacebookApp = () => {
     return window.hasOwnProperty("FBInstant");
 }
@@ -39,6 +43,10 @@ function execFB(func: string, ...options) {
         }
     }
 }
+
+//////////////////////////
+/////  Wechat
+//////////////////////////
 
 const isWechatApp = () => {
     return window.hasOwnProperty("wx");
@@ -64,9 +72,23 @@ function postMessageToWXOpenDataContext(data) {
     openDataContext && openDataContext.postMessage && openDataContext.postMessage(data);
 }
 
+//////////////////////////
+/////  Version
+//////////////////////////
+
 function getVersion(): string {
     return "${version}";
 }
+
+function getAppVersion(): string {
+    return "${app_version}";
+}
+
+//////////////////////////
+/////  Debug
+//////////////////////////
+
+let _debugOn = true;
 
 function setDebug(on: boolean) {
     _debugOn = on;
@@ -77,6 +99,12 @@ function printDebug(message: any, ...options) {
         console.log("Tape:", message, ...options);
     }
 }
+
+//////////////////////////
+/////  Env
+//////////////////////////
+
+let _env = '${env}';
 
 function getEnv() {
     if (_env.indexOf('${') === 0) {
@@ -97,28 +125,8 @@ function isProd() {
     return getEnv() === 'production';
 }
 
-function promiseTimeout(promise, type = '', timeout = 3000) {
-    if (!promise || !promise.then) {
-        return Promise.reject();
-    }
-    return Promise.race([
-        new Promise((_, reject) => {
-            _promises[promise] = setTimeout(() => {
-                delete _promises[promise];
-                reject && reject(`${type}:fail timeout ms:${timeout}`);
-            }, timeout);
-        }),
-        new Promise((resolve, _) => {
-            promise.then((res) => {
-                clearTimeout(_promises[promise]);
-                delete _promises[promise];
-                resolve && resolve(res);
-            });
-        })
-    ]);
-}
-
 export default {
+    getAppVersion,
     getVersion,
     isConchApp,
     execConch,
@@ -133,5 +141,4 @@ export default {
     setEnv,
     isDev,
     isProd,
-    promiseTimeout,
 }

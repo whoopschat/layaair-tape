@@ -2,7 +2,7 @@ import { IRank } from "../interfaces";
 
 class ConchRank implements IRank {
 
-    public canSupportRank() {
+    public supportRank() {
         return false;
     }
 

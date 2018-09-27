@@ -18,6 +18,14 @@ class FBApp implements IApp {
         platform.execFB('onPause', () => {
             this._pauseCallback && this._pauseCallback();
         });
+        platform.execFB('player.canSubscribeBotAsync').then(can_subscribe => {
+            if (can_subscribe) {
+                platform.execFB('player.subscribeBotAsync');
+                platform.printDebug('can subscribe bot');
+            } else {
+                platform.printDebug('not can subscribe bot');
+            }
+        });
     }
 
     public shareAsync(options) {

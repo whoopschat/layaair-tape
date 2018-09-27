@@ -7,13 +7,17 @@ class WXAd implements IAd {
     private _rewardedVideoAd = null;
     private _rewardedVideoCallback = null;
 
+    public supportRewardedVideoAd() {
+        return true;
+    }
+
     public configRewardedVideoAd(platform: string, adId: string) {
         if (platform == 'wechat') {
             this._adId = adId;
         }
     }
 
-    public watchRewardedVideoAd(onRewarded?: () => void, onCancal?: () => void, onError?: (error: any) => void) {
+    public watchRewardedVideoAd(onWatch?: () => void, onCancal?: () => void, onError?: (error: any) => void) {
         this._rewardedVideoAd = platform.execWX('createRewardedVideoAd', {
             adUnitId: this._adId
         });
@@ -21,7 +25,7 @@ class WXAd implements IAd {
             this._rewardedVideoCallback && this._rewardedVideoAd.offClose(this._rewardedVideoCallback);
             this._rewardedVideoCallback = (res) => {
                 if (res && res.isEnded || res === undefined) {
-                    onRewarded && onRewarded();
+                    onWatch && onWatch();
                 } else {
                     onCancal && onCancal();
                 }
@@ -29,14 +33,11 @@ class WXAd implements IAd {
             this._rewardedVideoAd.onClose(this._rewardedVideoCallback);
             this._rewardedVideoAd.show().catch(err => {
                 this._rewardedVideoAd.load().then(() => this._rewardedVideoAd.show()).catch(err => {
-                    onError && onError(err);
+                    onError && onError(err.errMsg);
                 });
             });
         } else {
-            onError && onError({
-                errMsg: 'createRewardedVideoAd:fail',
-                err_code: -1
-            });
+            onError && onError('createRewardedVideoAd:fail')
         }
     }
 
