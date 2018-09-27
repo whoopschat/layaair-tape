@@ -5,7 +5,7 @@ class FBAd implements IAd {
 
     private _adId = '';
 
-    public supportRewardedVideoAd() {
+    public isSupportedRewardedVideoAd() {
         return true;
     }
 

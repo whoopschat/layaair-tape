@@ -2,7 +2,7 @@ import { IAd } from "../interfaces";
 
 class H5Ad implements IAd {
 
-    public supportRewardedVideoAd() {
+    public isSupportedRewardedVideoAd() {
         return false;
     }
 

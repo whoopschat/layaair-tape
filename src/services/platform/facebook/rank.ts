@@ -126,7 +126,7 @@ class FBRank implements IRank {
         }, 200);
     }
 
-    public supportRank() {
+    public isSupportedRank() {
         return true;
     }
 

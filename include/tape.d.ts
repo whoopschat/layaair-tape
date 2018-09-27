@@ -142,8 +142,8 @@ declare module Tape {
 
     /** rank */
     module rank {
-        /** canSupportRank */
-        function supportRank(): boolean;
+        /** isSupportedRank */
+        function isSupportedRank(): boolean;
         /** createRankView */
         function createRankView(x?: number, y?: number, width?: number, height?: number): Laya.Sprite;
         /** setRankKey */
@@ -158,8 +158,8 @@ declare module Tape {
 
     /** ad */
     module ad {
-        /** canSupportRewardedVideo */
-        function supportRewardedVideo(): boolean;
+        /** isSupportedRewardedVideo */
+        function isSupportedRewardedVideo(): boolean;
         /** setRewardedVideoAd */
         function configRewardedVideoAd(platform: 'h5' | 'conch' | 'wechat' | 'facebook', adId: string): void;
         /** watchRewardedVideoAd */

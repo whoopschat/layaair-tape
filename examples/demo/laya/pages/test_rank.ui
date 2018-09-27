@@ -27,21 +27,8 @@
         },
         {
             "x":15,
-            "type":"Label",
-            "props":{"y":16,"x":203,"text":"label","name":"nickname","fontSize":50,"color":"#333333"},
-            "nodeParent":1,
-            "label":"Label(nickname)",
-            "isDirectory":false,
-            "isAniNode":true,
-            "hasChild":false,
-            "compId":4,
-            "child":[
-                ]
-        },
-        {
-            "x":15,
             "type":"List",
-            "props":{"y":62,"x":232,"width":248,"name":"rankList","height":256},
+            "props":{"y":62,"x":236,"width":248,"name":"rankList","height":238},
             "nodeParent":1,
             "label":"List(rankList)",
             "isOpen":true,
@@ -53,7 +40,7 @@
                 {
                     "x":30,
                     "type":"Box",
-                    "props":{"width":300,"name":"render"},
+                    "props":{"width":300,"name":"render","height":60},
                     "nodeParent":5,
                     "label":"Box(render)",
                     "isOpen":true,
@@ -65,9 +52,9 @@
                         {
                             "x":45,
                             "type":"Label",
-                            "props":{"y":14,"x":14,"text":"label","name":"score"},
+                            "props":{"y":24,"x":135,"text":"0","name":"score|append|分"},
                             "nodeParent":6,
-                            "label":"Label(score)",
+                            "label":"Label(score|append|分)",
                             "isDirectory":false,
                             "isAniNode":false,
                             "hasChild":false,
@@ -78,9 +65,9 @@
                         {
                             "x":45,
                             "type":"Label",
-                            "props":{"y":12,"x":70,"text":"label","name":"nickname"},
+                            "props":{"y":24,"x":60,"text":"nickname","name":"nickname|sub|4"},
                             "nodeParent":6,
-                            "label":"Label(nickname)",
+                            "label":"Label(nickname|sub|4)",
                             "isDirectory":false,
                             "isAniNode":false,
                             "hasChild":false,
@@ -91,7 +78,7 @@
                         {
                             "x":45,
                             "type":"Image",
-                            "props":{"y":-4,"x":135,"width":50,"name":"avatarUrl","height":50},
+                            "props":{"y":5,"width":50,"name":"avatarUrl","height":50},
                             "nodeParent":6,
                             "label":"Image(avatarUrl)",
                             "isDirectory":false,

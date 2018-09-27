@@ -1,4 +1,4 @@
-# layaair-tape 2.x
+# layaair-tape 3.x
 > A layaair game library
 
 Install
@@ -8,6 +8,6 @@ Install
 
 Use
 ```html
-<!-- Tape Library -->
+<!-- include tape library -->
 <script src="../node_modules/layaair-tape/dist/tape.js"></script>
 ```

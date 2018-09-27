@@ -7,7 +7,7 @@ class WXAd implements IAd {
     private _rewardedVideoAd = null;
     private _rewardedVideoCallback = null;
 
-    public supportRewardedVideoAd() {
+    public isSupportedRewardedVideoAd() {
         return true;
     }
 

@@ -2,7 +2,7 @@ import { IAd } from "../interfaces";
 
 class ConchAd implements IAd {
 
-    public supportRewardedVideoAd() {
+    public isSupportedRewardedVideoAd() {
         return false;
     }
 
