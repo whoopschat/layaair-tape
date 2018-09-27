@@ -76,12 +76,21 @@ function postMessageToWXOpenDataContext(data) {
 /////  Version
 //////////////////////////
 
+let _tape_version = "${version}";
+let _app_version = '${app_version}';
+
 function getVersion(): string {
-    return "${version}";
+    if (_tape_version.indexOf('${') === 0) {
+        return '1.0.0';
+    }
+    return _tape_version;
 }
 
 function getAppVersion(): string {
-    return "${app_version}";
+    if (_app_version.indexOf('${') === 0) {
+        return '1.0.0';
+    }
+    return _app_version;
 }
 
 //////////////////////////
