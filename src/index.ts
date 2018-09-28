@@ -3,11 +3,12 @@ import './polyfill'
 import bg from "./services/manager/bg";
 import screen from "./services/manager/screen";
 import platform from "./utils/platform";
-import runtime from "./utils/runtime";
-import rank from './services/rank';
-import app from './services/app';
-import ad from './services/ad';
 
+import ad from './services/ad';
+import app from './services/app';
+import rank from './services/rank';
+
+import runtime from "./utils/runtime";
 import navigator from "./services/navigator/stack";
 import popup from "./services/display/popupmanager";
 import toast from "./services/display/toastmanager";
@@ -27,9 +28,11 @@ const Tape = {
     bg,
     screen,
     platform,
+
     ad,
-    rank,
     app,
+    rank,
+
     navigator,
     popup,
     toast,

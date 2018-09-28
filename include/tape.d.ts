@@ -128,34 +128,6 @@ declare module Tape {
         function isProd(): boolean;
     }
 
-    /** navigator */
-    module navigator {
-        /** navigate */
-        function navigate(page, params?: any, action?: Function): void;
-        /** finish activity */
-        function finish(page, instance?: any): void;
-        /** pop */
-        function pop(num?: number): void;
-        /** pop to top */
-        function popToTop(): void;
-    }
-
-    /** rank */
-    module rank {
-        /** isSupportedRank */
-        function isSupportedRank(): boolean;
-        /** createRankView */
-        function createRankView(x?: number, y?: number, width?: number, height?: number): Laya.Sprite;
-        /** setRankKey */
-        function setRankKey(key: string, count?: number, offset?: number): void;
-        /** setRankScore */
-        function setRankScore(key: string, score: number, extraData?: string): void;
-        /** showRank */
-        function showRank(ui: obj | obj[]): void;
-        /** hideRank */
-        function hideRank(): void;
-    }
-
     /** ad */
     module ad {
         /** isSupportedRewardedVideo */
@@ -178,6 +150,34 @@ declare module Tape {
         function onLaunch(callback: (options: obj) => void);
         /** onPause */
         function onPause(callback: () => void): void;
+    }
+
+    /** rank */
+    module rank {
+        /** isSupportedRank */
+        function isSupportedRank(): boolean;
+        /** createRankView */
+        function createRankView(x?: number, y?: number, width?: number, height?: number): Laya.Sprite;
+        /** setRankKey */
+        function setRankKey(key: string, count?: number, offset?: number): void;
+        /** setRankScore */
+        function setRankScore(key: string, score: number, extraData?: string): void;
+        /** showRank */
+        function showRank(ui: obj | obj[]): void;
+        /** hideRank */
+        function hideRank(): void;
+    }
+
+    /** navigator */
+    module navigator {
+        /** navigate */
+        function navigate(page, params?: any, action?: Function): void;
+        /** finish activity */
+        function finish(page, instance?: any): void;
+        /** pop */
+        function pop(num?: number): void;
+        /** pop to top */
+        function popToTop(): void;
     }
 
     /** popup */

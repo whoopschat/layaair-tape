@@ -9,7 +9,7 @@
     "build-fb": "layaair-build --platform facebook --input ./bin --output ./release"
   },
   "devDependencies": {
-    "layaair-build": "1.0.2"
+    "layaair-build": "1.0.4"
   },
   "author": "",
   "license": "ISC"
