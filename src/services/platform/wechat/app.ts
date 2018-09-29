@@ -1,9 +1,9 @@
 import platform from "../../../utils/platform";
+import sharemanager from "../common/share";
 import { IApp } from "../interfaces";
 
 class WXApp implements IApp {
 
-    private _shareCallback = null;
     private _pauseCallback = null;
     private _launchCallback = null;
     private _userButton = null;
@@ -26,21 +26,24 @@ class WXApp implements IApp {
             withShareTicket: true
         });
         platform.execWX('onShareAppMessage', () => {
-            return this._shareCallback ? this._shareCallback() : {};
+            return sharemanager.getShareOptions();
         });
     }
 
-    public shareAsync(options) {
+    public shareAsync(tag, options) {
         return new Promise((resolve, reject) => {
-            let query = '';
-            if (options.data) {
-                query += Object.keys(options.data).map(key => {
-                    return `${key}=${options.data[key]}`
+            let share = Object.assign({}, sharemanager.getShareOptions(tag) || {}, options)
+            let query = `share_tag=${tag}`;
+            let keys = share.data ? Object.keys(share.data) : [];
+            if (keys.length > 0) {
+                query += '&';
+                query += keys.map(key => {
+                    return `${key}=${share.data[key]}`
                 }).join('&');
             }
             platform.execWX('shareAppMessage', {
-                title: options.text,
-                imageUrl: options.image,
+                title: share.text,
+                imageUrl: share.image,
                 query: query,
                 success: resolve,
                 fail: reject,
@@ -48,8 +51,8 @@ class WXApp implements IApp {
         });
     }
 
-    public onShare(callback: () => object) {
-        this._shareCallback = callback;
+    public configShare(title: string, image: string, configs?: object[]) {
+        sharemanager.configShare(title, image, configs);
     }
 
     public getUserInfo(callback: (userinfo) => void) {

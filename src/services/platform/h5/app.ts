@@ -2,11 +2,11 @@ import { IApp } from "../interfaces";
 
 class H5App implements IApp {
 
-    public shareAsync(options) {
+    public shareAsync(tag, options) {
         return Promise.reject();
     }
 
-    public onShare(callback: () => object) {
+    public configShare(title: string, image: string, configs?: object[]) {
     }
 
     public getUserInfo(callback: (userinfo) => void) {

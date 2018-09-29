@@ -40,7 +40,6 @@ class FBInit implements IInit {
     }
 
     public onLoadProgress(progress) {
-
     }
 
 }

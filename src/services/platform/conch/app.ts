@@ -1,15 +1,24 @@
+import platform from "../../../utils/platform";
+import sharemanager from "../common/share";
 import { IApp } from "../interfaces";
 
 class ConchApp implements IApp {
 
-    public shareAsync(options) {
+    constructor() {
+        if (!platform.isConchApp()) {
+            return;
+        }
+    }
+
+    public shareAsync(tag, options) {
         return new Promise((resolve, _reject) => {
-            Laya.conchMarket.enterShareAndFeed(JSON.stringify(options), resolve);
+            let share = Object.assign({}, sharemanager.getShareOptions(tag) || {}, options)
+            Laya.conchMarket.enterShareAndFeed(JSON.stringify(share), resolve);
         });
     }
 
-    public onShare(callback: () => object) {
-        // do nothing
+    public configShare(title: string, image: string, configs?: object[]) {
+        sharemanager.configShare(title, image, configs);
     }
 
     public getUserInfo(callback: (userinfo) => void) {

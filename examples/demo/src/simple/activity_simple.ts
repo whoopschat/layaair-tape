@@ -3,6 +3,7 @@ class SimpleActivity extends Tape.Activity {
     ui = new ui.page.simpleUI;
 
     onCreate() {
+        Tape.app.configShare('快来一起玩游戏吧', 'res/atlas/comp.png');
         this.ui.btnNavigate.on(Laya.Event.CLICK, this, () => {
             this.navigate(Page1Activity);
         });
@@ -22,9 +23,7 @@ class SimpleActivity extends Tape.Activity {
             RankActivity.open();
         });
         this.ui.btnShare.on(Laya.Event.CLICK, this, () => {
-            Tape.app.shareAsync({
-                text: '快来一起玩游戏吧',
-                image: 'res/atlas/comp.png',
+            Tape.app.shareAsync('default', {
                 data: {
                     name: '111',
                     value: '222'

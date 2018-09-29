@@ -1,6 +1,7 @@
 import platform from "../../../utils/platform";
-import { IApp } from "../interfaces";
+import sharemanager from "../common/share";
 import { convertImgToBase64Async } from "../../../utils/image";
+import { IApp } from "../interfaces";
 
 class FBApp implements IApp {
 
@@ -28,14 +29,15 @@ class FBApp implements IApp {
         });
     }
 
-    public shareAsync(options) {
-        return convertImgToBase64Async(options.image).then(image => {
-            return platform.execFB('shareAsync', Object.assign({}, options, { image, intent: 'SHARE' }));
+    public shareAsync(tag: string, options) {
+        let share = Object.assign({}, sharemanager.getShareOptions(tag) || {}, options || {})
+        return convertImgToBase64Async(share.image).then(image => {
+            return platform.execFB('shareAsync', Object.assign({}, share, { image, intent: 'SHARE' }));
         });
     }
 
-    public onShare(callback: () => object) {
-        // do nothing
+    public configShare(title: string, image: string, configs?: object[]) {
+        sharemanager.configShare(title, image, configs);
     }
 
     public getUserInfo(callback: (userinfo) => void) {

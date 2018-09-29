@@ -45,11 +45,18 @@ declare module Tape {
         onLoaded?: () => void;
     }
 
-    /** shareOptions */
+    /** sharePayload */
     interface sharePayload {
-        image: string,
-        text: string,
+        image?: string,
+        text?: string,
         data?: obj
+    }
+
+    /** shareConfig */
+    interface shareConfig {
+        text: string,
+        images?: string[],
+        tag?: string,
     }
 
     /** userinfoPayload */
@@ -141,9 +148,9 @@ declare module Tape {
     /** app */
     module app {
         /** shareAsync */
-        function shareAsync(options: sharePayload): Promise<any>;
-        /** onShare */
-        function onShare(callback: () => obj): void;
+        function shareAsync(tag: string, options?: sharePayload): Promise<any>;
+        /** configShare, use img for wx: res/unpack/default_share_img.png */
+        function configShare(title: string, image: string, configs?: shareConfig[]): void;
         /** getUserInfo, use img for wx: res/unpack/get_user_info.png */
         function getUserInfo(callback: (userinfo: userinfoPayload) => void): void;
         /** onLaunch */
