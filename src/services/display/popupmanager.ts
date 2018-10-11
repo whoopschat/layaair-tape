@@ -9,7 +9,7 @@ function _showAnimPopup(popupView, cb) {
     let duration = popupView.duration || 500;
     Object.assign(popupView, from);
     Laya.Tween.to(popupView, to, duration, easeIn, Laya.Handler.create(this, () => {
-        cb && cb();
+        cb && cb(popupView);
     }));
 }
 
@@ -20,7 +20,7 @@ function _hideAnimPopup(popupView, cb) {
     let duration = popupView.duration || 500;
     Object.assign(popupView, to);
     Laya.Tween.to(popupView, from, duration, easeOut, Laya.Handler.create(this, () => {
-        cb && cb();
+        cb && cb(popupView);
     }));
 }
 
@@ -56,11 +56,11 @@ function hidePopup(popup, view = null, result = null) {
         UIMgr.checkFocus();
     } else {
         views && views.splice(0, views.length).forEach(v => {
-            _hideAnimPopup(v, (view) => {
-                view._onHide && view._onHide(view.popup, result);
-                view.onHide && view.onHide(view.popup, result);
-                view.removeSelf && view.removeSelf();
-                view.destroy && view.destroy();
+            _hideAnimPopup(v, () => {
+                v._onHide && v._onHide(v.popup, result);
+                v.onHide && v.onHide(v.popup, result);
+                v.removeSelf && v.removeSelf();
+                v.destroy && v.destroy();
                 UIMgr.checkFocus();
             })
         });
