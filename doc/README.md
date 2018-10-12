@@ -11,5 +11,7 @@
 * [Tape.rank](doc-rank.md)
 * [Tape.ad](doc-ad.md)
 
+### Release
+* [Build](doc-build.md)
 
 #### [API definition (Tape.d.ts)](../include/tape.d.ts)
