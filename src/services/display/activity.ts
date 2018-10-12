@@ -63,8 +63,8 @@ export default class Activity extends Laya.Component {
         NavStack.finish(this.page, this);
     }
 
-    finish(page, instance = null) {
-        NavStack.finish(page, instance);
+    finish() {
+        NavStack.finish(this.page);
     }
 
     pop(number = 1) {

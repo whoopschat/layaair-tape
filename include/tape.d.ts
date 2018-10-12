@@ -250,7 +250,7 @@ declare module Tape {
         /** finish self */
         protected back(): void;
         /** finish activity */
-        protected finish(page, instance?: any): void;
+        protected finish(): void;
         /** pop */
         protected pop(num?: number): void;
         /** pop to top */
