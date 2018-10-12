@@ -1,8 +1,8 @@
 ## Documentation
 * [Getting Stared](getting-started.md)
+* [Tape.Init](doc-init.md)
 
 ### Components
-* [Tape.Init](doc-init.md)
 * [Tape.Activity](doc-activity.md)
 * [Tape.PopupView](doc-popup.md)
 * [Tape.ToastView](doc-toast.md)
