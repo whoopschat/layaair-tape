@@ -117,6 +117,8 @@ declare module Tape {
         function isDev(): boolean;
         /** isProd */
         function isProd(): boolean;
+        /** getPlatform */
+        function getPlatform(): string;
     }
 
     /** ad */
