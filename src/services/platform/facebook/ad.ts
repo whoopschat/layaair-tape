@@ -1,4 +1,4 @@
-import platform from "../../../utils/platform";
+import platform, { FACEBOOK } from "../../../utils/platform";
 import { IAd } from "../interfaces";
 
 class FBAd implements IAd {
@@ -10,7 +10,7 @@ class FBAd implements IAd {
     }
 
     public configRewardedVideoAd(platform: string, adId: string) {
-        if (platform == 'facebook') {
+        if (platform == FACEBOOK) {
             this._adId = adId;
         }
     }

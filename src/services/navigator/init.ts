@@ -8,7 +8,6 @@ let _readyPromise: Promise<any> = new Promise((resolve) => {
     _readyResolve = resolve;
 });
 
-
 function _enableResourceVersion() {
     if (_options && _options.fileVersion) {
         Laya.ResourceVersion.type = Laya.ResourceVersion.FILENAME_VERSION;

@@ -1,4 +1,4 @@
-import platform from "../../../utils/platform";
+import platform, { WECHAT } from "../../../utils/platform";
 import screen from "../../manager/screen";
 import { IAd } from "../interfaces";
 
@@ -35,7 +35,7 @@ class WXAd implements IAd {
     }
 
     public configRewardedVideoAd(platform: string, adId: string) {
-        if (platform == 'wechat') {
+        if (platform == WECHAT) {
             this._rewardedAdId = adId;
         }
     }
@@ -69,7 +69,7 @@ class WXAd implements IAd {
     }
 
     public configBannerAd(platform: string, adId: string) {
-        if (platform == 'wechat') {
+        if (platform == WECHAT) {
             this._bannerAdId = adId;
         }
     }

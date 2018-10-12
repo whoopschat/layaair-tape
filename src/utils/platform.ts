@@ -11,7 +11,7 @@ const isBrowserApp = () => {
 //////////////////////////
 
 const isFacebookApp = () => {
-    return window.hasOwnProperty("FBInstant");
+    return window.hasOwnProperty("FBInstant") && !window['FBInstant'].isMock;
 }
 
 function execFB(func: string, ...options) {
@@ -124,8 +124,12 @@ function isProd() {
 /////  platform
 //////////////////////////
 
+export const FACEBOOK = 'facebook';
+export const WECHAT = 'wechat';
+export const BROWSER = 'browser';
+
 function getPlatform() {
-    return isFacebookApp() ? 'facebook' : (isWechatApp() ? 'wechat' : 'browser');
+    return isFacebookApp() ? FACEBOOK : (isWechatApp() ? WECHAT : BROWSER);
 }
 
 export default {

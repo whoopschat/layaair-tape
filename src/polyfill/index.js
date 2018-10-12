@@ -32,3 +32,48 @@ if (typeof Object.assign != 'function') {
         configurable: true
     });
 }
+
+// global
+let polyfillGlobal = {};
+if (typeof GameGlobal !== 'undefined') {
+    polyfillGlobal = GameGlobal
+} else {
+    polyfillGlobal = window || {
+        setTimeout: (...params) => {
+            return setTimeout(...params);
+        },
+        setInterval: (...params) => {
+            return setInterval(...params);
+        },
+        clearTimeout: (...params) => {
+            return clearTimeout(...params);
+        },
+        clearInterval: (...params) => {
+            return clearInterval(...params);
+        }
+    };
+}
+
+// window
+if (typeof window === 'undefined') {
+    window = polyfillGlobal;
+    window.self = window;
+    window.parent = window;
+    window.window = window;
+    window.global = window;
+    window.GameGlobal = window;
+}
+
+// wx
+if (typeof wx === 'undefined') {
+    window.wx = { isMock: true };
+} else {
+    window.wx = wx;
+}
+
+// FBInstant
+if (typeof FBInstant === 'undefined') {
+    window.FBInstant = { isMock: true };
+} else {
+    window.FBInstant = FBInstant;
+}
