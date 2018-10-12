@@ -1,6 +1,7 @@
 ## Tape.ToastView
+> toast component
 
-#### Simple [Src](../examples/demo)
+#### Simple [view src](../examples/demo)
 ```js
 class SimpleToast extends Tape.ToastView {
 

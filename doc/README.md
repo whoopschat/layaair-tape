@@ -1,5 +1,5 @@
 ## Documentation
-* [getting-stared](getting-started.md)
+* [Getting Stared](getting-started.md)
 
 ### Components
 * [Tape.Init](doc-init.md)

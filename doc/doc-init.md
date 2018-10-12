@@ -1,6 +1,7 @@
 ## Tape.init
+> init tape libriry
 
-#### Simple [Src](../examples/demo)
+#### Simple [view src](../examples/demo)
 ```js
 Tape.init(750, 1334);
 Tape.bg.setBgColor('#02021a');
@@ -11,3 +12,5 @@ Tape.start({
     ]
 });
 ```
+
+#### [API definition (Tape.d.ts)](../include/tape.d.ts)

@@ -1,6 +1,6 @@
 ## Getting Started
+> getting started
 
-#### Simple [Src](../examples/demo)
-
+#### [Simple](../examples/demo)
 #### [API definition (Tape.d.ts)](../include/tape.d.ts)
 

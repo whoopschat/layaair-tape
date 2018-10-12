@@ -126,7 +126,7 @@ declare module Tape {
         /** isSupportedRewardedVideo */
         function isSupportedRewardedVideo(): boolean;
         /** setRewardedVideoAd */
-        function configRewardedVideoAd(platform: 'h5' | 'conch' | 'wechat' | 'facebook', adId: string): void;
+        function configRewardedVideoAd(platform: string, adId: string): void;
         /** watchRewardedVideoAd */
         function watchRewardedVideoAd(onRewarded?: () => void, onCancal?: () => void, onError?: (error: any) => void): void;
     }

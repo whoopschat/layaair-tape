@@ -1,6 +1,6 @@
 ## Tape.Activity
 
-#### Simple [Src](../examples/demo)
+#### Simple [view src](../examples/demo)
 ```js
 class LoadingActivity extends Tape.Activity {
     
