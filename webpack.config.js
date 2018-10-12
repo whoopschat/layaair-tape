@@ -45,7 +45,7 @@ const config = {
             }, {
                 loader: 'string-replace-loader',
                 options: {
-                    search: '\${version}',
+                    search: '\${tape_version}',
                     replace: version,
                 }
             }],

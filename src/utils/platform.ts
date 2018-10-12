@@ -1,24 +1,9 @@
 //////////////////////////
-/////  Conch
+/////  Browser
 //////////////////////////
 
-const isConchApp = () => {
-    return window.hasOwnProperty('conch');
-}
-
-function execConch(func: string, ...options) {
-    if (window.hasOwnProperty("conch")) {
-        let funcs = func.split('.');
-        let instant = window['conch'];
-        while (funcs.length > 1) {
-            instant = instant[funcs.shift()];
-        }
-        if (instant && funcs.length == 1) {
-            if (instant.hasOwnProperty(funcs[0])) {
-                return instant[funcs[0]](...options);
-            }
-        }
-    }
+const isBrowserApp = () => {
+    return !isFacebookApp() && !isWechatApp();
 }
 
 //////////////////////////
@@ -49,7 +34,7 @@ function execFB(func: string, ...options) {
 //////////////////////////
 
 const isWechatApp = () => {
-    return window.hasOwnProperty("wx");
+    return window.hasOwnProperty("wx") && !window['wx'].isMock;
 }
 
 function execWX(func, ...options) {
@@ -76,7 +61,7 @@ function postMessageToWXOpenDataContext(data) {
 /////  Version
 //////////////////////////
 
-let _tape_version = "${version}";
+let _tape_version = "${tape_version}";
 let _app_version = '${app_version}';
 
 function getVersion(): string {
@@ -134,11 +119,19 @@ function isProd() {
     return getEnv() === 'production';
 }
 
+
+//////////////////////////
+/////  platform
+//////////////////////////
+
+function getPlatform() {
+    return isFacebookApp() ? 'facebook' : (isWechatApp() ? 'wechat' : 'browser');
+}
+
 export default {
     getAppVersion,
     getVersion,
-    isConchApp,
-    execConch,
+    isBrowserApp,
     isFacebookApp,
     execFB,
     isWechatApp,
@@ -150,4 +143,5 @@ export default {
     setEnv,
     isDev,
     isProd,
+    getPlatform,
 }

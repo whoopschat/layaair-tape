@@ -32,6 +32,13 @@ class SimpleActivity extends Tape.Activity {
                 this.ui.output.text = `onError --------------------\n${JSON.stringify(err)}`;
             })
         });
+        this.ui.btnBanner.on(Laya.Event.CLICK, this, () => {
+            Tape.ad.configBannerAd('facebook', '456456456456_456456456456');
+            Tape.ad.configBannerAd('wechat', 'adunit-5cf669a77cf5a440');
+            Tape.ad.showBannerAd(0, 0, 100, 40, (err) => {
+                this.ui.output.text = `onError --------------------\n${JSON.stringify(err)}`;
+            })
+        });
         Tape.app.onLaunch((options) => {
             this.ui.output.text = `onLaunch --------------------\n${JSON.stringify(options)}`;
         });

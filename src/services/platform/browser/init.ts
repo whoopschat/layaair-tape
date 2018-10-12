@@ -1,7 +1,7 @@
 import { IInit } from "../interfaces";
 import { setNavigatorReady } from "../../navigator/init";
 
-class H5Init implements IInit {
+class BrowserInit implements IInit {
 
     public start(callback: () => void) {
         callback && callback();
@@ -20,4 +20,4 @@ class H5Init implements IInit {
 
 }
 
-export const h5Init = new H5Init;
+export const browserInit = new BrowserInit;

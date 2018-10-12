@@ -9,6 +9,10 @@ export interface IAd {
     isSupportedRewardedVideoAd(): boolean;
     configRewardedVideoAd(platform: string, adId: string): void;
     watchRewardedVideoAd(onWatch?: () => void, onCancal?: () => void, onError?: (error: any) => void): void;
+    isSupportedBannerAd(): boolean;
+    configBannerAd(platform: string, adId: string): void;
+    showBannerAd(x: number, y: number, w: number, h: number, onError?: (error: any) => void): void;
+    hideBannerAd(): void;
 }
 
 export interface IApp {

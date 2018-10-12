@@ -2,7 +2,7 @@
     "x":0,
     "type":"View",
     "selectedBox":1,
-    "selecteID":16,
+    "selecteID":17,
     "props":{"width":600,"sceneColor":"#000000","height":400},
     "nodeParent":-1,
     "label":"View",
@@ -120,13 +120,26 @@
         {
             "x":15,
             "type":"Button",
-            "props":{"y":140,"x":20,"width":179,"var":"btnRewardedVideo","skin":"comp/button.png","label":"RewardedVideo","height":42},
+            "props":{"y":140,"x":20,"width":179,"var":"btnRewardedVideo","skin":"comp/button.png","label":"RewardedVideo AD","height":42},
             "nodeParent":1,
             "label":"Button(btnRewardedVideo)",
             "isDirectory":false,
             "isAniNode":true,
             "hasChild":false,
             "compId":15,
+            "child":[
+                ]
+        },
+        {
+            "x":15,
+            "type":"Button",
+            "props":{"y":190,"x":20,"width":179,"var":"btnBanner","skin":"comp/button.png","label":"Banner AD","height":42},
+            "nodeParent":1,
+            "label":"Button(btnBanner)",
+            "isDirectory":false,
+            "isAniNode":true,
+            "hasChild":false,
+            "compId":17,
             "child":[
                 ]
         }],

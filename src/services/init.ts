@@ -1,8 +1,7 @@
 import platform from "../utils/platform";
 import { wxInit } from "./platform/wechat/init";
 import { fbInit } from "./platform/facebook/init";
-import { conchInit } from "./platform/conch/init";
-import { h5Init } from "./platform/h5/init";
+import { browserInit } from "./platform/browser/init";
 
 import { initScreen } from "./manager/screen";
 import { initNavigator } from "./navigator/init";
@@ -12,17 +11,16 @@ function _get() {
         return fbInit;
     } else if (platform.isWechatApp()) {
         return wxInit;
-    } else if (platform.isConchApp()) {
-        return conchInit;
     } else {
-        return h5Init;
+        return browserInit;
     }
 }
 
 export function init(width: number, height: number, ...options) {
     platform.printDebug(`init...`);
-    platform.printDebug(`tape version:${platform.getVersion()}`);
-    platform.printDebug(`app version:${platform.getAppVersion()}`);
+    platform.printDebug(`tape version: ${platform.getVersion()}`);
+    platform.printDebug(`app version: ${platform.getAppVersion()}`);
+    platform.printDebug(`platform: ${platform.getPlatform()}`);
     if (platform.isWechatApp()) {
         Laya.MiniAdpter.init(true);
     }
@@ -31,8 +29,9 @@ export function init(width: number, height: number, ...options) {
 
 export function init3D(width: number, height: number, ...options) {
     platform.printDebug(`init3D...`);
-    platform.printDebug(`tape version:${platform.getVersion()}`);
-    platform.printDebug(`app version:${platform.getAppVersion()}`);
+    platform.printDebug(`tape version: ${platform.getVersion()}`);
+    platform.printDebug(`app version: ${platform.getAppVersion()}`);
+    platform.printDebug(`platform: ${platform.getPlatform()}`);
     if (platform.isWechatApp()) {
         Laya.MiniAdpter.init(true);
     }

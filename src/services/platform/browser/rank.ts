@@ -1,6 +1,6 @@
 import { IRank } from "../interfaces";
 
-class ConchRank implements IRank {
+class BrowserRank implements IRank {
 
     public isSupportedRank() {
         return false;
@@ -26,4 +26,4 @@ class ConchRank implements IRank {
 
 }
 
-export const conchRank = new ConchRank;
+export const browserRank = new BrowserRank;

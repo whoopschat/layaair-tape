@@ -33,6 +33,22 @@ class FBAd implements IAd {
         });
     }
 
+    public isSupportedBannerAd() {
+        return false;
+    }
+
+    public configBannerAd(platform: string, adId: string) {
+        // do nothing
+    }
+
+    public showBannerAd(x: number, y: number, width: number, height: number, onError?: (error: any) => void) {
+        onError && onError('not support banner ad')
+    }
+
+    public hideBannerAd() {
+        // do nothing
+    }
+
 }
 
 export const fbAd = new FBAd;

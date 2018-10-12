@@ -95,10 +95,8 @@ declare module Tape {
         function getAppVersion(): string;
         /** getVersion */
         function getVersion(): string;
-        /** isConchApp */
-        function isConchApp(): boolean;
-        /** execConch */
-        function execConch(func, ...options): any;
+        /** isBrowserApp */
+        function isBrowserApp(): boolean;
         /** isFacebookApp */
         function isFacebookApp(): boolean;
         /** execFB */
@@ -129,6 +127,14 @@ declare module Tape {
         function configRewardedVideoAd(platform: string, adId: string): void;
         /** watchRewardedVideoAd */
         function watchRewardedVideoAd(onRewarded?: () => void, onCancal?: () => void, onError?: (error: any) => void): void;
+        /** isSupportedBannerAd */
+        function isSupportedBannerAd(): boolean;
+        /** configBannerAd */
+        function configBannerAd(platform: string, adId: string): void;
+        /** showBannerAd */
+        function showBannerAd(x: number, y: number, width: number, height: number, onError?: (error: any) => void): void;
+        /** hideBannerAd */
+        function hideBannerAd(): void;
     }
 
     /** app */
@@ -303,6 +309,8 @@ declare module Tape {
         protected params: any;
         /** duration */
         protected duration: number;
+        /** displayDuration */
+        protected displayDuration: number;
         /** easeIn */
         protected easeIn: Function;
         /** easeOut */
