@@ -8,6 +8,7 @@
 * [Tape.ToastView](doc-toast.md)
 
 ### Modules
+* [Tape.app](doc-app.md)
 * [Tape.rank](doc-rank.md)
 * [Tape.ad](doc-ad.md)
 

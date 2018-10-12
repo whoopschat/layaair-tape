@@ -8,6 +8,7 @@
 * `runtime.btn_sprite`
 * `runtime.btn_box`
 
+#### [Documentation](./)
 #### [Simple](../examples/demo)
 #### [API definition (Tape.d.ts)](../include/tape.d.ts)
 
