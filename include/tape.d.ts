@@ -133,7 +133,7 @@ declare module Tape {
 
     /** app */
     module app {
-        /** getUserInfo, use img for wx: res/unpack/get_user_info.png */
+        /** getUserInfo, use img for wechat: res/unpack/get_user_info.png */
         function getUserInfo(callback: (userinfo: userinfoPayload) => void): void;
         /** onLaunch */
         function onLaunch(callback: (options: obj) => void);
@@ -182,7 +182,7 @@ declare module Tape {
         /** showToast */
         function showToast(toast, params?, onHide?: (toast) => void): void;
         /** hideToast */
-        function hideToast(): void;
+        function hideToast(toast, view?: any): void;
     }
 
     /** Activity */
@@ -231,8 +231,6 @@ declare module Tape {
         protected onDestroy?(): void;
         /** activity on next page load progress */
         protected onNextProgress?(progress: number): void;
-        /** constructor */
-        constructor(options: obj);
         /** redirectTo */
         protected redirectTo(page, params?: any): void;
         /** navigate */
@@ -245,6 +243,9 @@ declare module Tape {
         protected pop(num?: number): void;
         /** pop to top */
         protected popToTop(): void;
+        /** constructor */
+        constructor(options: obj);
+
     }
 
     /** PopupView */
@@ -252,7 +253,7 @@ declare module Tape {
         /** show */
         static show(params?: any, onHide?: (pop, result?: any) => void): void;
         /** hide */
-        static hide(): void;
+        static hide(result?: any): void;
         /** pop */
         protected pop: any;
         /** ui */
@@ -292,6 +293,8 @@ declare module Tape {
 
         /** show */
         static show(params?: any, onHide?: (toast) => void): void;
+        /** hide */
+        static hide(): void;
         /** toast */
         protected toast: any;
         /** ui */
@@ -320,6 +323,8 @@ declare module Tape {
         protected onShow?(): void;
         /** toast on hide */
         protected onHide?(): void;
+        /** hide toast */
+        protected hide(): void;
         /** constructor */
         constructor();
 

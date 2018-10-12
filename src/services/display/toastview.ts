@@ -7,9 +7,13 @@ export default class ToastView extends ui {
         toast.showToast(this, params, onHide);
     }
 
+    static hide() {
+        toast.hideToast(this);
+    }
+
     public toast;
     public params;
-    public duration = 5000;
+    public duration = 1000;
     public easeIn = null;
     public easeOut = null;
     public fromProps = null;
@@ -18,9 +22,13 @@ export default class ToastView extends ui {
     public onHide?(): void;
 
     constructor() {
-        super(() => { toast.hideToast(this.toast, this) });
+        super(() => { this.hide() });
         this.width = Laya.stage.width;
         this.height = Laya.stage.height;
+    }
+
+    public hide() {
+        toast.hideToast(this.toast, this);
     }
 
 }

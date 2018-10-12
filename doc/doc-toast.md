@@ -20,11 +20,16 @@ class SimpleToast extends Tape.ToastView {
 
 ```
 
-#### Show Popup 
+#### Show Toast 
 ```js
 Tape.toast.showToast(SimpleToast, { key1: 'value1' })
 // or
 SimpleToast.show({ key1: 'value1' });
+```
+
+#### Hide Toast 
+```js
+this.hide();
 ```
 
 #### [Documentation](./)
