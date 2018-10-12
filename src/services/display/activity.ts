@@ -1,6 +1,7 @@
 import NavStack from "../navigator/stack";
+import ui from "./ui";
 
-export default class Activity extends Laya.Component {
+export default class Activity extends ui {
 
     static open(params, action) {
         NavStack.navigate(this, params, action);
@@ -28,21 +29,11 @@ export default class Activity extends Laya.Component {
     public onNextProgress?(progress): void;
 
     constructor(options) {
-        super();
+        super(() => { this.back(); });
         this.width = Laya.stage.width;
         this.height = Laya.stage.height;
         this.params = Object.assign({}, options.params || {});
         this.page = options.page;
-    }
-
-    public set ui(view) {
-        view.name = '_contentView';
-        this.removeChildren();
-        this.addChild(view);
-    }
-
-    public get ui() {
-        return this.getChildByName('_contentView');
     }
 
     //////////////////////////
@@ -63,8 +54,8 @@ export default class Activity extends Laya.Component {
         NavStack.finish(this.page, this);
     }
 
-    finish() {
-        NavStack.finish(this.page);
+    finish(page = this.page, instance = null) {
+        NavStack.finish(page, instance);
     }
 
     pop(number = 1) {

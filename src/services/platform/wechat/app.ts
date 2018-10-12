@@ -1,12 +1,11 @@
 import platform from "../../../utils/platform";
-import sharemanager from "../common/share";
 import { IApp } from "../interfaces";
 
 class WXApp implements IApp {
 
     private _pauseCallback = null;
     private _launchCallback = null;
-    private _userButton = null;
+    private _userinfoButton = null;
 
     constructor() {
         if (!platform.isWechatApp()) {
@@ -22,37 +21,6 @@ class WXApp implements IApp {
         platform.execWX('onShow', (options) => {
             this._launchCallback && this._launchCallback({ entry: options.scene || 1000, query: options.query || {}, platform: 'wechat' });
         });
-        platform.execWX('showShareMenu', {
-            withShareTicket: true
-        });
-        platform.execWX('onShareAppMessage', () => {
-            return sharemanager.getShareOptions();
-        });
-    }
-
-    public shareAsync(tag, options) {
-        return new Promise((resolve, reject) => {
-            let share = Object.assign({}, sharemanager.getShareOptions(tag) || {}, options)
-            let query = `share_tag=${tag}`;
-            let keys = share.data ? Object.keys(share.data) : [];
-            if (keys.length > 0) {
-                query += '&';
-                query += keys.map(key => {
-                    return `${key}=${share.data[key]}`
-                }).join('&');
-            }
-            platform.execWX('shareAppMessage', {
-                title: share.text,
-                imageUrl: share.image,
-                query: query,
-                success: resolve,
-                fail: reject,
-            });
-        });
-    }
-
-    public configShare(title: string, image: string, configs?: object[]) {
-        sharemanager.configShare(title, image, configs);
     }
 
     public getUserInfo(callback: (userinfo) => void) {
@@ -75,12 +43,12 @@ class WXApp implements IApp {
             }
         }
         let onHide = () => {
-            if (this._userButton) {
-                this._userButton.style.left = -this._userButton.style.width;
-                this._userButton.style.top = -this._userButton.style.height;
-                this._userButton.hide();
-                this._userButton.destroy();
-                this._userButton = null;
+            if (this._userinfoButton) {
+                this._userinfoButton.style.left = -this._userinfoButton.style.width;
+                this._userinfoButton.style.top = -this._userinfoButton.style.height;
+                this._userinfoButton.hide();
+                this._userinfoButton.destroy();
+                this._userinfoButton = null;
             }
         }
         let onFail = () => {
@@ -90,8 +58,8 @@ class WXApp implements IApp {
                 return;
             }
             onHide();
-            if (!this._userButton) {
-                this._userButton = platform.execWX('createUserInfoButton', {
+            if (!this._userinfoButton) {
+                this._userinfoButton = platform.execWX('createUserInfoButton', {
                     withCredentials: true,
                     type: 'image',
                     image: 'res/unpack/get_user_info.png',
@@ -103,14 +71,14 @@ class WXApp implements IApp {
                     }
                 });
             }
-            if (this._userButton) {
-                this._userButton.onTap((res) => {
+            if (this._userinfoButton) {
+                this._userinfoButton.onTap((res) => {
                     if (res.errMsg.indexOf(':ok') >= 0) {
                         onHide();
                         onHandler(res);
                     }
                 });
-                this._userButton.show();
+                this._userinfoButton.show();
             }
         }
         platform.execWX('getUserInfo', {

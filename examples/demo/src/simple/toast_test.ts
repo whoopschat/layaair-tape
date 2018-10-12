@@ -7,6 +7,7 @@ class TestToast extends Tape.ToastView {
     }
 
     onShow() {
+        this.canceledOnTouchOutside = true;
         console.log('onShow', this);
     }
 

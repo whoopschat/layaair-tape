@@ -107,19 +107,6 @@
         {
             "x":15,
             "type":"Button",
-            "props":{"y":140,"x":20,"width":179,"var":"btnShare","skin":"comp/button.png","label":"Share","height":42},
-            "nodeParent":1,
-            "label":"Button(btnShare)",
-            "isDirectory":false,
-            "isAniNode":true,
-            "hasChild":false,
-            "compId":12,
-            "child":[
-                ]
-        },
-        {
-            "x":15,
-            "type":"Button",
             "props":{"y":90,"x":210,"width":179,"var":"btnNavigate2","skin":"comp/button.png","label":"Page2","height":42},
             "nodeParent":1,
             "label":"Button(btnNavigate2)",
@@ -133,26 +120,13 @@
         {
             "x":15,
             "type":"Button",
-            "props":{"y":190,"x":20,"width":179,"var":"btnRewardedVideo","skin":"comp/button.png","label":"RewardedVideo","height":42},
+            "props":{"y":140,"x":20,"width":179,"var":"btnRewardedVideo","skin":"comp/button.png","label":"RewardedVideo","height":42},
             "nodeParent":1,
             "label":"Button(btnRewardedVideo)",
             "isDirectory":false,
             "isAniNode":true,
             "hasChild":false,
             "compId":15,
-            "child":[
-                ]
-        },
-        {
-            "x":15,
-            "type":"FontClip",
-            "props":{"y":162,"x":232,"value":"你好他","skin":"comp/clip_num.png","sheet":"你好他说我是"},
-            "nodeParent":1,
-            "label":"FontClip",
-            "isDirectory":false,
-            "isAniNode":true,
-            "hasChild":false,
-            "compId":16,
             "child":[
                 ]
         }],

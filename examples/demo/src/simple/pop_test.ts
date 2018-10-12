@@ -5,11 +5,12 @@ class TestPop extends Tape.PopupView {
     constructor() {
         super();
         this.ui.btnClose.on(Laya.Event.CLICK, this, () => {
-            this.finish();
+            this.hide();
         });
     }
 
     onShow() {
+        this.canceledOnTouchOutside = true;
         console.log('onShow', this);
     }
 

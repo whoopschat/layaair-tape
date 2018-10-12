@@ -12,8 +12,6 @@ export interface IAd {
 }
 
 export interface IApp {
-    shareAsync(tag: string, options?: object): Promise<any>;
-    configShare(title: string, image: string, shareConfigs?: object[]): void;
     getUserInfo(callback: (userinfo: object) => void): void;
     onPause(callback: () => void): void;
     onLaunch(callback: (options: object) => void);

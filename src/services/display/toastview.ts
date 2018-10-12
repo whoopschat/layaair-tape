@@ -1,6 +1,7 @@
 import toast from "./toastmanager";
+import ui from "./ui";
 
-export default class ToastView extends Laya.Sprite {
+export default class ToastView extends ui {
 
     static show(params, onHide) {
         toast.showToast(this, params, onHide);
@@ -8,7 +9,7 @@ export default class ToastView extends Laya.Sprite {
 
     public toast;
     public params;
-    public duration = 500;
+    public duration = 5000;
     public easeIn = null;
     public easeOut = null;
     public fromProps = null;
@@ -16,18 +17,8 @@ export default class ToastView extends Laya.Sprite {
     public onShow?(): void;
     public onHide?(): void;
 
-    public set ui(view) {
-        this.removeChildren();
-        view.name = '_contentView';
-        this.addChild(view);
-    }
-
-    public get ui() {
-        return this.getChildByName('_contentView');
-    }
-
     constructor() {
-        super();
+        super(() => { toast.hideToast(this.toast, this) });
         this.width = Laya.stage.width;
         this.height = Laya.stage.height;
     }

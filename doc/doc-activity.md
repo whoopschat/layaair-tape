@@ -1,12 +1,16 @@
 ## Tape.Activity
 
-#### Simple
+#### Simple [Src](../examples/demo)
 ```js
 class LoadingActivity extends Tape.Activity {
+    
+    // bind ui
+    ui = new ui.page.loadingUI;
 
     onFocus(focus) {
         // on focus changed
     }
+
     onCreate() {
         // on create
     }
@@ -33,6 +37,8 @@ class LoadingActivity extends Tape.Activity {
 
 #### Open Activity 
 ```js
+this.navigate(LoadingActivity, { key1: 'value1' })
+// or
 LoadingActivity.open({ key1: 'value1' });
 ```
 
@@ -47,5 +53,8 @@ this.back();
 * `this.back`       Close the current activity
 * `this.pop`        Back multilevel activity
 * `this.popToTop`   Back to the front activity
+
+
+#### [API definition (Tape.d.ts)](../include/tape.d.ts)
 
 

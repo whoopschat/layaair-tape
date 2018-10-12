@@ -1,34 +1,57 @@
 import UIMgr from "../manager/uimgr";
 
-let _toasts = [];
+let _toasts: { [key: string]: any[] } = {};
 
-function showToast(toast, params = null, onHide = null) {
-    var toastView = new toast;
-    toastView._on_hide = onHide;
-    toastView.toast = toast;
-    toastView.params = params || {};
-    let from = toastView.fromProps || { alpha: 0 };
-    let to = toastView.toProps || { alpha: 1 };
-    let easeIn = toastView.easeIn || Laya.Ease.linearIn;
-    let easeOut = toastView.easeOut || Laya.Ease.linearOut;
-    let duration = toastView.duration || 500;
-    Object.assign(toastView, from);
-    toastView.onShow && toastView.onShow();
-    Laya.Tween.to(toastView, to, duration, easeIn, null, 0);
-    Laya.Tween.to(toastView, from, duration, easeOut, Laya.Handler.create(this, () => {
-        if (toastView) {
-            _toasts.splice(_toasts.indexOf(toastView), 1);
-            toastView._on_hide && toastView._on_hide(toastView.toast);
-            toastView.onHide && toastView.onHide();
-            toastView.destroy();
-        }
-    }), duration);
-    _toasts.push(toastView);
-    UIMgr.addTopUI(toastView);
+function _pushToast(toast, view) {
+    if (_toasts[toast]) {
+        _toasts[toast].push(view);
+    } else {
+        _toasts[toast] = [view];
+    }
 }
 
-function hideAll() {
-    let list = _toasts.splice(0, _toasts.length);
+function _popToast(toast, view) {
+    if (!_toasts[toast]) {
+        return [];
+    }
+    if (view && _toasts[toast].length > 1) {
+        _toasts[toast].splice(_toasts[toast].indexOf(view), 1);
+        return [view];
+    } else {
+        let views = _toasts[toast] || [];
+        delete _toasts[toast];
+        return views;
+    }
+}
+
+function showToast(toast, params = null, onHide = null) {
+    var view = new toast;
+    view._on_hide = onHide;
+    view.toast = toast;
+    view.params = params || {};
+    let from = view.fromProps || { alpha: 0 };
+    let to = view.toProps || { alpha: 1 };
+    let easeIn = view.easeIn || Laya.Ease.linearIn;
+    let easeOut = view.easeOut || Laya.Ease.linearOut;
+    let duration = view.duration || 500;
+    Object.assign(view, from);
+    Laya.Tween.to(view, to, 300, easeIn, Laya.Handler.create(this, () => {
+        view.onShow && view.onShow();
+    }), 0);
+    Laya.Tween.to(view, from, 300, easeOut, Laya.Handler.create(this, () => {
+        if (view) {
+            _popToast(toast, view);
+            view._on_hide && view._on_hide(view.toast);
+            view.onHide && view.onHide();
+            view.destroy();
+        }
+    }), duration + 300);
+    _pushToast(toast, view);
+    UIMgr.addTopUI(view);
+}
+
+function hideToast(toast, view = null) {
+    let list = _popToast(toast, view);
     list.forEach(view => {
         view._on_hide && view._on_hide(view.toast);
         view.onHide && view.onHide();
@@ -38,5 +61,5 @@ function hideAll() {
 
 export default {
     showToast,
-    hideAll,
+    hideToast,
 }

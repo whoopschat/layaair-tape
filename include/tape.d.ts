@@ -45,20 +45,6 @@ declare module Tape {
         onLoaded?: () => void;
     }
 
-    /** sharePayload */
-    interface sharePayload {
-        image?: string,
-        text?: string,
-        data?: obj
-    }
-
-    /** shareConfig */
-    interface shareConfig {
-        text: string,
-        images?: string[],
-        tag?: string,
-    }
-
     /** userinfoPayload */
     interface userinfoPayload {
         platform: string,
@@ -147,10 +133,6 @@ declare module Tape {
 
     /** app */
     module app {
-        /** shareAsync */
-        function shareAsync(tag: string, options?: sharePayload): Promise<any>;
-        /** configShare, use img for wx: res/unpack/default_share_img.png */
-        function configShare(title: string, image: string, configs?: shareConfig[]): void;
         /** getUserInfo, use img for wx: res/unpack/get_user_info.png */
         function getUserInfo(callback: (userinfo: userinfoPayload) => void): void;
         /** onLaunch */
@@ -199,8 +181,8 @@ declare module Tape {
     module toast {
         /** showToast */
         function showToast(toast, params?, onHide?: (toast) => void): void;
-        /** hideAll */
-        function hideAll(): void;
+        /** hideToast */
+        function hideToast(): void;
     }
 
     /** Activity */
@@ -229,6 +211,14 @@ declare module Tape {
         protected fromProps: obj;
         /** toProps */
         protected toProps: obj;
+        /** bgAlpha */
+        protected bgAlpha: number;
+        /** bgColor */
+        protected bgColor: string;
+        /** isTranslucent */
+        protected isTranslucent: boolean;
+        /** canceledOnTouchOutside */
+        protected canceledOnTouchOutside: boolean;
         /** activity on focus change */
         protected onFocus?(focus: boolean): void;
         /** activity on create */
@@ -250,7 +240,7 @@ declare module Tape {
         /** finish self */
         protected back(): void;
         /** finish activity */
-        protected finish(): void;
+        protected finish(page?, instance?: any): void;
         /** pop */
         protected pop(num?: number): void;
         /** pop to top */
@@ -291,8 +281,8 @@ declare module Tape {
         protected onShow?(): void;
         /** pop on hide */
         protected onHide?(): void;
-        /** finish pop */
-        protected finish(result?: any): void;
+        /** hide pop */
+        protected hide(result?: any): void;
         /** constructor */
         constructor();
     }
@@ -318,6 +308,14 @@ declare module Tape {
         protected fromProps: obj;
         /** toProps */
         protected toProps: obj;
+        /** bgAlpha */
+        protected bgAlpha: number;
+        /** bgColor */
+        protected bgColor: string;
+        /** isTranslucent */
+        protected isTranslucent: boolean;
+        /** canceledOnTouchOutside */
+        protected canceledOnTouchOutside: boolean;
         /** toast on show */
         protected onShow?(): void;
         /** toast on hide */
