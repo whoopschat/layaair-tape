@@ -11,3 +11,5 @@ Use
 <!-- include tape library -->
 <script src="../node_modules/layaair-tape/dist/tape.js"></script>
 ```
+
+#### [Documentation](doc)
