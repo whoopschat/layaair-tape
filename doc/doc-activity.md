@@ -1,4 +1,5 @@
 ## Tape.Activity
+> activity component
 
 #### Simple [view src](../examples/demo)
 ```js
@@ -55,6 +56,7 @@ this.back();
 * `this.popToTop`   Back to the front activity
 
 
+#### [Documentation](./)
 #### [API definition (Tape.d.ts)](../include/tape.d.ts)
 
 

@@ -32,4 +32,5 @@ SimplePupup.show({ key1: 'value1' });
 this.hide();
 ```
 
+#### [Documentation](./)
 #### [API definition (Tape.d.ts)](../include/tape.d.ts)

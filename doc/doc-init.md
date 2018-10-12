@@ -3,7 +3,7 @@
 
 #### Simple [view src](../examples/demo)
 ```js
-Tape.init(750, 1334);
+Tape.init(750, 1334); // Tape.init3D(750, 1334);
 Tape.bg.setBgColor('#02021a');
 Tape.start({
     mainPage: LoadingActivity,
@@ -13,4 +13,10 @@ Tape.start({
 });
 ```
 
+#### Exit
+```js
+Tape.exit();
+```
+
+#### [Documentation](./)
 #### [API definition (Tape.d.ts)](../include/tape.d.ts)

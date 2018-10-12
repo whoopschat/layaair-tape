@@ -27,4 +27,5 @@ Tape.toast.showToast(SimpleToast, { key1: 'value1' })
 SimpleToast.show({ key1: 'value1' });
 ```
 
+#### [Documentation](./)
 #### [API definition (Tape.d.ts)](../include/tape.d.ts)

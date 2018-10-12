@@ -15,4 +15,5 @@ Tape.rank.hideRank();
 Tape.rank.setRankScore('score', 1024, '---------');
 ```
 
+#### [Documentation](./)
 #### [API definition (Tape.d.ts)](../include/tape.d.ts)

@@ -14,4 +14,5 @@ Tape.ad.watchRewardedVideoAd(() => {
 })
 ```
 
+#### [Documentation](./)
 #### [API definition (Tape.d.ts)](../include/tape.d.ts)
