@@ -144,7 +144,7 @@ declare module Tape {
         /** getUserInfo, use img for wechat: res/unpack/get_user_info.png */
         function getUserInfo(callback: (userinfo: userinfoPayload) => void): void;
         /** onLaunch */
-        function onLaunch(callback: (options: obj) => void);
+        function onLaunch(callback: (options: { scene: string, query: obj, platform: string }) => void);
         /** onPause */
         function onPause(callback: () => void): void;
     }

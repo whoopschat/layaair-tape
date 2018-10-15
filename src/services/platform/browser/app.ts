@@ -65,7 +65,7 @@ class BrowserApp implements IApp {
     }
 
     private _checkOnLaunch() {
-        this._launchCallback && this._launchCallback({ entry: 1000, query: _getQueryParams(), platform: 'browser' });
+        this._launchCallback && this._launchCallback({ scene: '', query: _getQueryParams(), platform: 'browser' });
     }
 
     public onPause(callback: () => void) {

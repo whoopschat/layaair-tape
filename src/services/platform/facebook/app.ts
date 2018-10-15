@@ -43,9 +43,9 @@ class FBApp implements IApp {
     }
 
     private _checkOnLaunch() {
-        platform.execFB('getEntryPointAsync').then(entry => {
+        platform.execFB('getEntryPointAsync').then(scene => {
             let query = platform.execFB('getEntryPointData') || {};
-            this._launchCallback && this._launchCallback({ entry, query, platform: 'facebook' });
+            this._launchCallback && this._launchCallback({ scene: `${scene}`, query, platform: 'facebook' });
         });
     }
 
