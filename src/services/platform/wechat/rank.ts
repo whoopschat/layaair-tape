@@ -6,7 +6,12 @@ class WXRank implements IRank {
 
     private _rank_texture = null;
 
-    private _createRankTexture() {
+    public isSupportedRank() {
+        return true;
+    }
+
+    public createRankView(x = 0, y = 0, width = screen.getDesignWidth(), height = screen.getDesignHeight()) {
+        let rankView = new Laya.Sprite();
         if (window.hasOwnProperty('sharedCanvas')) {
             var sharedCanvas = window['sharedCanvas'];
             if (!sharedCanvas.hasOwnProperty('_addReference')) {
@@ -17,18 +22,8 @@ class WXRank implements IRank {
                 this._rank_texture.bitmap.alwaysChange = false;
             }
         }
-        return this._rank_texture;
-    }
-
-    public isSupportedRank(){
-        return true;
-    }
-
-    public createRankView(x = 0, y = 0, width = screen.getDesignWidth(), height = screen.getDesignHeight()) {
-        var rankView = new Laya.Sprite();
-        var rankTexture = this._createRankTexture();
-        if (rankTexture) {
-            var newTexture = Laya.Texture.createFromTexture(rankTexture, x + screen.getOffestX(), y + screen.getOffestY(), width, height);
+        if (this._rank_texture) {
+            var newTexture = Laya.Texture.createFromTexture(this._rank_texture, x + screen.getOffestX(), y + screen.getOffestY(), width, height);
             newTexture.bitmap.alwaysChange = false;
             rankView.width = width;
             rankView.height = height;
