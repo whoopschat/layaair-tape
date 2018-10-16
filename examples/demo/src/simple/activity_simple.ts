@@ -49,6 +49,11 @@ class SimpleActivity extends Tape.Activity {
 
     onFocus(focus) {
         console.log('PageActivity onFocus ---------------------------------', focus);
+        if (focus) {
+            Tape.app.showGameClubButton('res/unpack/default_share_img.png', 450, 200, 50, 50)
+        } else {
+            Tape.app.hideGameClubButton();
+        }
     }
 
 }
