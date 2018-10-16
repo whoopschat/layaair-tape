@@ -72,6 +72,14 @@ class BrowserApp implements IApp {
         this._pauseCallback = callback;
     }
 
+    public showGameClubButton(icon: string, x: number, y: number, w: number, h: number) {
+        // do nothing
+    }
+
+    public hideGameClubButton() {
+        // do nothing
+    }
+
 }
 
 export const browserApp = new BrowserApp;

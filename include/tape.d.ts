@@ -141,12 +141,16 @@ declare module Tape {
 
     /** app */
     module app {
-        /** getUserInfo, use img for wechat: res/unpack/get_user_info.png */
-        function getUserInfo(callback: (userinfo: userinfoPayload) => void): void;
         /** onLaunch */
         function onLaunch(callback: (options: { scene: string, query: obj, platform: string }) => void);
         /** onPause */
         function onPause(callback: () => void): void;
+        /** getUserInfo, use img for wechat: res/unpack/get_user_info.png */
+        function getUserInfo(callback: (userinfo: userinfoPayload) => void): void;
+        /** showGameClubButton */
+        function showGameClubButton(icon: string, x: number, y: number, w: number, h: number): void;
+        /** hideGameClubButton */
+        function hideGameClubButton(): void;
     }
 
     /** rank */
