@@ -38,7 +38,10 @@ export function init3D(width: number, height: number, ...options) {
     initScreen(true, width, height, ...options);
 }
 
-export function start(options: any = {}, onLoaded = null) {
+export function start(options, onLoaded = null) {
+    if (!options) {
+        options = {};
+    }
     let newOptions = {
         mainPage: options.mainPage || null,
         commonRes: options.commonRes || [],

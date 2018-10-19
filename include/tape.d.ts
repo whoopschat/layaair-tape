@@ -38,7 +38,7 @@ declare module Tape {
 
     /** startOptions */
     interface startPayload {
-        mainPage: any;
+        mainPage?: any;
         commonRes?: { url: string, type: string }[];
         fileVersion?: string;
         onLoadProgress?: (progress: number) => void;
