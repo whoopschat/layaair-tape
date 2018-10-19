@@ -1,5 +1,6 @@
 import toast from "./toastmanager";
 import ui from "./ui";
+import screen from "../manager/screen";
 
 export default class ToastView extends ui {
 
@@ -24,8 +25,8 @@ export default class ToastView extends ui {
 
     constructor() {
         super(() => { this.hide() });
-        this.width = Laya.stage.width;
-        this.height = Laya.stage.height;
+        this.width = screen.getWidth();
+        this.height = screen.getHeight();
     }
 
     public hide() {

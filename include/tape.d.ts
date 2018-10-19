@@ -63,7 +63,7 @@ declare module Tape {
     /** init for 3D */
     function init3D(width: number, height: number, ...options): void;
     /** start */
-    function start(options: startPayload): void;
+    function start(options: startPayload, callback?:() => void): void;
     /** exit */
     function exit(): void;
 
@@ -79,6 +79,10 @@ declare module Tape {
 
     /** screen */
     module screen {
+        /** getWidth */
+        function getWidth(): number;
+        /** getHeight */
+        function getHeight(): number;
         /** getOffestX */
         function getOffestX(): number;
         /** getOffestY */

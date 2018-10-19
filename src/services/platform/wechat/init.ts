@@ -8,8 +8,8 @@ class WXInit implements IInit {
     start(callback: () => void) {
         if (window.hasOwnProperty('sharedCanvas')) {
             var sharedCanvas = window['sharedCanvas'];
-            sharedCanvas.width = Laya.stage.width;
-            sharedCanvas.height = Laya.stage.height;
+            sharedCanvas.width = screen.getWidth();
+            sharedCanvas.height = screen.getHeight();
         }
         callback && callback();
     }
@@ -23,8 +23,8 @@ class WXInit implements IInit {
         platform.postMessageToWXOpenDataContext({
             action: "initRank",
             data: {
-                width: Laya.stage.width,
-                height: Laya.stage.height,
+                width: screen.getWidth(),
+                height: screen.getHeight(),
                 offsetX: screen.getOffestX(),
                 offsetY: screen.getOffestY(),
                 designWidth: screen.getDesignWidth(),

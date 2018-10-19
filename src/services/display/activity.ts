@@ -1,5 +1,6 @@
 import NavStack from "../navigator/stack";
 import ui from "./ui";
+import screen from "../manager/screen";
 
 export default class Activity extends ui {
 
@@ -30,8 +31,8 @@ export default class Activity extends ui {
 
     constructor(options) {
         super(() => { this.back(); });
-        this.width = Laya.stage.width;
-        this.height = Laya.stage.height;
+        this.width = screen.getWidth();
+        this.height = screen.getHeight();
         this.params = Object.assign({}, options.params || {});
         this.page = options.page;
     }

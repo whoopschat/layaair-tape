@@ -1,4 +1,5 @@
 import { IRank } from "../interfaces";
+import screen from "../../manager/screen";
 
 class BrowserRank implements IRank {
 
@@ -6,7 +7,7 @@ class BrowserRank implements IRank {
         return false;
     }
 
-    public createRankView(x = 0, y = 0, width = Laya.stage.width, height = Laya.stage.height) {
+    public createRankView(x = 0, y = 0, width = screen.getWidth(), height = screen.getHeight()) {
         var rankView = new Laya.Sprite();
         rankView.scrollRect = new Laya.Rectangle(x, y, width, height);
         return rankView;

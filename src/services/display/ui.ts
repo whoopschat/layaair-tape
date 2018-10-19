@@ -85,8 +85,8 @@ export default class ui extends Laya.Component {
         this._bgSprite = new Laya.Sprite();
         this._bgSprite.x = -screen.getOffestX();
         this._bgSprite.y = -screen.getOffestY();
-        this._bgSprite.width = Laya.stage.width;
-        this._bgSprite.height = Laya.stage.height;
+        this._bgSprite.width = screen.getWidth();
+        this._bgSprite.height = screen.getHeight();
         this._bgSprite.on(Laya.Event.CLICK, this, (e) => {
             if (this.canceledOnTouchOutside) {
                 this._handleOnTouchOutside && this._handleOnTouchOutside();

@@ -10,10 +10,8 @@ export function initBg() {
         _bgSprite.name = 'tape_background_layer';
         Laya.stage.addChild(_bgSprite);
     }
-    _bgSprite.x = -screen.getOffestX();
-    _bgSprite.y = -screen.getOffestY();
-    _bgSprite.width = Laya.stage.width;
-    _bgSprite.height = Laya.stage.height;
+    _bgSprite.width = screen.getWidth();
+    _bgSprite.height = screen.getHeight();
     _bgSprite.graphics.clear();
     _bgSprite.graphics.drawRect(0, 0, _bgSprite.width, _bgSprite.height, _bgColor);
 }

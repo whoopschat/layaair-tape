@@ -38,10 +38,10 @@ export function init3D(width: number, height: number, ...options) {
     initScreen(true, width, height, ...options);
 }
 
-export function start(options) {
+export function start(options, callback = null) {
     let newOptions = {
         mainPage: options.mainPage,
-        commonRes: options.commonRes,
+        commonRes: options.commonRes || [],
         fileVersion: options.fileVersion,
         onLoadProgress: (progress) => {
             _get().onLoadProgress(progress);
@@ -54,6 +54,7 @@ export function start(options) {
     }
     let onStart = () => {
         initNavigator(newOptions);
+        callback && callback();
     }
     _get().start(onStart);
 }

@@ -1,4 +1,5 @@
 import { initBg } from "./bg";
+import { initUI } from "./uimgr";
 
 let __offset_x__ = 0;
 let __offset_y__ = 0;
@@ -28,12 +29,19 @@ export function initScreen(is3D, width, height, ...options) {
     } else {
         Laya.init.apply(this, [initWidth, initHeight, ...options]);
     }
-    initBg();
-    Laya.stage.x = __offset_x__;
-    Laya.stage.y = __offset_y__;
     Laya.stage.scaleMode = Laya.Stage.SCALE_EXACTFIT;
     Laya.stage.alignH = Laya.Stage.ALIGN_CENTER;
     Laya.stage.alignV = Laya.Stage.ALIGN_MIDDLE;
+    initBg();
+    initUI(__offset_x__,__offset_y__)
+}
+
+function getWidth() {
+    return Laya.stage.width;
+}
+
+function getHeight() {
+    return Laya.stage.height;
 }
 
 function getOffestX() {
@@ -53,6 +61,8 @@ function getDesignHeight() {
 }
 
 export default {
+    getWidth,
+    getHeight,
     getOffestX,
     getOffestY,
     getDesignWidth,

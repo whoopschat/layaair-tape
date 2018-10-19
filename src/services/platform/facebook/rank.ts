@@ -1,6 +1,7 @@
 import platform from "../../../utils/platform";
 import { IRank } from "../interfaces";
 import { bindView } from "../../../utils/bind";
+import screen from "../../manager/screen";
 
 class FBRank implements IRank {
 
@@ -130,7 +131,7 @@ class FBRank implements IRank {
         return true;
     }
 
-    public createRankView(x = 0, y = 0, width = Laya.stage.width, height = Laya.stage.height) {
+    public createRankView(x = 0, y = 0, width = screen.getWidth(), height = screen.getHeight()) {
         var rankView = new Laya.Sprite();
         rankView.scrollRect = new Laya.Rectangle(x, y, width, height);
         this._rankViews.push(rankView);

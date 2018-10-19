@@ -1,5 +1,6 @@
 import popup from "./popupmanager";
 import ui from "./ui";
+import screen from "../manager/screen";
 
 export default class PopupView extends ui {
 
@@ -31,8 +32,8 @@ export default class PopupView extends ui {
         super(() => {
             this.hide();
         });
-        this.width = Laya.stage.width;
-        this.height = Laya.stage.height;
+        this.width = screen.getWidth();
+        this.height = screen.getHeight();
     }
 
 }

@@ -56,55 +56,61 @@ class WXAd implements IAd {
     }
 
     public showBannerAd(x: number, y: number, width: number, height: number, onError?: (error: any) => void) {
-        this.hideBannerAd();
-        let realLeft = fixWidth(x + screen.getOffestX());
-        let realTop = fixHeight(y + screen.getOffestY());
-        let realWidth = fixWidth(width);
-        let realHeight = fixHeight(height);
-        if (realWidth < 300) {
-            realWidth = 300;
-        }
-        this._bannerAd = platform.execWX('createBannerAd', {
-            adUnitId: this._bannerAdId,
-            style: {
-                left: realLeft,
-                top: realTop,
-                width: realWidth,
-                height: realHeight
+        try {
+            this.hideBannerAd();
+            let realLeft = fixWidth(x + screen.getOffestX());
+            let realTop = fixHeight(y + screen.getOffestY());
+            let realWidth = fixWidth(width);
+            let realHeight = fixHeight(height);
+            if (realWidth < 300) {
+                realWidth = 300;
             }
-        });
-        if (this._bannerAd) {
-            this._bannerAd.style.left = realLeft;
-            this._bannerAd.style.top = realTop;
-            this._bannerAd.style.width = realWidth;
-            this._bannerAd.style.height = realHeight;
-            this._bannerAd.onResize(res => {
-                let configZ = realWidth / realHeight;
-                let newZ = res.width / res.height;
-                let newL = realLeft;
-                let newT = realTop;
-                let newW = realWidth;
-                let newH = realHeight;
-                if (configZ < newZ) {
-                    newH = realWidth / newZ;
-                } else {
-                    newW = realHeight * newZ;
+            this._bannerAd = platform.execWX('createBannerAd', {
+                adUnitId: this._bannerAdId,
+                style: {
+                    left: realLeft,
+                    top: realTop,
+                    width: realWidth,
+                    height: realHeight
                 }
-                if (newW < 300) {
-                    newW = 300;
-                }
-                newL = realLeft + ((realWidth - newW) / 2);
-                this._bannerAd.style.left = newL;
-                this._bannerAd.style.top = newT;
-                this._bannerAd.style.width = newW;
-                this._bannerAd.style.height = newH;
             });
-            this._bannerAd.onError(err => {
-                onError && onError(err && err.errMsg || 'showBannerAd:fail');
-            });
-            this._bannerAd.show();
-        } else {
-            onError && onError('createBannerAd:fail')
+            if (this._bannerAd) {
+                this._bannerAd.style.left = realLeft;
+                this._bannerAd.style.top = realTop;
+                this._bannerAd.style.width = realWidth;
+                this._bannerAd.style.height = realHeight;
+                this._bannerAd.onResize(res => {
+                    if (this._bannerAd) {
+                        let configZ = realWidth / realHeight;
+                        let newZ = res.width / res.height;
+                        let newL = realLeft;
+                        let newT = realTop;
+                        let newW = realWidth;
+                        let newH = realHeight;
+                        if (configZ < newZ) {
+                            newH = realWidth / newZ;
+                        } else {
+                            newW = realHeight * newZ;
+                        }
+                        if (newW < 300) {
+                            newW = 300;
+                        }
+                        newL = realLeft + ((realWidth - newW) / 2);
+                        this._bannerAd.style.left = newL;
+                        this._bannerAd.style.top = newT;
+                        this._bannerAd.style.width = newW;
+                        this._bannerAd.style.height = newH;
+                    }
+                });
+                this._bannerAd.onError(err => {
+                    onError && onError(err && err.errMsg || 'showBannerAd:fail');
+                });
+                this._bannerAd.show();
+            } else {
+                onError && onError('createBannerAd:fail')
+            }
+        } catch (error) {
+            onError && onError('showBannerAd:fail')
         }
     }
 
