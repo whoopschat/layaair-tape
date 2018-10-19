@@ -36,7 +36,7 @@ function _beginLoadStaticRes() {
 }
 
 function _onStaticResLoaded() {
-    NavStack.navigate(_options.mainPage);
+    _options.mainPage && NavStack.navigate(_options.mainPage);
 }
 
 export function initNavigator(options) {

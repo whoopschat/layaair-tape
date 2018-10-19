@@ -63,7 +63,7 @@ declare module Tape {
     /** init for 3D */
     function init3D(width: number, height: number, ...options): void;
     /** start */
-    function start(options: startPayload, callback?:() => void): void;
+    function start(options: startPayload | null, onLoaded?: () => void): void;
     /** exit */
     function exit(): void;
 

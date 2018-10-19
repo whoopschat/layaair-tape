@@ -38,23 +38,23 @@ export function init3D(width: number, height: number, ...options) {
     initScreen(true, width, height, ...options);
 }
 
-export function start(options, callback = null) {
+export function start(options: any = {}, onLoaded = null) {
     let newOptions = {
-        mainPage: options.mainPage,
+        mainPage: options.mainPage || null,
         commonRes: options.commonRes || [],
         fileVersion: options.fileVersion,
         onLoadProgress: (progress) => {
             _get().onLoadProgress(progress);
-            options.onLoaded && options.onLoadProgress(progress);
+            options.onLoadProgress && options.onLoadProgress(progress);
         },
         onLoaded: () => {
             _get().onLoaded();
+            onLoaded && onLoaded();
             options.onLoaded && options.onLoaded();
         }
     }
     let onStart = () => {
         initNavigator(newOptions);
-        callback && callback();
     }
     _get().start(onStart);
 }
