@@ -7,6 +7,7 @@ import platform from "./utils/platform";
 import ad from './services/ad';
 import app from './services/app';
 import rank from './services/rank';
+import club from './services/club';
 
 
 import utils from './services/utils';
@@ -19,7 +20,15 @@ import PopupView from "./services/display/popupview";
 import ToastView from "./services/display/toastview";
 
 import { init, init3D, start, exit } from './services/init';
-import { showLoading, hideLoading, showModal, showToast, hideToast } from './services/comp';
+import {
+    showLoading,
+    hideLoading,
+    showModal,
+    showToast,
+    hideToast,
+    vibrateLong,
+    vibrateShort,
+} from './services/comp';
 
 import runtime from "./utils/runtime";
 
@@ -34,6 +43,8 @@ const Tape = {
     showModal,
     showToast,
     hideToast,
+    vibrateShort,
+    vibrateLong,
 
     bg,
     screen,
@@ -42,6 +53,7 @@ const Tape = {
     ad,
     app,
     rank,
+    club,
 
     utils,
 

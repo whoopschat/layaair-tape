@@ -33,6 +33,19 @@ class BrowserApp implements IApp {
         }
     }
 
+    private _checkOnLaunch() {
+        this._launchCallback && this._launchCallback({ scene: '', query: _getQueryParams(), platform: 'browser' });
+    }
+
+    public onLaunch(callback: (data: object) => void) {
+        this._launchCallback = callback;
+        this._checkOnLaunch();
+    }
+
+    public onPause(callback: () => void) {
+        this._pauseCallback = callback;
+    }
+
     public getUserInfo(callback: (userinfo) => void) {
         let user = JSON.parse(_getQueryParams()['user'] || '{}');
         let id = user['id'] || getStorageData('id', '-');
@@ -57,35 +70,6 @@ class BrowserApp implements IApp {
             language: language,
             raw: JSON.stringify(user),
         });
-    }
-
-    public onLaunch(callback: (data: object) => void) {
-        this._launchCallback = callback;
-        this._checkOnLaunch();
-    }
-
-    private _checkOnLaunch() {
-        this._launchCallback && this._launchCallback({ scene: '', query: _getQueryParams(), platform: 'browser' });
-    }
-
-    public onPause(callback: () => void) {
-        this._pauseCallback = callback;
-    }
-
-    public showGameClubButton(icon: string, x: number, y: number, w: number, h: number) {
-        // do nothing
-    }
-
-    public hideGameClubButton() {
-        // do nothing
-    }
-
-    public vibrateShort() {
-        // do nothing
-    }
-
-    public vibrateLong() {
-        // do nothing
     }
 
 }

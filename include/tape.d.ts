@@ -111,6 +111,10 @@ declare module Tape {
     function showLoading(params?: loadingPayload): void;
     /** hideLoading */
     function hideLoading(): void;
+    /** vibrateShort */
+    function vibrateShort(): void;
+    /** vibrateLong */
+    function vibrateLong(): void;
 
     /** bg */
     module bg {
@@ -195,11 +199,7 @@ declare module Tape {
         /** onPause */
         function onPause(callback: () => void): void;
         /** getUserInfo, use img for wechat: res/unpack/get_user_info.png */
-        function getUserInfo(callback: (userinfo: userinfoPayload) => void): void;
-        /** showGameClubButton */
-        function showGameClubButton(icon: string, x: number, y: number, w: number, h: number): void;
-        /** hideGameClubButton */
-        function hideGameClubButton(): void;
+        function getUserInfo(callback: (userinfo: userinfoPayload) => void, image?: string): void;
     }
 
     /** rank */
@@ -216,6 +216,14 @@ declare module Tape {
         function showRank(ui: obj | obj[]): void;
         /** hideRank */
         function hideRank(): void;
+    }
+
+    /** club */
+    module club {
+        /** showClubButton */
+        function showClubButton(icon: string, x: number, y: number, w: number, h: number): void;
+        /** hideClubButton */
+        function hideClubButton(): void;
     }
 
     /** utils */

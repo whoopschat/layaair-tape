@@ -2,7 +2,7 @@
     "x":0,
     "type":"View",
     "selectedBox":1,
-    "selecteID":18,
+    "selecteID":20,
     "props":{"width":600,"sceneColor":"#000000","height":400},
     "nodeParent":-1,
     "label":"View",
@@ -29,7 +29,7 @@
         {
             "x":15,
             "type":"Label",
-            "props":{"y":279,"x":16,"wordWrap":true,"width":571,"var":"output","height":105,"fontSize":20,"color":"#666666","borderColor":"#333333"},
+            "props":{"y":300,"x":16,"wordWrap":true,"width":571,"var":"output","height":80,"fontSize":20,"color":"#666666","borderColor":"#333333"},
             "nodeParent":1,
             "label":"Label(output)",
             "isDirectory":false,
@@ -166,6 +166,19 @@
             "isAniNode":true,
             "hasChild":false,
             "compId":19,
+            "child":[
+                ]
+        },
+        {
+            "x":15,
+            "type":"Button",
+            "props":{"y":240,"x":400,"width":179,"var":"btnVibrate","skin":"comp/button.png","label":"Vibrate","height":42},
+            "nodeParent":1,
+            "label":"Button(btnVibrate)",
+            "isDirectory":false,
+            "isAniNode":true,
+            "hasChild":false,
+            "compId":20,
             "child":[
                 ]
         }],

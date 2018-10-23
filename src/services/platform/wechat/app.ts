@@ -1,14 +1,11 @@
 import platform from "../../../utils/platform";
 import { IApp } from "../interfaces";
-import { fixWidth, fixHeight } from "./_size";
-import screen from "../../manager/screen";
 
 class WXApp implements IApp {
 
     private _pauseCallback = null;
     private _launchCallback = null;
     private _userinfoButton = null;
-    private _clubButton = null;
 
     constructor() {
         if (!platform.isWechatApp()) {
@@ -26,53 +23,21 @@ class WXApp implements IApp {
         });
     }
 
-    public showGameClubButton(icon: string, x: number, y: number, w: number, h: number) {
-        try {
-            let left = fixWidth(x + screen.getOffestX());
-            let top = fixHeight(y + screen.getOffestY());
-            let width = fixWidth(w);
-            let height = fixHeight(h);
-            let icons = ['green', 'white', 'dark', 'light'];
-            this.hideGameClubButton();
-            if (!this._clubButton) {
-                this._clubButton = platform.execWX('createGameClubButton', {
-                    icon: icons.indexOf(icon) < 0 ? icons[0] : icon,
-                    style: {
-                        left,
-                        top,
-                        width,
-                        height
-                    }
-                });
-                if (this._clubButton && icons.indexOf(icon) < 0) {
-                    this._clubButton.image = icon;
-                }
-            }
-            if (this._clubButton) {
-                this._clubButton.style.left = left;
-                this._clubButton.style.top = top;
-                this._clubButton.style.width = width;
-                this._clubButton.style.height = height;
-                this._clubButton.show();
-            }
-        } catch (error) {
-        }
+    public onLaunch(callback: (data: object) => void) {
+        this._launchCallback = callback;
+        this._checkOnLaunch();
     }
 
-    public hideGameClubButton() {
-        try {
-            if (this._clubButton) {
-                this._clubButton.style.left = -this._clubButton.style.width;
-                this._clubButton.style.top = -this._clubButton.style.height;
-                this._clubButton.hide();
-                this._clubButton.destroy();
-                this._clubButton = null;
-            }
-        } catch (error) {
-        }
+    private _checkOnLaunch() {
+        let options = platform.execWX('getLaunchOptionsSync') || {};
+        this._launchCallback && this._launchCallback({ entry: options.scene || 1000, query: options.query || {}, platform: 'wechat' });
     }
 
-    public getUserInfo(callback: (userinfo) => void) {
+    public onPause(callback: () => void) {
+        this._pauseCallback = callback;
+    }
+
+    public getUserInfo(callback: (userinfo) => void, image = null) {
         let onHandler = (res) => {
             if (res && res.userInfo) {
                 callback && callback({
@@ -111,7 +76,7 @@ class WXApp implements IApp {
                 this._userinfoButton = platform.execWX('createUserInfoButton', {
                     withCredentials: true,
                     type: 'image',
-                    image: 'res/unpack/get_user_info.png',
+                    image: image || 'res/unpack/get_user_info.png',
                     style: {
                         left: 0,
                         top: 0,
@@ -137,28 +102,6 @@ class WXApp implements IApp {
         });
     }
 
-    public onLaunch(callback: (data: object) => void) {
-        this._launchCallback = callback;
-        this._checkOnLaunch();
-    }
-
-    private _checkOnLaunch() {
-        let options = platform.execWX('getLaunchOptionsSync') || {};
-        this._launchCallback && this._launchCallback({ entry: options.scene || 1000, query: options.query || {}, platform: 'wechat' });
-    }
-
-    public onPause(callback: () => void) {
-        this._pauseCallback = callback;
-    }
-
-    public vibrateShort() {
-        platform.execWX('vibrateShort')
-    }
-
-    public vibrateLong() {
-        platform.execWX('vibrateLong')
-    }
-    
 }
 
 export const wxApp = new WXApp;

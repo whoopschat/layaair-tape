@@ -30,7 +30,7 @@ class SimpleActivity extends Tape.Activity {
             })
         });
         this.ui.btnLoading.on(Laya.Event.CLICK, this, () => {
-            Tape.showLoading({  });
+            Tape.showLoading();
             setTimeout(function () {
                 Tape.showLoading({ title: '正在获取用户信息' });
             }, 2000);
@@ -46,6 +46,9 @@ class SimpleActivity extends Tape.Activity {
         });
         this.ui.btnRank.on(Laya.Event.CLICK, this, () => {
             RankActivity.open();
+        });
+        this.ui.btnVibrate.on(Laya.Event.CLICK, this, () => {
+            Tape.vibrateShort();
         });
         this.ui.btnRewardedVideo.on(Laya.Event.CLICK, this, () => {
             Tape.ad.configRewardedVideoAd('facebook', '456456456456_456456456456');
@@ -76,9 +79,9 @@ class SimpleActivity extends Tape.Activity {
     onFocus(focus) {
         console.log('PageActivity onFocus ---------------------------------', focus);
         if (focus) {
-            Tape.app.showGameClubButton('res/unpack/default_share_img.png', 450, 200, 50, 50)
+            Tape.club.showClubButton('res/unpack/default_share_img.png', 450, 200, 50, 50)
         } else {
-            Tape.app.hideGameClubButton();
+            Tape.club.hideClubButton();
         }
     }
 

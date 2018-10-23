@@ -27,21 +27,6 @@ class FBApp implements IApp {
         });
     }
 
-    public getUserInfo(callback: (userinfo) => void) {
-        callback && callback({
-            platform: 'facebook',
-            playerId: platform.execFB('player.getID'),
-            nickname: platform.execFB('player.getName'),
-            avatarUrl: platform.execFB('player.getPhoto'),
-            city: '-',
-            country: '-',
-            province: '-',
-            gender: 0,
-            language: platform.execFB('getLocale'),
-            raw: null,
-        });
-    }
-
     private _checkOnLaunch() {
         platform.execFB('getEntryPointAsync').then(scene => {
             let query = platform.execFB('getEntryPointData') || {};
@@ -58,22 +43,21 @@ class FBApp implements IApp {
         this._pauseCallback = callback;
     }
 
-    public showGameClubButton(icon: string, x: number, y: number, w: number, h: number) {
-        // do nothing
+    public getUserInfo(callback: (userinfo) => void) {
+        callback && callback({
+            platform: 'facebook',
+            playerId: platform.execFB('player.getID'),
+            nickname: platform.execFB('player.getName'),
+            avatarUrl: platform.execFB('player.getPhoto'),
+            city: '-',
+            country: '-',
+            province: '-',
+            gender: 0,
+            language: platform.execFB('getLocale'),
+            raw: null,
+        });
     }
 
-    public hideGameClubButton() {
-        // do nothing
-    }
-
-    public vibrateShort() {
-        // do nothing
-    }
-
-    public vibrateLong() {
-        // do nothing
-    }
-    
 }
 
 export const fbApp = new FBApp;
