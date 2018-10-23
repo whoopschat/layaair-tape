@@ -10,7 +10,33 @@ class SimpleActivity extends Tape.Activity {
             this.navigate(Page2Activity);
         });
         this.ui.btnToast.on(Laya.Event.CLICK, this, () => {
-            TestToast.show();
+            Tape.showToast({ title: '金币+50', image: 'res/ic_coin.png', duration: 1500 })
+        });
+        this.ui.btnModal.on(Laya.Event.CLICK, this, () => {
+            Tape.showModal({
+                title: '提示',
+                content: '你好，请重新登录',
+                showCancel: true,
+                cancelText: '取消',
+                confirmText: '确定',
+                success: (res) => {
+                    if (res.confirm) {
+                        Tape.showToast({ title: '点击确定' })
+                    }
+                    if (res.cancel) {
+                        Tape.showToast({ title: '点击取消' })
+                    }
+                }
+            })
+        });
+        this.ui.btnLoading.on(Laya.Event.CLICK, this, () => {
+            Tape.showLoading({  });
+            setTimeout(function () {
+                Tape.showLoading({ title: '正在获取用户信息' });
+            }, 2000);
+            setTimeout(function () {
+                Tape.hideLoading();
+            }, 4000);
         });
         this.ui.btnPopup.on(Laya.Event.CLICK, this, () => {
             TestPop.show();

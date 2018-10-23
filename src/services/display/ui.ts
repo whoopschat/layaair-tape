@@ -6,12 +6,21 @@ export default class ui extends Laya.Component {
     private _bgAlpha = 0.5;
     private _bgColor = '#000000';
     private _isTranslucent = true;
+    private _isShow = false;
     private _handleOnTouchOutside = null;
     private _canceledOnTouchOutside = false;
+    private _nonPenetrating = false;
+    private _onEvent = null;
 
     constructor(handleOnTouchOutside = null) {
         super();
         this._handleOnTouchOutside = handleOnTouchOutside;
+        this._onEvent = (e) => {
+            if (this.isShow && this.canceledOnTouchOutside) {
+                this._handleOnTouchOutside && this._handleOnTouchOutside();
+            }
+            e.stopPropagation();
+        }
         setTimeout(() => this.initBg(), 0);
     }
 
@@ -23,6 +32,14 @@ export default class ui extends Laya.Component {
 
     public get ui(): Laya.Sprite {
         return this.getChildByName('_contentView') as Laya.Sprite;
+    }
+
+    public set isShow(isShow) {
+        this._isShow = isShow;
+    }
+
+    public get isShow() {
+        return this._isShow;
     }
 
     public set bgAlpha(bgAlpha) {
@@ -61,6 +78,15 @@ export default class ui extends Laya.Component {
         return this._canceledOnTouchOutside;
     }
 
+    public set nonPenetrating(nonPenetrating) {
+        this._nonPenetrating = nonPenetrating;
+        this.refreshCanceledOnTouchOutside();
+    }
+
+    public get nonPenetrating() {
+        return this._nonPenetrating;
+    }
+
     private refreshBg() {
         if (!this._bgSprite) {
             return;
@@ -73,8 +99,10 @@ export default class ui extends Laya.Component {
     }
 
     private refreshCanceledOnTouchOutside() {
-        if (this.canceledOnTouchOutside && this.ui) {
+        this._bgSprite && this._bgSprite.offAll();
+        if ((this.canceledOnTouchOutside || this.nonPenetrating) && this.ui) {
             this.ui.mouseThrough = true;
+            this._bgSprite && this._bgSprite.on(Laya.Event.CLICK, this, this._onEvent);
         }
     }
 
@@ -87,12 +115,6 @@ export default class ui extends Laya.Component {
         this._bgSprite.y = -screen.getOffestY();
         this._bgSprite.width = screen.getWidth();
         this._bgSprite.height = screen.getHeight();
-        this._bgSprite.on(Laya.Event.CLICK, this, (e) => {
-            if (this.canceledOnTouchOutside) {
-                this._handleOnTouchOutside && this._handleOnTouchOutside();
-            }
-            e.stopPropagation();
-        });
         this.addChildAt(this._bgSprite, 0);
         this.refreshBg();
         this.refreshCanceledOnTouchOutside();

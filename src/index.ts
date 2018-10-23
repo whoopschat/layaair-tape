@@ -8,7 +8,8 @@ import ad from './services/ad';
 import app from './services/app';
 import rank from './services/rank';
 
-import runtime from "./utils/runtime";
+
+import utils from './services/utils';
 import navigator from "./services/navigator/stack";
 import popup from "./services/display/popupmanager";
 import toast from "./services/display/toastmanager";
@@ -18,12 +19,21 @@ import PopupView from "./services/display/popupview";
 import ToastView from "./services/display/toastview";
 
 import { init, init3D, start, exit } from './services/init';
+import { showLoading, hideLoading, showModal, showToast, hideToast } from './services/comp';
+
+import runtime from "./utils/runtime";
 
 const Tape = {
     init,
     init3D,
     start,
     exit,
+
+    showLoading,
+    hideLoading,
+    showModal,
+    showToast,
+    hideToast,
 
     bg,
     screen,
@@ -32,6 +42,8 @@ const Tape = {
     ad,
     app,
     rank,
+
+    utils,
 
     navigator,
     popup,

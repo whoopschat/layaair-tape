@@ -151,6 +151,14 @@ class WXApp implements IApp {
         this._pauseCallback = callback;
     }
 
+    public vibrateShort() {
+        platform.execWX('vibrateShort')
+    }
+
+    public vibrateLong() {
+        platform.execWX('vibrateLong')
+    }
+    
 }
 
 export const wxApp = new WXApp;

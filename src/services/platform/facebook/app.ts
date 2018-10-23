@@ -66,6 +66,14 @@ class FBApp implements IApp {
         // do nothing
     }
 
+    public vibrateShort() {
+        // do nothing
+    }
+
+    public vibrateLong() {
+        // do nothing
+    }
+    
 }
 
 export const fbApp = new FBApp;

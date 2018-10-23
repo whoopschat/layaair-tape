@@ -29,15 +29,16 @@ function showToast(toast, params = null, onHide = null) {
     view._on_hide = onHide;
     view.toast = toast;
     view.params = params || {};
+    view.onShow && view.onShow();
     let from = view.fromProps || { alpha: 0 };
     let to = view.toProps || { alpha: 1 };
     let easeIn = view.easeIn || Laya.Ease.linearIn;
     let easeOut = view.easeOut || Laya.Ease.linearOut;
-    let duration = view.duration || 500;
-    let displayDuration = view.displayDuration || 1000;
+    let duration = view.duration;
+    let displayDuration = view.displayDuration;
     Object.assign(view, from);
     Laya.Tween.to(view, to, duration, easeIn, Laya.Handler.create(this, () => {
-        view.onShow && view.onShow();
+        view.isShow = true;
     }), 0);
     Laya.Tween.to(view, from, duration, easeOut, Laya.Handler.create(this, () => {
         if (view) {

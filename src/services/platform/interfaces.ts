@@ -21,6 +21,8 @@ export interface IApp {
     getUserInfo(callback: (userinfo: object) => void): void;
     showGameClubButton(icon: string, x: number, y: number, w: number, h: number): void;
     hideGameClubButton(): void;
+    vibrateShort();
+    vibrateLong();
 }
 
 export interface IRank {

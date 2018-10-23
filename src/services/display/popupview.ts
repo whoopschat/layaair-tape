@@ -32,6 +32,7 @@ export default class PopupView extends ui {
         super(() => {
             this.hide();
         });
+        this.nonPenetrating = true;
         this.width = screen.getWidth();
         this.height = screen.getHeight();
     }

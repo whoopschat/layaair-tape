@@ -58,6 +58,41 @@ declare module Tape {
         raw: obj
     }
 
+    /** modalPayload */
+    interface modalPayload {
+        title?: string,
+        content?: string,
+        showCancel?: boolean,
+        cancelText?: string,
+        cancelColor?: string,
+        confirmText?: string,
+        confirmColor?: string,
+        success?: (result: { cancel: boolean, confirm: boolean }) => void,
+        fail?: any;
+        complete?: any;
+    }
+
+    /** toastPayload */
+    interface toastPayload {
+        title: string,
+        image?: string,
+        icon?: string,
+        duration?: number,
+        mask?: boolean,
+        success?: any,
+        fail?: any;
+        complete?: any;
+    }
+
+    /** loadingPayload */
+    interface loadingPayload {
+        title: string,
+        mask?: boolean,
+        success?: any,
+        fail?: any;
+        complete?: any;
+    }
+
     /** init for 2D */
     function init(width: number, height: number, ...options): void;
     /** init for 3D */
@@ -66,6 +101,16 @@ declare module Tape {
     function start(options: startPayload | null, onLoaded?: () => void): void;
     /** exit */
     function exit(): void;
+    /** showToast */
+    function showToast(params: toastPayload): void;
+    /** hideToast */
+    function hideToast(): void;
+    /** showModal */
+    function showModal(params: modalPayload): void;
+    /** showToast */
+    function showLoading(params?: loadingPayload): void;
+    /** hideLoading */
+    function hideLoading(): void;
 
     /** bg */
     module bg {
@@ -171,6 +216,24 @@ declare module Tape {
         function showRank(ui: obj | obj[]): void;
         /** hideRank */
         function hideRank(): void;
+    }
+
+    /** utils */
+    module utils {
+        /** randomUUID */
+        function randomUUID(): string;
+        /** randomNumber */
+        function randomNumber(minNum: number, maxNum: number): number;
+        /** randomNumber */
+        function randomInteger(minNum: number, maxNum: number): number;
+        /** randomArray */
+        function randomArray(source: any[], length?: number): any[];
+        /** randomArrayItem */
+        function randomArrayItem(source: any[]): any;
+        /** tryToObject */
+        function tryToObject(source): any;
+        /** anyToArray */
+        function anyToArray(source: any): any[];
     }
 
     /** navigator */
