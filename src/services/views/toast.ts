@@ -1,5 +1,33 @@
 import screen from "../manager/screen";
 import { BgView } from "./bg";
+import { PNG_LOADING } from "../../utils/pngres";
+
+class IconView extends Laya.Image {
+
+    private _angle = 0;
+
+    constructor() {
+        super();
+    }
+
+    public runLoop() {
+        this.timer.clear(this, this.update);
+        this.timer.frameLoop(1, this, this.update);
+    }
+
+    public stopLoop() {
+        this.timer.clear(this, this.update);
+    }
+
+    private update() {
+        this._angle += 3;
+        if (this._angle >= 360) {
+            this._angle = 0;
+        }
+        this.rotation = this._angle;
+    }
+
+}
 
 export class ToastContentView extends Laya.Sprite {
 
@@ -17,11 +45,11 @@ export class ToastContentView extends Laya.Sprite {
         super();
         let size = Math.min(screen.getDesignWidth(), screen.getDesignHeight());
         this._maxW = size * 0.6;
-        this._minW = size * 0.2;
-        this._iconSize = size * 0.08;
-        this._padding = size * 0.04;
-        this._fontSize = size * 0.04;
-        this._radius = size * 0.03;
+        this._minW = size * 0.3;
+        this._iconSize = size * 0.15;
+        this._padding = size * 0.08;
+        this._fontSize = size * 0.06;
+        this._radius = 0;
         this._initBg();
         this._initImage();
         this._initTitle();
@@ -50,11 +78,11 @@ export class ToastContentView extends Laya.Sprite {
     }
 
     private _initImage() {
-        this._imageView = new Laya.Image();
+        this._imageView = new IconView();
         this.addChild(this._imageView);
     }
 
-    public setContent(title, image) {
+    public setContent(title, image, anim = false) {
 
         this._titleView.width = undefined;
         this._titleView.visible = false;
@@ -66,24 +94,32 @@ export class ToastContentView extends Laya.Sprite {
         }
 
         let _draw = () => {
+            if (this._imageView.visible) {
+                this._titleView.y = this._imageView.y + this._imageView.height / 2 + this._padding / 2;
+            }
             this._titleView.visible = true;
             this._bgView.height = this._titleView.height + this._titleView.y + this._padding;
             this._bgView.width = this._titleView.width + 2 * this._padding;
             this._bgView.callDraw();
 
-            this._imageView.x = (this._bgView.width - this._imageView.width) / 2;
+            this._imageView.x = this._bgView.width / 2;
 
             this.x = (screen.getDesignWidth() - this._bgView.width) / 2;
             this.y = (screen.getDesignHeight() - this._bgView.height) / 2;
         }
 
         if (image) {
+            this._imageView.visible = false;
             Laya.loader.load(image, Laya.Handler.create(this, (res) => {
                 if (res) {
-                    this._imageView.visible = true;
                     this._imageView.width = undefined;
                     this._imageView.height = undefined;
                     this._imageView.skin = image;
+                    if (anim) {
+                        this._imageView.runLoop();
+                    } else {
+                        this._imageView.stopLoop();
+                    }
                     if (this._imageView.width && this._imageView.height) {
                         if (this._imageView.width > this._imageView.height) {
                             this._imageView.width = this._iconSize * this._imageView.width / this._imageView.height;
@@ -93,8 +129,9 @@ export class ToastContentView extends Laya.Sprite {
                             this._imageView.width = this._iconSize;
                         }
                     }
-                    this._imageView.y = this._padding;
-                    this._titleView.y = this._imageView.y + this._imageView.height + this._padding / 2;
+                    this._imageView.pivot(this._imageView.width / 2, this._imageView.height / 2);
+                    this._imageView.y = this._padding + this._imageView.height / 2;
+                    this._imageView.visible = true;
                 } else {
                     this._imageView.visible = false;
                 }

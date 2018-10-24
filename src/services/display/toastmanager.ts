@@ -40,14 +40,16 @@ function showToast(toast, params = null, onHide = null) {
     Laya.Tween.to(view, to, duration, easeIn, Laya.Handler.create(this, () => {
         view.isShow = true;
     }), 0);
-    Laya.Tween.to(view, from, duration, easeOut, Laya.Handler.create(this, () => {
-        if (view) {
-            _popToast(toast, view);
-            view._on_hide && view._on_hide(view.toast);
-            view.onHide && view.onHide();
-            view.destroy();
-        }
-    }), displayDuration + duration);
+    if (displayDuration != -1) {
+        Laya.Tween.to(view, from, duration, easeOut, Laya.Handler.create(this, () => {
+            if (view) {
+                _popToast(toast, view);
+                view._on_hide && view._on_hide(view.toast);
+                view.onHide && view.onHide();
+                view.destroy();
+            }
+        }), displayDuration + duration);
+    }
     _pushToast(toast, view);
     UIMgr.addTopLayer(view);
 }

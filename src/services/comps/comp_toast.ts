@@ -1,5 +1,6 @@
 import ToastView from "../display/toastview";
 import { ToastContentView } from "../views/toast";
+import { PNG_SUCCESS, PNG_ERROR, PNG_LOADING } from "../../utils/pngres";
 
 class Toast extends ToastView {
 
@@ -7,6 +8,20 @@ class Toast extends ToastView {
 
     constructor() {
         super();
+    }
+
+    private getIcon() {
+        if ('success' == this.params.icon) {
+            return PNG_SUCCESS;
+        } else if ('error' == this.params.icon) {
+            return PNG_ERROR;
+        } else if ('loading' == this.params.icon) {
+            return PNG_LOADING;
+        } else if ('none' == this.params.icon) {
+            return null;
+        } else {
+            return PNG_SUCCESS;
+        }
     }
 
     onShow() {
@@ -20,7 +35,12 @@ class Toast extends ToastView {
         if (this.displayDuration < 500) {
             this.displayDuration = 500;
         }
-        this.ui.setContent(this.params.title || '', this.params.image);
+        this.nonPenetrating = this.params.mask === true;
+        if (this.params.image) {
+            this.ui.setContent(this.params.title || '', this.params.image);
+        } else {
+            this.ui.setContent(this.params.title || '', this.getIcon(), this.params.icon === 'loading');
+        }
         this.params.success && this.params.success();
         this.params.complete && this.params.complete();
     }

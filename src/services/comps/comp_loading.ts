@@ -1,11 +1,7 @@
-import PopupView from "../display/popupview";
 import { LoadingContentView } from "../views/loading";
+import ToastView from "../display/toastview";
 
-
-// title	string		是	提示的内容	
-// mask	boolean	false	否	是否显示透明蒙层，防止触摸穿透	
-// success
-class Loading extends PopupView {
+class Loading extends ToastView {
 
     ui = new LoadingContentView;
 
@@ -15,7 +11,10 @@ class Loading extends PopupView {
 
     onShow() {
         this.alpha = 0.2;
-        this.isTranslucent = false;
+        this.isTranslucent = true;
+        this.duration = 0;
+        this.displayDuration = -1;
+        this.nonPenetrating = this.params.mask === true;
         this.ui.setContent(this.params.title);
         this.params.success && this.params.success();
         this.params.complete && this.params.complete();
@@ -24,12 +23,12 @@ class Loading extends PopupView {
 }
 
 function showLoading(params) {
-    Loading.hide(false);
+    Loading.hide();
     Loading.show(params, null);
 }
 
 function hideLoading() {
-    Loading.hide(false);
+    Loading.hide();
 }
 
 export default {

@@ -76,7 +76,7 @@ declare module Tape {
     interface toastPayload {
         title: string,
         image?: string,
-        icon?: string,
+        icon?: 'success' | 'loading' | 'none',
         duration?: number,
         mask?: boolean,
         success?: any,
@@ -148,6 +148,8 @@ declare module Tape {
         function getAppVersion(): string;
         /** getVersion */
         function getVersion(): string;
+        /** isLayaApp */
+        function isLayaApp(): boolean;
         /** isBrowserApp */
         function isBrowserApp(): boolean;
         /** isFacebookApp */
@@ -162,6 +164,8 @@ declare module Tape {
         function setDebug(debug: boolean): void;
         /** printDebug */
         function printDebug(message: any, ...options): void;
+        /** printError */
+        function printError(message: any, ...options): void;
         /** getEnv */
         function getEnv(): string;
         /** setEnv */

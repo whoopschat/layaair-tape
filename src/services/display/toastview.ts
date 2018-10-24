@@ -14,7 +14,7 @@ export default class ToastView extends ui {
 
     public toast;
     public params;
-    public duration = 100;
+    public duration = 200;
     public displayDuration = 1000;
     public easeIn = null;
     public easeOut = null;

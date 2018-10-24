@@ -1,6 +1,22 @@
 import screen from "../manager/screen";
 import { BgView } from "./bg";
 
+function _btnEffect(view: Laya.Label) {
+    view.offAll();
+    view.on(Laya.Event.MOUSE_DOWN, view, () => {
+        view.bgColor = '#666666';
+        view.alpha = 0.2;
+    });
+    view.on(Laya.Event.MOUSE_UP, view, () => {
+        view.bgColor = '#eeeeee';
+        view.alpha = 1;
+    });
+    view.on(Laya.Event.MOUSE_OUT, view, () => {
+        view.bgColor = '#eeeeee';
+        view.alpha = 1;
+    });
+}
+
 export class ModalContentView extends Laya.Sprite {
 
     private _maxW = 0;
@@ -16,16 +32,18 @@ export class ModalContentView extends Laya.Sprite {
     private _confirmBtn = null;
     private _lineView = null;
     private _line2View = null;
+    private _lineHeight = 0;
     private _callback = null;
 
     constructor() {
         super();
         let size = Math.min(screen.getDesignWidth(), screen.getDesignHeight());
-        this._maxW = size * 0.6;
-        this._padding = size * 0.04;
-        this._fontSize = size * 0.04;
-        this._radius = size * 0.01;
-        this._btnHeight = size * 0.1;
+        this._maxW = size * 0.9;
+        this._padding = size * 0.08;
+        this._fontSize = size * 0.06;
+        this._btnHeight = size * 0.18;
+        this._lineHeight = size * 0.005;
+        this._radius = 0;
         this._initBg();
         this._initTitle();
         this._initContent();
@@ -71,14 +89,15 @@ export class ModalContentView extends Laya.Sprite {
         this._btnsView = new Laya.Label;
         this._lineView = new Laya.Label;
         this._lineView.bgColor = '#666666';
-        this._lineView.alpha = 0.3;
-        this._lineView.height = this._btnHeight / 100;
+        this._lineView.alpha = 0.2;
+        this._lineView.height = this._lineHeight;
 
         this._line2View = new Laya.Label;
         this._line2View.bgColor = '#666666';
-        this._line2View.alpha = 0.3;
-        this._line2View.height = this._btnHeight;
-        this._line2View.width = this._btnHeight / 100;
+        this._line2View.alpha = 0.2;
+        this._line2View.height = this._btnHeight - this._lineHeight;
+        this._line2View.width = this._lineHeight;
+        this._line2View.y = this._lineHeight;
 
         this._btnsView.height = this._btnHeight;
 
@@ -94,10 +113,13 @@ export class ModalContentView extends Laya.Sprite {
         this._confirmBtn.height = this._btnHeight;
         this._confirmBtn.fontSize = this._fontSize;
 
-        this._btnsView.addChild(this._lineView);
-        this._btnsView.addChild(this._line2View);
+        _btnEffect(this._cancelBtn);
+        _btnEffect(this._confirmBtn);
+
         this._btnsView.addChild(this._cancelBtn);
         this._btnsView.addChild(this._confirmBtn);
+        this._btnsView.addChild(this._lineView);
+        this._btnsView.addChild(this._line2View);
 
         this._confirmBtn.on(Laya.Event.CLICK, this, () => {
             this._callback && this._callback({

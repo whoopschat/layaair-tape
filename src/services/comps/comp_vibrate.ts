@@ -1,13 +1,10 @@
-import platform from "../../utils/platform";
-
 function vibrateForH5(pattern) {
     let vs = ['vibrate', 'webkitVibrate', 'webkitVibrate', 'mozVibrate', 'msVibrate'];
     for (let index = 0; index < vs.length; index++) {
         const element = vs[index];
         if (window && window.navigator && window.navigator[element]) {
             try {
-                window.navigator[element](pattern);
-                return;
+                return window.navigator[element](pattern);
             } catch (error) {
             }
         }
@@ -15,19 +12,11 @@ function vibrateForH5(pattern) {
 }
 
 function vibrateShort() {
-    if (platform.isWechatApp()) {
-        platform.execWX('vibrateShort')
-    } else {
-        vibrateForH5([100])
-    }
+    vibrateForH5([1000])
 }
 
 function vibrateLong() {
-    if (platform.isWechatApp()) {
-        platform.execWX('vibrateLong')
-    } else {
-        vibrateForH5([1500])
-    }
+    vibrateForH5([3000])
 }
 
 export default {

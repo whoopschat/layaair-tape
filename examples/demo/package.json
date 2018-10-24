@@ -4,12 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build-wx": "layaair-build --platform wechat --input ./bin --output ./release --min",
+    "build-wx": "layaair-build --platform wechat --input ./bin --output ./release",
     "build-h5": "layaair-build --platform h5 --input ./bin --output ./release",
-    "build-fb": "layaair-build --platform facebook --input ./bin --output ./release"
+    "build-fb": "layaair-build --platform facebook --input ./bin --output ./release",
+    "build-qq": "layaair-build --platform qq --input ./bin --output ./release"
   },
   "devDependencies": {
-    "layaair-build": "1.0.4"
+    "layaair-build": "1.1.1"
   },
   "author": "",
   "license": "ISC"

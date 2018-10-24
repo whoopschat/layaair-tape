@@ -1,4 +1,12 @@
 //////////////////////////
+/////  Laya
+//////////////////////////
+
+const isLayaApp = () => {
+    return window.hasOwnProperty("Laya") && !window['Laya'].isMock;
+}
+
+//////////////////////////
 /////  Browser
 //////////////////////////
 
@@ -94,6 +102,12 @@ function printDebug(message: any, ...options) {
     }
 }
 
+function printError(message: any, ...options) {
+    if (_debugOn) {
+        console.error("Tape:", message, ...options);
+    }
+}
+
 //////////////////////////
 /////  Env
 //////////////////////////
@@ -135,6 +149,7 @@ function getPlatform() {
 export default {
     getAppVersion,
     getVersion,
+    isLayaApp,
     isBrowserApp,
     isFacebookApp,
     execFB,
@@ -142,6 +157,7 @@ export default {
     execWX,
     postMessageToWXOpenDataContext,
     setDebug,
+    printError,
     printDebug,
     getEnv,
     setEnv,

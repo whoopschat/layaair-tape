@@ -24,7 +24,7 @@ class SimpleActivity extends Tape.Activity {
                         Tape.showToast({ title: '点击确定' })
                     }
                     if (res.cancel) {
-                        Tape.showToast({ title: '点击取消' })
+                        Tape.showToast({ title: '点击取消', icon: 'error' })
                     }
                 }
             })

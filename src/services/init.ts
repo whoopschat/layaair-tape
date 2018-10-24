@@ -6,6 +6,8 @@ import { browserInit } from "./platform/browser/init";
 import { initScreen } from "./manager/screen";
 import { initNavigator } from "./navigator/init";
 
+let _inited = false;
+
 function _get() {
     if (platform.isFacebookApp()) {
         return fbInit;
@@ -17,6 +19,13 @@ function _get() {
 }
 
 export function init(width: number, height: number, ...options) {
+    if (_inited) {
+        return;
+    }
+    if (!platform.isLayaApp()) {
+        platform.printError('Please ensure that the \'Laya\' library has been introduced.');
+        return;
+    }
     platform.printDebug(`init...`);
     platform.printDebug(`tape version: ${platform.getVersion()}`);
     platform.printDebug(`app version: ${platform.getAppVersion()}`);
@@ -25,9 +34,17 @@ export function init(width: number, height: number, ...options) {
         Laya.MiniAdpter.init(true);
     }
     initScreen(false, width, height, ...options);
+    _inited = true;
 }
 
 export function init3D(width: number, height: number, ...options) {
+    if (_inited) {
+        return;
+    }
+    if (!platform.isLayaApp()) {
+        platform.printError('Please ensure that the \'Laya\' library has been introduced.');
+        return;
+    }
     platform.printDebug(`init3D...`);
     platform.printDebug(`tape version: ${platform.getVersion()}`);
     platform.printDebug(`app version: ${platform.getAppVersion()}`);
@@ -36,9 +53,14 @@ export function init3D(width: number, height: number, ...options) {
         Laya.MiniAdpter.init(true);
     }
     initScreen(true, width, height, ...options);
+    _inited = true;
 }
 
 export function start(options, onLoaded = null) {
+    if (!_inited) {
+        platform.printError('Please perform \'Tape.init\' initialization first.');
+        return;
+    }
     if (!options) {
         options = {};
     }

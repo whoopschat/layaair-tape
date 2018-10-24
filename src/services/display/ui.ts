@@ -9,7 +9,7 @@ export default class ui extends Laya.Component {
     private _isShow = false;
     private _handleOnTouchOutside = null;
     private _canceledOnTouchOutside = false;
-    private _nonPenetrating = false;
+    private _mask = false;
     private _onEvent = null;
 
     constructor(handleOnTouchOutside = null) {
@@ -79,12 +79,12 @@ export default class ui extends Laya.Component {
     }
 
     public set nonPenetrating(nonPenetrating) {
-        this._nonPenetrating = nonPenetrating;
+        this._mask = nonPenetrating;
         this.refreshCanceledOnTouchOutside();
     }
 
     public get nonPenetrating() {
-        return this._nonPenetrating;
+        return this._mask;
     }
 
     private refreshBg() {
