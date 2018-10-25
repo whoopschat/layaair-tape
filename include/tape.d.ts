@@ -36,8 +36,8 @@ declare module Tape {
         [key: string]: any
     }
 
-    /** startOptions */
-    interface startPayload {
+    /** StartPayload */
+    interface StartPayload {
         mainPage?: any;
         commonRes?: { url: string, type: string }[];
         fileVersion?: string;
@@ -45,8 +45,8 @@ declare module Tape {
         onLoaded?: () => void;
     }
 
-    /** userinfoPayload */
-    interface userinfoPayload {
+    /** UserinfoPayload */
+    interface UserinfoPayload {
         platform: string,
         playerId: string,
         nickname: string,
@@ -58,8 +58,8 @@ declare module Tape {
         raw: obj
     }
 
-    /** modalPayload */
-    interface modalPayload {
+    /** ModalPayload */
+    interface ModalPayload {
         title?: string,
         content?: string,
         showCancel?: boolean,
@@ -72,8 +72,8 @@ declare module Tape {
         complete?: any;
     }
 
-    /** toastPayload */
-    interface toastPayload {
+    /** ToastPayload */
+    interface ToastPayload {
         title: string,
         image?: string,
         icon?: 'success' | 'loading' | 'none',
@@ -84,8 +84,8 @@ declare module Tape {
         complete?: any;
     }
 
-    /** loadingPayload */
-    interface loadingPayload {
+    /** LoadingPayload */
+    interface LoadingPayload {
         title: string,
         mask?: boolean,
         success?: any,
@@ -93,6 +93,7 @@ declare module Tape {
         complete?: any;
     }
 
+    /** AudioController */
     interface AudioController {
         readonly url: string;
         readonly type: string;
@@ -101,15 +102,15 @@ declare module Tape {
         onPlay(callback: () => void): void;
         onStop(callback: () => void): void;
         onPause(callback: () => void): void;
-        onResume(callback: () => void): void;
         onProgress(callback: (progress: { position: number, duration: number }) => void): void;
         onComplete(callback: () => void): void;
-        play(loops?: number): void
-        stop(): void;
-        pause(): void;
-        resume(): void;
         isPaused(): void;
         isPlaying(): void;
+        play(loops?: number): void
+        pause(): void;
+        resume(): void;
+        stop(): void;
+        destroy(): void;
     }
 
     /** init for 2D */
@@ -117,17 +118,18 @@ declare module Tape {
     /** init for 3D */
     function init3D(width: number, height: number, ...options): void;
     /** start */
-    function start(options: startPayload | null, onLoaded?: () => void): void;
+    function start(options: StartPayload | null, onLoaded?: () => void): void;
     /** exit */
     function exit(): void;
+
     /** showToast */
-    function showToast(params: toastPayload): void;
+    function showToast(params: ToastPayload): void;
     /** hideToast */
     function hideToast(): void;
     /** showModal */
-    function showModal(params: modalPayload): void;
+    function showModal(params: ModalPayload): void;
     /** showToast */
-    function showLoading(params?: loadingPayload): void;
+    function showLoading(params?: LoadingPayload): void;
     /** hideLoading */
     function hideLoading(): void;
     /** vibrateShort */
@@ -236,7 +238,7 @@ declare module Tape {
         /** onPause */
         function onPause(callback: () => void): void;
         /** getUserInfo, use img for wechat: res/unpack/get_user_info.png */
-        function getUserInfo(callback: (userinfo: userinfoPayload) => void, image?: string): void;
+        function getUserInfo(callback: (userinfo: UserinfoPayload) => void, image?: string): void;
     }
 
     /** rank */

@@ -18,12 +18,11 @@ class AudioController {
     private _auidoType: 'sound' | 'music' = 'sound';
     private _chancel: Laya.SoundChannel = null;
     private _playing = false;
-    private _onComplete = null;
-    private _onStop = null;
     private _onPlay = null;
     private _onPause = null;
-    private _onResume = null;
+    private _onStop = null;
     private _onProgress = null;
+    private _onComplete = null;
     private _position = -1;
     private _duration = -1;
     private _paused = false;
@@ -57,11 +56,7 @@ class AudioController {
     }
 
     public onPause(callback) {
-        this._onResume = callback;
-    }
-
-    public onResume(callback) {
-        this._onResume = callback;
+        this._onPause = callback;
     }
 
     public onProgress(callback) {
@@ -121,23 +116,12 @@ class AudioController {
         });
     }
 
-    public stop() {
-        if (this._chancel) {
-            this._onStop && this._onStop();
-            this._chancel.stop();
-            this._chancel = null;
-            this._paused = false;
-            this._playing = false;
-            Laya.timer.clear(this, this._update);
-        }
-    }
-
     public pause() {
         if (this._chancel && this._playing) {
             this._onPause && this._onPause();
             this._chancel.pause();
-            this._playing = false;
             this._paused = true;
+            this._playing = false;
             Laya.timer.clear(this, this._update);
         }
     }
@@ -145,10 +129,30 @@ class AudioController {
     public resume() {
         if (this._chancel) {
             this._paused = false;
-            this._playing = true;
             this._chancel.resume();
-            this._onResume && this._onResume();
             Laya.timer.frameLoop(1, this, this._update);
+        }
+    }
+
+    public stop() {
+        try {
+            if (this._chancel) {
+                this._onStop && this._onStop();
+                this._chancel.stop();
+                Laya.SoundManager.removeChannel(this._chancel)
+                this._chancel = null;
+                this._paused = false;
+                this._playing = false;
+                Laya.timer.clear(this, this._update);
+            }
+        } catch (error) {
+        }
+    }
+
+    public destroy() {
+        try {
+            Laya.SoundManager.destroySound(this._auidoUrl);
+        } catch (error) {
         }
     }
 
