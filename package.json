@@ -1,7 +1,7 @@
 {
   "name": "layaair-tape",
   "main": "./dist/tape.js",
-  "version": "3.4.2",
+  "version": "3.4.3",
   "description": "A layaair game library",
   "scripts": {
     "start": "webpack --watch",

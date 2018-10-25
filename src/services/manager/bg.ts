@@ -4,10 +4,10 @@ let _bgSprite = null;
 let _bgColor = '#000000';
 
 export function initBg() {
-    _bgSprite = Laya.stage.getChildByName('tape_background_layer');
+    _bgSprite = Laya.stage.getChildByName('_tape_bg_layer');
     if (!_bgSprite) {
         _bgSprite = new Laya.Sprite;
-        _bgSprite.name = 'tape_background_layer';
+        _bgSprite.name = '_tape_bg_layer';
         Laya.stage.addChild(_bgSprite);
     }
     _bgSprite.width = screen.getWidth();

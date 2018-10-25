@@ -3,12 +3,12 @@ import './polyfill'
 import bg from "./services/manager/bg";
 import screen from "./services/manager/screen";
 import platform from "./utils/platform";
+import audio from './services/audio';
 
 import ad from './services/ad';
 import app from './services/app';
 import rank from './services/rank';
 import club from './services/club';
-
 
 import utils from './services/utils';
 import navigator from "./services/navigator/stack";
@@ -38,6 +38,7 @@ const Tape = {
     start,
     exit,
 
+    // interactive
     showLoading,
     hideLoading,
     showModal,
@@ -49,6 +50,7 @@ const Tape = {
     bg,
     screen,
     platform,
+    audio,
 
     ad,
     app,

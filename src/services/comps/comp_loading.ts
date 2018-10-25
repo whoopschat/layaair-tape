@@ -10,10 +10,9 @@ class Loading extends ToastView {
     }
 
     onShow() {
-        this.alpha = 0.2;
-        this.isTranslucent = true;
         this.duration = 0;
         this.displayDuration = -1;
+        this.isTranslucent = true;
         this.nonPenetrating = this.params.mask === true;
         this.ui.setContent(this.params.title);
         this.params.success && this.params.success();

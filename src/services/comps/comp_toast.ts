@@ -1,6 +1,6 @@
 import ToastView from "../display/toastview";
 import { ToastContentView } from "../views/toast";
-import { PNG_SUCCESS, PNG_ERROR, PNG_LOADING } from "../../utils/pngres";
+import { PNG_SUCCESS, PNG_LOADING } from "../../utils/pngres";
 
 class Toast extends ToastView {
 
@@ -13,8 +13,6 @@ class Toast extends ToastView {
     private getIcon() {
         if ('success' == this.params.icon) {
             return PNG_SUCCESS;
-        } else if ('error' == this.params.icon) {
-            return PNG_ERROR;
         } else if ('loading' == this.params.icon) {
             return PNG_LOADING;
         } else if ('none' == this.params.icon) {

@@ -9,6 +9,9 @@ class SimpleActivity extends Tape.Activity {
         this.ui.btnNavigate2.on(Laya.Event.CLICK, this, () => {
             this.navigate(Page2Activity);
         });
+        this.ui.btnAudio.on(Laya.Event.CLICK, this, () => {
+            this.navigate(AudioActivity);
+        });
         this.ui.btnToast.on(Laya.Event.CLICK, this, () => {
             Tape.showToast({ title: '金币+50', image: 'res/ic_coin.png', duration: 1500 })
         });
@@ -24,7 +27,7 @@ class SimpleActivity extends Tape.Activity {
                         Tape.showToast({ title: '点击确定' })
                     }
                     if (res.cancel) {
-                        Tape.showToast({ title: '点击取消', icon: 'error' })
+                        Tape.showToast({ title: '点击取消', icon: 'loading' })
                     }
                 }
             })

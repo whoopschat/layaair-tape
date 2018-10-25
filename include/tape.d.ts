@@ -93,6 +93,25 @@ declare module Tape {
         complete?: any;
     }
 
+    interface AudioController {
+        readonly url: string;
+        readonly type: string;
+        readonly position: number;
+        readonly duration: number;
+        onPlay(callback: () => void): void;
+        onStop(callback: () => void): void;
+        onPause(callback: () => void): void;
+        onResume(callback: () => void): void;
+        onProgress(callback: (progress: { position: number, duration: number }) => void): void;
+        onComplete(callback: () => void): void;
+        play(loops?: number): void
+        stop(): void;
+        pause(): void;
+        resume(): void;
+        isPaused(): void;
+        isPlaying(): void;
+    }
+
     /** init for 2D */
     function init(width: number, height: number, ...options): void;
     /** init for 3D */
@@ -176,6 +195,20 @@ declare module Tape {
         function isProd(): boolean;
         /** getPlatform */
         function getPlatform(): string;
+    }
+
+    /** audio */
+    module audio {
+        /** playMusic */
+        function playMusic(url: string, loops?: number): AudioController;
+        /** playSound */
+        function playSound(url: string, loops?: number): AudioController;
+        /** stopMusic */
+        function stopMusic(): void;
+        /** stopAll */
+        function stopAll(): void;
+        /** stopAllSound */
+        function stopAllSound(): void;
     }
 
     /** ad */

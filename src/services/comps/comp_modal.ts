@@ -10,7 +10,6 @@ class Modal extends PopupView {
     }
 
     onShow() {
-        this.alpha = 0.2;
         this.isTranslucent = false;
         this.ui.setContent(
             this.params.title,
