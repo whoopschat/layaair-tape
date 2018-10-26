@@ -53,6 +53,9 @@ class SimpleActivity extends Tape.Activity {
         this.ui.btnVibrate.on(Laya.Event.CLICK, this, () => {
             Tape.vibrateShort();
         });
+        this.ui.btnDebug.on(Laya.Event.CLICK, this, () => {
+            Tape.openDebugActivity();
+        });
         this.ui.btnRewardedVideo.on(Laya.Event.CLICK, this, () => {
             Tape.ad.configRewardedVideoAd('facebook', '456456456456_456456456456');
             Tape.ad.configRewardedVideoAd('wechat', 'adunit-5cf669a77cf5a440');

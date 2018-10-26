@@ -19,6 +19,7 @@ import Activity from "./services/display/activity";
 import PopupView from "./services/display/popupview";
 import ToastView from "./services/display/toastview";
 
+import { initDebug, openDebugActivity, closeDebugActivity } from './services/debug';
 import { init, init3D, start, exit } from './services/init';
 import {
     showLoading,
@@ -33,6 +34,7 @@ import {
 import runtime from "./utils/runtime";
 
 const Tape = {
+
     init,
     init3D,
     start,
@@ -46,6 +48,10 @@ const Tape = {
     hideToast,
     vibrateShort,
     vibrateLong,
+
+    // debug tool
+    openDebugActivity,
+    closeDebugActivity,
 
     bg,
     screen,
@@ -72,6 +78,8 @@ if (typeof window !== "undefined") {
     (window as any).Tape = Tape;
     (window as any).runtime = runtime;
 }
+
+initDebug();
 
 export = {
     Tape,

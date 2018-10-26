@@ -25,8 +25,8 @@ export default class ToastView extends ui {
 
     constructor() {
         super(() => { this.hide() });
-        this.width = screen.getWidth();
-        this.height = screen.getHeight();
+        this.width = screen.getDesignWidth();
+        this.height = screen.getDesignHeight();
     }
 
     public hide() {

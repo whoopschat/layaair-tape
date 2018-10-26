@@ -136,15 +136,25 @@ declare module Tape {
     function vibrateShort(): void;
     /** vibrateLong */
     function vibrateLong(): void;
+    /** openDebugActivity */
+    function openDebugActivity(): void;
+    /** closeDebugActivity */
+    function closeDebugActivity(): void;
 
     /** bg */
     module bg {
-        /** getBgSprite */
-        function getBgSprite(): Laya.Sprite;
         /** setBgColor */
         function setBgColor(color: string): void;
         /** getBgColor */
         function getBgColor(): string;
+        /** setBgSkin */
+        function setBgSkin(skin: string): void;
+        /** getBgSkin */
+        function getBgSkin(): string;
+        /** setBgSizeGrid */
+        function setBgSizeGrid(sizeGrid: string): void;
+        /** getBgSizeGrid */
+        function getBgSizeGrid(): string;
     }
 
     /** screen */

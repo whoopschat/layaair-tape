@@ -31,8 +31,8 @@ export default class Activity extends ui {
 
     constructor(options) {
         super(() => { this.back(); });
-        this.width = screen.getWidth();
-        this.height = screen.getHeight();
+        this.width = screen.getDesignWidth();
+        this.height = screen.getDesignHeight();
         this.params = Object.assign({}, options.params || {});
         this.page = options.page;
     }
