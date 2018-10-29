@@ -52,4 +52,9 @@ class AudioActivity extends Tape.Activity {
         });
     }
 
+    onDestroy() {
+        this.musicAudio && this.musicAudio.destroy();
+        this.soundAudio && this.soundAudio.destroy();
+    }
+
 }

@@ -44,13 +44,13 @@ function checkFocus() {
     setFocus(false);
 }
 
-function addMainLayer(view) {
+function addViewToMainLayer(view) {
     _checkInit();
     view && _mainUILayer.addChild(view);
     checkFocus();
 }
 
-function addTopLayer(view) {
+function addViewTopLayer(view) {
     _checkInit();
     view && _topUILayer.addChild(view);
     checkFocus();
@@ -58,6 +58,6 @@ function addTopLayer(view) {
 
 export default {
     checkFocus,
-    addMainLayer,
-    addTopLayer
+    addViewToMainLayer,
+    addViewTopLayer,
 }

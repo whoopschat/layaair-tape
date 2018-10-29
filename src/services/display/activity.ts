@@ -14,6 +14,8 @@ export default class Activity extends ui {
 
     static res = [];
 
+    static num = 0;
+
     public page = null;
     public params = {};
     public duration = 0;

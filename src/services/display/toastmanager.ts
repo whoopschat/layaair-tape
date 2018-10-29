@@ -51,7 +51,7 @@ function showToast(toast, params = null, onHide = null) {
         }), displayDuration + duration);
     }
     _pushToast(toast, view);
-    UIMgr.addTopLayer(view);
+    UIMgr.addViewTopLayer(view);
 }
 
 function hideToast(toast, view = null) {

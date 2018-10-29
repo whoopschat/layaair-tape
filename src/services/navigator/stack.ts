@@ -86,7 +86,7 @@ function navigate(page, params = {}, action = null) {
         },
         onLoaded: (loader) => {
             _loading = false;
-            UIMgr.addMainLayer(loader);
+            UIMgr.addViewToMainLayer(loader);
             _pushStack(loader);
         },
         onLoadProgress: (loader, progress) => {

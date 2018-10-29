@@ -96,7 +96,6 @@ declare module Tape {
     /** AudioController */
     interface AudioController {
         readonly url: string;
-        readonly type: string;
         readonly position: number;
         readonly duration: number;
         onPlay(callback: () => void): void;
@@ -136,10 +135,6 @@ declare module Tape {
     function vibrateShort(): void;
     /** vibrateLong */
     function vibrateLong(): void;
-    /** openDebugActivity */
-    function openDebugActivity(): void;
-    /** closeDebugActivity */
-    function closeDebugActivity(): void;
 
     /** bg */
     module bg {
@@ -330,6 +325,8 @@ declare module Tape {
         static finish(): void;
         /** res */
         static res: { url: string, type: string }[];
+        /** num */
+        static num: number;
 
         /** page */
         protected page: any;

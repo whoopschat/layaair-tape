@@ -194,19 +194,6 @@
             "compId":21,
             "child":[
                 ]
-        },
-        {
-            "x":15,
-            "type":"Button",
-            "props":{"y":190,"x":210,"width":179,"var":"btnDebug","skin":"comp/button.png","label":"Debug","height":42},
-            "nodeParent":1,
-            "label":"Button(btnDebug)",
-            "isDirectory":false,
-            "isAniNode":true,
-            "hasChild":false,
-            "compId":22,
-            "child":[
-                ]
         }],
     "animations":[
         {
