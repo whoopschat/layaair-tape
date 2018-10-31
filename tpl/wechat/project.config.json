@@ -1,0 +1,33 @@
+{
+	"description": "config.json",
+	"setting": {
+		"urlCheck": false,
+		"es6": true,
+		"postcss": true,
+		"minified": true,
+		"newFeature": true
+	},
+	"compileType": "game",
+	"libVersion": "game",
+	"appid": "${app_id}",
+	"projectname": "${project_name}",
+	"condition": {
+		"search": {
+			"current": -1,
+			"list": []
+		},
+		"conversation": {
+			"current": -1,
+			"list": []
+		},
+		"game": {
+			"currentL": -1,
+			"list": []
+		},
+		"miniprogram": {
+			"current": -1,
+			"list": []
+		}
+	},
+	"isGameTourist": "${is_game_tourist}"
+}

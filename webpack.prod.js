@@ -1,5 +1,5 @@
 const path = require('path');
-const devConfig = require('./webpack.config.js');
+const devConfig = require('./webpack.dev.js');
 
 const config = Object.assign({}, devConfig, {
     plugins: [

@@ -16,5 +16,8 @@ yarn-error.log
 # dev
 dist-dev/
 
+# buidl
+build/
+
 # examples package-lock
 examples/*/package-lock.json

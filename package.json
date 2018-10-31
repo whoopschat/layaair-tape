@@ -5,8 +5,12 @@
   "description": "A layaair game library",
   "scripts": {
     "start": "webpack --watch",
-    "build-dev": "webpack",
-    "build": "webpack --config webpack.prod.js"
+    "build-dev": "webpack --config webpack.dev.js",
+    "build": "webpack --config webpack.prod.js --mode production && webpack --config webpack.wxrank.js --mode production",
+    "build-test-fb": "node ./bin/build.js --platform facebook --input ./test/bin/ --output ./build/  --force",
+    "build-test-h5": "node ./bin/build.js --platform h5 --output ./build/ --input ./examples/demo/bin/ --force",
+    "build-test-qq": "node ./bin/build.js --platform qq --output ./build/ --input ./examples/demo/bin/ --zip --min --minpng",
+    "build-test-wx": "node ./bin/build.js --platform wechat --input ./examples/demo/bin/ --output ./build/ --min --env prod --publish"
   },
   "author": "liangmayong",
   "license": "UNLICENSED",
@@ -22,10 +26,31 @@
     "tape",
     "layaair-tape"
   ],
+  "bin": {
+    "tape": "./bin/build.js"
+  },
   "files": [
+    "tpl",
+    "bin",
     "dist",
     "include"
   ],
+  "dependencies": {
+    "cheerio": "*",
+    "del": "*",
+    "gulp": ">=4.0.0",
+    "gulp-zip": "*",
+    "gulp-cheerio": "*",
+    "gulp-concat": "*",
+    "gulp-downloader": "*",
+    "gulp-pngquant": "*",
+    "gulp-uglify": "*",
+    "gulp-replace": "*",
+    "minimist": "*",
+    "through2": "*",
+    "iconv-lite": "*",
+    "exec-sh": "*"
+  },
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.4",
