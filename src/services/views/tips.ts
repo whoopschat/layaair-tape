@@ -66,8 +66,8 @@ export class TipsView extends Laya.Sprite {
             this._iconView.visible = true;
             this._iconView.setSize(this._iconSize);
             this._iconView.setIcon(icon);
-            titleY = this._iconView.y + this._iconView.height / 2 + this._padding / 4;
-            bgH = this._iconView.height + 2 * this._padding;
+            titleY = this._iconSize + this._padding * 5 / 4;
+            bgH = this._iconSize + 2 * this._padding;
         } else {
             this._iconView.visible = false;
             titleY = this._padding;
@@ -90,34 +90,13 @@ export class TipsView extends Laya.Sprite {
 
         this._bgView.height = bgH;
         this._bgView.width = Math.max(this._titleView.width, this._iconView.width) + 2 * this._padding;
+
         this._bgView.callDraw();
 
         this._iconView.x = this._bgView.width / 2;
 
         this.x = (screen.getDesignWidth() - this._bgView.width) / 2;
         this.y = (screen.getDesignHeight() - this._bgView.height) / 2;
-
-        // if (title) {
-        //     this._iconView.y = this._padding / 2 + this._iconView.height / 2;
-        //     this._titleView.width = undefined;
-        //     this._titleView.visible = true;
-        //     this._titleView.text = title;
-        //     if (this._titleView.width > this._maxWidth) {
-        //         this._titleView.width = this._maxWidth;
-        //     } else if (this._titleView.width < this._minWidth) {
-        //         this._titleView.width = this._minWidth;
-        //     }
-        //     this._titleView.y = this._iconView.y + this._iconView.height / 2 + this._padding / 4;
-
-        //     this._bgView.height = this._titleView.height + this._titleView.y + this._padding / 2;
-        //     this._bgView.width = this._titleView.width + 2 * this._padding;
-        // } else {
-        //     this._iconView.y = this._padding + this._iconView.height / 2;
-        //     this._titleView.visible = false;
-        //     this._bgView.height = this._iconView.height + 2 * this._padding;
-        //     this._bgView.width = this._iconView.width + 2 * this._padding;
-        // }
-        // this._iconView.setIcon(icon);
 
     }
 

@@ -1,25 +1,9 @@
 export class BgView extends Laya.Sprite {
 
-    private _drawlock = null;
     public radius = 0;
     public color = '#ff0000';
 
-    constructor() {
-        super();
-        this.callDraw();
-    }
-
     public callDraw() {
-        if (this._drawlock) {
-            return;
-        }
-        this._drawlock = setTimeout(() => {
-            this.draw();
-            this._drawlock = null;
-        }, 0);
-    }
-
-    private draw() {
         this.graphics.clear();
         if (this.radius <= 0) {
             this.graphics.drawRect(0, 0, this.width, this.height, this.color);

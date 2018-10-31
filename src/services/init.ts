@@ -29,6 +29,9 @@ export function init(width: number, height: number, ...options) {
         platform.printError('Please ensure that the \'Laya\' library has been introduced.');
         return;
     }
+    if (platform.isQQApp()) {
+        platform.execQQ('Script.loadlib', 'GameRes://layaforqq/laya.bkadpter.js')
+    }
     platform.printDebug(`init...`);
     platform.printDebug(`tape version: ${platform.getVersion()}`);
     platform.printDebug(`app version: ${platform.getAppVersion()}`);
@@ -47,6 +50,9 @@ export function init3D(width: number, height: number, ...options) {
     if (!platform.isLayaApp()) {
         platform.printError('Please ensure that the \'Laya\' library has been introduced.');
         return;
+    }
+    if (platform.isQQApp()) {
+        platform.execQQ('Script.loadlib', 'GameRes://layaforqq/laya.bkadpter.js')
     }
     platform.printDebug(`init3D...`);
     platform.printDebug(`tape version: ${platform.getVersion()}`);
