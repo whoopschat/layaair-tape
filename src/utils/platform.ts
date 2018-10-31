@@ -11,7 +11,7 @@ const isLayaApp = () => {
 //////////////////////////
 
 const isBrowserApp = () => {
-    return !isFacebookApp() && !isWechatApp();
+    return !isFacebookApp() && !isWechatApp() && !isQQApp();
 }
 
 //////////////////////////
@@ -37,12 +37,36 @@ function execFB(func: string, ...options) {
     }
 }
 
+
+//////////////////////////
+/////  QQ
+//////////////////////////
+
+const isQQApp = () => {
+    return window.hasOwnProperty("BK") && !window['BK'].isMock;
+}
+
+function execQQ(func: string, ...options) {
+    if (window.hasOwnProperty("BK")) {
+        let funcs = func.split('.');
+        let instant = window['BK'];
+        while (funcs.length > 1) {
+            instant = instant[funcs.shift()];
+        }
+        if (instant && funcs.length == 1) {
+            if (instant.hasOwnProperty(funcs[0])) {
+                return instant[funcs[0]](...options);
+            }
+        }
+    }
+}
+
 //////////////////////////
 /////  Wechat
 //////////////////////////
 
 const isWechatApp = () => {
-    return window.hasOwnProperty("wx") && !window['wx'].isMock;
+    return !isFacebookApp() && !isQQApp() && window.hasOwnProperty("wx") && !window['wx'].isMock;
 }
 
 function execWX(func, ...options) {
@@ -141,15 +165,25 @@ function isProd() {
 export const FACEBOOK = 'facebook';
 export const WECHAT = 'wechat';
 export const BROWSER = 'browser';
+export const QQ = 'qq';
 
 function getPlatform() {
-    return isFacebookApp() ? FACEBOOK : (isWechatApp() ? WECHAT : BROWSER);
+    if (isFacebookApp()) {
+        return FACEBOOK;
+    } else if (isQQApp()) {
+        return QQ;
+    } else if (isWechatApp()) {
+        return WECHAT;
+    }
+    return BROWSER;
 }
 
 export default {
     getAppVersion,
     getVersion,
     isLayaApp,
+    isQQApp,
+    execQQ,
     isBrowserApp,
     isFacebookApp,
     execFB,

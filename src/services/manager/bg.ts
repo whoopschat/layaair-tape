@@ -1,8 +1,9 @@
 import screen from "./screen";
 
 let _bgSprite = null;
+let _bgLabel: Laya.Label = null;
 let _bgImage: Laya.Image = null;
-let _bgColor = '#000000';
+let _bgColor = null;
 let _bgSkin = null;
 let _bgSizeGrid = null;
 
@@ -16,9 +17,8 @@ function _drawSkin() {
 }
 
 function _drawColor() {
-    if (_bgSprite) {
-        _bgSprite.graphics.clear();
-        _bgSprite.graphics.drawRect(0, 0, _bgSprite.width, _bgSprite.height, _bgColor);
+    if (_bgLabel && _bgColor) {
+        _bgLabel.bgColor = _bgColor;
     }
 }
 
@@ -27,19 +27,29 @@ export function initBg() {
     if (!_bgSprite) {
         _bgSprite = new Laya.Sprite;
         _bgSprite.name = '_tape_bg_layer';
+
+        _bgLabel = new Laya.Label;
+        _bgLabel.name = '_bg_label';
+        _bgSprite.addChild(_bgLabel);
+
         _bgImage = new Laya.Image;
         _bgImage.name = '_bg_image';
         _bgSprite.addChild(_bgImage);
+
         Laya.stage.addChild(_bgSprite);
     }
+
+    _bgLabel.width = screen.getWidth();
+    _bgLabel.height = screen.getHeight();
+
     _bgImage.width = screen.getWidth();
     _bgImage.height = screen.getHeight();
 
     _bgSprite.width = screen.getWidth();
     _bgSprite.height = screen.getHeight();
 
-    _drawSkin();
     _drawColor();
+    _drawSkin();
 }
 
 function setBgColor(color) {

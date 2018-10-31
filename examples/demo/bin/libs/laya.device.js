@@ -270,7 +270,7 @@ var Accelerator=(function(_super){
 		Accelerator.rotationRate.alpha=e.rotationRate.gamma *-1;
 		Accelerator.rotationRate.beta=e.rotationRate.alpha *-1;
 		Accelerator.rotationRate.gamma=e.rotationRate.beta;
-		if (Browser.onAndriod){
+		if (Browser.onAndroid){
 			if (Accelerator.onChrome){
 				Accelerator.rotationRate.alpha *=180 / Math.PI;
 				Accelerator.rotationRate.beta *=180 / Math.PI;

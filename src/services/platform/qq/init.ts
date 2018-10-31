@@ -1,7 +1,7 @@
 import { IInit } from "../interfaces";
 import { setNavigatorReady } from "../../navigator/init";
 
-class BrowserInit implements IInit {
+class QQInit implements IInit {
 
     public start(callback: () => void) {
         callback && callback();
@@ -19,4 +19,4 @@ class BrowserInit implements IInit {
 
 }
 
-export const browserInit = new BrowserInit;
+export const qqInit = new QQInit;

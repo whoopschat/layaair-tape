@@ -4092,7 +4092,6 @@ var Skeleton=(function(_super){
 				}
 			}
 		}
-		this._eventIndex=0;
 		this._drawOrder=null;
 		this.event(/*laya.events.Event.STOPPED*/"stopped");
 	}
@@ -5233,7 +5232,7 @@ var MovieClip=(function(_super){
 	*/
 	__proto.load=function(url,atlas,atlasPath){
 		(atlas===void 0)&& (atlas=false);
-		this._url=url=URL.formatURL(url);
+		this._url=url;
 		if(atlas)this._atlasPath=atlasPath?atlasPath:url.split(".swf")[0]+".json";
 		this.stop();
 		this._clear();
@@ -5252,6 +5251,10 @@ var MovieClip=(function(_super){
 		data=Loader.getRes(this._url);
 		if (!data){
 			this.event(/*laya.events.Event.ERROR*/"error","file not find");
+			return;
+		}
+		if (this._atlasPath && !Loader.getAtlas(this._atlasPath)){
+			this.event(/*laya.events.Event.ERROR*/"error","Atlas not find");
 			return;
 		}
 		this.basePath=this._atlasPath?Loader.getAtlas(this._atlasPath).dir:this._url.split(".swf")[0]+"/image/";
@@ -5979,7 +5982,10 @@ var Templet=(function(_super){
 	*@return
 	*/
 	__proto.getGrahicsDataWithCache=function(aniIndex,frameIndex){
-		return this._graphicsCache[aniIndex][frameIndex];
+		if (this._graphicsCache[aniIndex] && this._graphicsCache[aniIndex][frameIndex]){
+			return this._graphicsCache[aniIndex][frameIndex];
+		}
+		return null;
 	}
 
 	/**

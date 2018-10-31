@@ -347,6 +347,10 @@ var ParticleSetting=(function(){
 				setting[key]=ParticleSetting._defaultSetting[key];
 			}
 		}
+		setting.endVelocity=+setting.endVelocity;
+		setting.gravity[0]=+setting.gravity[0];
+		setting.gravity[1]=+setting.gravity[1];
+		setting.gravity[2]=+setting.gravity[2];
 	}
 
 	__static(ParticleSetting,

@@ -178,6 +178,10 @@ declare module Tape {
         function isLayaApp(): boolean;
         /** isBrowserApp */
         function isBrowserApp(): boolean;
+        /** isQQApp */
+        function isQQApp(): boolean;
+        /** execQQ */
+        function execQQ(func, ...options): any;
         /** isFacebookApp */
         function isFacebookApp(): boolean;
         /** execFB */

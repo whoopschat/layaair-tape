@@ -1,25 +1,12 @@
 import ToastView from "../display/toastview";
-import { ToastContentView } from "../views/toast";
-import { PNG_SUCCESS, PNG_LOADING } from "../../utils/pngres";
+import { TipsView } from "../views/tips";
 
 class Toast extends ToastView {
 
-    ui = new ToastContentView;
+    ui = new TipsView;
 
     constructor() {
         super();
-    }
-
-    private getIcon() {
-        if ('success' == this.params.icon) {
-            return PNG_SUCCESS;
-        } else if ('loading' == this.params.icon) {
-            return PNG_LOADING;
-        } else if ('none' == this.params.icon) {
-            return null;
-        } else {
-            return PNG_SUCCESS;
-        }
     }
 
     onShow() {
@@ -34,11 +21,7 @@ class Toast extends ToastView {
             this.displayDuration = 500;
         }
         this.nonPenetrating = this.params.mask === true;
-        if (this.params.image) {
-            this.ui.setContent(this.params.title || '', this.params.image);
-        } else {
-            this.ui.setContent(this.params.title || '', this.getIcon(), this.params.icon === 'loading');
-        }
+        this.ui.setContent(this.params.title || '', this.params.image || this.params.icon || 'success');
         this.params.success && this.params.success();
         this.params.complete && this.params.complete();
     }

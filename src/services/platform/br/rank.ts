@@ -1,9 +1,9 @@
-import platform from "../../../utils/platform";
+import screen from "../../manager/screen";
 import { IRank } from "../interfaces";
 import { bindView } from "../../../utils/bind";
-import screen from "../../manager/screen";
+import { fetchRankDataForBR, setRankScoreForBR } from "./_rank";
 
-class FBRank implements IRank {
+class BRRank implements IRank {
 
     private _rankKey: string = null;
     private _rankUi: object | object[] = null;
@@ -13,57 +13,6 @@ class FBRank implements IRank {
     private _count = 100;
     private _offset = 0;
     private _delayObj = null;
-
-    private _fetchRankData(key, cb) {
-        let getLeaderboardAsync = platform.execFB('getLeaderboardAsync', key);
-        if (getLeaderboardAsync && getLeaderboardAsync.then) {
-            getLeaderboardAsync.then((leaderboard) => {
-                return leaderboard.getConnectedPlayerEntriesAsync(this._count, this._offset);
-            }).then(entries => {
-                try {
-                    let selfInfo = {
-                        playerId: platform.execFB('player.getID'),
-                        nickname: platform.execFB('player.getName'),
-                        avatarUrl: platform.execFB('player.getPhoto'),
-                    };
-                    let selfIndex = -1;
-                    let selfData = {};
-                    let rankSelf = null;
-                    let rankThree = [];
-                    let rankList = entries.map((entry, index) => {
-                        let item = {
-                            rank: entry.getRank(),
-                            score: entry.getScore(),
-                            timestamp: entry.getTimestamp(),
-                            extraData: entry.getExtraData(),
-                            playerId: entry.getPlayer().getID(),
-                            nickname: entry.getPlayer().getName(),
-                            avatarUrl: entry.getPlayer().getPhoto(),
-                        }
-                        let self = item.playerId == selfInfo.playerId;
-                        if (self) {
-                            rankSelf = item;
-                            selfIndex = index;
-                            selfData = {
-                                score: item.score,
-                                extraData: item.extraData
-                            }
-                        }
-                        Object.assign(item, { self });
-                        return item;
-                    });
-                    if (selfIndex <= 0) {
-                        rankThree = rankList.slice(0, 3);
-                    } else {
-                        rankThree = rankList.slice(selfIndex - 1, selfIndex + 1);
-                    }
-                    cb && cb({ selfInfo, selfData, rankList, rankSelf, rankThree });
-                } catch (error) {
-                    cb && cb({});
-                }
-            });
-        }
-    }
 
     private _drawRankView() {
         if (!this._rankUi) {
@@ -105,7 +54,7 @@ class FBRank implements IRank {
             return;
         }
         this._canDraw = false;
-        this._fetchRankData(this._rankKey, (data) => {
+        fetchRankDataForBR(this._rankKey, this._count, this._offset, (data) => {
             this._rankData = data;
             this._canDraw = true;
             this._rankViews.forEach((rankView) => {
@@ -148,16 +97,9 @@ class FBRank implements IRank {
     }
 
     public setRankScore(key: string, score: number, extraData?: string) {
-        let getLeaderboardAsync = platform.execFB('getLeaderboardAsync', key);
-        if (getLeaderboardAsync && getLeaderboardAsync.then) {
-            getLeaderboardAsync.then(function (leaderboard) {
-                return leaderboard.setScoreAsync(score, extraData);
-            }).then((res) => {
-                if (key == this._rankKey && res.getScore() == score) {
-                    this._delayBindRankView();
-                }
-            });
-        }
+        setRankScoreForBR(key, score, extraData, () => {
+            this._delayBindRankView();
+        });
     }
 
     public showRank(ui: object | object[]) {
@@ -177,4 +119,4 @@ class FBRank implements IRank {
 
 }
 
-export const fbRank = new FBRank;
+export const brRank = new BRRank;

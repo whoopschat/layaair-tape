@@ -1,4 +1,4 @@
-import platform from "../../../utils/platform";
+import platform, { WECHAT } from "../../../utils/platform";
 import { IApp } from "../interfaces";
 
 class WXApp implements IApp {
@@ -19,7 +19,7 @@ class WXApp implements IApp {
             this._pauseCallback && this._pauseCallback();
         });
         platform.execWX('onShow', (options) => {
-            this._launchCallback && this._launchCallback({ scene: `${options.scene || ''}`, query: options.query || {}, platform: 'wechat' });
+            this._launchCallback && this._launchCallback({ scene: `${options.scene || ''}`, query: options.query || {}, platform: WECHAT });
         });
     }
 
@@ -30,7 +30,7 @@ class WXApp implements IApp {
 
     private _checkOnLaunch() {
         let options = platform.execWX('getLaunchOptionsSync') || {};
-        this._launchCallback && this._launchCallback({ entry: options.scene || 1000, query: options.query || {}, platform: 'wechat' });
+        this._launchCallback && this._launchCallback({ entry: options.scene || 1000, query: options.query || {}, platform: WECHAT });
     }
 
     public onPause(callback: () => void) {
@@ -41,7 +41,7 @@ class WXApp implements IApp {
         let onHandler = (res) => {
             if (res && res.userInfo) {
                 callback && callback({
-                    platform: 'wechat',
+                    platform: WECHAT,
                     playerId: '-',
                     avatarUrl: res.userInfo.avatarUrl,
                     nickname: res.userInfo.nickName,

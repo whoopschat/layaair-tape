@@ -1,15 +1,18 @@
 import platform from "../utils/platform";
-import { wxRank } from "./platform/wechat/rank";
-import { fbRank } from "./platform/facebook/rank";
-import { browserRank } from "./platform/browser/rank";
+import { fbRank } from "./platform/fb/rank";
+import { qqRank } from "./platform/qq/rank";
+import { wxRank } from "./platform/wx/rank";
+import { brRank } from "./platform/br/rank";
 
 function _get() {
     if (platform.isFacebookApp()) {
         return fbRank;
     } else if (platform.isWechatApp()) {
         return wxRank;
+    } else if (platform.isQQApp()) {
+        return qqRank;
     } else {
-        return browserRank;
+        return brRank;
     }
 }
 

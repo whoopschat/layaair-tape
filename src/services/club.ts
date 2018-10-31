@@ -1,6 +1,6 @@
 import platform from "../utils/platform";
-import { fixWidth, fixHeight } from "./platform/wechat/_size";
 import screen from "./manager/screen";
+import { fixWidth, fixHeight } from "./platform/wx/_size";
 
 let _clubButton = null;
 

@@ -205,7 +205,8 @@ var AutoBitmap=(function(_super){
 		var sw=source.sourceWidth;
 		var sh=source.sourceHeight;
 		if (!sizeGrid || (sw===width && sh===height)){
-			this.cleanByTexture(source,this._offset ? this._offset[0] :0,this._offset ? this._offset[1] :0,width,height);
+			this.clear();
+			this.drawTexture(source,this._offset ? this._offset[0] :0,this._offset ? this._offset[1] :0,width,height);
 			}else {
 			source.$_GID || (source.$_GID=Utils.getGID());
 			var key=source.$_GID+"."+width+"."+height+"."+sizeGrid.join(".");
@@ -345,7 +346,7 @@ var AutoBitmap=(function(_super){
 		tex.$_GID || (tex.$_GID=Utils.getGID())
 		var key=tex.$_GID+"."+x+"."+y+"."+width+"."+height;
 		var texture=WeakObject.I.get(key);
-		if (!texture||!texture.source){
+		if (!texture || !texture.source){
 			texture=Texture.createFromTexture(tex,x,y,width,height);
 			WeakObject.I.set(key,texture);
 		}
@@ -461,6 +462,10 @@ var Component=(function(_super){
 	*/
 	__proto.changeSize=function(){
 		this.event(/*laya.events.Event.RESIZE*/"resize");
+		if (this._layout.enable){
+			this.resetLayoutX();
+			this.resetLayoutY();
+		}
 	}
 
 	/**
@@ -571,6 +576,11 @@ var Component=(function(_super){
 	*/
 	__proto.onMouseOut=function(e){
 		Laya.stage.event(/*laya.ui.UIEvent.HIDE_TIP*/"hidetip",this._toolTip);
+	}
+
+	__proto._childChanged=function(child){
+		this.callLater(this.changeSize);
+		_super.prototype._childChanged.call(this,child);
 	}
 
 	/**
@@ -3596,6 +3606,7 @@ var ScrollBar=(function(_super){
 		return this._mouseWheelEnable;
 		},function(value){
 		this._mouseWheelEnable=value;
+		this.target=this._target;
 	});
 
 	/**
@@ -5351,13 +5362,6 @@ var LayoutBox=(function(_super){
 	}
 
 	/**@inheritDoc */
-	__proto.removeChild=function(child){
-		child.off(/*laya.events.Event.RESIZE*/"resize",this,this.onResize);
-		this._setItemChanged();
-		return laya.display.Node.prototype.removeChild.call(this,child);
-	}
-
-	/**@inheritDoc */
 	__proto.removeChildAt=function(index){
 		this.getChildAt(index).off(/*laya.events.Event.RESIZE*/"resize",this,this.onResize);
 		this._setItemChanged();
@@ -5795,9 +5799,9 @@ var List=(function(_super){
 		this._createdLine=0;
 		/**@private */
 		this._cellChanged=false;
-		List.__super.call(this);
 		this._cells=[];
 		this._offset=new Point();
+		List.__super.call(this);
 	}
 
 	__class(List,'laya.ui.List',_super);
@@ -6710,9 +6714,7 @@ var Panel=(function(_super){
 	__proto.removeChildren=function(beginIndex,endIndex){
 		(beginIndex===void 0)&& (beginIndex=0);
 		(endIndex===void 0)&& (endIndex=0x7fffffff);
-		for (var i=this._content.numChildren-1;i >-1;i--){
-			this._content.removeChildAt(i);
-		}
+		this._content.removeChildren(beginIndex,endIndex);
 		this._setScrollChanged();
 		return this;
 	}

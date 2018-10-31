@@ -1,7 +1,8 @@
 import platform from "../utils/platform";
-import { wxInit } from "./platform/wechat/init";
-import { fbInit } from "./platform/facebook/init";
-import { browserInit } from "./platform/browser/init";
+import { fbInit } from "./platform/fb/init";
+import { qqInit } from "./platform/qq/init";
+import { wxInit } from "./platform/wx/init";
+import { brInit } from "./platform/br/init";
 
 import { initScreen } from "./manager/screen";
 import { initNavigator } from "./navigator/init";
@@ -13,8 +14,10 @@ function _get() {
         return fbInit;
     } else if (platform.isWechatApp()) {
         return wxInit;
+    } else if (platform.isQQApp()) {
+        return qqInit;
     } else {
-        return browserInit;
+        return brInit;
     }
 }
 

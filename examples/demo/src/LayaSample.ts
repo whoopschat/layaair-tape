@@ -3,6 +3,7 @@ class GameMain {
     constructor() {
         Tape.init(600, 400);
         Tape.bg.setBgColor('#3399ff');
+        Laya.Stat.show();
 
         // config ad for wechat
         Tape.ad.configBannerAd('wechat', 'adunit-5cf669a77cf5a440');

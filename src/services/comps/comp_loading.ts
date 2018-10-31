@@ -1,9 +1,9 @@
-import { LoadingContentView } from "../views/loading";
 import ToastView from "../display/toastview";
+import { TipsView } from "../views/tips";
 
 class Loading extends ToastView {
 
-    ui = new LoadingContentView;
+    ui = new TipsView;
 
     constructor() {
         super();
@@ -14,7 +14,7 @@ class Loading extends ToastView {
         this.displayDuration = -1;
         this.isTranslucent = true;
         this.nonPenetrating = this.params.mask === true;
-        this.ui.setContent(this.params.title);
+        this.ui.setContent(this.params.title, 'loading');
         this.params.success && this.params.success();
         this.params.complete && this.params.complete();
     }

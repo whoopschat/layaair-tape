@@ -7397,6 +7397,7 @@ var Common = require('../core/Common');
 
 },{"../core/Common":14,"../geometry/Vector":26}],28:[function(require,module,exports){
 var Matter = module.exports = {};
+window.Matter = Matter;
 Matter.version = 'master';
 
 Matter.Body = require('../body/Body');

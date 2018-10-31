@@ -1,4 +1,4 @@
-import platform from "../../../utils/platform";
+import platform, { FACEBOOK } from "../../../utils/platform";
 import { IApp } from "../interfaces";
 
 class FBApp implements IApp {
@@ -30,7 +30,7 @@ class FBApp implements IApp {
     private _checkOnLaunch() {
         platform.execFB('getEntryPointAsync').then(scene => {
             let query = platform.execFB('getEntryPointData') || {};
-            this._launchCallback && this._launchCallback({ scene: `${scene}`, query, platform: 'facebook' });
+            this._launchCallback && this._launchCallback({ scene: `${scene}`, query, platform: FACEBOOK });
         });
     }
 
@@ -45,7 +45,7 @@ class FBApp implements IApp {
 
     public getUserInfo(callback: (userinfo) => void) {
         callback && callback({
-            platform: 'facebook',
+            platform: FACEBOOK,
             playerId: platform.execFB('player.getID'),
             nickname: platform.execFB('player.getName'),
             avatarUrl: platform.execFB('player.getPhoto'),

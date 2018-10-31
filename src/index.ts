@@ -31,7 +31,6 @@ import {
 } from './services/comp';
 
 import runtime from "./utils/runtime";
-import { initLogs } from './services/debug/logger';
 
 const Tape = {
 
@@ -74,8 +73,6 @@ if (typeof window !== "undefined") {
     (window as any).Tape = Tape;
     (window as any).runtime = runtime;
 }
-
-initLogs();
 
 export = {
     Tape,

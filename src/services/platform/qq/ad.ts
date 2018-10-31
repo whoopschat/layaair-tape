@@ -1,6 +1,6 @@
 import { IAd } from "../interfaces";
 
-class BrowserAd implements IAd {
+class QQAd implements IAd {
 
     public isSupportedRewardedVideoAd() {
         return false;
@@ -31,4 +31,4 @@ class BrowserAd implements IAd {
 
 }
 
-export const browserAd = new BrowserAd;
+export const qqAd = new QQAd;
