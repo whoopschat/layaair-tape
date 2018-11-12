@@ -1,4 +1,4 @@
-# layaair-tape 4.x
+# layaair-tape
 > A layaair game library
 
 ### Usage
@@ -37,7 +37,7 @@ or
     --orientation      [Optional] orientation
     --pngquality       [Optional] png quality def: 65-80
     --zip              [Optional] [bool] zip build.zip
-    --minpng           [Optional] [bool] use pngquant
+    --imgmin           [Optional] [bool] use imagemin
     --min              [Optional] [bool] uglify js
     --publish          [Optional] [bool] publish project
     --force            [Optional] [bool] ignore 'platform'-game.lock
