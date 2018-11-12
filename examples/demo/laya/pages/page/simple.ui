@@ -194,6 +194,19 @@
             "compId":21,
             "child":[
                 ]
+        },
+        {
+            "x":15,
+            "type":"Button",
+            "props":{"y":240,"x":20,"width":179,"var":"btnKefu","skin":"comp/button.png","label":"Kefu Msg","height":42},
+            "nodeParent":1,
+            "label":"Button(btnKefu)",
+            "isDirectory":false,
+            "isAniNode":true,
+            "hasChild":false,
+            "compId":22,
+            "child":[
+                ]
         }],
     "animations":[
         {

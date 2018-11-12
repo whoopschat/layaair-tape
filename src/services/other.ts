@@ -4,6 +4,13 @@ import { fixWidth, fixHeight } from "./platform/wx/_size";
 
 let _clubButton = null;
 
+function isSupportClubButton() {
+    if (platform.isWechatApp()) {
+        return true;
+    }
+    return false;
+}
+
 function showClubButton(icon: string, x: number, y: number, w: number, h: number) {
     if (!platform.isWechatApp()) {
         return;
@@ -56,7 +63,24 @@ function hideClubButton() {
     }
 }
 
+function isSupportKefuConversation() {
+    if (platform.isWechatApp()) {
+        return true;
+    }
+    return false;
+}
+
+function openKefuConversation(options = null) {
+    if (platform.isWechatApp()) {
+        platform.execWX('openCustomerServiceConversation', options);
+    }
+}
+
+
 export default {
+    isSupportKefuConversation,
+    openKefuConversation,
+    isSupportClubButton,
     showClubButton,
     hideClubButton,
 }

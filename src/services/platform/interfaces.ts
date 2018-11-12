@@ -6,7 +6,7 @@ export interface IInit {
 }
 
 export interface IApp {
-    getUserInfo(callback: (userinfo: object) => void): void;
+    getUserInfo(callback: (userinfo: object) => void, imageUrl?: string): void;
     onPause(callback: () => void): void;
     onLaunch(callback: (options: object) => void);
 }

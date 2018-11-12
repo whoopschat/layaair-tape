@@ -247,7 +247,7 @@ declare module Tape {
         /** onPause */
         function onPause(callback: () => void): void;
         /** getUserInfo, use img for wechat: res/unpack/get_user_info.png */
-        function getUserInfo(callback: (userinfo: UserinfoPayload) => void, image?: string): void;
+        function getUserInfo(callback: (userinfo: UserinfoPayload) => void, imageUrl?: string): void;
     }
 
     /** rank */
@@ -266,8 +266,14 @@ declare module Tape {
         function hideRank(): void;
     }
 
-    /** club */
-    module club {
+    /** other */
+    module other {
+        /** isSupportKefuConversation */
+        function isSupportKefuConversation(): boolean;
+        /** openKefuConversation */
+        function openKefuConversation(options?: obj): void;
+        /** isSupportClubButton */
+        function isSupportClubButton(): boolean;
         /** showClubButton */
         function showClubButton(icon: string, x: number, y: number, w: number, h: number): void;
         /** hideClubButton */

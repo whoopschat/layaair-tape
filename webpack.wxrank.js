@@ -16,7 +16,8 @@ const config = {
     },
     plugins: [
         new UglifyJsPlugin()
-    ]
+    ],
+    mode: 'production',
 };
 
 module.exports = config;

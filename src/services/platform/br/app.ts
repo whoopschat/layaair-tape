@@ -1,6 +1,6 @@
 import { IApp } from "../interfaces";
 import platform, { BROWSER } from "../../../utils/platform";
-import { getEnterSceneForBR, getEnterDataForBR, getUserDataForBR } from "./_data";
+import { getEnterSceneForBR, getEnterDataForBR } from "./_data";
 
 class BrApp implements IApp {
 
@@ -34,7 +34,18 @@ class BrApp implements IApp {
     }
 
     public getUserInfo(callback: (userinfo) => void) {
-        callback && callback(getUserDataForBR());
+        callback && callback({
+            platform: BROWSER,
+            playerId: '-',
+            nickname: '-',
+            avatarUrl: '-',
+            city: '-',
+            country: '-',
+            province: '-',
+            gender: 0,
+            language: '-',
+            raw: null,
+        });
     }
 
 }

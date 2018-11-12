@@ -1,4 +1,4 @@
 {
-    "viewMode":2,
-    "enterUrl":""
+    "viewMode": "${orientationMode}",
+    "enterUrl": ""
 }

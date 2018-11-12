@@ -1,24 +1,26 @@
-# layaair-tape 3.x
+# layaair-tape 4.x
 > A layaair game library
 
-### Install
+### Usage
+
+#### 1.install
 ```
 > npm install layaair-tape
 ```
 
-### Use
+#### 2.require
 ```js
 require('layaair-tape');
 ```
 
-OR
+or
 
 ```html
 <!-- include tape library -->
 <script src="../node_modules/layaair-tape/dist/tape.js"></script>
 ```
 
-### Build
+### CMD
 ```
 > tape
   Usage: tape [options]

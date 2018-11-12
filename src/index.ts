@@ -8,7 +8,7 @@ import audio from './services/audio';
 import ad from './services/ad';
 import app from './services/app';
 import rank from './services/rank';
-import club from './services/club';
+import other from './services/other';
 
 import utils from './services/utils';
 import navigator from "./services/navigator/stack";
@@ -56,7 +56,7 @@ const Tape = {
     ad,
     app,
     rank,
-    club,
+    other,
 
     utils,
 

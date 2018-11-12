@@ -37,7 +37,7 @@ class WXApp implements IApp {
         this._pauseCallback = callback;
     }
 
-    public getUserInfo(callback: (userinfo) => void, image = null) {
+    public getUserInfo(callback: (userinfo) => void, imageUrl = null) {
         let onHandler = (res) => {
             if (res && res.userInfo) {
                 callback && callback({
@@ -76,7 +76,7 @@ class WXApp implements IApp {
                 this._userinfoButton = platform.execWX('createUserInfoButton', {
                     withCredentials: true,
                     type: 'image',
-                    image: image || 'res/unpack/get_user_info.png',
+                    image: imageUrl || 'res/unpack/get_user_info.png',
                     style: {
                         left: 0,
                         top: 0,

@@ -67,6 +67,9 @@ class SimpleActivity extends Tape.Activity {
                 this.ui.output.text = `onError --------------------\n${JSON.stringify(err)}`;
             })
         });
+        this.ui.btnKefu.on(Laya.Event.CLICK, this, () => {
+            Tape.other.openKefuConversation();
+        });
         Tape.app.onLaunch((options) => {
             this.ui.output.text = `onLaunch --------------------\n${JSON.stringify(options)}`;
         });
@@ -78,9 +81,9 @@ class SimpleActivity extends Tape.Activity {
     onFocus(focus) {
         console.log('PageActivity onFocus ---------------------------------', focus);
         if (focus) {
-            Tape.club.showClubButton('res/unpack/default_share_img.png', 450, 200, 50, 50)
+            Tape.other.showClubButton('res/unpack/default_share_img.png', 450, 200, 50, 50)
         } else {
-            Tape.club.hideClubButton();
+            Tape.other.hideClubButton();
         }
     }
 

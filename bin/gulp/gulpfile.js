@@ -7,7 +7,7 @@ const Empty = require('./tasks/empty');
 const Test = require('./tasks/bin');
 const Clean = require('./tasks/clean');
 const Resources = require('./tasks/resources');
-const Pngquant = require('./tasks/pngquant');
+const Imgmin = require('./tasks/imgmin');
 const Template = require('./tasks/template');
 const Mergejs = require('./tasks/mergejs');
 const Zipe = require('./tasks/zip');
@@ -68,12 +68,13 @@ const initReplaceList = (htmlFile) => {
     let orientation = program.orientation || Html.readValue({ file: htmlFile, selector: 'meta', attribute: 'screenorientation' }, "portrait");
     let app_id = program.appid || Html.readValue({ file: htmlFile, selector: 'meta', attribute: 'appid' }, "touristappid");
     replaceList.push(['${app_id}', app_id]);
-    replaceList.push(['"${is_game_tourist}"', app_id === 'touristappid']);
     replaceList.push(['${app_version}', app_version]);
     replaceList.push(['${orientation}', orientation]);
     replaceList.push(['${project_name}', projectname]);
     replaceList.push(['${env}', program.env]);
     replaceList.push(['${codeJs}', program.jsfile]);
+    replaceList.push(['"${is_game_tourist}"', app_id === 'touristappid']);
+    replaceList.push(['"${orientationMode}"', orientation === 'portrait' ? 1 : 2]);
 }
 
 const begin = () => {
@@ -126,9 +127,8 @@ gulp.task('help', Empty.emptyTask(() => {
     console.log("  --appid            [Optional] app id");
     console.log("  --projectname      [Optional] project name");
     console.log("  --orientation      [Optional] orientation");
-    console.log("  --pngquality       [Optional] png quality def: 65-80");
     console.log("  --zip              [Optional] [bool] zip build.zip");
-    console.log("  --minpng           [Optional] [bool] use pngquant");
+    console.log("  --imgmin           [Optional] [bool] use imagemin");
     console.log("  --min              [Optional] [bool] uglify js");
     console.log("  --publish          [Optional] [bool] publish project");
     console.log("  --force            [Optional] [bool] ignore 'platform'-game.lock");
@@ -143,7 +143,7 @@ gulp.task('clean', Clean.cleanTask(program.output, `${program.platform}-game.loc
 
 gulp.task('resources', Resources.resourcesTask(program.input, program.output));
 
-gulp.task('pngquant', Pngquant.pngquantTask(program.input, program.output, program.pngquality || '65-80'));
+gulp.task('imgmin', Imgmin.imageminTask(program.input, program.output));
 
 gulp.task('mergejs', Mergejs.mergejsTask(`${program.input}/${program.index}`, program.output, program.jsfile, program.min, replaceList));
 
@@ -163,8 +163,8 @@ gulp.task('build', function (done) {
         tasks.push('copybin');
         tasks.push('clean');
         tasks.push('resources');
-        if (program.minpng) {
-            tasks.push('pngquant');
+        if (program.imgmin) {
+            tasks.push('imgmin');
         }
         tasks.push('mergejs');
         tasks.push('template');

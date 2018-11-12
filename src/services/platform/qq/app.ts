@@ -1,6 +1,6 @@
 import { IApp } from "../interfaces";
 import platform, { QQ } from "../../../utils/platform";
-import { getEnterSceneForQQ, getEnterDataForQQ, getUserDataForQQ } from "./_data";
+import { getEnterSceneForQQ, getEnterDataForQQ } from "./_data";
 
 class QQApp implements IApp {
 
@@ -37,7 +37,18 @@ class QQApp implements IApp {
     }
 
     public getUserInfo(callback: (userinfo) => void) {
-        callback && callback(getUserDataForQQ());
+        callback && callback({
+            platform: QQ,
+            playerId: '-',
+            nickname: '-',
+            avatarUrl: '-',
+            city: '-',
+            country: '-',
+            province: '-',
+            gender: 0,
+            language: '-',
+            raw: null,
+        });
     }
 
 }
