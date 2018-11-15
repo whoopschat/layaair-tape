@@ -1,4 +1,4 @@
-import platform, { FACEBOOK } from "../../../utils/platform";
+import env, { FACEBOOK } from "../../../utils/env";
 import { IApp } from "../interfaces";
 
 class FBApp implements IApp {
@@ -7,29 +7,29 @@ class FBApp implements IApp {
     private _pauseCallback = null;
 
     constructor() {
-        if (!platform.isFacebookApp()) {
+        if (!env.isFacebookApp()) {
             return;
         }
         this._init();
     }
 
     private _init() {
-        platform.execFB('onPause', () => {
+        env.execFB('onPause', () => {
             this._pauseCallback && this._pauseCallback();
         });
-        platform.execFB('player.canSubscribeBotAsync').then(can_subscribe => {
+        env.execFB('player.canSubscribeBotAsync').then(can_subscribe => {
             if (can_subscribe) {
-                platform.execFB('player.subscribeBotAsync');
-                platform.printDebug('can subscribe bot');
+                env.execFB('player.subscribeBotAsync');
+                env.printDebug('can subscribe bot');
             } else {
-                platform.printDebug('not can subscribe bot');
+                env.printDebug('not can subscribe bot');
             }
         });
     }
 
     private _checkOnLaunch() {
-        platform.execFB('getEntryPointAsync').then(scene => {
-            let query = platform.execFB('getEntryPointData') || {};
+        env.execFB('getEntryPointAsync').then(scene => {
+            let query = env.execFB('getEntryPointData') || {};
             this._launchCallback && this._launchCallback({ scene: `${scene}`, query, platform: FACEBOOK });
         });
     }
@@ -46,14 +46,13 @@ class FBApp implements IApp {
     public getUserInfo(callback: (userinfo) => void) {
         callback && callback({
             platform: FACEBOOK,
-            playerId: platform.execFB('player.getID'),
-            nickname: platform.execFB('player.getName'),
-            avatarUrl: platform.execFB('player.getPhoto'),
+            nickname: env.execFB('player.getName'),
+            avatarUrl: env.execFB('player.getPhoto'),
             city: '-',
             country: '-',
             province: '-',
             gender: 0,
-            language: platform.execFB('getLocale'),
+            language: env.execFB('getLocale'),
             raw: null,
         });
     }

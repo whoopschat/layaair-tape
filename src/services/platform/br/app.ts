@@ -1,5 +1,5 @@
+import env, { BROWSER } from "../../../utils/env";
 import { IApp } from "../interfaces";
-import platform, { BROWSER } from "../../../utils/platform";
 import { getEnterSceneForBR, getEnterDataForBR } from "./_data";
 
 class BrApp implements IApp {
@@ -8,7 +8,7 @@ class BrApp implements IApp {
     private _launchCallback = null;
 
     constructor() {
-        if (!platform.isBrowserApp()) {
+        if (!env.isBrowserApp()) {
             return;
         }
         this._init();
@@ -36,7 +36,6 @@ class BrApp implements IApp {
     public getUserInfo(callback: (userinfo) => void) {
         callback && callback({
             platform: BROWSER,
-            playerId: '-',
             nickname: '-',
             avatarUrl: '-',
             city: '-',

@@ -1,9 +1,15 @@
 import { IAd } from "../interfaces";
 
 class BrAd implements IAd {
+    
+    private _preloadRewardedVideo = false;
 
     public isSupportedRewardedVideoAd() {
         return false;
+    }
+
+    public isPreloadRewardedVideoAd(){
+        return this._preloadRewardedVideo;
     }
 
     public configRewardedVideoAd(platform: string, adId: string) {

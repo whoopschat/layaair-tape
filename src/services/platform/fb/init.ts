@@ -1,4 +1,4 @@
-import platform from "../../../utils/platform";
+import env from "../../../utils/env";
 import { IInit } from "../interfaces";
 import { setNavigatorReady } from "../../navigator/init";
 
@@ -15,26 +15,26 @@ function runMockLoading() {
     } else {
         setTimeout(runMockLoading, 50);
     }
-    platform.execFB('setLoadingProgress', _percentage);
+    env.execFB('setLoadingProgress', _percentage);
 }
 
 class FBInit implements IInit {
 
     public start(callback: () => void) {
         runMockLoading();
-        platform.execFB('initializeAsync').then(() => {
+        env.execFB('initializeAsync').then(() => {
             callback && callback();
         });
     }
 
     public exit() {
-        platform.execFB('quit');
+        env.execFB('quit');
     }
 
     public onLoaded() {
         _isLoaded = true;
-        platform.execFB('setLoadingProgress', 100);
-        platform.execFB('startGameAsync').then(() => {
+        env.execFB('setLoadingProgress', 100);
+        env.execFB('startGameAsync').then(() => {
             setNavigatorReady();
         });
     }

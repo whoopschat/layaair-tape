@@ -1,5 +1,5 @@
+import env, { QQ } from "../../../utils/env";
 import { IApp } from "../interfaces";
-import platform, { QQ } from "../../../utils/platform";
 import { getEnterSceneForQQ, getEnterDataForQQ } from "./_data";
 
 class QQApp implements IApp {
@@ -8,17 +8,17 @@ class QQApp implements IApp {
     private _launchCallback = null;
 
     constructor() {
-        if (!platform.isQQApp()) {
+        if (!env.isQQApp()) {
             return;
         }
         this._init();
     }
 
     private _init() {
-        platform.execQQ('onEnterForeground', () => {
+        env.execQQ('onEnterForeground', () => {
             this._launchCallback && this._launchCallback({ scene: getEnterSceneForQQ(), query: getEnterDataForQQ(), platform: QQ });
         });
-        platform.execQQ('onEnterBackground', () => {
+        env.execQQ('onEnterBackground', () => {
             this._pauseCallback && this._pauseCallback();
         });
     }
@@ -39,7 +39,6 @@ class QQApp implements IApp {
     public getUserInfo(callback: (userinfo) => void) {
         callback && callback({
             platform: QQ,
-            playerId: '-',
             nickname: '-',
             avatarUrl: '-',
             city: '-',

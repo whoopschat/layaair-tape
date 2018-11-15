@@ -13,6 +13,7 @@ export interface IApp {
 
 export interface IAd {
     isSupportedRewardedVideoAd(): boolean;
+    isPreloadRewardedVideoAd(): boolean;
     configRewardedVideoAd(platform: string, adId: string): void;
     watchRewardedVideoAd(onWatch?: () => void, onCancal?: () => void, onError?: (error: any) => void): void;
     isSupportedBannerAd(): boolean;

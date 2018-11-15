@@ -1,15 +1,15 @@
-import platform from "../utils/platform";
+import env from "../utils/env";
 import { fbAd } from "./platform/fb/ad";
 import { wxAd } from "./platform/wx/ad";
 import { qqAd } from "./platform/qq/ad";
 import { brAd } from "./platform/br/ad";
 
 function _get() {
-    if (platform.isFacebookApp()) {
+    if (env.isFacebookApp()) {
         return fbAd;
-    } else if (platform.isWechatApp()) {
+    } else if (env.isWechatApp()) {
         return wxAd;
-    } else if (platform.isQQApp()) {
+    } else if (env.isQQApp()) {
         return qqAd;
     } else {
         return brAd;

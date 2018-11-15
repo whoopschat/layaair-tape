@@ -1,4 +1,4 @@
-import platform from "../utils/platform";
+import env from "../utils/env";
 import { fbInit } from "./platform/fb/init";
 import { qqInit } from "./platform/qq/init";
 import { wxInit } from "./platform/wx/init";
@@ -10,11 +10,11 @@ import { initNavigator } from "./navigator/init";
 let _inited = false;
 
 function _get() {
-    if (platform.isFacebookApp()) {
+    if (env.isFacebookApp()) {
         return fbInit;
-    } else if (platform.isWechatApp()) {
+    } else if (env.isWechatApp()) {
         return wxInit;
-    } else if (platform.isQQApp()) {
+    } else if (env.isQQApp()) {
         return qqInit;
     } else {
         return brInit;
@@ -25,18 +25,18 @@ export function init(width: number, height: number, ...options) {
     if (_inited) {
         return;
     }
-    if (!platform.isLayaApp()) {
-        platform.printError('Please ensure that the \'Laya\' library has been introduced.');
+    if (!env.isLayaApp()) {
+        env.printError('Please ensure that the \'Laya\' library has been introduced.');
         return;
     }
-    if (platform.isQQApp()) {
-        platform.execQQ('Script.loadlib', 'GameRes://layaforqq/laya.bkadpter.js')
+    if (env.isQQApp()) {
+        env.execQQ('Script.loadlib', 'GameRes://layaforqq/laya.bkadpter.js')
     }
-    platform.printDebug(`init...`);
-    platform.printDebug(`tape version: ${platform.getVersion()}`);
-    platform.printDebug(`app version: ${platform.getAppVersion()}`);
-    platform.printDebug(`platform: ${platform.getPlatform()}`);
-    if (platform.isWechatApp()) {
+    env.printDebug(`init...`);
+    env.printDebug(`tape version: ${env.getVersion()}`);
+    env.printDebug(`app version: ${env.getAppVersion()}`);
+    env.printDebug(`platform: ${env.getPlatform()}`);
+    if (env.isWechatApp()) {
         Laya.MiniAdpter.init(true);
     }
     initScreen(false, width, height, ...options);
@@ -47,18 +47,18 @@ export function init3D(width: number, height: number, ...options) {
     if (_inited) {
         return;
     }
-    if (!platform.isLayaApp()) {
-        platform.printError('Please ensure that the \'Laya\' library has been introduced.');
+    if (!env.isLayaApp()) {
+        env.printError('Please ensure that the \'Laya\' library has been introduced.');
         return;
     }
-    if (platform.isQQApp()) {
-        platform.execQQ('Script.loadlib', 'GameRes://layaforqq/laya.bkadpter.js')
+    if (env.isQQApp()) {
+        env.execQQ('Script.loadlib', 'GameRes://layaforqq/laya.bkadpter.js')
     }
-    platform.printDebug(`init3D...`);
-    platform.printDebug(`tape version: ${platform.getVersion()}`);
-    platform.printDebug(`app version: ${platform.getAppVersion()}`);
-    platform.printDebug(`platform: ${platform.getPlatform()}`);
-    if (platform.isWechatApp()) {
+    env.printDebug(`init3D...`);
+    env.printDebug(`tape version: ${env.getVersion()}`);
+    env.printDebug(`app version: ${env.getAppVersion()}`);
+    env.printDebug(`platform: ${env.getPlatform()}`);
+    if (env.isWechatApp()) {
         Laya.MiniAdpter.init(true);
     }
     initScreen(true, width, height, ...options);
@@ -67,7 +67,7 @@ export function init3D(width: number, height: number, ...options) {
 
 export function start(options, onLoaded = null) {
     if (!_inited) {
-        platform.printError('Please perform \'Tape.init\' initialization first.');
+        env.printError('Please perform \'Tape.init\' initialization first.');
         return;
     }
     if (!options) {

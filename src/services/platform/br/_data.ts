@@ -11,10 +11,6 @@ function _getQueryParams() {
     return query;
 }
 
-export function getUserDataForBR() {
-    return {};
-}
-
 export function getEnterSceneForBR() {
     return 'other';
 }

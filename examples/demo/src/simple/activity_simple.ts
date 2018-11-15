@@ -68,10 +68,13 @@ class SimpleActivity extends Tape.Activity {
             })
         });
         this.ui.btnKefu.on(Laya.Event.CLICK, this, () => {
-            Tape.other.openKefuConversation();
+            Tape.other.openKefuConversation({
+                showMessageCard: true,
+                sendMessageTitle: '消息卡片',
+            });
         });
         Tape.app.onLaunch((options) => {
-            this.ui.output.text = `onLaunch --------------------\n${JSON.stringify(options)}`;
+            this.ui.output.text = `onLaunch ------------isPreloadRewardedVideoAd:${Tape.ad.isPreloadRewardedVideoAd()}--------\n${JSON.stringify(options)}`;
         });
         Tape.app.onPause(() => {
             this.ui.output.text = 'onPause --------------------';
@@ -79,7 +82,6 @@ class SimpleActivity extends Tape.Activity {
     }
 
     onFocus(focus) {
-        console.log('PageActivity onFocus ---------------------------------', focus);
         if (focus) {
             Tape.other.showClubButton('res/unpack/default_share_img.png', 450, 200, 50, 50)
         } else {

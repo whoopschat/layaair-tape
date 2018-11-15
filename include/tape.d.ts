@@ -168,8 +168,22 @@ declare module Tape {
         function getDesignHeight(): number;
     }
 
-    /** platform */
-    module platform {
+    /** audio */
+    module audio {
+        /** playMusic */
+        function playMusic(url: string, loops?: number): AudioController;
+        /** playSound */
+        function playSound(url: string, loops?: number): AudioController;
+        /** stopMusic */
+        function stopMusic(): void;
+        /** stopAll */
+        function stopAll(): void;
+        /** stopAllSound */
+        function stopAllSound(): void;
+    }
+
+    /** env */
+    module env {
         /** getVersion */
         function getAppVersion(): string;
         /** getVersion */
@@ -208,24 +222,12 @@ declare module Tape {
         function getPlatform(): string;
     }
 
-    /** audio */
-    module audio {
-        /** playMusic */
-        function playMusic(url: string, loops?: number): AudioController;
-        /** playSound */
-        function playSound(url: string, loops?: number): AudioController;
-        /** stopMusic */
-        function stopMusic(): void;
-        /** stopAll */
-        function stopAll(): void;
-        /** stopAllSound */
-        function stopAllSound(): void;
-    }
-
     /** ad */
     module ad {
         /** isSupportedRewardedVideo */
         function isSupportedRewardedVideo(): boolean;
+        /** isPreloadRewardedVideoAd */
+        function isPreloadRewardedVideoAd(): boolean;
         /** setRewardedVideoAd */
         function configRewardedVideoAd(platform: string, adId: string): void;
         /** watchRewardedVideoAd */
@@ -246,7 +248,7 @@ declare module Tape {
         function onLaunch(callback: (options: { scene: string, query: obj, platform: string }) => void);
         /** onPause */
         function onPause(callback: () => void): void;
-        /** getUserInfo, use img for wechat: res/unpack/get_user_info.png */
+        /** getUserInfo, use img for wechat: default_login.png */
         function getUserInfo(callback: (userinfo: UserinfoPayload) => void, imageUrl?: string): void;
     }
 
@@ -271,7 +273,7 @@ declare module Tape {
         /** isSupportKefuConversation */
         function isSupportKefuConversation(): boolean;
         /** openKefuConversation */
-        function openKefuConversation(options?: obj): void;
+        function openKefuConversation(options?: { sessionFrom?: string, showMessageCard?: boolean, sendMessageTitle?: string, sendMessagePath?: string, sendMessageImg?: string }): void;
         /** isSupportClubButton */
         function isSupportClubButton(): boolean;
         /** showClubButton */

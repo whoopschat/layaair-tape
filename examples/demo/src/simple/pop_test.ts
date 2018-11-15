@@ -11,11 +11,9 @@ class TestPop extends Tape.PopupView {
 
     onShow() {
         this.canceledOnTouchOutside = true;
-        console.log('onShow', this);
     }
 
     onHide() {
-        console.log('onHide', this);
     }
 
 }

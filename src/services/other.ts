@@ -1,18 +1,18 @@
-import platform from "../utils/platform";
+import env from "../utils/env";
 import screen from "./manager/screen";
 import { fixWidth, fixHeight } from "./platform/wx/_size";
 
 let _clubButton = null;
 
 function isSupportClubButton() {
-    if (platform.isWechatApp()) {
+    if (env.isWechatApp()) {
         return true;
     }
     return false;
 }
 
 function showClubButton(icon: string, x: number, y: number, w: number, h: number) {
-    if (!platform.isWechatApp()) {
+    if (!env.isWechatApp()) {
         return;
     }
     try {
@@ -23,7 +23,7 @@ function showClubButton(icon: string, x: number, y: number, w: number, h: number
         let icons = ['green', 'white', 'dark', 'light'];
         hideClubButton();
         if (!_clubButton) {
-            _clubButton = platform.execWX('createGameClubButton', {
+            _clubButton = env.execWX('createGameClubButton', {
                 icon: icons.indexOf(icon) < 0 ? icons[0] : icon,
                 style: {
                     left,
@@ -48,7 +48,7 @@ function showClubButton(icon: string, x: number, y: number, w: number, h: number
 }
 
 function hideClubButton() {
-    if (!platform.isWechatApp()) {
+    if (!env.isWechatApp()) {
         return;
     }
     try {
@@ -64,15 +64,15 @@ function hideClubButton() {
 }
 
 function isSupportKefuConversation() {
-    if (platform.isWechatApp()) {
+    if (env.isWechatApp()) {
         return true;
     }
     return false;
 }
 
 function openKefuConversation(options = null) {
-    if (platform.isWechatApp()) {
-        platform.execWX('openCustomerServiceConversation', options);
+    if (env.isWechatApp()) {
+        env.execWX('openCustomerServiceConversation', options);
     }
 }
 

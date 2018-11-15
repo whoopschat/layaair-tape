@@ -1,8 +1,8 @@
-import platform from "../../../utils/platform";
+import env from "../../../utils/env";
 import screen from "../../manager/screen";
 
 export function fixWidth(width) {
-    let systemInfo = platform.execWX('getSystemInfoSync');
+    let systemInfo = env.execWX('getSystemInfoSync');
     if (systemInfo) {
         let windowWidth = systemInfo.windowWidth;
         let stageWidth = screen.getWidth();
@@ -12,7 +12,7 @@ export function fixWidth(width) {
 }
 
 export function fixHeight(height) {
-    let systemInfo = platform.execWX('getSystemInfoSync');
+    let systemInfo = env.execWX('getSystemInfoSync');
     if (systemInfo) {
         let windowHeight = systemInfo.windowHeight;
         let stageHeight = screen.getHeight();

@@ -2,8 +2,8 @@ import './polyfill'
 
 import bg from "./services/manager/bg";
 import screen from "./services/manager/screen";
-import platform from "./utils/platform";
 import audio from './services/audio';
+import env from "./utils/env";
 
 import ad from './services/ad';
 import app from './services/app';
@@ -30,7 +30,7 @@ import {
     vibrateShort,
 } from './services/comp';
 
-import runtime from "./utils/runtime";
+import runtime from "./runtime";
 
 const Tape = {
 
@@ -50,8 +50,8 @@ const Tape = {
 
     bg,
     screen,
-    platform,
     audio,
+    env,
 
     ad,
     app,

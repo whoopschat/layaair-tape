@@ -22,8 +22,8 @@ or
 
 ### CMD
 ```
-> tape
-  Usage: tape [options]
+> layaair-tape
+  Usage: layaair-tape [options]
     --input            input dir
     --output           output dir
     --platform         [Optional] h5 || wechat || qq || facebook def: h5

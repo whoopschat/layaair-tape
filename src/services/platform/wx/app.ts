@@ -1,4 +1,4 @@
-import platform, { WECHAT } from "../../../utils/platform";
+import env, { WECHAT } from "../../../utils/env";
 import { IApp } from "../interfaces";
 
 class WXApp implements IApp {
@@ -8,17 +8,17 @@ class WXApp implements IApp {
     private _userinfoButton = null;
 
     constructor() {
-        if (!platform.isWechatApp()) {
+        if (!env.isWechatApp()) {
             return;
         }
         this._init();
     }
 
     private _init() {
-        platform.execWX('onHide', () => {
+        env.execWX('onHide', () => {
             this._pauseCallback && this._pauseCallback();
         });
-        platform.execWX('onShow', (options) => {
+        env.execWX('onShow', (options) => {
             this._launchCallback && this._launchCallback({ scene: `${options.scene || ''}`, query: options.query || {}, platform: WECHAT });
         });
     }
@@ -29,7 +29,7 @@ class WXApp implements IApp {
     }
 
     private _checkOnLaunch() {
-        let options = platform.execWX('getLaunchOptionsSync') || {};
+        let options = env.execWX('getLaunchOptionsSync') || {};
         this._launchCallback && this._launchCallback({ entry: options.scene || 1000, query: options.query || {}, platform: WECHAT });
     }
 
@@ -42,7 +42,6 @@ class WXApp implements IApp {
             if (res && res.userInfo) {
                 callback && callback({
                     platform: WECHAT,
-                    playerId: '-',
                     avatarUrl: res.userInfo.avatarUrl,
                     nickname: res.userInfo.nickName,
                     city: res.userInfo.city,
@@ -66,22 +65,22 @@ class WXApp implements IApp {
             }
         }
         let onFail = () => {
-            let systemInfo = platform.execWX('getSystemInfoSync');
+            let systemInfo = env.execWX('getSystemInfoSync');
             if (!systemInfo) {
                 onHandler(null);
                 return;
             }
             onHide();
             if (!this._userinfoButton) {
-                this._userinfoButton = platform.execWX('createUserInfoButton', {
+                this._userinfoButton = env.execWX('createUserInfoButton', {
                     withCredentials: true,
                     type: 'image',
-                    image: imageUrl || 'res/unpack/get_user_info.png',
+                    image: imageUrl || 'default_login.png',
                     style: {
                         left: 0,
                         top: 0,
                         width: systemInfo.windowWidth,
-                        height: systemInfo.windowHeight
+                        height: systemInfo.windowHeight,
                     }
                 });
             }
@@ -95,7 +94,7 @@ class WXApp implements IApp {
                 this._userinfoButton.show();
             }
         }
-        platform.execWX('getUserInfo', {
+        env.execWX('getUserInfo', {
             withCredentials: true,
             success: onHandler,
             fail: onFail

@@ -40,7 +40,7 @@ if (typeof GameGlobal !== 'undefined') {
 } else {
     polyfillGlobal = window || {
         setTimeout: (callback, timeout) => {
-            if (BK) {
+            if (BK && BK.Director) {
                 let obj = {};
                 BK.Director.ticker.setTimeout(callback, timeout, obj);
                 return obj;
@@ -48,7 +48,7 @@ if (typeof GameGlobal !== 'undefined') {
             return setTimeout(callback, timeout);
         },
         setInterval: (callback, timeout) => {
-            if (BK) {
+            if (BK && BK.Director) {
                 let obj = {};
                 BK.Director.ticker.setInterval(callback, timeout, obj);
                 return obj;
@@ -56,13 +56,13 @@ if (typeof GameGlobal !== 'undefined') {
             return setInterval(callback, timeout);
         },
         clearTimeout: (target) => {
-            if (BK) {
+            if (BK && BK.Director) {
                 return BK.Director.ticker.removeTimeout(target);
             }
             return clearTimeout(target);
         },
         clearInterval: (target) => {
-            if (BK) {
+            if (BK && BK.Director) {
                 return BK.Director.ticker.removeInterval(target);
             }
             return clearInterval(target);
@@ -80,23 +80,17 @@ if (typeof window === 'undefined') {
     window.GameGlobal = window;
 }
 
-// wx
-if (typeof wx === 'undefined') {
-    window.wx = { isMock: true };
-} else {
-    window.wx = wx;
-}
-
 // FBInstant
-if (typeof FBInstant === 'undefined') {
-    window.FBInstant = { isMock: true };
-} else {
+if (typeof FBInstant !== 'undefined') {
     window.FBInstant = FBInstant;
 }
 
 // BK
-if (typeof BK === 'undefined') {
-    window.BK = { isMock: true };
-} else {
+if (typeof BK !== 'undefined') {
     window.BK = BK;
+}
+
+// wx
+if (typeof wx !== 'undefined') {
+    window.wx = wx;
 }

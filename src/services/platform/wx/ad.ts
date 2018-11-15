@@ -1,44 +1,69 @@
-import platform, { WECHAT } from "../../../utils/platform";
+import env, { WECHAT } from "../../../utils/env";
 import screen from "../../manager/screen";
 import { IAd } from "../interfaces";
 import { fixWidth, fixHeight } from "./_size";
 
 class WXAd implements IAd {
 
-    private _rewardedAdId = '';
     private _bannerAdId = '';
     private _bannerAd = null;
+    private _rewardedAdId = '';
     private _rewardedVideoAd = null;
-    private _rewardedVideoCallback = null;
+    private _rewardedVideoOnClose = null;
+    private _rewardedVideoOnError = null;
+    private _preloadRewardedVideo = false;
+    private _emptyOnError = () => { };
 
     public isSupportedRewardedVideoAd() {
         return true;
     }
 
+    public isPreloadRewardedVideoAd() {
+        return this._preloadRewardedVideo;
+    }
+
     public configRewardedVideoAd(platform: string, adId: string) {
         if (platform == WECHAT) {
             this._rewardedAdId = adId;
+            this._rewardedVideoAd = env.execWX('createRewardedVideoAd', {
+                adUnitId: this._rewardedAdId
+            });
+            if (this._rewardedVideoAd) {
+                try {
+                    this._rewardedVideoAd.offError(this._emptyOnError);
+                } catch (error) {
+                }
+                this._rewardedVideoAd.onError(this._emptyOnError);
+                this._rewardedVideoAd.load().then(() => { this._preloadRewardedVideo = true; });
+            }
         }
     }
 
     public watchRewardedVideoAd(onWatch?: () => void, onCancal?: () => void, onError?: (error: any) => void) {
-        this._rewardedVideoAd = platform.execWX('createRewardedVideoAd', {
-            adUnitId: this._rewardedAdId
-        });
         if (this._rewardedVideoAd) {
-            this._rewardedVideoCallback && this._rewardedVideoAd.offClose(this._rewardedVideoCallback);
-            this._rewardedVideoCallback = (res) => {
+            try {
+                this._rewardedVideoOnClose && this._rewardedVideoAd.offClose(this._rewardedVideoOnClose);
+            } catch (error) {
+            }
+            try {
+                this._rewardedVideoOnError && this._rewardedVideoAd.offError(this._rewardedVideoOnError);
+            } catch (error) {
+            }
+            this._rewardedVideoOnClose = (res) => {
                 if (res && res.isEnded || res === undefined) {
                     onWatch && onWatch();
                 } else {
                     onCancal && onCancal();
                 }
-            };
-            this._rewardedVideoAd.onClose(this._rewardedVideoCallback);
-            this._rewardedVideoAd.show().catch(err => {
-                this._rewardedVideoAd.load().then(() => this._rewardedVideoAd.show()).catch(err => {
-                    onError && onError(err.errMsg);
-                });
+                this._rewardedVideoAd.load().then(() => { this._preloadRewardedVideo = true; });
+            }
+            this._rewardedVideoOnError = (err) => {
+                onError && onError(err && err.errMsg || 'watchRewardedVideoAd:fail');
+            }
+            this._rewardedVideoAd.onClose(this._rewardedVideoOnClose);
+            this._rewardedVideoAd.onError(this._rewardedVideoOnError);
+            this._rewardedVideoAd.show().then(() => { this._preloadRewardedVideo = false; }).catch(() => {
+                this._rewardedVideoAd.load().then(() => this._rewardedVideoAd.show()).catch(() => { });
             });
         } else {
             onError && onError('createRewardedVideoAd:fail')
@@ -65,7 +90,7 @@ class WXAd implements IAd {
             if (realWidth < 300) {
                 realWidth = 300;
             }
-            this._bannerAd = platform.execWX('createBannerAd', {
+            this._bannerAd = env.execWX('createBannerAd', {
                 adUnitId: this._bannerAdId,
                 style: {
                     left: realLeft,

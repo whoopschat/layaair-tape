@@ -1,16 +1,16 @@
-import platform from "../../../utils/platform";
+import env from "../../../utils/env";
 
 export function fetchRankDataForFB(key, count, offset, cb) {
-    let getLeaderboardAsync = platform.execFB('getLeaderboardAsync', key);
+    let getLeaderboardAsync = env.execFB('getLeaderboardAsync', key);
     if (getLeaderboardAsync && getLeaderboardAsync.then) {
         getLeaderboardAsync.then((leaderboard) => {
             return leaderboard.getConnectedPlayerEntriesAsync(count, offset);
         }).then(entries => {
             try {
                 let selfInfo = {
-                    playerId: platform.execFB('player.getID'),
-                    nickname: platform.execFB('player.getName'),
-                    avatarUrl: platform.execFB('player.getPhoto'),
+                    playerId: env.execFB('player.getID'),
+                    nickname: env.execFB('player.getName'),
+                    avatarUrl: env.execFB('player.getPhoto'),
                 };
                 let selfIndex = -1;
                 let selfData = {};
@@ -52,7 +52,7 @@ export function fetchRankDataForFB(key, count, offset, cb) {
 }
 
 export function setRankScoreForFB(key: string, score: number, extraData: string = null, callback = null) {
-    let getLeaderboardAsync = platform.execFB('getLeaderboardAsync', key);
+    let getLeaderboardAsync = env.execFB('getLeaderboardAsync', key);
     if (getLeaderboardAsync && getLeaderboardAsync.then) {
         getLeaderboardAsync.then(function (leaderboard) {
             return leaderboard.setScoreAsync(score, extraData);

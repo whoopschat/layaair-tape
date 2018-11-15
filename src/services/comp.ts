@@ -1,12 +1,12 @@
+import env from "../utils/env";
 import comp_toast from "./comps/comp_toast";
 import comp_modal from "./comps/comp_modal";
 import comp_loading from "./comps/comp_loading";
 import comp_vibrate from "./comps/comp_vibrate";
-import platform from "../utils/platform";
 
 export function showLoading(params) {
-    if (platform.isWechatApp()) {
-        return platform.execWX('showLoading', params)
+    if (env.isWechatApp()) {
+        return env.execWX('showLoading', params)
     }
     // if (platform.isQQApp()) {
     //     return platform.execQQ('UI.showLoading', params)
@@ -16,8 +16,8 @@ export function showLoading(params) {
 }
 
 export function hideLoading() {
-    if (platform.isWechatApp()) {
-        return platform.execWX('hideLoading')
+    if (env.isWechatApp()) {
+        return env.execWX('hideLoading')
     }
     // if (platform.isQQApp()) {
     //     return platform.execQQ('UI.hideLoading')
@@ -26,8 +26,8 @@ export function hideLoading() {
 }
 
 export function showToast(params) {
-    if (platform.isWechatApp()) {
-        return platform.execWX('showToast', params)
+    if (env.isWechatApp()) {
+        return env.execWX('showToast', params)
     }
     // if (platform.isQQApp()) {
     //     return platform.execQQ('UI.showToast', params)
@@ -37,8 +37,8 @@ export function showToast(params) {
 }
 
 export function hideToast() {
-    if (platform.isWechatApp()) {
-        return platform.execWX('hideToast')
+    if (env.isWechatApp()) {
+        return env.execWX('hideToast')
     }
     // if (platform.isQQApp()) {
     //     return platform.execQQ('UI.hideToast')
@@ -47,8 +47,8 @@ export function hideToast() {
 }
 
 export function showModal(params) {
-    if (platform.isWechatApp()) {
-        return platform.execWX('showModal', params)
+    if (env.isWechatApp()) {
+        return env.execWX('showModal', params)
     }
     // if (platform.isQQApp()) {
     //     return platform.execQQ('UI.showAlert')
@@ -57,15 +57,15 @@ export function showModal(params) {
 }
 
 export function vibrateShort() {
-    if (platform.isWechatApp()) {
-        return platform.execWX('vibrateShort')
+    if (env.isWechatApp()) {
+        return env.execWX('vibrateShort')
     }
     comp_vibrate.vibrateShort();
 }
 
 export function vibrateLong() {
-    if (platform.isWechatApp()) {
-        return platform.execWX('vibrateLong')
+    if (env.isWechatApp()) {
+        return env.execWX('vibrateLong')
     }
     comp_vibrate.vibrateLong();
 }

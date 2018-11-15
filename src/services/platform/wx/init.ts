@@ -1,4 +1,4 @@
-import platform from "../../../utils/platform";
+import env from "../../../utils/env";
 import screen from "../../manager/screen";
 import { IInit } from "../interfaces";
 import { setNavigatorReady } from "../../navigator/init";
@@ -15,12 +15,12 @@ class WXInit implements IInit {
     }
 
     exit() {
-        platform.execWX('exitMiniProgram');
+        env.execWX('exitMiniProgram');
     }
 
     onLoaded() {
         setNavigatorReady();
-        platform.postMessageToWXOpenDataContext({
+        env.postMessageToWXOpenDataContext({
             action: "initRank",
             data: {
                 width: screen.getWidth(),

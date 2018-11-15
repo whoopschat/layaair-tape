@@ -1,4 +1,4 @@
-import platform from "../../../utils/platform";
+import env from "../../../utils/env";
 import screen from "../../manager/screen";
 import { IRank } from "../interfaces";
 
@@ -33,28 +33,28 @@ class WXRank implements IRank {
     }
 
     public setRankKey(key: string, count: number = 100, offset: number = 0) {
-        platform.postMessageToWXOpenDataContext({
+        env.postMessageToWXOpenDataContext({
             action: "setRankKey",
             data: { key, count, offset }
         });
     }
 
     public setRankScore(key: string, score: number, extraData: string = '') {
-        platform.postMessageToWXOpenDataContext({
+        env.postMessageToWXOpenDataContext({
             action: 'setRankScore',
             data: { key, score, extraData }
         });
     }
 
     public showRank(ui: object | object[]) {
-        platform.postMessageToWXOpenDataContext({
+        env.postMessageToWXOpenDataContext({
             action: "showRank",
             data: { ui }
         });
     }
 
     public hideRank() {
-        platform.postMessageToWXOpenDataContext({
+        env.postMessageToWXOpenDataContext({
             action: 'hideRank',
             data: {}
         });
