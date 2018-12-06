@@ -339,6 +339,8 @@ declare module Tape {
         static res: { url: string, type: string }[];
         /** num */
         static num: number;
+        /** single */
+        static single: boolean;
 
         /** page */
         protected page: any;
@@ -377,9 +379,9 @@ declare module Tape {
         /** activity on next page load progress */
         protected onNextProgress?(progress: number): void;
         /** redirectTo */
-        protected redirectTo(page, params?: any): void;
+        protected redirectTo(page, params?: any, action?: () => void, single?: boolean): void;
         /** navigate */
-        protected navigate(page, params?: any, action?: () => void): void;
+        protected navigate(page, params?: any, action?: () => void, single?: boolean): void;
         /** finish self */
         protected back(): void;
         /** finish activity */

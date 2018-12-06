@@ -13,7 +13,7 @@ class Page2Activity extends Tape.Activity {
             this.back();
         });
         this.ui.btnNavigate.on(Laya.Event.CLICK, this, () => {
-            this.navigate(Page1Activity);
+            this.navigate(Page1Activity, null, null, true);
         });
     }
 

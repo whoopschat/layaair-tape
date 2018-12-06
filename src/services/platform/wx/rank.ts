@@ -4,32 +4,32 @@ import { IRank } from "../interfaces";
 
 class WXRank implements IRank {
 
-    private _rank_texture = null;
-
     public isSupportedRank() {
         return true;
     }
 
     public createRankView(x = 0, y = 0, width = screen.getDesignWidth(), height = screen.getDesignHeight()) {
-        let rankView = new Laya.Sprite();
+        var sharedCanvasView = new Laya.Sprite();
+        sharedCanvasView.scrollRect = new Laya.Rectangle(x, y, width, height);
         if (window.hasOwnProperty('sharedCanvas')) {
             var sharedCanvas = window['sharedCanvas'];
+            sharedCanvas.width = Laya.stage.width;
+            sharedCanvas.height = Laya.stage.height;
             if (!sharedCanvas.hasOwnProperty('_addReference')) {
-                sharedCanvas['_addReference'] = () => { }
+                sharedCanvas['_addReference'] = () => {
+                };
             }
-            if (!this._rank_texture) {
-                this._rank_texture = new Laya.Texture(sharedCanvas, null);
-                this._rank_texture.bitmap.alwaysChange = false;
-            }
+            var rankTexture = new Laya.Texture(sharedCanvas);
+            rankTexture.bitmap.alwaysChange = true;
+            var rankSprite = new Laya.Sprite();
+            rankSprite.x -= screen.getOffestX();
+            rankSprite.y -= screen.getOffestY();
+            rankSprite.width = Laya.stage.width;
+            rankSprite.height = Laya.stage.height;
+            rankSprite.graphics.drawTexture(rankTexture, 0, 0, rankTexture.width, rankTexture.height);
+            sharedCanvasView.addChild(rankSprite);
         }
-        if (this._rank_texture) {
-            var newTexture = Laya.Texture.createFromTexture(this._rank_texture, x + screen.getOffestX(), y + screen.getOffestY(), width, height);
-            newTexture.bitmap.alwaysChange = false;
-            rankView.width = width;
-            rankView.height = height;
-            rankView.graphics.drawTexture(newTexture, 0, 0, newTexture.width, newTexture.height);
-        }
-        return rankView;
+        return sharedCanvasView;
     }
 
     public setRankKey(key: string, count: number = 100, offset: number = 0) {

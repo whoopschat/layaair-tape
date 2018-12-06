@@ -76,10 +76,11 @@ export function bindView(targetView, targetData) {
                 if (elementView instanceof Laya.List) {
                     const listView = elementView;
                     listView.array = [];
-                    if (listView.repeatX > 1 && !listView.hScrollBarSkin) {
+                    if (listView.repeatY > 1 && listView.repeatY >= listView.repeatX && !listView.vScrollBarSkin) {
+                        listView.vScrollBarSkin = null;
+                    } else if (listView.repeatX > 1 && listView.repeatX >= listView.repeatY && !listView.hScrollBarSkin) {
                         listView.hScrollBarSkin = null;
-                    }
-                    if (listView.repeatY > 1 && !listView.vScrollBarSkin) {
+                    } else if (!listView.vScrollBarSkin && !listView.hScrollBarSkin) {
                         listView.vScrollBarSkin = null;
                     }
                     listView.renderHandler = Laya.Handler.create(this, function (itemView, index) {

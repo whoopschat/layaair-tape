@@ -2,8 +2,8 @@ import { setFocus } from "../navigator/stack";
 import NavLoader from "../navigator/loader";
 
 let _inited = false;
-let _mainUILayer;
-let _topUILayer;
+let _mainUILayer: Laya.Sprite;
+let _topUILayer: Laya.Sprite;
 let _offsetX = 0;
 let _offsetY = 0;
 
@@ -44,6 +44,15 @@ function checkFocus() {
     setFocus(false);
 }
 
+function moveTopToMainLayer(view: NavLoader) {
+    _checkInit();
+    if (view && view.parent == _mainUILayer) {
+        _mainUILayer.removeChild(view);
+        _mainUILayer.addChild(view);
+    }
+    checkFocus();
+}
+
 function addViewToMainLayer(view) {
     _checkInit();
     view && _mainUILayer.addChild(view);
@@ -58,6 +67,7 @@ function addViewTopLayer(view) {
 
 export default {
     checkFocus,
+    moveTopToMainLayer,
     addViewToMainLayer,
     addViewTopLayer,
 }

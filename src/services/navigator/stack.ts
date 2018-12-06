@@ -1,5 +1,6 @@
 import NavLoader from "./loader";
 import UIMgr from "../manager/uimgr";
+import uimgr from "../manager/uimgr";
 
 let _loaders = [];
 let _loading = false;
@@ -27,6 +28,16 @@ function _showStack(index = 0, anim = false, callback = null) {
 
 function _pushStack(stack) {
     _loaders.push(stack);
+}
+
+function _topStack(stack) {
+    let index = _loaders.indexOf(stack);
+    if (index >= 0) {
+        _loaders.splice(index, 1);
+        _loaders.push(stack);
+        _refreshStack(null);
+        uimgr.moveTopToMainLayer(stack);
+    }
 }
 
 function _refreshStack(callback) {
@@ -75,7 +86,10 @@ export function setFocus(focus) {
     }
 }
 
-function navigate(page, params = {}, action = null, single = false) {
+function navigate(page, params = null, action = null, single = false) {
+    if (!params) {
+        params = {};
+    }
     let open = () => {
         new NavLoader({
             page,
@@ -98,16 +112,16 @@ function navigate(page, params = {}, action = null, single = false) {
             }
         });
     }
-    if (!single) {
-        open();
-    } else {
+    if (single || page.single) {
         var stacks = [];
         _all().forEach(stack => {
             if (stack.filter(page)) {
                 stacks.push(stack);
             }
         });
-        console.log('-------------stacks-------------', stacks);
+        stacks.length > 0 ? _topStack(stacks.pop()) : open();
+    } else {
+        open();
     }
 }
 

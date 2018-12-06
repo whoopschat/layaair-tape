@@ -43,7 +43,7 @@ if (!program.index) {
     program.index = 'index.html';
 }
 
-const app_version = `${program.version || File.readJson((program.bincwd || '.') + '/package.json').version || '1.0'}.${program.buildnum}`;
+const app_version = `${program.version || File.readJson((program.bincwd || '.') + '/package.json').version || '1.0.0'}`;
 
 if (!program.x) {
     console.log(`build to ... `, chalk.yellow(program.platform));
@@ -137,9 +137,9 @@ gulp.task('help', Empty.emptyTask(() => {
     console.log("");
 }));
 
-gulp.task('copybin', Test.testTask('./dist/bin', program.bin, 'bin.lock'));
-
 gulp.task('clean', Clean.cleanTask(program.output, `${program.platform}-game.lock`, program.force));
+
+gulp.task('copybin', Test.testTask('./tpl/bin', program.bin, 'bin.lock'));
 
 gulp.task('resources', Resources.resourcesTask(program.input, program.output));
 
@@ -151,7 +151,7 @@ gulp.task('template', Template.templateTask(`./tpl/${program.platform}`, program
 
 gulp.task('zip', Zipe.zipTask(program.output));
 
-gulp.task('publish', Publish.publishTask(program.platform, program.output, program.env, app_version));
+gulp.task('publish', Publish.publishTask(program.platform, program.output, program.env, app_version, program.buildnum));
 
 gulp.task('build', function (done) {
     let tasks = [];
@@ -160,8 +160,8 @@ gulp.task('build', function (done) {
     } else if (!begin()) {
         tasks.push('error');
     } else {
-        tasks.push('copybin');
         tasks.push('clean');
+        tasks.push('copybin');
         tasks.push('resources');
         if (program.imgmin) {
             tasks.push('imgmin');
