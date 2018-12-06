@@ -71,6 +71,7 @@ class SimpleActivity extends Tape.Activity {
             Tape.other.openKefuConversation({
                 showMessageCard: true,
                 sendMessageTitle: '消息卡片',
+                sendMessagePath: '?name=你好'
             });
         });
         Tape.app.onLaunch((options) => {

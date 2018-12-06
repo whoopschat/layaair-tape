@@ -55,7 +55,7 @@ export default class extends Laya.Component {
         this._activity.onNextProgress && this._activity.onNextProgress(progress);
     }
 
-    canFinish(page, activity) {
+    filter(page, activity) {
         if (page === this._options.page) {
             return !activity || activity === this._activity;
         }

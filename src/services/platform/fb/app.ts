@@ -17,6 +17,7 @@ class FBApp implements IApp {
         env.execFB('onPause', () => {
             this._pauseCallback && this._pauseCallback();
         });
+        env.execFB('setSessionData', { message: 'start game' })
         env.execFB('player.canSubscribeBotAsync').then(can_subscribe => {
             if (can_subscribe) {
                 env.execFB('player.subscribeBotAsync');

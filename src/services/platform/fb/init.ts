@@ -28,6 +28,7 @@ class FBInit implements IInit {
     }
 
     public exit() {
+        env.execFB('setSessionData', { message: 'quit game' })
         env.execFB('quit');
     }
 

@@ -75,27 +75,40 @@ export function setFocus(focus) {
     }
 }
 
-function navigate(page, params = {}, action = null) {
-    new NavLoader({
-        page,
-        params,
-        onShow: () => {
-            _refreshStack(() => {
-                action && action(true);
-            });
-        },
-        onLoaded: (loader) => {
-            _loading = false;
-            UIMgr.addViewToMainLayer(loader);
-            _pushStack(loader);
-        },
-        onLoadProgress: (loader, progress) => {
-            if (_loading) {
-                var stack = _getStack();
-                stack && stack.nextProgress(progress);
+function navigate(page, params = {}, action = null, single = false) {
+    let open = () => {
+        new NavLoader({
+            page,
+            params,
+            onShow: () => {
+                _refreshStack(() => {
+                    action && action(true);
+                });
+            },
+            onLoaded: (loader) => {
+                _loading = false;
+                UIMgr.addViewToMainLayer(loader);
+                _pushStack(loader);
+            },
+            onLoadProgress: (loader, progress) => {
+                if (_loading) {
+                    var stack = _getStack();
+                    stack && stack.nextProgress(progress);
+                }
             }
-        }
-    });
+        });
+    }
+    if (!single) {
+        open();
+    } else {
+        var stacks = [];
+        _all().forEach(stack => {
+            if (stack.filter(page)) {
+                stacks.push(stack);
+            }
+        });
+        console.log('-------------stacks-------------', stacks);
+    }
 }
 
 function popToTop() {
@@ -109,7 +122,7 @@ function pop(number = 1) {
 function finish(page, instance = null) {
     var stacks = [];
     _all().forEach(stack => {
-        if (stack.canFinish(page, instance)) {
+        if (stack.filter(page, instance)) {
             stacks.push(stack);
         }
     });
