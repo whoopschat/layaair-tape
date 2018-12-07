@@ -190,6 +190,8 @@ declare module Tape {
         function getVersion(): string;
         /** isLayaApp */
         function isLayaApp(): boolean;
+        /** isConchApp */
+        function isConchApp(): boolean;
         /** isBrowserApp */
         function isBrowserApp(): boolean;
         /** sendMessageToPlatform */

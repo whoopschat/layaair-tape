@@ -62,10 +62,9 @@ export class ModalContentView extends Laya.Sprite {
         this._titleView = new Laya.Label()
         this._titleView.align = Laya.Stage.ALIGN_CENTER;
         this._titleView.valign = Laya.Stage.ALIGN_MIDDLE;
-        this._titleView.bold = true;
         this._titleView.wordWrap = true;
         this._titleView.name = 'title';
-        this._titleView.fontSize = this._fontSize * 1.2;
+        this._titleView.fontSize = this._fontSize;
         this._titleView.color = '#333333';
         this._titleView.x = this._padding;
         this._titleView.y = this._padding;

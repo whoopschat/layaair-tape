@@ -6,6 +6,10 @@ const isLayaApp = () => {
     return window.hasOwnProperty("Laya") && !window['Laya'].isMock;
 }
 
+const isConchApp = () => {
+    return window.hasOwnProperty("conch") && !window['conch'].isMock;
+}
+
 //////////////////////////
 /////  Browser
 //////////////////////////
@@ -192,6 +196,7 @@ export default {
     getAppVersion,
     getVersion,
     isLayaApp,
+    isConchApp,
     isBrowserApp,
     sendMessageToPlatform,
     isQQApp,

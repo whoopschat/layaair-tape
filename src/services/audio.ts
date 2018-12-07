@@ -1,3 +1,5 @@
+import env from "../utils/env";
+
 function fixWechatAudioPlay(callback: Function) {
     if (window && window['WeixinJSBridge']) {
         try {
@@ -92,6 +94,10 @@ class AudioController {
         fixWechatAudioPlay(() => {
             if (this.url) {
                 this.stop();
+                var ext = Laya.Utils.getFileExtension(this.url);
+                if (env.isConchApp() && ext != "wav" && ext != "ogg") {
+                    return;
+                }
                 this._chancel = Laya.SoundManager.playSound(this._auidoUrl, loops, Laya.Handler.create(this, () => {
                     this._onComplete && this._onComplete();
                     this.stop();
