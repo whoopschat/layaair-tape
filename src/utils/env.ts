@@ -14,6 +14,16 @@ const isBrowserApp = () => {
     return !isFacebookApp() && !isWechatApp() && !isQQApp();
 }
 
+const sendMessageToPlatform = (params, callback) => {
+    if (!Laya || !Laya.conchMarket) {
+        callback && callback({})
+        return;
+    }
+    Laya.conchMarket.sendMessageToPlatform(JSON.stringify(params || {}), function (json): void {
+        callback && callback(JSON.parse(json || '{}'))
+    });
+}
+
 //////////////////////////
 /////  Facebook
 //////////////////////////
@@ -183,6 +193,7 @@ export default {
     getVersion,
     isLayaApp,
     isBrowserApp,
+    sendMessageToPlatform,
     isQQApp,
     execQQ,
     isFacebookApp,

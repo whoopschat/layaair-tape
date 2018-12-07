@@ -1,6 +1,18 @@
 const fs = require('fs');
 const path = require('path');
 
+function mkdirsSync(dirname, mode) {
+    if (fs.existsSync(dirname)) {
+        return true;
+    } else {
+        if (mkdirsSync(path.dirname(dirname), mode)) {
+            fs.mkdirSync(dirname, mode);
+            return true;
+        }
+    }
+    return false;
+}
+
 function createFolderSync(file) {
     try {
         var sep = path.sep
@@ -65,6 +77,7 @@ function readJson(file) {
 }
 
 module.exports = {
+    mkdirsSync,
     createFileSync,
     createFolderSync,
     deleteFolderSync,

@@ -5,7 +5,7 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const config = {
     entry: path.resolve('./src/wxrank/index.js'),
     output: {
-        path: path.resolve('./tpl/wechat/openDataContext'),
+        path: path.resolve('./tpl/platform/wechat/openDataContext'),
         filename: 'code.js',
         libraryTarget: 'umd',
     },

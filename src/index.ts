@@ -71,7 +71,7 @@ const Tape = {
 
 if (typeof window !== "undefined") {
     (window as any).Tape = Tape;
-    (window as any).runtime = runtime;
+    (window as any).TapeRuntime = runtime;
 }
 
 export = {

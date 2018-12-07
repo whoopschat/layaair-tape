@@ -8,6 +8,12 @@ class BrInit implements IInit {
     }
 
     public exit() {
+        try {
+            if (window && window['conch'] && typeof window['conch']['exit'] == 'function') {
+                window['conch']['exit']();
+            }
+        } catch (error) {
+        }
     }
 
     public onLoaded() {

@@ -1,4 +1,4 @@
-declare module runtime {
+declare module TapeRuntime {
 
     let clickSound: string;
     let scaleTime: number;
@@ -192,6 +192,8 @@ declare module Tape {
         function isLayaApp(): boolean;
         /** isBrowserApp */
         function isBrowserApp(): boolean;
+        /** sendMessageToPlatform */
+        function sendMessageToPlatform(params: obj, callback: (result: obj) => void): void;
         /** isQQApp */
         function isQQApp(): boolean;
         /** execQQ */

@@ -5,6 +5,7 @@ const File = require('./utils/file');
 const Html = require('./utils/html');
 const Empty = require('./tasks/empty');
 const Test = require('./tasks/bin');
+const App = require('./tasks/app');
 const Clean = require('./tasks/clean');
 const Resources = require('./tasks/resources');
 const Imgmin = require('./tasks/imgmin');
@@ -58,19 +59,22 @@ if (program.input) {
 if (program.output) {
     program.bin = path.join((program.bincwd || '.') + "/" + program.output + "/bin");
     program.output = path.join((program.bincwd || '.') + "/" + program.output + "/" + program.platform);
+    program.outputTemp = program.platform == 'android' ? program.output + '/temp' : program.output;
 }
 
 const replaceList = [
 ]
 
 const initReplaceList = (htmlFile) => {
-    let projectname = program.projectname || Html.readValue({ file: htmlFile, selector: 'title' }, "WXGame");
+    let projectname = program.projectname || Html.readValue({ file: htmlFile, selector: 'title' }, "Game");
     let orientation = program.orientation || Html.readValue({ file: htmlFile, selector: 'meta', attribute: 'screenorientation' }, "portrait");
+    let packagename = program.packagename || Html.readValue({ file: htmlFile, selector: 'meta', attribute: 'packagename' }, "com.ezgame.demo");
     let app_id = program.appid || Html.readValue({ file: htmlFile, selector: 'meta', attribute: 'appid' }, "touristappid");
     replaceList.push(['${app_id}', app_id]);
     replaceList.push(['${app_version}', app_version]);
     replaceList.push(['${orientation}', orientation]);
     replaceList.push(['${project_name}', projectname]);
+    replaceList.push(['${package_name}', packagename]);
     replaceList.push(['${env}', program.env]);
     replaceList.push(['${codeJs}', program.jsfile]);
     replaceList.push(['"${is_game_tourist}"', app_id === 'touristappid']);
@@ -78,7 +82,7 @@ const initReplaceList = (htmlFile) => {
 }
 
 const begin = () => {
-    let platforms = ['h5', 'wechat', 'qq', 'facebook'];
+    let platforms = ['h5', 'wechat', 'qq', 'facebook', 'android'];
     let checkPlatform = platforms.indexOf(program.platform) >= 0;
     let checkInput = !!program.input;
     let checkOutput = !!program.output;
@@ -118,7 +122,7 @@ gulp.task('help', Empty.emptyTask(() => {
     console.log("Usage: tape [options]");
     console.log("  --input            input dir");
     console.log("  --output           output dir");
-    console.log("  --platform         [Optional] h5 || wechat || facebook def: h5");
+    console.log("  --platform         [Optional] h5 || wechat || facebook || qq || android def: h5");
     console.log("  --env              [Optional] development || production(prod)");
     console.log("  --index            [Optional] index.html file def: index.html");
     console.log("  --version          [Optional] version code def: read package.json");
@@ -126,12 +130,13 @@ gulp.task('help', Empty.emptyTask(() => {
     console.log("  --jsfile           [Optional] jsfile def: code.js");
     console.log("  --appid            [Optional] app id");
     console.log("  --projectname      [Optional] project name");
+    console.log("  --package_name     [Optional] package name");
     console.log("  --orientation      [Optional] orientation");
     console.log("  --zip              [Optional] [bool] zip build.zip");
     console.log("  --imgmin           [Optional] [bool] use imagemin");
     console.log("  --min              [Optional] [bool] uglify js");
     console.log("  --publish          [Optional] [bool] publish project");
-    console.log("  --force            [Optional] [bool] ignore 'platform'-game.lock");
+    console.log("  --force            [Optional] [bool] ignore .lock file");
     console.log("  --x                [Optional] show this help");
     console.log("");
     console.log("");
@@ -141,17 +146,19 @@ gulp.task('clean', Clean.cleanTask(program.output, `${program.platform}-game.loc
 
 gulp.task('copybin', Test.testTask('./tpl/bin', program.bin, 'bin.lock'));
 
-gulp.task('resources', Resources.resourcesTask(program.input, program.output));
+gulp.task('resources', Resources.resourcesTask(program.input, program.outputTemp));
 
-gulp.task('imgmin', Imgmin.imageminTask(program.input, program.output));
+gulp.task('imgmin', Imgmin.imageminTask(program.input, program.outputTemp));
 
-gulp.task('mergejs', Mergejs.mergejsTask(`${program.input}/${program.index}`, program.output, program.jsfile, program.min, replaceList));
+gulp.task('mergejs', Mergejs.mergejsTask(`${program.input}/${program.index}`, program.outputTemp, program.jsfile, program.min, replaceList));
 
-gulp.task('template', Template.templateTask(`./tpl/${program.platform}`, program.output, replaceList, `${program.platform}-game.lock`, program.force));
+gulp.task('template', Template.templateTask(`./tpl/platform/${program.platform}`, program.output, replaceList, `${program.platform}-game.lock`, program.force));
 
-gulp.task('zip', Zipe.zipTask(program.output));
+gulp.task('zip', Zipe.zipTask(program.outputTemp));
 
-gulp.task('publish', Publish.publishTask(program.platform, program.output, program.env, app_version, program.buildnum));
+gulp.task('publish', Publish.publishTask(program.platform, program.outputTemp, program.env, app_version, program.buildnum));
+
+gulp.task('android', App.androidTask(program.outputTemp, "http://stand.alone.version/index.html", program.output));
 
 gulp.task('build', function (done) {
     let tasks = [];
@@ -170,6 +177,9 @@ gulp.task('build', function (done) {
         tasks.push('template');
         if (program.zip || program.platform === 'facebook') {
             tasks.push('zip');
+        }
+        if (program.platform === 'android') {
+            tasks.push('android');
         }
         if (program.publish) {
             tasks.push('publish');

@@ -7,6 +7,7 @@
     "start": "webpack  --config webpack.dev.js --watch",
     "build-dev": "webpack --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js && webpack --config webpack.wxrank.js",
+    "build-test-android": "node ./bin/build.js --platform android --output ./build/ --input ./examples/demo/bin/",
     "build-test-fb": "node ./bin/build.js --platform facebook --output ./build/ --input ./examples/demo/bin/",
     "build-test-h5": "node ./bin/build.js --platform h5 --output ./build/ --input ./examples/demo/bin/ --zip",
     "build-test-qq": "node ./bin/build.js --platform qq --output ./build/ --input ./examples/demo/bin/ --imgmin --zip --force",
@@ -49,6 +50,7 @@
     "minimist": "*",
     "through2": "*",
     "iconv-lite": "*",
+    "layadcc": "*",
     "exec-sh": "*"
   },
   "devDependencies": {

@@ -1,6 +1,6 @@
-const FileUtils = require('../utils/file');
 const gulp = require('gulp');
 const gulpReplace = require('gulp-replace');
+const FileUtils = require('../utils/file');
 
 const checkLock = (dir, lockFile) => {
     return FileUtils.existsSync(dir + '/' + lockFile);
