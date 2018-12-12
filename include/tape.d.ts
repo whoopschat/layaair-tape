@@ -1,34 +1,3 @@
-declare module TapeRuntime {
-
-    let clickSound: string;
-    let scaleTime: number;
-    let scaleSmalValue: number;
-    let scaleBigValue: number;
-
-    function bindClick(view): void;
-
-    class btn extends Laya.Button {
-        public sound: string;
-    }
-
-    class btn_img extends Laya.Image {
-        public sound: string;
-    }
-
-    class btn_label extends Laya.Label {
-        public sound: string;
-    }
-
-    class btn_sprite extends Laya.Sprite {
-        public sound: string;
-    }
-
-    class btn_box extends Laya.Box {
-        public sound: string;
-    }
-
-}
-
 declare module Tape {
 
     /** obj */
@@ -140,16 +109,10 @@ declare module Tape {
     module bg {
         /** setBgColor */
         function setBgColor(color: string): void;
-        /** getBgColor */
-        function getBgColor(): string;
         /** setBgSkin */
-        function setBgSkin(skin: string): void;
-        /** getBgSkin */
-        function getBgSkin(): string;
-        /** setBgSizeGrid */
-        function setBgSizeGrid(sizeGrid: string): void;
-        /** getBgSizeGrid */
-        function getBgSizeGrid(): string;
+        function setBgTexture(url: string): void;
+        /** getBgSprite */
+        function getBgSprite(): Laya.Sprite;
     }
 
     /** screen */
@@ -208,6 +171,10 @@ declare module Tape {
         function isWechatApp(): boolean;
         /** execWX */
         function execWX(func, ...options): any;
+        /** isBaiduApp */
+        function isBaiduApp(): boolean;
+        /** execBD */
+        function execBD(func, ...options): any;
         /** setDebug */
         function setDebug(debug: boolean): void;
         /** printDebug */
@@ -396,6 +363,41 @@ declare module Tape {
         protected popToTop(): void;
         /** constructor */
         constructor(options: obj);
+
+    }
+
+    /** runtime */
+    module runtime {
+        /** clickSound */
+        let clickSound: string;
+        /** scaleTime */
+        let scaleTime: number;
+        /** scaleSmalValue */
+        let scaleSmalValue: number;
+        /** scaleBigValue */
+        let scaleBigValue: number;
+        /** bindClick */
+        function bindClick(view): void;
+        /** btn */
+        class btn extends Laya.Button {
+            public sound: string;
+        }
+        /** btn_img */
+        class btn_img extends Laya.Image {
+            public sound: string;
+        }
+        /** btn_label */
+        class btn_label extends Laya.Label {
+            public sound: string;
+        }
+        /** btn_sprite */
+        class btn_sprite extends Laya.Sprite {
+            public sound: string;
+        }
+        /** btn_box */
+        class btn_box extends Laya.Box {
+            public sound: string;
+        }
 
     }
 

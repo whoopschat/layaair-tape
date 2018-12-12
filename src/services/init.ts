@@ -2,6 +2,7 @@ import env from "../utils/env";
 import { fbInit } from "./platform/fb/init";
 import { qqInit } from "./platform/qq/init";
 import { wxInit } from "./platform/wx/init";
+import bdInit from "./platform/bd/init";
 import { brInit } from "./platform/br/init";
 
 import { initScreen } from "./manager/screen";
@@ -12,10 +13,12 @@ let _inited = false;
 function _get() {
     if (env.isFacebookApp()) {
         return fbInit;
-    } else if (env.isWechatApp()) {
-        return wxInit;
     } else if (env.isQQApp()) {
         return qqInit;
+    } else if (env.isWechatApp()) {
+        return wxInit;
+    } else if (env.isBaiduApp()) {
+        return bdInit;
     } else {
         return brInit;
     }
@@ -38,6 +41,9 @@ export function init(width: number, height: number, ...options) {
     env.printDebug(`platform: ${env.getPlatform()}`);
     if (env.isWechatApp()) {
         Laya.MiniAdpter.init(true);
+    }
+    if (env.isBaiduApp()) {
+        Laya.BMiniAdapter.init(true);
     }
     initScreen(false, width, height, ...options);
     _inited = true;

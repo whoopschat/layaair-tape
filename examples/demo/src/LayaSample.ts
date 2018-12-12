@@ -2,7 +2,8 @@
 class GameMain {
     constructor() {
         Tape.init(600, 400);
-        Tape.bg.setBgColor('#3399ff');
+        // Tape.bg.setBgColor('#3399ff');
+        Tape.bg.setBgTexture('res/unpack/gameBG1.png')
         Laya.Stat.show();
 
         // config ad for wechat

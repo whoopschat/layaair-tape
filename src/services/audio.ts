@@ -1,4 +1,5 @@
 import env from "../utils/env";
+import loop from "./loop";
 
 function fixWechatAudioPlay(callback: Function) {
     if (window && window['WeixinJSBridge']) {
@@ -22,11 +23,18 @@ class AudioController {
     private _onPlay = null;
     private _onPause = null;
     private _onStop = null;
+    private _onError = null;
     private _onProgress = null;
     private _onComplete = null;
     private _position = -1;
     private _duration = -1;
     private _paused = false;
+    private _type = 'sound';
+    private _playTime = 0;
+
+    constructor(type) {
+        this._type = type;
+    }
 
     private _update() {
         if (this._chancel) {
@@ -36,10 +44,15 @@ class AudioController {
                 this._playing = true;
                 this._onPlay && this._onPlay();
             }
-            this._onProgress && this._onProgress({
-                position: this.position,
-                duration: this.duration,
-            });
+            if (this._playing && this._duration > 0) {
+                this._onProgress && this._onProgress({
+                    position: this.position,
+                    duration: this.duration,
+                });
+            } else if (Date.now() - this._playTime > 2000) {
+                this._onError && this._onError();
+                this.stop();
+            }
         }
     }
 
@@ -63,6 +76,10 @@ class AudioController {
         this._onComplete = callback;
     }
 
+    public onError(callback) {
+        this._onError = callback;
+    }
+
     public set url(url) {
         if (this._auidoUrl != url) {
             this._auidoUrl = url;
@@ -72,6 +89,10 @@ class AudioController {
 
     public get url() {
         return this._auidoUrl;
+    }
+
+    public get type() {
+        return this._type;
     }
 
     public get position() {
@@ -92,17 +113,18 @@ class AudioController {
 
     public play(loops: number = 1) {
         fixWechatAudioPlay(() => {
-            if (this.url) {
+            if (this._auidoUrl) {
                 this.stop();
-                var ext = Laya.Utils.getFileExtension(this.url);
+                var ext = Laya.Utils.getFileExtension(this._auidoUrl);
                 if (env.isConchApp() && ext != "wav" && ext != "ogg") {
                     return;
                 }
+                this._playTime = Date.now();
                 this._chancel = Laya.SoundManager.playSound(this._auidoUrl, loops, Laya.Handler.create(this, () => {
                     this._onComplete && this._onComplete();
                     this.stop();
-                }), 0);
-                Laya.timer.frameLoop(1, this, this._update);
+                }), null, 0);
+                loop.loop(this, this._update);
             }
         });
     }
@@ -113,49 +135,43 @@ class AudioController {
             this._chancel.pause();
             this._paused = true;
             this._playing = false;
-            Laya.timer.clear(this, this._update);
+            loop.clear(this, this._update);
         }
     }
 
     public resume() {
-        if (this._chancel) {
+        if (this._chancel && this._paused) {
             this._paused = false;
             this._chancel.resume();
-            Laya.timer.frameLoop(1, this, this._update);
+            loop.loop(this, this._update);
         }
     }
 
     public stop() {
-        try {
-            if (this._chancel) {
-                this._onStop && this._onStop();
-                this._chancel.stop();
-                this._chancel = null;
-                this._paused = false;
-                this._playing = false;
-                Laya.timer.clear(this, this._update);
-                Laya.SoundManager.removeChannel(this._chancel);
-                Laya.SoundManager.destroySound(this._auidoUrl);
-            }
-        } catch (error) {
+        if (this._chancel) {
+            this._onStop && this._onStop();
+            this._chancel.stop();
+            this._chancel = null;
+            this._paused = false;
+            this._playing = false;
+            Laya.SoundManager.removeChannel(this._chancel);
+            Laya.SoundManager.destroySound(this._auidoUrl);
+            loop.clear(this, this._update);
         }
     }
 
     public destroy() {
         this.stop();
-        try {
-            this._onComplete = null;
-            this._onProgress = null;
-            this._onPlay = null;
-            this._onStop = null;
-            this._onPause = null;
-        } catch (error) {
-        }
+        this._onComplete = null;
+        this._onProgress = null;
+        this._onPlay = null;
+        this._onStop = null;
+        this._onPause = null;
     }
 
 }
 
-let _musicAudio = new AudioController()
+let _musicAudio = new AudioController('music')
 
 function playMusic(url: string, loops: number = 1) {
     _musicAudio.url = url;
@@ -164,7 +180,7 @@ function playMusic(url: string, loops: number = 1) {
 }
 
 function playSound(url: string, loops: number = 1) {
-    let audio = new AudioController();
+    let audio = new AudioController('sound');
     audio.url = url;
     audio.play(loops);
     return audio;

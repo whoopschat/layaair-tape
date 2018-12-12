@@ -8,20 +8,20 @@ export function showLoading(params) {
     if (env.isWechatApp()) {
         return env.execWX('showLoading', params)
     }
-    // if (platform.isQQApp()) {
-    //     return platform.execQQ('UI.showLoading', params)
-    // }
-    hideToast();
+    if (env.isBaiduApp()) {
+        return env.execBD('showLoading', params)
+    }
     comp_loading.showLoading(params);
+    comp_toast.hideToast();
 }
 
 export function hideLoading() {
     if (env.isWechatApp()) {
         return env.execWX('hideLoading')
     }
-    // if (platform.isQQApp()) {
-    //     return platform.execQQ('UI.hideLoading')
-    // }
+    if (env.isBaiduApp()) {
+        return env.execBD('hideLoading')
+    }
     comp_loading.hideLoading();
 }
 
@@ -29,20 +29,20 @@ export function showToast(params) {
     if (env.isWechatApp()) {
         return env.execWX('showToast', params)
     }
-    // if (platform.isQQApp()) {
-    //     return platform.execQQ('UI.showToast', params)
-    // }
-    hideLoading();
+    if (env.isBaiduApp()) {
+        return env.execBD('showToast', params)
+    }
     comp_toast.showToast(params);
+    comp_loading.hideLoading();
 }
 
 export function hideToast() {
     if (env.isWechatApp()) {
         return env.execWX('hideToast')
     }
-    // if (platform.isQQApp()) {
-    //     return platform.execQQ('UI.hideToast')
-    // }
+    if (env.isBaiduApp()) {
+        return env.execBD('hideToast')
+    }
     comp_toast.hideToast();
 }
 
@@ -50,9 +50,9 @@ export function showModal(params) {
     if (env.isWechatApp()) {
         return env.execWX('showModal', params)
     }
-    // if (platform.isQQApp()) {
-    //     return platform.execQQ('UI.showAlert')
-    // }
+    if (env.isBaiduApp()) {
+        return env.execBD('showModal', params)
+    }
     comp_modal.showModal(params)
 }
 
@@ -60,12 +60,18 @@ export function vibrateShort() {
     if (env.isWechatApp()) {
         return env.execWX('vibrateShort')
     }
+    if (env.isBaiduApp()) {
+        return env.execBD('vibrateShort')
+    }
     comp_vibrate.vibrateShort();
 }
 
 export function vibrateLong() {
     if (env.isWechatApp()) {
         return env.execWX('vibrateLong')
+    }
+    if (env.isBaiduApp()) {
+        return env.execBD('vibrateLong')
     }
     comp_vibrate.vibrateLong();
 }

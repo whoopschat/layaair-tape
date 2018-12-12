@@ -4,16 +4,13 @@ import { BgView } from "./bg";
 function _btnEffect(view: Laya.Label) {
     view.offAll();
     view.on(Laya.Event.MOUSE_DOWN, view, () => {
-        view.bgColor = '#666666';
-        view.alpha = 0.2;
+        view.bgColor = '#dddddd';
     });
     view.on(Laya.Event.MOUSE_UP, view, () => {
         view.bgColor = '#eeeeee';
-        view.alpha = 1;
     });
     view.on(Laya.Event.MOUSE_OUT, view, () => {
         view.bgColor = '#eeeeee';
-        view.alpha = 1;
     });
 }
 
@@ -64,7 +61,7 @@ export class ModalContentView extends Laya.Sprite {
         this._titleView.valign = Laya.Stage.ALIGN_MIDDLE;
         this._titleView.wordWrap = true;
         this._titleView.name = 'title';
-        this._titleView.fontSize = this._fontSize;
+        this._titleView.fontSize = this._fontSize + this._fontSize * 0.2;
         this._titleView.color = '#333333';
         this._titleView.x = this._padding;
         this._titleView.y = this._padding;

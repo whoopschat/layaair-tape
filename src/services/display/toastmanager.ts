@@ -45,6 +45,7 @@ function showToast(toast, params = null, onHide = null) {
             if (view) {
                 _popToast(toast, view);
                 view._on_hide && view._on_hide(view.toast);
+                view.isShow = false;
                 view.onHide && view.onHide();
                 view.destroy();
             }
@@ -58,6 +59,7 @@ function hideToast(toast, view = null) {
     let list = _popToast(toast, view);
     list.forEach(view => {
         view._on_hide && view._on_hide(view.toast);
+        view.isShow = false;
         view.onHide && view.onHide();
         view.destroy();
     });

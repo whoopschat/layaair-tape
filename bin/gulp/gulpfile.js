@@ -68,21 +68,23 @@ const replaceList = [
 const initReplaceList = (htmlFile) => {
     let projectname = program.projectname || Html.readValue({ file: htmlFile, selector: 'title' }, "Game");
     let orientation = program.orientation || Html.readValue({ file: htmlFile, selector: 'meta', attribute: 'screenorientation' }, "portrait");
-    let packagename = program.packagename || Html.readValue({ file: htmlFile, selector: 'meta', attribute: 'packagename' }, "com.ezgame.demo");
-    let app_id = program.appid || Html.readValue({ file: htmlFile, selector: 'meta', attribute: 'appid' }, "touristappid");
-    replaceList.push(['${app_id}', app_id]);
+    let packagename = program.packagename || Html.readValue({ file: htmlFile, selector: 'meta', attribute: 'packagename' }, "com.tapegame");
+    let wx_app_id = program.appid || Html.readValue({ file: htmlFile, selector: 'meta', attribute: 'appid' }, "touristappid");
+    let bd_app_id = program.appid || Html.readValue({ file: htmlFile, selector: 'meta', attribute: 'baidu_appid' }, "无智能小程序AppId部分功能受限");
+    replaceList.push(['${wx_app_id}', wx_app_id]);
+    replaceList.push(['${bd_app_id}', bd_app_id]);
     replaceList.push(['${app_version}', app_version]);
     replaceList.push(['${orientation}', orientation]);
     replaceList.push(['${project_name}', projectname]);
     replaceList.push(['${package_name}', packagename]);
     replaceList.push(['${env}', program.env]);
     replaceList.push(['${codeJs}', program.jsfile]);
-    replaceList.push(['"${is_game_tourist}"', app_id === 'touristappid']);
-    replaceList.push(['"${orientationMode}"', orientation === 'portrait' ? 1 : 2]);
+    replaceList.push(['"${wx_is_game_tourist}"', wx_app_id === 'touristappid']);
+    replaceList.push(['"${qq_orientationMode}"', orientation === 'portrait' ? 1 : 2]);
 }
 
 const begin = () => {
-    let platforms = ['h5', 'wechat', 'qq', 'facebook', 'android'];
+    let platforms = ['h5', 'facebook', 'qq', 'wechat', 'baidu', 'android'];
     let checkPlatform = platforms.indexOf(program.platform) >= 0;
     let checkInput = !!program.input;
     let checkOutput = !!program.output;

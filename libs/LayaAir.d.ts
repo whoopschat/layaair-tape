@@ -26503,8 +26503,6 @@ declare module laya.utils {
         /** 表示是否在 ipad 设备。*/
         static onIPad: boolean;
         /** 表示是否在 Android设备。*/
-        static onAndriod: boolean;
-        /** 表示是否在 Android设备。*/
         static onAndroid: boolean;
         /** 表示是否在 Windows Phone 设备。*/
         static onWP: boolean;
@@ -30370,6 +30368,92 @@ declare module laya.wx.mini {
 
         static remove(fileUrl?:String,callBack?:Handler): void;
         
+
+        /**
+        * 清空缓存空间文件内容
+        */        
+        public static removeAll():void
+        /**
+         * 
+         * 获取文件信息
+         * @param fileUrl
+         * @return
+         */
+        static getFileInfo(fileUrl: string):Object;
+        
+        /**
+         * 获取文件列表
+         */
+        static getFileList():Object;
+     
+    }
+}
+
+declare module laya.bd.mini {
+    import Handler = laya.utils.Handler;
+
+    
+    class BMiniAdapter {
+         
+
+
+        /**是否自动缓存下载的图片跟声音文件，默认为true**/
+        public static  autoCacheFile:Boolean;
+		/**50M缓存容量满时每次清理容量值,默认每次清理5M**/
+		public static  minClearSize:Number; 
+		/**本地资源列表**/
+		public static  nativefiles:Object;
+         
+
+        /**
+         * 初始化回调
+         * @param isPostMsg 是否需要在主域中自动将加载的文本数据自动传递到子域，默认 false
+         * @param isSon 是否是子域，默认为false
+         * @param isCacheFile 是否缓存下载的图片跟声音文件，默认true缓存
+         */
+        static init(isPosMsg?: boolean, isSon?: boolean, isCacheFile?: boolean): void;
+      
+      /**
+       * 判断文件是否在4M包
+       * @param url 文件路径
+       * @return 
+       */
+      
+        static hasNativeFile(fileUrl:String):Boolean;
+        
+       
+
+        /**
+       * 通过url地址获取文件编码(编码的设置只有在直接调用本地读取4M包非图片文件的时候才需要指定，50M空间文件加载无需设置文件编码) 
+       * @param url 文件路径(绝对地址)
+       * @param type 文件类型
+       * @return 
+       */		
+        static getUrlEncode(url:String,type:String):String;
+
+        /**
+         * 下载文件
+         * @param url 文件路径（绝对地址）
+         * @param type 文件类型
+         * @param callBack 文件加载回调，回调内容[errorCode码(0成功,1失败,2加载进度)
+         * @param encoding 文件编码默认 ascill，非图片文件加载需要设置相应的编码，二进制编码为空字符串
+
+         */
+        static downLoadFile(fileUrl: string, fileType?: string, callBack?: Handler, encoding?: string): void;
+        
+       /**
+        * 删除指定缓存文件
+        * @param fileUrl文件路径(绝对地址)
+        * @param callBack 删除回调函数
+        */
+
+        static remove(fileUrl?:String,callBack?:Handler): void;
+        
+
+        /**
+        * 清空缓存空间文件内容
+        */        
+        public static removeAll():void
         /**
          * 
          * 获取文件信息
@@ -31796,6 +31880,8 @@ declare module Laya {
     }
     class MiniAdpter extends laya.wx.mini.MiniAdpter {
     }
+    class BMiniAdapter extends laya.bd.mini.BMiniAdapter {
+    }
 }
 declare class Laya3D {
     /**
@@ -31955,3 +32041,79 @@ declare module laya.debug{
     }
 }
 
+/**
+ * ETH区块链相关
+ */
+declare class LayaGCS{
+	/*
+		ETH的功能类实例，封装了bip协议以及账户签名算法
+	*/
+	static ETHBip:Object;
+
+	/*
+		得到当前已经unlock的ETH账户，如果是undefined说明玩家还没登陆
+	*/
+	static get_current_account():string;
+	/*
+		初始化LayaGCS，需要传入Laya.stage根节点以及网络network
+		 //初始化LayaGCS
+   		 LayaGCS.initlize({
+			laya_stage_node:laya.stage,     //Laya Air根节点
+			network:0                       //ETH区块链网络（0位测试网络Rinkedby , 1为正式网络MainNet)
+			auto_load_last_account:false    //自动读取上次登入的账户
+		})
+	*/
+	static initlize(t:Object):void;
+	/*
+		是否已经初始化完成
+	*/
+	static initlized:boolean;
+	/*	
+		当前使用的区块链网络，0为Rinkedby , 1是正式网络
+	*/
+	static network:number;
+	/*
+		sdk资源回调完成
+	*/
+	static onSDKResouceLoaded():void;
+	/*
+		设置初始化完成回调
+	*/
+	static set_inited_callback(t:Function):void;
+	/*
+		打开登陆界面（如果已经登录，进入账户界面)
+	*/
+	static show_login_ui(t:any):void;
+	/*
+		已经设定的Laya.stage
+	*/
+	static target_stage:Object;
+	/*
+		
+		这是一个完整的web3实例。LayaGCS的web3有一些改动。
+
+		由于LayaOne提供了一个全节点，所以游戏前端无需同步区块数据
+
+		为了更好的游戏体验，LayaGCS.web3不再提供同步方法，例如
+
+		var balance = web3.eth.getBalance(LayaGCS.get_default_account()); //同步的写法，LayaGCS不再支持
+
+		支持的写法
+
+		1.
+		co(function*(){
+			var balance = yield function(done){
+			web3.eth.getBalance(LayaGCS.get_default_account(),done)
+			}
+
+			console.log('账户余额为',balalnce)
+		})
+
+		2. web3.eth.getBalance(LayaGCS.get_default_account,function(err,result){
+			console.log(result)
+		})
+
+
+	*/
+	static web3:Object;
+}

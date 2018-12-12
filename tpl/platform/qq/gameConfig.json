@@ -1,4 +1,4 @@
 {
-    "viewMode": "${orientationMode}",
+    "viewMode": "${qq_orientationMode}",
     "enterUrl": ""
 }

@@ -425,7 +425,7 @@ var ___Laya=(function(){
 	Laya.timer=null;
 	Laya.scaleTimer=null;
 	Laya.loader=null;
-	Laya.version="1.7.21beta";
+	Laya.version="1.8.0beta";
 	Laya.render=null;
 	Laya._currentStage=null;
 	Laya._isinit=false;
@@ -560,7 +560,7 @@ var EventDispatcher=(function(){
 		(onceOnly===void 0)&& (onceOnly=false);
 		if (!this._events || !this._events[type])return this;
 		var listeners=this._events[type];
-		if (listener !=null){
+		if (listeners !=null){
 			if (listeners.run){
 				if ((!caller || listeners.caller===caller)&& listeners.method===listener && (!onceOnly || listeners.once)){
 					delete this._events[type];
@@ -4853,7 +4853,12 @@ var SoundManager=(function(){
 		if (value){
 			if (SoundManager._tMusic){
 				if (SoundManager._musicChannel&&!SoundManager._musicChannel.isStopped){
-					SoundManager._musicChannel.pause();
+					if (Render.isConchApp){
+						/*__JS__ */if (SoundManager._musicChannel._audio)SoundManager._musicChannel._audio.muted=true;;
+					}
+					else {
+						SoundManager._musicChannel.pause();
+					}
 					}else{
 					SoundManager._musicChannel=null;
 				}
@@ -4865,7 +4870,12 @@ var SoundManager=(function(){
 			SoundManager._musicMuted=value;
 			if (SoundManager._tMusic){
 				if (SoundManager._musicChannel){
-					SoundManager._musicChannel.resume();
+					if (Render.isConchApp){
+						/*__JS__ */if (SoundManager._musicChannel._audio)SoundManager._musicChannel._audio.muted=false;;
+					}
+					else {
+						SoundManager._musicChannel.resume();
+					}
 				}
 			}
 		}
@@ -7727,6 +7737,18 @@ var Byte=(function(){
 		var uint8array=new Uint8Array(arraybuffer);
 		this._u8d_.set(uint8array.subarray(offset,offset+length),this._pos_);
 		this._pos_+=length;
+	}
+
+	/**
+	*读取ArrayBuffer数据
+	*@param length
+	*@return
+	*/
+	__proto.readArrayBuffer=function(length){
+		var rst;
+		rst=this._u8d_.buffer.slice(this._pos_,this._pos_+length);
+		this._pos_=this._pos_+length
+		return rst;
 	}
 
 	/**
@@ -21178,7 +21200,7 @@ var GraphicAnimation=(function(_super){
 })(FrameAnimation)
 
 
-	Laya.__init([EventDispatcher,LoaderManager,Render,Browser,Timer,LocalStorage,TimeLine,GraphicAnimation]);
+	Laya.__init([EventDispatcher,LoaderManager,GraphicAnimation,Render,Browser,Timer,LocalStorage,TimeLine]);
 })(window,document,Laya);
 
 (function(window,document,Laya){

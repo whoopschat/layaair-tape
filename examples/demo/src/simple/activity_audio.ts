@@ -8,6 +8,12 @@ class AudioActivity extends Tape.Activity {
         this.ui.btnBack.on(Laya.Event.CLICK, this, () => {
             this.back();
         });
+        this.ui.btnStopAll.on(Laya.Event.CLICK, this, () => {
+            Tape.audio.stopAll();
+        });
+        this.ui.btnStopAllSound.on(Laya.Event.CLICK, this, () => {
+            Tape.audio.stopAllSound();
+        });
         this.ui.btnPlayMusic.on(Laya.Event.CLICK, this, () => {
             this.musicAudio = Tape.audio.playMusic('res/sound/bgm.mp3');
             this.musicAudio.onProgress(res => {
@@ -30,7 +36,7 @@ class AudioActivity extends Tape.Activity {
             }
         });
         this.ui.btnPlaySound.on(Laya.Event.CLICK, this, () => {
-            this.soundAudio = Tape.audio.playSound('res/sound/bgm.mp3');
+            this.soundAudio = Tape.audio.playSound('https://yx-static.oss-cn-shanghai.aliyuncs.com/bubbledragon/beta/sound/sound_bomb.mp3');
             this.soundAudio.onProgress(res => {
                 this.ui.output.text = JSON.stringify(res);
             });

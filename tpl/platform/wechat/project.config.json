@@ -1,4 +1,6 @@
 {
+	"appid": "${wx_app_id}",
+	"projectname": "${project_name}",
 	"description": "config.json",
 	"setting": {
 		"urlCheck": false,
@@ -9,8 +11,6 @@
 	},
 	"compileType": "game",
 	"libVersion": "game",
-	"appid": "${app_id}",
-	"projectname": "${project_name}",
 	"condition": {
 		"search": {
 			"current": -1,
@@ -29,5 +29,5 @@
 			"list": []
 		}
 	},
-	"isGameTourist": "${is_game_tourist}"
+	"isGameTourist": "${wx_is_game_tourist}"
 }

@@ -1,5 +1,3 @@
-import './polyfill'
-
 import bg from "./services/manager/bg";
 import screen from "./services/manager/screen";
 import audio from './services/audio';
@@ -9,6 +7,7 @@ import ad from './services/ad';
 import app from './services/app';
 import rank from './services/rank';
 import other from './services/other';
+import runtime from "./services/runtime";
 
 import utils from './services/utils';
 import navigator from "./services/navigator/stack";
@@ -29,8 +28,6 @@ import {
     vibrateLong,
     vibrateShort,
 } from './services/comp';
-
-import runtime from "./runtime";
 
 const Tape = {
 
@@ -57,6 +54,7 @@ const Tape = {
     app,
     rank,
     other,
+    runtime,
 
     utils,
 
@@ -71,10 +69,10 @@ const Tape = {
 
 if (typeof window !== "undefined") {
     (window as any).Tape = Tape;
-    (window as any).TapeRuntime = runtime;
+    (window as any).runtime = runtime;
 }
 
 export = {
     Tape,
     runtime
-};
+}

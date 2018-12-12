@@ -104,6 +104,34 @@ function postMessageToWXOpenDataContext(data) {
 }
 
 //////////////////////////
+/////  Baidu
+//////////////////////////
+
+const isBaiduApp = () => {
+    return !isFacebookApp() && !isQQApp() && window.hasOwnProperty("swan") && !window['swan'].isMock;
+}
+
+function execBD(func, ...options) {
+    if (window.hasOwnProperty("swan")) {
+        let funcs = func.split('.');
+        let instant = window['swan'];
+        while (funcs.length > 1) {
+            instant = instant[funcs.shift()];
+        }
+        if (instant && funcs.length == 1) {
+            if (instant.hasOwnProperty(funcs[0])) {
+                return instant[funcs[0]](...options);
+            }
+        }
+    }
+}
+
+function postMessageToBDOpenDataContext(data) {
+    let openDataContext = execBD('getOpenDataContext');
+    openDataContext && openDataContext.postMessage && openDataContext.postMessage(data);
+}
+
+//////////////////////////
 /////  Version
 //////////////////////////
 
@@ -177,9 +205,10 @@ function isProd() {
 //////////////////////////
 
 export const FACEBOOK = 'facebook';
-export const WECHAT = 'wechat';
-export const BROWSER = 'browser';
 export const QQ = 'qq';
+export const WECHAT = 'wechat';
+export const BAIDU = 'baidu';
+export const BROWSER = 'browser';
 
 function getPlatform() {
     if (isFacebookApp()) {
@@ -188,6 +217,8 @@ function getPlatform() {
         return QQ;
     } else if (isWechatApp()) {
         return WECHAT;
+    } else if (isBaiduApp()) {
+        return BAIDU;
     }
     return BROWSER;
 }
@@ -206,6 +237,9 @@ export default {
     isWechatApp,
     execWX,
     postMessageToWXOpenDataContext,
+    isBaiduApp,
+    execBD,
+    postMessageToBDOpenDataContext,
     setDebug,
     printError,
     printDebug,
