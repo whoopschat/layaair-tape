@@ -73,6 +73,5 @@ if (typeof window !== "undefined") {
 }
 
 export = {
-    Tape,
-    runtime
+    Tape
 }
