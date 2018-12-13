@@ -1,7 +1,7 @@
 {
   "name": "layaair-tape",
   "main": "./dist/tape.js",
-  "version": "3.7.1",
+  "version": "3.7.2",
   "description": "A layaair game library",
   "scripts": {
     "start": "webpack  --config webpack.dev.js --watch",
@@ -59,7 +59,6 @@
     "babel-loader": "^7.1.4",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-preset-env": "^1.7.0",
-    "es6-promise": "^4.2.4",
     "fs-extra": "^6.0.1",
     "string-replace-loader": "^2.1.1",
     "uglifyjs-webpack-plugin": "^1.2.2",
