@@ -39,6 +39,13 @@ class Rank implements IRank {
         });
     }
 
+    public setRankLocationSelf(enable: boolean, offset: number = 0) {
+        env.postMessageToBDOpenDataContext({
+            action: 'setRankLocationSelf',
+            data: { enable, offset }
+        });
+    }
+
     public setRankScore(key: string, score: number, extraData: string = '') {
         env.postMessageToBDOpenDataContext({
             action: 'setRankScore',

@@ -1,6 +1,6 @@
 import screen from "../../manager/screen";
 import { IRank } from "../interfaces";
-import { bindView } from "../../../utils/bind";
+import { bindView, setLocationSelf } from "../../../utils/bind";
 import { fetchRankDataForFB, setRankScoreForFB } from "./_rank";
 
 class FBRank implements IRank {
@@ -87,6 +87,10 @@ class FBRank implements IRank {
         this._drawRankView();
         this._delayBindRankView();
         return rankView;
+    }
+
+    public setRankLocationSelf(enable: boolean, offset: number = 0) {
+        setLocationSelf(enable, offset);
     }
 
     public setRankKey(key: string, count: number = 100, offset: number = 0) {

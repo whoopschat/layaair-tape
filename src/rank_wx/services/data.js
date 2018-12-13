@@ -81,7 +81,7 @@ const fetchRankList = (selfInfo, key, count = 100, offset = 0, callback) => {
             if (selfIndex <= 0) {
                 rankThree = rankList.slice(0, 3);
             } else {
-                rankThree = rankList.slice(selfIndex - 1, selfIndex + 1);
+                rankThree = rankList.slice(selfIndex - 1, selfIndex + 2);
             }
             callback && callback({ selfInfo, rankList, rankSelf, selfData, rankThree });
         }

@@ -65,6 +65,14 @@ function findDataByWhere(data, where) {
     return findValue;
 }
 
+let _offsetEnable = false;
+let _offsetSelf = 0;
+
+export function setLocationSelf(enable, offset = 0) {
+    _offsetEnable = enable;
+    _offsetSelf = offset;
+}
+
 export function bindView(targetView, targetData) {
     var data = tryParseJson(targetData);
     for (var index = 0; index < targetView.numChildren; index++) {
@@ -91,6 +99,14 @@ export function bindView(targetView, targetData) {
                         bindView(itemView, elementItemData);
                     }, null, false);
                     listView.array = element;
+                    let selfIndex = listView.array.findIndex((item) => {
+                        return item.self === true;
+                    })
+                    if (selfIndex != -1 && _offsetEnable) {
+                        listView.scrollTo(_offsetSelf + selfIndex);
+                    } else {
+                        listView.scrollTo(0);
+                    }
                 } else if (elementView instanceof Laya.FontClip) {
                     elementView.value = element;
                 } else if (elementView instanceof Laya.Label) {

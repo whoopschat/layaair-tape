@@ -25,6 +25,7 @@ export interface IAd {
 export interface IRank {
     isSupportedRank(): boolean;
     createRankView(x?: number, y?: number, width?: number, height?: number): Laya.Sprite;
+    setRankLocationSelf(enable: boolean, offset?: number);
     setRankKey(key: string, count?: number, offset?: number): void;
     setRankScore(key: string, score: number, extraData?: string): void;
     showRank(ui: object | object[]): void;

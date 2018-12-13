@@ -39,6 +39,13 @@ class WXRank implements IRank {
         });
     }
 
+    public setRankLocationSelf(enable: boolean, offset: number = 0) {
+        env.postMessageToWXOpenDataContext({
+            action: 'setRankLocationSelf',
+            data: { enable, offset }
+        });
+    }
+
     public setRankScore(key: string, score: number, extraData: string = '') {
         env.postMessageToWXOpenDataContext({
             action: 'setRankScore',

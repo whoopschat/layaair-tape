@@ -229,6 +229,8 @@ declare module Tape {
         function isSupportedRank(): boolean;
         /** createRankView */
         function createRankView(x?: number, y?: number, width?: number, height?: number): Laya.Sprite;
+        /** setRankLocationSelf */
+        function setRankLocationSelf(enable: boolean, offset?: number): void;
         /** setRankKey */
         function setRankKey(key: string, count?: number, offset?: number): void;
         /** setRankScore */
@@ -269,6 +271,41 @@ declare module Tape {
         function tryToObject(source): any;
         /** anyToArray */
         function anyToArray(source: any): any[];
+    }
+
+    /** runtime */
+    module runtime {
+        /** clickSound */
+        let clickSound: string;
+        /** scaleTime */
+        let scaleTime: number;
+        /** scaleSmalValue */
+        let scaleSmalValue: number;
+        /** scaleBigValue */
+        let scaleBigValue: number;
+        /** bindClick */
+        function bindClick(view): void;
+        /** btn */
+        class btn extends Laya.Button {
+            public sound: string;
+        }
+        /** btn_img */
+        class btn_img extends Laya.Image {
+            public sound: string;
+        }
+        /** btn_label */
+        class btn_label extends Laya.Label {
+            public sound: string;
+        }
+        /** btn_sprite */
+        class btn_sprite extends Laya.Sprite {
+            public sound: string;
+        }
+        /** btn_box */
+        class btn_box extends Laya.Box {
+            public sound: string;
+        }
+
     }
 
     /** navigator */
@@ -363,41 +400,6 @@ declare module Tape {
         protected popToTop(): void;
         /** constructor */
         constructor(options: obj);
-
-    }
-
-    /** runtime */
-    module runtime {
-        /** clickSound */
-        let clickSound: string;
-        /** scaleTime */
-        let scaleTime: number;
-        /** scaleSmalValue */
-        let scaleSmalValue: number;
-        /** scaleBigValue */
-        let scaleBigValue: number;
-        /** bindClick */
-        function bindClick(view): void;
-        /** btn */
-        class btn extends Laya.Button {
-            public sound: string;
-        }
-        /** btn_img */
-        class btn_img extends Laya.Image {
-            public sound: string;
-        }
-        /** btn_label */
-        class btn_label extends Laya.Label {
-            public sound: string;
-        }
-        /** btn_sprite */
-        class btn_sprite extends Laya.Sprite {
-            public sound: string;
-        }
-        /** btn_box */
-        class btn_box extends Laya.Box {
-            public sound: string;
-        }
 
     }
 
