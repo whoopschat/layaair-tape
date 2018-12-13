@@ -110,6 +110,8 @@ declare module Tape {
         /** setBgColor */
         function setBgColor(color: string): void;
         /** setBgSkin */
+        function setBgSkin(url: string, sizeGrid?: string): void;
+        /** setBgTexture */
         function setBgTexture(url: string): void;
         /** getBgSprite */
         function getBgSprite(): Laya.Sprite;

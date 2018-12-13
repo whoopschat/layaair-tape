@@ -3,9 +3,9 @@ import screen from "./services/manager/screen";
 import audio from './services/audio';
 import env from "./utils/env";
 
-import ad from './services/ad';
-import app from './services/app';
-import rank from './services/rank';
+import ad from './services/platform/ad';
+import app from './services/platform/app';
+import rank from './services/platform/rank';
 import other from './services/other';
 import runtime from "./services/runtime";
 
@@ -18,7 +18,7 @@ import Activity from "./services/display/activity";
 import PopupView from "./services/display/popupview";
 import ToastView from "./services/display/toastview";
 
-import { init, init3D, start, exit } from './services/init';
+import { init, init3D, start, exit } from './services/platform/init';
 import {
     showLoading,
     hideLoading,

@@ -1,6 +1,6 @@
 import env from "../utils/env";
 import screen from "./manager/screen";
-import { fixWidth, fixHeight } from "./platform/wx/_size";
+import { fixWidthForWechat, fixHeightForWechat } from "./platform/_size";
 
 let _clubButton = null;
 
@@ -16,10 +16,10 @@ function showClubButton(icon: string, x: number, y: number, w: number, h: number
         return;
     }
     try {
-        let left = fixWidth(x + screen.getOffestX());
-        let top = fixHeight(y + screen.getOffestY());
-        let width = fixWidth(w);
-        let height = fixHeight(h);
+        let left = fixWidthForWechat(x + screen.getOffestX());
+        let top = fixHeightForWechat(y + screen.getOffestY());
+        let width = fixWidthForWechat(w);
+        let height = fixHeightForWechat(h);
         let icons = ['green', 'white', 'dark', 'light'];
         hideClubButton();
         if (!_clubButton) {

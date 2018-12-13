@@ -1,6 +1,5 @@
-import NavLoader from "./loader";
+import UILoader from "./loader";
 import UIMgr from "../manager/uimgr";
-import uimgr from "../manager/uimgr";
 
 let _loaders = [];
 let _loading = false;
@@ -36,7 +35,7 @@ function _topStack(stack) {
         _loaders.splice(index, 1);
         _loaders.push(stack);
         _refreshStack(null);
-        uimgr.moveTopToMainLayer(stack);
+        UIMgr.moveTopToMainLayer(stack);
     }
 }
 
@@ -91,7 +90,7 @@ function navigate(page, params = null, action = null, single = false) {
         params = {};
     }
     let open = () => {
-        new NavLoader({
+        new UILoader({
             page,
             params,
             onShow: () => {

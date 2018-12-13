@@ -8,7 +8,7 @@ const Test = require('./tasks/bin');
 const App = require('./tasks/app');
 const Clean = require('./tasks/clean');
 const Resources = require('./tasks/resources');
-const Imgmin = require('./tasks/imgmin');
+const Pngquant = require('./tasks/pngquant');
 const Template = require('./tasks/template');
 const Mergejs = require('./tasks/mergejs');
 const Zipe = require('./tasks/zip');
@@ -134,8 +134,8 @@ gulp.task('help', Empty.emptyTask(() => {
     console.log("  --projectname      [Optional] project name");
     console.log("  --package_name     [Optional] package name");
     console.log("  --orientation      [Optional] orientation");
+    console.log("  --pngquant         [Optional] pngquant quality");
     console.log("  --zip              [Optional] [bool] zip build.zip");
-    console.log("  --imgmin           [Optional] [bool] use imagemin");
     console.log("  --min              [Optional] [bool] uglify js");
     console.log("  --publish          [Optional] [bool] publish project");
     console.log("  --force            [Optional] [bool] ignore .lock file");
@@ -150,7 +150,7 @@ gulp.task('copybin', Test.testTask('./tpl/bin', program.bin, 'bin.lock'));
 
 gulp.task('resources', Resources.resourcesTask(program.input, program.outputTemp));
 
-gulp.task('imgmin', Imgmin.imageminTask(program.input, program.outputTemp));
+gulp.task('pngquant', Pngquant.pngquantTask(program.input, program.outputTemp, program.pngquant));
 
 gulp.task('mergejs', Mergejs.mergejsTask(`${program.input}/${program.index}`, program.outputTemp, program.jsfile, program.min, replaceList));
 
@@ -172,8 +172,8 @@ gulp.task('build', function (done) {
         tasks.push('clean');
         tasks.push('copybin');
         tasks.push('resources');
-        if (program.imgmin) {
-            tasks.push('imgmin');
+        if (program.pngquant) {
+            tasks.push('pngquant');
         }
         tasks.push('mergejs');
         tasks.push('template');

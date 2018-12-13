@@ -1,6 +1,18 @@
 import screen from "./screen";
 
 let _bgSprite: Laya.Sprite = null;
+let _bgImage: Laya.Image = null;
+let _bgSkin = null;
+let _bgSizeGrid = null;
+
+function _drawSkin() {
+    if (_bgImage && _bgSkin) {
+        _bgImage.skin = _bgSkin;
+    }
+    if (_bgImage && _bgSizeGrid) {
+        _bgImage.sizeGrid = _bgSizeGrid;
+    }
+}
 
 export function initBg() {
     _bgSprite = Laya.stage.getChildByName('_tape_bg_layer') as Laya.Sprite;
@@ -8,9 +20,19 @@ export function initBg() {
         _bgSprite = new Laya.Sprite;
         _bgSprite.name = '_tape_bg_layer';
         Laya.stage.addChild(_bgSprite);
+
+        _bgImage = new Laya.Image;
+        _bgImage.name = '_bg_image';
+        _bgSprite.addChild(_bgImage);
     }
+
     _bgSprite.width = screen.getWidth();
     _bgSprite.height = screen.getHeight();
+
+    _bgImage.width = screen.getWidth();
+    _bgImage.height = screen.getHeight();
+
+    _drawSkin();
 }
 
 function setBgColor(color) {
@@ -19,6 +41,12 @@ function setBgColor(color) {
     }
     _bgSprite.graphics.clear();
     _bgSprite.graphics.drawRect(0, 0, _bgSprite.width, _bgSprite.height, color);
+}
+
+function setBgSkin(url, sizeGrid = null) {
+    _bgSkin = url;
+    _bgSizeGrid = sizeGrid;
+    _drawSkin();
 }
 
 function setBgTexture(url) {
@@ -39,6 +67,7 @@ function getBgSprite() {
 }
 
 export default {
+    setBgSkin,
     setBgColor,
     setBgTexture,
     getBgSprite,
