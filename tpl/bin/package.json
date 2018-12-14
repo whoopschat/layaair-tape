@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "A http test server",
   "scripts": {
-    "https": "npm i && http-server -p 8001 ../ -S -K ./cert/key.pem -C ./cert/cert.pem -o https://localhost:8001/"
+    "https": "npm i && http-server -p 8001 ../ -S -K ./cert/key.pem -C ./cert/cert.pem"
   },
   "dependencies": {
     "http-server": "*"

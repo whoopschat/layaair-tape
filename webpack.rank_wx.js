@@ -3,7 +3,7 @@ const rules = require('./webpack.rules.js');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const config = {
-    entry: path.resolve('./src/rank_wx/index.js'),
+    entry: path.resolve('./src/libs/rank_wx/index.js'),
     output: {
         path: path.resolve('./tpl/platform/wechat/openDataContext'),
         filename: 'code.js',

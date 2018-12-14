@@ -8,9 +8,9 @@ export function showLoading(params) {
     if (env.isWechatApp()) {
         return env.execWX('showLoading', params)
     }
-    if (env.isBaiduApp()) {
-        return env.execBD('showLoading', params)
-    }
+    // if (env.isBaiduApp()) {
+    //     return env.execBD('showLoading', params)
+    // }
     comp_loading.showLoading(params);
     comp_toast.hideToast();
 }
@@ -19,9 +19,9 @@ export function hideLoading() {
     if (env.isWechatApp()) {
         return env.execWX('hideLoading')
     }
-    if (env.isBaiduApp()) {
-        return env.execBD('hideLoading')
-    }
+    // if (env.isBaiduApp()) {
+    //     return env.execBD('hideLoading')
+    // }
     comp_loading.hideLoading();
 }
 
@@ -29,9 +29,9 @@ export function showToast(params) {
     if (env.isWechatApp()) {
         return env.execWX('showToast', params)
     }
-    if (env.isBaiduApp()) {
-        return env.execBD('showToast', params)
-    }
+    // if (env.isBaiduApp()) {
+    //     return env.execBD('showToast', params)
+    // }
     comp_toast.showToast(params);
     comp_loading.hideLoading();
 }
@@ -40,9 +40,9 @@ export function hideToast() {
     if (env.isWechatApp()) {
         return env.execWX('hideToast')
     }
-    if (env.isBaiduApp()) {
-        return env.execBD('hideToast')
-    }
+    // if (env.isBaiduApp()) {
+    //     return env.execBD('hideToast')
+    // }
     comp_toast.hideToast();
 }
 
@@ -50,9 +50,9 @@ export function showModal(params) {
     if (env.isWechatApp()) {
         return env.execWX('showModal', params)
     }
-    if (env.isBaiduApp()) {
-        return env.execBD('showModal', params)
-    }
+    // if (env.isBaiduApp()) {
+    //     return env.execBD('showModal', params)
+    // }
     comp_modal.showModal(params)
 }
 

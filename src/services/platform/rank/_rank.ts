@@ -79,3 +79,11 @@ export function fetchRankDataForBR(key, count, offset, cb) {
 export function setRankScoreForBR(key: string, score: number, extraData: string = null, callback = null) {
     callback && callback();
 }
+
+export function fetchRankDataForBD(key, count, offset, cb) {
+    cb && cb({});
+}
+
+export function setRankScoreForBD(key: string, score: number, extraData: string = null, callback = null) {
+    callback && callback();
+}

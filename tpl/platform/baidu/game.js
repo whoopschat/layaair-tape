@@ -1,2 +1,2 @@
-require("./swan-game-adapter");
+require("./swan-adapter");
 require("${codeJs}");
