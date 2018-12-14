@@ -8,7 +8,7 @@
     "build": "webpack --config webpack.prod.js && webpack --config webpack.rank_wx.js",
     "build-dev": "webpack --config webpack.dev.js",
     "build-test-android": "node ./bin/build.js --platform android --output ./build/ --input ./examples/demo/bin/",
-    "build-test-h5": "node ./bin/build.js --platform h5 --output ./build/ --input ./examples/demo/bin/ --zip --pngquant",
+    "build-test-h5": "node ./bin/build.js --platform h5 --output ./build/ --input ./examples/demo/bin/ --zip --pngquant 30-40",
     "build-test-fb": "node ./bin/build.js --platform facebook --output ./build/ --input ./examples/demo/bin/",
     "build-test-qq": "node ./bin/build.js --platform qq --output ./build/ --input ./examples/demo/bin/ --imgmin --zip --force",
     "build-test-wx": "node ./bin/build.js --platform wechat --input ./examples/demo/bin/ --output ./build/ --min --env prod --publish",

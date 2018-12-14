@@ -11,6 +11,8 @@ function _drawSkin() {
     }
     if (_bgImage && _bgSizeGrid) {
         _bgImage.sizeGrid = _bgSizeGrid;
+    } else {
+        _bgImage.sizeGrid = '';
     }
 }
 

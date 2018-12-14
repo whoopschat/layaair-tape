@@ -8,6 +8,9 @@ const getRes = (dir) => {
 }
 
 const pngquantTask = (inputPath, outputDir, quality = "65-80") => {
+    if (!quality || typeof quality !== 'string') {
+        quality = '65-80'
+    }
     return function () {
         return gulp.src(getRes(inputPath))
             .pipe(gulpPngquant({ quality }))
