@@ -13,7 +13,6 @@ export default class Activity extends ui {
     }
 
     static res = [];
-    static num = 0;
     static single = false;
 
     public page = null;

@@ -157,10 +157,12 @@ declare module Tape {
         function isLayaApp(): boolean;
         /** isConchApp */
         function isConchApp(): boolean;
+        /** sendMessageToConch */
+        function sendMessageToConch(params: obj, callback: (result: obj) => void): void;
         /** isBrowserApp */
         function isBrowserApp(): boolean;
-        /** sendMessageToPlatform */
-        function sendMessageToPlatform(params: obj, callback: (result: obj) => void): void;
+        /** execBR */
+        function execBR(func, ...options): any;
         /** isQQApp */
         function isQQApp(): boolean;
         /** execQQ */
@@ -347,8 +349,6 @@ declare module Tape {
         static finish(): void;
         /** res */
         static res: { url: string, type: string }[];
-        /** num */
-        static num: number;
         /** single */
         static single: boolean;
 

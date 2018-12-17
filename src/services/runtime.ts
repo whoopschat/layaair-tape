@@ -18,9 +18,9 @@ module runtime {
 
     function playClickSound(sound) {
         if (sound) {
-            Laya.SoundManager.playSound(sound, 1);
+            sound != 'none' && Laya.SoundManager.playSound(sound, 1);
         } else if (clickSound) {
-            Laya.SoundManager.playSound(clickSound, 1);
+            clickSound != 'none' && Laya.SoundManager.playSound(clickSound, 1);
         }
     }
 

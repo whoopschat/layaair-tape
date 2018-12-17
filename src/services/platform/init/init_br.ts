@@ -1,3 +1,4 @@
+import env from "../../../utils/env";
 import { IInit } from "../_inters";
 import { setNavigatorReady } from "../../navigator/init";
 
@@ -8,12 +9,7 @@ class Init implements IInit {
     }
 
     public exit() {
-        try {
-            if (window && window['conch'] && typeof window['conch']['exit'] == 'function') {
-                window['conch']['exit']();
-            }
-        } catch (error) {
-        }
+        env.execBR('conch.exit');
     }
 
     public onLoaded() {

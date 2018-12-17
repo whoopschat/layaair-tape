@@ -10,6 +10,16 @@ const isConchApp = () => {
     return window.hasOwnProperty("conch") && !window['conch'].isMock;
 }
 
+const postMessageToConch = (params, callback) => {
+    if (!Laya || !Laya.conchMarket) {
+        callback && callback({})
+        return;
+    }
+    Laya.conchMarket.sendMessageToPlatform(JSON.stringify(params || {}), function (json): void {
+        callback && callback(JSON.parse(json || '{}'))
+    });
+}
+
 //////////////////////////
 /////  Browser
 //////////////////////////
@@ -18,14 +28,17 @@ const isBrowserApp = () => {
     return !isFacebookApp() && !isWechatApp() && !isQQApp();
 }
 
-const sendMessageToPlatform = (params, callback) => {
-    if (!Laya || !Laya.conchMarket) {
-        callback && callback({})
-        return;
+function execBR(func: string, ...options) {
+    let funcs = func.split('.');
+    let instant = window;
+    while (funcs.length > 1) {
+        instant = instant[funcs.shift()];
     }
-    Laya.conchMarket.sendMessageToPlatform(JSON.stringify(params || {}), function (json): void {
-        callback && callback(JSON.parse(json || '{}'))
-    });
+    if (instant && funcs.length == 1) {
+        if (instant.hasOwnProperty(funcs[0])) {
+            return instant[funcs[0]](...options);
+        }
+    }
 }
 
 //////////////////////////
@@ -228,8 +241,9 @@ export default {
     getVersion,
     isLayaApp,
     isConchApp,
+    postMessageToConch,
     isBrowserApp,
-    sendMessageToPlatform,
+    execBR,
     isQQApp,
     execQQ,
     isFacebookApp,
