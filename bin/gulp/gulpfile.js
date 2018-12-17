@@ -124,8 +124,8 @@ gulp.task('help', Empty.emptyTask(() => {
     console.log("Usage: tape [options]");
     console.log("  --input            input dir");
     console.log("  --output           output dir");
-    console.log("  --platform         [Optional] h5 || wechat || facebook || qq || android def: h5");
-    console.log("  --env              [Optional] development || production(prod)");
+    console.log("  --platform         [Optional] h5 || facebook || qq || wechat || baidu || android");
+    console.log("  --env              [Optional] development(dev) || production(prod)");
     console.log("  --index            [Optional] index.html file def: index.html");
     console.log("  --version          [Optional] version code def: read package.json");
     console.log("  --buildnum         [Optional] version build num def: 0");
@@ -134,7 +134,7 @@ gulp.task('help', Empty.emptyTask(() => {
     console.log("  --projectname      [Optional] project name");
     console.log("  --package_name     [Optional] package name");
     console.log("  --orientation      [Optional] orientation");
-    console.log("  --pngquant         [Optional] pngquant quality");
+    console.log("  --pngquant         [Optional] pngquant quality def:65-80");
     console.log("  --zip              [Optional] [bool] zip build.zip");
     console.log("  --min              [Optional] [bool] uglify js");
     console.log("  --publish          [Optional] [bool] publish project");

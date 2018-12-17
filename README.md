@@ -26,7 +26,7 @@ or
   Usage: layaair-tape [options]
     --input            input dir
     --output           output dir
-    --platform         [Optional] h5 || wechat || qq || facebook || android def: h5
+    --platform         [Optional] platform : h5 || facebook || qq || wechat || baidu || android , def: h5
     --env              [Optional] development || production(prod)
     --index            [Optional] index.html file def: index.html
     --version          [Optional] version code def: read package.json
@@ -36,9 +36,8 @@ or
     --projectname      [Optional] project name
     --packagename      [Optional] package name
     --orientation      [Optional] orientation
-    --pngquality       [Optional] png quality def: 65-80
+    --pngquant         [Optional] pngquant quality def:65-80
     --zip              [Optional] [bool] zip build.zip
-    --imgmin           [Optional] [bool] use imagemin
     --min              [Optional] [bool] uglify js
     --publish          [Optional] [bool] publish project
     --force            [Optional] [bool] ignore .lock file
