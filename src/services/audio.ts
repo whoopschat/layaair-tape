@@ -15,12 +15,13 @@ function fixWechatAudioPlay(callback: Function) {
     }
 }
 
-function fixAudioExtension(url, replaceExt) {
-    let ext = Laya.Utils.getFileExtension(url);
-    if (env.isConchApp() && ext != "wav" && ext != "ogg") {
-        return url.substr(0, url.length - ext.length) + replaceExt;
+function fixAudioExtension(targetUrl, replaceExt) {
+    let ext = Laya.Utils.getFileExtension(targetUrl);
+    let searchExt = !!ext ? `.${ext}` : '';
+    if (env.isConchApp() && searchExt != ".wav" && searchExt != ".ogg") {
+        return targetUrl.substr(0, targetUrl.length - searchExt.length) + replaceExt;
     }
-    return url;
+    return targetUrl;
 }
 
 class AudioController {
@@ -123,7 +124,7 @@ class AudioController {
         fixWechatAudioPlay(() => {
             if (this._auidoUrl) {
                 this.stop();
-                let playUrl = fixAudioExtension(this._auidoUrl, 'ogg');
+                let playUrl = fixAudioExtension(this._auidoUrl, '.ogg');
                 this._playTime = Date.now();
                 this._chancel = Laya.SoundManager.playSound(playUrl, loops, Laya.Handler.create(this, () => {
                     this._onComplete && this._onComplete();
