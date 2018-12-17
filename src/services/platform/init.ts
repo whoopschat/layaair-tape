@@ -39,6 +39,7 @@ export function init(width: number, height: number, ...options) {
     env.printDebug(`tape version: ${env.getVersion()}`);
     env.printDebug(`app version: ${env.getAppVersion()}`);
     env.printDebug(`platform: ${env.getPlatform()}`);
+    env.printDebug(`env: ${env.getEnv()}`);
     if (env.isWechatApp()) {
         Laya.MiniAdpter.init(true);
     }
@@ -64,6 +65,7 @@ export function init3D(width: number, height: number, ...options) {
     env.printDebug(`tape version: ${env.getVersion()}`);
     env.printDebug(`app version: ${env.getAppVersion()}`);
     env.printDebug(`platform: ${env.getPlatform()}`);
+    env.printDebug(`env: ${env.getEnv()}`);
     if (env.isWechatApp()) {
         Laya.MiniAdpter.init(true);
     }
@@ -73,7 +75,7 @@ export function init3D(width: number, height: number, ...options) {
 
 export function start(options, onLoaded = null) {
     if (!_inited) {
-        env.printError('Please perform \'Tape.init\' initialization first.');
+        env.printError('Please complete the initialization of Tape first.');
         return;
     }
     if (!options) {
