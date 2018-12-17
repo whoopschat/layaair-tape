@@ -1,4 +1,4 @@
-function removeItem(array, where) {
+function removeItemForWhere(array, where) {
     if (typeof where === 'function') {
         let removeIndexArray = []
         array.forEach((value, index) => {
@@ -51,7 +51,7 @@ class Looper {
     }
 
     public clear(caller: Object, callback: () => void) {
-        removeItem(this._tasks, (task) => {
+        removeItemForWhere(this._tasks, (task) => {
             return task.caller == caller && (!callback || task.callback == callback);
         });
         this._checkLoop();

@@ -1,5 +1,5 @@
 import env from "../utils/env";
-import loop from "./loop";
+import loop from "../utils/looper";
 
 function fixWechatAudioPlay(callback: Function) {
     if (window && window['WeixinJSBridge']) {
@@ -13,6 +13,14 @@ function fixWechatAudioPlay(callback: Function) {
     } else {
         callback && callback();
     }
+}
+
+function fixAudioExtension(url, replaceExt) {
+    let ext = Laya.Utils.getFileExtension(url);
+    if (env.isConchApp() && ext != "wav" && ext != "ogg") {
+        return url.substr(0, url.length - ext.length) + replaceExt;
+    }
+    return url;
 }
 
 class AudioController {
@@ -115,12 +123,9 @@ class AudioController {
         fixWechatAudioPlay(() => {
             if (this._auidoUrl) {
                 this.stop();
-                var ext = Laya.Utils.getFileExtension(this._auidoUrl);
-                if (env.isConchApp() && ext != "wav" && ext != "ogg") {
-                    return;
-                }
+                let playUrl = fixAudioExtension(this._auidoUrl, 'ogg');
                 this._playTime = Date.now();
-                this._chancel = Laya.SoundManager.playSound(this._auidoUrl, loops, Laya.Handler.create(this, () => {
+                this._chancel = Laya.SoundManager.playSound(playUrl, loops, Laya.Handler.create(this, () => {
                     this._onComplete && this._onComplete();
                     this.stop();
                 }), null, 0);
