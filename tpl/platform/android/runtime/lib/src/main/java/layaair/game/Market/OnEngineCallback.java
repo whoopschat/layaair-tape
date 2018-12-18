@@ -1,6 +1,6 @@
 package layaair.game.Market;
 
-public interface OnEngineListener {
+public interface OnEngineCallback {
 
     void onGameExit();
 

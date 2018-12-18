@@ -6,12 +6,12 @@ import android.app.Activity;
  * Created by liangmayong on 2018-12-7.
  */
 
-public class EZBridgeManager {
+public class TapeBridgeManager {
 
-    private static IEZGameBridge bridge = null;
+    private static ITapeGameBridge bridge = null;
 
-    public static void setBridge(IEZGameBridge bridge) {
-        EZBridgeManager.bridge = bridge;
+    public static void setBridge(ITapeGameBridge bridge) {
+        TapeBridgeManager.bridge = bridge;
     }
 
     public static void handleOnMessage(Activity activity, String message, OnMarketCallback callback) {

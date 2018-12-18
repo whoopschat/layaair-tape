@@ -1,4 +1,4 @@
-export class BgView extends Laya.Sprite {
+export default class extends Laya.Sprite {
 
     public radius = 0;
     public color = '#ff0000';

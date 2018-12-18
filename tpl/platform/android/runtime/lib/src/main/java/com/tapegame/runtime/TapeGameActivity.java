@@ -1,4 +1,4 @@
-package com.ezgame.runtime;
+package com.tapegame.runtime;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -6,17 +6,17 @@ import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.View;
 
-import layaair.game.Market.EZBridgeManager;
-import layaair.game.Market.EZGameEngine;
-import layaair.game.Market.EZGamePlayer;
-import layaair.game.Market.IEZGameMarket;
-import layaair.game.Market.OnEngineListener;
+import layaair.game.Market.ITapeGameMarket;
+import layaair.game.Market.OnEngineCallback;
 import layaair.game.Market.OnMarketCallback;
+import layaair.game.Market.TapeBridgeManager;
+import layaair.game.Market.TapeGameEngine;
+import layaair.game.Market.TapeGamePlayer;
 
-public abstract class EZGameActivity extends Activity implements IEZGameMarket, OnEngineListener {
+public abstract class TapeGameActivity extends Activity implements ITapeGameMarket, OnEngineCallback {
 
     private String mGameUrl = null;
-    private EZGamePlayer mGamePlayer = null;
+    private TapeGamePlayer mGamePlayer = null;
     private Handler mHandler = new Handler();
 
     @Override
@@ -26,17 +26,19 @@ public abstract class EZGameActivity extends Activity implements IEZGameMarket, 
 
     @Override
     public void onGameMessage(String jsonParam, OnMarketCallback callback) {
-        EZBridgeManager.handleOnMessage(this, jsonParam, callback);
+        TapeBridgeManager.handleOnMessage(this, jsonParam, callback);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ez_game_activity);
-        EZGameEngine.registerMarket(this);
+        TapeGameEngine.registerMarket(this);
         mGamePlayer = findViewById(R.id.ez_game_player_view);
         mGamePlayer.setEngineListener(this);
-        if (mGameUrl != null) mGamePlayer.setGameUrl(mGameUrl);
+        if (mGameUrl != null) {
+            mGamePlayer.setGameUrl(mGameUrl);
+        }
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -46,9 +48,13 @@ public abstract class EZGameActivity extends Activity implements IEZGameMarket, 
     }
 
     protected void setGameUrl(String url) {
-        if (url == null) return;
+        if (url == null) {
+            return;
+        }
         mGameUrl = url;
-        if (mGamePlayer != null) mGamePlayer.setGameUrl(mGameUrl);
+        if (mGamePlayer != null) {
+            mGamePlayer.setGameUrl(mGameUrl);
+        }
     }
 
     @Override
@@ -60,21 +66,21 @@ public abstract class EZGameActivity extends Activity implements IEZGameMarket, 
     protected void onResume() {
         super.onResume();
         this.mGamePlayer.resume();
-        EZBridgeManager.handleOnResume(this);
+        TapeBridgeManager.handleOnResume(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         this.mGamePlayer.pause();
-        EZBridgeManager.handleOnPause(this);
+        TapeBridgeManager.handleOnPause(this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         this.mGamePlayer.destroy();
-        EZGameEngine.unregisterMarket(this);
+        TapeGameEngine.unregisterMarket(this);
     }
 
 }

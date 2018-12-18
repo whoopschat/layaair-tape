@@ -1,6 +1,6 @@
+import bg from "./bg";
+import icon from "./icon";
 import screen from "../manager/screen";
-import { BgView } from "./bg";
-import { IconView } from "./icon";
 
 export class TipsView extends Laya.Sprite {
 
@@ -10,7 +10,7 @@ export class TipsView extends Laya.Sprite {
     private _fontSize = 0;
     private _radius = 0;
     private _bgView = null;
-    private _iconView: IconView = null;
+    private _iconView: icon = null;
     private _iconSize = 0;
     private _titleView = null;
 
@@ -29,7 +29,7 @@ export class TipsView extends Laya.Sprite {
     }
 
     private _initBg() {
-        this._bgView = new BgView();
+        this._bgView = new bg();
         this._bgView.name = '_bg';
         this._bgView.alpha = 0.6;
         this._bgView.color = '#333333';
@@ -38,7 +38,7 @@ export class TipsView extends Laya.Sprite {
     }
 
     private _initIcon() {
-        this._iconView = new IconView;
+        this._iconView = new icon;
         this._iconView.setSize(this._iconSize);
         this._iconView.name = '_icon';
         this.addChild(this._iconView);

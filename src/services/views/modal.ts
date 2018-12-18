@@ -1,5 +1,5 @@
+import bg from "./bg";
 import screen from "../manager/screen";
-import { BgView } from "./bg";
 
 function _btnEffect(view: Laya.Label) {
     view.offAll();
@@ -48,7 +48,7 @@ export class ModalContentView extends Laya.Sprite {
     }
 
     private _initBg() {
-        this._bgView = new BgView();
+        this._bgView = new bg();
         this._bgView.name = 'bg';
         this._bgView.color = '#eeeeee';
         this._bgView.radius = this._radius;
@@ -61,7 +61,7 @@ export class ModalContentView extends Laya.Sprite {
         this._titleView.valign = Laya.Stage.ALIGN_MIDDLE;
         this._titleView.wordWrap = true;
         this._titleView.name = 'title';
-        this._titleView.fontSize = this._fontSize + this._fontSize * 0.2;
+        this._titleView.fontSize = this._fontSize;
         this._titleView.color = '#333333';
         this._titleView.x = this._padding;
         this._titleView.y = this._padding;

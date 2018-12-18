@@ -4,26 +4,26 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
-public class EZGamePlayer extends FrameLayout {
+public class TapeGamePlayer extends FrameLayout {
 
     private String mUrl = null;
-    private EZGameEngine gameEngine = null;
-    private OnEngineListener listener = null;
+    private TapeGameEngine gameEngine = null;
+    private OnEngineCallback listener = null;
     private int mDownloadThreadNum = 3;
 
-    public EZGamePlayer(Context context) {
+    public TapeGamePlayer(Context context) {
         super(context);
     }
 
-    public EZGamePlayer(Context context, AttributeSet attrs) {
+    public TapeGamePlayer(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public EZGamePlayer(Context context, AttributeSet attrs, int defStyleAttr) {
+    public TapeGamePlayer(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
-    public void setEngineListener(OnEngineListener listener) {
+    public void setEngineListener(OnEngineCallback listener) {
         this.listener = listener;
     }
 
@@ -31,7 +31,7 @@ public class EZGamePlayer extends FrameLayout {
         this.mDownloadThreadNum = mDownloadThreadNum;
     }
 
-    public EZGameEngine getGameEngine() {
+    public TapeGameEngine getGameEngine() {
         return gameEngine;
     }
 
@@ -42,11 +42,11 @@ public class EZGamePlayer extends FrameLayout {
         removeAllViews();
         destroy();
         this.mUrl = url;
-        gameEngine = new EZGameEngine(getContext());
+        gameEngine = new TapeGameEngine(getContext());
         gameEngine.setGameUrl(mUrl);
         gameEngine.setLocalize(mUrl.contains("stand.alone.version"));
         gameEngine.setDownloadThreadNum(mDownloadThreadNum);
-        gameEngine.setEngineListener(new OnEngineListener() {
+        gameEngine.setEngineCallback(new OnEngineCallback() {
 
             @Override
             public void onGameExit() {
@@ -56,7 +56,7 @@ public class EZGamePlayer extends FrameLayout {
             }
 
         });
-        gameEngine.initEngine();
+        gameEngine.beginEngine();
         addView(gameEngine.getView());
         gameEngine.onResume();
     }

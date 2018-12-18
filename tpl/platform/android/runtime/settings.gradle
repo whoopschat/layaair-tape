@@ -1,1 +1,3 @@
-include ':app', ':lib'
+include ':lib'
+include ':${package_name}'
+project(':${package_name}').projectDir = new File(settingsDir, 'app')

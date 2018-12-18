@@ -11,17 +11,17 @@ import layaair.game.conch.ILayaEventListener;
 import layaair.game.conch.ILayaGameEgine;
 import layaair.game.conch.LayaConch5;
 
-public class EZGameEngine {
+public class TapeGameEngine {
 
-    static List<IEZGameMarket> MARKETS = new ArrayList<>();
+    static List<ITapeGameMarket> MARKETS = new ArrayList<>();
 
-    public static void registerMarket(IEZGameMarket market) {
+    public static void registerMarket(ITapeGameMarket market) {
         if (market != null && !MARKETS.contains(market)) {
             MARKETS.add(market);
         }
     }
 
-    public static void unregisterMarket(IEZGameMarket market) {
+    public static void unregisterMarket(ITapeGameMarket market) {
         if (market != null && MARKETS.contains(market)) {
             MARKETS.remove(market);
         }
@@ -34,9 +34,9 @@ public class EZGameEngine {
     private boolean mLocalize = false;
     private String mExpansionMainPath = "";
     private String mExpansionPatchPath = "";
-    private OnEngineListener engineListener = null;
+    private OnEngineCallback engineCallback = null;
 
-    public EZGameEngine(Context context) {
+    public TapeGameEngine(Context context) {
         this.mContext = context;
     }
 
@@ -60,16 +60,16 @@ public class EZGameEngine {
         this.mExpansionPatchPath = expansionPatchPath;
     }
 
-    public void setEngineListener(OnEngineListener engineListener) {
-        this.engineListener = engineListener;
+    public void setEngineCallback(OnEngineCallback engineCallback) {
+        this.engineCallback = engineCallback;
     }
 
-    public void initEngine() {
+    public void beginEngine() {
         if (this.mGameUrl == null || this.mGameUrl.length() < 2) {
             return;
         }
         Bundle bundle = new Bundle();
-        bundle.putString(LayaConch5.MARKET_MARKETNAME, EZGameMarket.class.getSimpleName());
+        bundle.putString(LayaConch5.MARKET_MARKETNAME, TapeGameMarket.class.getSimpleName());
         bundle.putInt(LayaConch5.MARKET_WAITSCREENBKCOLOR, 0);
         bundle.putInt(LayaConch5.MARKET_ENTERPLATFORMTYPE, 0);
         bundle.putString(LayaConch5.MARKET_EXITSHOWWEBURL, "");
@@ -90,8 +90,8 @@ public class EZGameEngine {
         mGameEngine.setLayaEventListener(new ILayaEventListener() {
             @Override
             public void ExitGame() {
-                if (engineListener != null) {
-                    engineListener.onGameExit();
+                if (engineCallback != null) {
+                    engineCallback.onGameExit();
                 }
             }
 

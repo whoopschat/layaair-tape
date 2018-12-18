@@ -1,6 +1,6 @@
 <resources>
 
-    <style name="EZGameTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="TapeGameTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowBackground">@mipmap/splash</item>
         <item name="android:windowFrame">@null</item>
         <item name="android:windowActionBar">false</item>

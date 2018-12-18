@@ -8,7 +8,7 @@ import android.util.Log;
 import layaair.game.PlatformInterface.LayaPlatformCallback;
 import layaair.game.PlatformInterface.LayaPlatformInterface;
 
-public class EZGameMarket implements LayaPlatformInterface {
+public class TapeGameMarket implements LayaPlatformInterface {
 
     private final String TAG = getClass().getSimpleName();
     private final String DEFAULT = "{}";
@@ -26,7 +26,7 @@ public class EZGameMarket implements LayaPlatformInterface {
     @Override
     public void LP_sendMessageToPlatform(final String jsonParam) {
         printLog(">>>>>>>>LP_sendMessageToPlatform jsonParam = " + jsonParam);
-        for (IEZGameMarket market : EZGameEngine.MARKETS) {
+        for (ITapeGameMarket market : TapeGameEngine.MARKETS) {
             market.onGameMessage(jsonParam, new OnMarketCallback() {
                 @Override
                 public void callback(String json) {

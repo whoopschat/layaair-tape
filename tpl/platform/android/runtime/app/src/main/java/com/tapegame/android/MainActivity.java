@@ -1,10 +1,10 @@
-package com.ezgame;
+package com.tapegame.android;
 
 import android.os.Bundle;
 
-import com.ezgame.runtime.EZGameActivity;
+import com.tapegame.runtime.TapeGameActivity;
 
-public class MainActivity extends EZGameActivity {
+public class MainActivity extends TapeGameActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

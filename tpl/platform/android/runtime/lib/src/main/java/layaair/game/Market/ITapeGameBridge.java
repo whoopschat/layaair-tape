@@ -2,7 +2,7 @@ package layaair.game.Market;
 
 import android.app.Activity;
 
-public interface IEZGameBridge {
+public interface ITapeGameBridge {
 
     void handleOnMessage(Activity activity, String message, OnMarketCallback callback);
 
