@@ -171,12 +171,12 @@ gulp.task('build', function (done) {
     } else {
         tasks.push('clean');
         tasks.push('copybin');
+        tasks.push('template');
         tasks.push('resources');
         if (program.pngquant) {
             tasks.push('pngquant');
         }
         tasks.push('mergejs');
-        tasks.push('template');
         if (program.zip || program.platform === 'facebook') {
             tasks.push('zip');
         }
