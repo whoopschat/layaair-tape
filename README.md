@@ -39,6 +39,7 @@ or
     --pngquant         [Optional] pngquant quality def:65-80
     --zip              [Optional] [bool] zip build.zip
     --min              [Optional] [bool] uglify js
+    --obfuscate        [Optional] [bool] obfuscate code
     --publish          [Optional] [bool] publish project
     --force            [Optional] [bool] ignore .lock file
     --x                [Optional] show this help

@@ -13,6 +13,7 @@ const Template = require('./tasks/template');
 const Mergejs = require('./tasks/mergejs');
 const Zipe = require('./tasks/zip');
 const Publish = require('./tasks/publish');
+const Obfuscate = require('./tasks/obfuscate');
 
 const gulp = require('gulp');
 const minimist = require('minimist');
@@ -137,6 +138,7 @@ gulp.task('help', Empty.emptyTask(() => {
     console.log("  --pngquant         [Optional] pngquant quality def:65-80");
     console.log("  --zip              [Optional] [bool] zip build.zip");
     console.log("  --min              [Optional] [bool] uglify js");
+    console.log("  --obfuscate        [Optional] [bool] obfuscate code");
     console.log("  --publish          [Optional] [bool] publish project");
     console.log("  --force            [Optional] [bool] ignore .lock file");
     console.log("  --x                [Optional] show this help");
@@ -148,19 +150,21 @@ gulp.task('clean', Clean.cleanTask(program.output, `${program.platform}-game.loc
 
 gulp.task('copybin', Test.testTask('./tpl/bin', program.bin, 'bin.lock'));
 
+gulp.task('template', Template.templateTask(`./tpl/platform/${program.platform}`, program.output, replaceList, `${program.platform}-game.lock`, program.force));
+
 gulp.task('resources', Resources.resourcesTask(program.input, program.outputTemp));
 
 gulp.task('pngquant', Pngquant.pngquantTask(program.input, program.outputTemp, program.pngquant));
 
-gulp.task('mergejs', Mergejs.mergejsTask(`${program.input}/${program.index}`, program.outputTemp, program.jsfile, program.min, replaceList));
+gulp.task('mergejs', Mergejs.mergejsTask(`${program.input}/${program.index}`, program.outputTemp, program.jsfile, !program.obfuscate && program.min, replaceList));
 
-gulp.task('template', Template.templateTask(`./tpl/platform/${program.platform}`, program.output, replaceList, `${program.platform}-game.lock`, program.force));
+gulp.task('obfuscate', Obfuscate.obfuscateTask(program.outputTemp, program.jsfile));
 
 gulp.task('zip', Zipe.zipTask(program.outputTemp));
 
-gulp.task('publish', Publish.publishTask(program.platform, program.outputTemp, program.env, app_version, program.buildnum));
-
 gulp.task('android', App.androidTask(program.outputTemp, "http://stand.alone.version/index.html", program.output));
+
+gulp.task('publish', Publish.publishTask(program.platform, program.outputTemp, program.env, app_version, program.buildnum));
 
 gulp.task('build', function (done) {
     let tasks = [];
@@ -177,6 +181,9 @@ gulp.task('build', function (done) {
             tasks.push('pngquant');
         }
         tasks.push('mergejs');
+        if (program.obfuscate) {
+            tasks.push('obfuscate');
+        }
         if (program.zip || program.platform === 'facebook') {
             tasks.push('zip');
         }

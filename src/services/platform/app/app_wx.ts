@@ -1,5 +1,7 @@
 import env from "../../../utils/env";
 import { IApp } from "../_inters";
+import { fixHeightForWechat, fixWidthForWechat } from "../_size";
+import screen from "../../manager/screen";
 
 class App implements IApp {
 
@@ -45,7 +47,7 @@ class App implements IApp {
         this._pauseCallback = callback;
     }
 
-    public getUserInfo(callback: (userinfo) => void, imageUrl = null) {
+    public getUserInfo(callback: (userinfo) => void, options: any = {}) {
         let onHandler = (res) => {
             if (res && res.userInfo) {
                 callback && callback({
@@ -73,22 +75,25 @@ class App implements IApp {
             }
         }
         let onFail = () => {
-            let systemInfo = env.execWX('getSystemInfoSync');
-            if (!systemInfo) {
-                onHandler(null);
-                return;
-            }
-            onHide();
+            let x = options.x || 0;
+            let y = options.y || 0;
+            let w = options.width || screen.getDesignWidth();
+            let h = options.height || screen.getDesignHeight();
+            let left = fixWidthForWechat(x + screen.getOffestX());
+            let top = fixHeightForWechat(y + screen.getOffestY());
+            let width = fixWidthForWechat(w);
+            let height = fixHeightForWechat(h);
+            let imageUrl = options.imageUrl || '';
             if (!this._userinfoButton) {
                 this._userinfoButton = env.execWX('createUserInfoButton', {
                     withCredentials: true,
                     type: 'image',
-                    image: imageUrl || 'default_login.png',
+                    image: imageUrl,
                     style: {
-                        left: 0,
-                        top: 0,
-                        width: systemInfo.windowWidth,
-                        height: systemInfo.windowHeight,
+                        left,
+                        top,
+                        width,
+                        height,
                     }
                 });
             }
@@ -102,6 +107,7 @@ class App implements IApp {
                 this._userinfoButton.show();
             }
         }
+        onHide();
         env.execWX('getUserInfo', {
             withCredentials: true,
             success: onHandler,

@@ -223,8 +223,8 @@ declare module Tape {
         function onLaunch(callback: (options: { scene: string, query: obj, platform: string }) => void);
         /** onPause */
         function onPause(callback: () => void): void;
-        /** getUserInfo, use img for wechat: default_login.png */
-        function getUserInfo(callback: (userinfo: UserinfoPayload) => void, imageUrl?: string): void;
+        /** getUserInfo */
+        function getUserInfo(callback: (userinfo: UserinfoPayload) => void, options?: { imageUrl?: string, x?: number, y?: number, width?: number, height?: number }): void;
     }
 
     /** rank */
