@@ -131,6 +131,8 @@ declare module Tape {
         function getDesignWidth(): number;
         /** getDesignHeight */
         function getDesignHeight(): number;
+        /** setDeviation */
+        function setDeviation(deviation): void;
     }
 
     /** audio */

@@ -5,6 +5,7 @@ let _offset_x = 0;
 let _offset_y = 0;
 let _design_width = 0;
 let _design_height = 0;
+let _deviation = 0.1;
 
 export function initScreen(is3D, width, height, ...options) {
     _design_width = width;
@@ -15,7 +16,7 @@ export function initScreen(is3D, width, height, ...options) {
     let initHeight = height;
     _offset_x = 0;
     _offset_y = 0;
-    if (Math.abs(screenRatio / initRatio - 1) > 0.1) {
+    if (Math.abs(screenRatio / initRatio - 1) > _deviation) {
         if (screenRatio > initRatio) {
             initHeight = width * screenRatio;
             _offset_y = (initHeight - height) / 2;
@@ -34,6 +35,10 @@ export function initScreen(is3D, width, height, ...options) {
     Laya.stage.alignV = Laya.Stage.ALIGN_MIDDLE;
     initBg();
     initUI(_offset_x, _offset_y)
+}
+
+function setDeviation(deviation) {
+    this._deviation = deviation;
 }
 
 function getWidth() {
@@ -61,6 +66,7 @@ function getDesignHeight() {
 }
 
 export default {
+    setDeviation,
     getWidth,
     getHeight,
     getOffestX,
