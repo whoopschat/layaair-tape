@@ -5,7 +5,7 @@ let _offset_x = 0;
 let _offset_y = 0;
 let _design_width = 0;
 let _design_height = 0;
-let _deviation = 0.1;
+let _deviation = 0.01;
 
 export function initScreen(is3D, width, height, ...options) {
     _design_width = width;
@@ -20,7 +20,7 @@ export function initScreen(is3D, width, height, ...options) {
         if (screenRatio > initRatio) {
             initHeight = width * screenRatio;
             _offset_y = (initHeight - height) / 2;
-        } else {
+        } else if (screenRatio < initRatio) {
             initWidth = height / screenRatio;
             _offset_x = (initWidth - width) / 2;
         }

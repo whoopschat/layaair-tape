@@ -16,7 +16,7 @@ const downloadRemoteJs = (htmlFile, tempDir) => {
         var downloads = [];
         remoteFiles.forEach(file => {
             let fileName = ".temp/" + UUID.gid();
-            files.push(tempDir + fileName);
+            files.push(tempDir + '/' + fileName);
             downloads.push({
                 fileName,
                 request: {

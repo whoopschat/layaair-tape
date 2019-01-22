@@ -1,7 +1,7 @@
 // 程序入口
 class GameMain {
     constructor() {
-        Tape.init(600, 400);
+        Tape.init(750, 1334);
         // Tape.bg.setBgColor('#3399ff');
         Tape.bg.setBgTexture('res/unpack/gameBG1.png')
         Laya.Stat.show();

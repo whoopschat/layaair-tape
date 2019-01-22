@@ -35,10 +35,10 @@ export class ModalContentView extends Laya.Sprite {
     constructor() {
         super();
         let size = Math.min(screen.getDesignWidth(), screen.getDesignHeight());
-        this._maxW = size * 0.9;
-        this._padding = size * 0.08;
+        this._maxW = size * 0.7;
+        this._padding = size * 0.06;
         this._fontSize = size * 0.06;
-        this._btnHeight = size * 0.18;
+        this._btnHeight = size * 0.15;
         this._lineHeight = size * 0.005;
         this._radius = 0;
         this._initBg();
