@@ -14,6 +14,7 @@ const Mergejs = require('./tasks/mergejs');
 const Zipe = require('./tasks/zip');
 const Publish = require('./tasks/publish');
 const Obfuscate = require('./tasks/obfuscate');
+const Injection = require('./tasks/injection');
 
 const gulp = require('gulp');
 const minimist = require('minimist');
@@ -166,6 +167,8 @@ gulp.task('android', App.androidTask(program.outputTemp, "http://stand.alone.ver
 
 gulp.task('publish', Publish.publishTask(program.platform, program.outputTemp, program.env, app_version, program.buildnum));
 
+gulp.task('injection', Injection.injectionTask(program.outputTemp, program.injection, program.force));
+
 gulp.task('build', function (done) {
     let tasks = [];
     if (program.x) {
@@ -192,6 +195,9 @@ gulp.task('build', function (done) {
         }
         if (program.publish) {
             tasks.push('publish');
+        }
+        if (program.injection) {
+            tasks.push('injection');
         }
     }
     return gulp.series(tasks)((error) => {
