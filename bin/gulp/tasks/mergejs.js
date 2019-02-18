@@ -12,7 +12,7 @@ const files = [];
 
 const downloadRemoteJs = (htmlFile, tempDir) => {
     return (done) => {
-        var remoteFiles = HtmlUtils.readRemoteFiles({ file: htmlFile, selector: 'script', attribute: 'src' });
+        var remoteFiles = HtmlUtils.readRemoteFiles({ file: htmlFile, selector: 'script', attribute: 'src', exclude: { build: 'unpack' } });
         var downloads = [];
         remoteFiles.forEach(file => {
             let fileName = ".temp/" + UUID.gid();
@@ -36,7 +36,7 @@ const downloadRemoteJs = (htmlFile, tempDir) => {
 const mergeJs = (htmlFile, outputDir, jsFile, uglify = false, replaces = []) => {
     return (done) => {
         var loadFiles = [...files];
-        loadFiles.push(...HtmlUtils.readLocalFiles({ file: htmlFile, selector: 'script', attribute: 'src' }));
+        loadFiles.push(...HtmlUtils.readLocalFiles({ file: htmlFile, selector: 'script', attribute: 'src', exclude: { build: 'unpack' } }));
         if (loadFiles.length > 0) {
             var task = gulp.src(loadFiles)
                 .pipe(gulpConcat(jsFile));

@@ -20,7 +20,20 @@ const find_value = function (html, config, def) {
 const find_local_files = function (html, config) {
     let $ = cheerio.load(html);
     return $(config.selector).map(function (i, elem) {
-        return $(elem).attr(config.attribute);
+        let flag = true;
+        if (config.filter) {
+            Object.keys(config.filter).forEach(key => {
+                flag = flag && $(elem).attr(key) == config.filter[key]
+            });
+        }
+        if (config.exclude) {
+            Object.keys(config.exclude).forEach(key => {
+                if ($(elem).has(key)){
+                    flag = flag && $(elem).attr(key) != config.exclude[key];
+                }
+            });
+        }
+        return flag ? $(elem).attr(config.attribute) : '';
     }).toArray().filter(function (item) {
         return (item !== undefined && item.substring(0, 4) !== 'http' && item.substring(0, 2) !== '//');
     }).map(function (item) {
@@ -32,7 +45,20 @@ const find_local_files = function (html, config) {
 const find_remote_files = function (html, config) {
     let $ = cheerio.load(html);
     return $(config.selector).map(function (i, elem) {
-        return $(elem).attr(config.attribute);
+        let flag = true;
+        if (config.filter) {
+            Object.keys(config.filter).forEach(key => {
+                flag = flag && $(elem).attr(key) == config.filter[key]
+            });
+        }
+        if (config.exclude) {
+            Object.keys(config.exclude).forEach(key => {
+                if ($(elem).has(key)){
+                    flag = flag && $(elem).attr(key) != config.exclude[key];
+                }
+            });
+        }
+        return flag ? $(elem).attr(config.attribute) : '';
     }).toArray().filter(function (item) {
         return item.substring(0, 4) === 'http' || item.substring(0, 2) === '//';
     });
