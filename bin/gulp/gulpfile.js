@@ -137,6 +137,7 @@ gulp.task('help', Empty.emptyTask(() => {
     console.log("  --package_name     [Optional] package name");
     console.log("  --orientation      [Optional] orientation");
     console.log("  --pngquant         [Optional] pngquant quality def:65-80");
+    console.log("  --injection        [Optional] injection js file");
     console.log("  --zip              [Optional] [bool] zip build.zip");
     console.log("  --min              [Optional] [bool] uglify js");
     console.log("  --obfuscate        [Optional] [bool] obfuscate code");

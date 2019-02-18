@@ -37,6 +37,7 @@ or
     --packagename      [Optional] package name
     --orientation      [Optional] orientation
     --pngquant         [Optional] pngquant quality def:65-80
+    --injection        [Optional] injection js file
     --zip              [Optional] [bool] zip build.zip
     --min              [Optional] [bool] uglify js
     --obfuscate        [Optional] [bool] obfuscate code

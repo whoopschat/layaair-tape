@@ -9,7 +9,10 @@ const injectionTask = (outputDir, injectionJs, force) => {
         if (injectionJs && FileUtils.existsSync(indexHtml) && force) {
             return gulp.src(indexHtml)
                 .pipe(gulpCheerio(function ($) {
-                    $('head').append('<script src="' + injectionJs + '"></script>');
+                    let jsList = injectionJs.split(',');
+                    jsList.forEach(js => {
+                        $('body').append('<script src="' + js + '"></script>');
+                    });
                 }))
                 .pipe(gulp.dest(outputDir));
         } else {
