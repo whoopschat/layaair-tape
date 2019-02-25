@@ -168,7 +168,7 @@ gulp.task('android', App.androidTask(program.outputTemp, "http://stand.alone.ver
 
 gulp.task('publish', Publish.publishTask(program.platform, program.outputTemp, program.env, app_version, program.buildnum));
 
-gulp.task('injection', Injection.injectionTask(program.outputTemp, program.injection, program.force));
+gulp.task('injection', Injection.injectionTask(program.outputTemp, program.injection, program['injection-append'], program.force));
 
 gulp.task('build', function (done) {
     let tasks = [];
