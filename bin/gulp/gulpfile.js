@@ -73,6 +73,8 @@ const initReplaceList = (htmlFile) => {
     let packagename = program.packagename || Html.readValue({ file: htmlFile, selector: 'meta', attribute: 'packagename' }, "com.tapegame");
     let wx_app_id = program.appid || Html.readValue({ file: htmlFile, selector: 'meta', attribute: 'appid' }, "touristappid");
     let bd_app_id = program.appid || Html.readValue({ file: htmlFile, selector: 'meta', attribute: 'baidu_appid' }, "无智能小程序AppId部分功能受限");
+    let bg_color = program.bgcolor ? program.bgcolor : "#ffffff";
+    replaceList.push(['${bg_color}', bg_color]);
     replaceList.push(['${wx_app_id}', wx_app_id]);
     replaceList.push(['${bd_app_id}', bd_app_id]);
     replaceList.push(['${app_version}', app_version]);
@@ -138,6 +140,7 @@ gulp.task('help', Empty.emptyTask(() => {
     console.log("  --orientation      [Optional] orientation");
     console.log("  --pngquant         [Optional] pngquant quality def:65-80");
     console.log("  --injection        [Optional] injection js file");
+    console.log("  --bgcolor          [Optional] h5 body bg color");
     console.log("  --zip              [Optional] [bool] zip build.zip");
     console.log("  --min              [Optional] [bool] uglify js");
     console.log("  --obfuscate        [Optional] [bool] obfuscate code");
