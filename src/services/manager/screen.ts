@@ -38,7 +38,7 @@ export function initScreen(is3D, width, height, ...options) {
 }
 
 function setDeviation(deviation) {
-    this._deviation = deviation;
+    _deviation = deviation;
 }
 
 function getWidth() {
