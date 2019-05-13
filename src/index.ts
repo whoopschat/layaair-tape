@@ -1,3 +1,4 @@
+import "./polyfill";
 import bg from "./services/manager/bg";
 import screen from "./services/manager/screen";
 import audio from './services/audio';
