@@ -7,6 +7,7 @@ const gulpConcat = require('gulp-concat');
 const gulpUglify = require('gulp-uglify');
 const gulpReplace = require('gulp-replace');
 const gulpDownloader = require('gulp-downloader');
+const gulpSourcemaps = require('gulp-sourcemaps');
 
 const files = [];
 
@@ -33,15 +34,21 @@ const downloadRemoteJs = (htmlFile, tempDir) => {
     }
 }
 
-const mergeJs = (htmlFile, outputDir, jsFile, uglify = false, replaces = []) => {
+const mergeJs = (htmlFile, outputDir, jsFile, uglify = false, sourcemaps = false, sourcemapsComment = false, replaces = []) => {
     return (done) => {
         var loadFiles = [...files];
         loadFiles.push(...HtmlUtils.readLocalFiles({ file: htmlFile, selector: 'script', attribute: 'src', exclude: { build: 'unpack' } }));
         if (loadFiles.length > 0) {
-            var task = gulp.src(loadFiles)
-                .pipe(gulpConcat(jsFile));
+            var task = gulp.src(loadFiles);
+            if (sourcemaps) {
+                task = task.pipe(gulpSourcemaps.init())
+            }
+            task = task.pipe(gulpConcat(jsFile))
             if (uglify) {
                 task = task.pipe(gulpUglify());
+            }
+            if (sourcemaps) {
+                task = task.pipe(gulpSourcemaps.write('./sourcemaps/', { addComment: !!sourcemapsComment }))
             }
             replaces.forEach(replace => {
                 if (replace instanceof Array) {

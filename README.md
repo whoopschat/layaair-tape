@@ -32,14 +32,16 @@ or
     --version          [Optional] version code def: read package.json
     --buildnum         [Optional] version build num def: 0
     --jsfile           [Optional] jsfile def: code.js
-    --appid            [Optional] app id
+    --appid            [Optional] wechat or baidu app id
     --projectname      [Optional] project name
-    --packagename      [Optional] package name
-    --orientation      [Optional] orientation
+    --packagename      [Optional] android package name
+    --orientation      [Optional] android screen orientation
     --pngquant         [Optional] pngquant quality def:65-80
     --injection        [Optional] injection js file
     --zip              [Optional] [bool] zip build.zip
     --min              [Optional] [bool] uglify js
+    --map              [Optional] [bool] output sourcemaps
+    --mapcomment       [Optional] [bool] output sourcemaps comment
     --obfuscate        [Optional] [bool] obfuscate code
     --publish          [Optional] [bool] publish project
     --force            [Optional] [bool] ignore .lock file

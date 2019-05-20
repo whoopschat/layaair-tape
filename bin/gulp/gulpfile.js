@@ -134,15 +134,17 @@ gulp.task('help', Empty.emptyTask(() => {
     console.log("  --version          [Optional] version code def: read package.json");
     console.log("  --buildnum         [Optional] version build num def: 0");
     console.log("  --jsfile           [Optional] jsfile def: code.js");
-    console.log("  --appid            [Optional] app id");
+    console.log("  --appid            [Optional] wechat or baidu app id");
     console.log("  --projectname      [Optional] project name");
-    console.log("  --package_name     [Optional] package name");
-    console.log("  --orientation      [Optional] orientation");
+    console.log("  --packagename      [Optional] android package name");
+    console.log("  --orientation      [Optional] android screen orientation");
     console.log("  --pngquant         [Optional] pngquant quality def:65-80");
     console.log("  --injection        [Optional] injection js file");
     console.log("  --bgcolor          [Optional] h5 body bg color");
     console.log("  --zip              [Optional] [bool] zip build.zip");
     console.log("  --min              [Optional] [bool] uglify js");
+    console.log("  --map              [Optional] [bool] output sourcemaps");
+    console.log("  --mapcomment       [Optional] [bool] output sourcemaps comment");
     console.log("  --obfuscate        [Optional] [bool] obfuscate code");
     console.log("  --publish          [Optional] [bool] publish project");
     console.log("  --force            [Optional] [bool] ignore .lock file");
@@ -161,7 +163,7 @@ gulp.task('resources', Resources.resourcesTask(program.input, program.outputTemp
 
 gulp.task('pngquant', Pngquant.pngquantTask(program.input, program.outputTemp, program.pngquant));
 
-gulp.task('mergejs', Mergejs.mergejsTask(`${program.input}/${program.index}`, program.outputTemp, program.jsfile, !program.obfuscate && program.min, replaceList));
+gulp.task('mergejs', Mergejs.mergejsTask(`${program.input}/${program.index}`, program.outputTemp, program.jsfile, !program.obfuscate && program.min, program.map, process.mapcomment, replaceList));
 
 gulp.task('obfuscate', Obfuscate.obfuscateTask(program.outputTemp, program.jsfile));
 
