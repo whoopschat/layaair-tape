@@ -163,7 +163,7 @@ gulp.task('resources', Resources.resourcesTask(program.input, program.outputTemp
 
 gulp.task('pngquant', Pngquant.pngquantTask(program.input, program.outputTemp, program.pngquant));
 
-gulp.task('mergejs', Mergejs.mergejsTask(`${program.input}/${program.index}`, program.outputTemp, program.jsfile, !program.obfuscate && program.min, program.map, process.mapcomment, replaceList));
+gulp.task('mergejs', Mergejs.mergejsTask(`${program.input}/${program.index}`, program.outputTemp, program.jsfile, !program.obfuscate && program.min, program.map, program.mapcomment, replaceList));
 
 gulp.task('obfuscate', Obfuscate.obfuscateTask(program.outputTemp, program.jsfile));
 

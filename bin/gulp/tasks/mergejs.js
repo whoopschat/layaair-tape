@@ -34,7 +34,7 @@ const downloadRemoteJs = (htmlFile, tempDir) => {
     }
 }
 
-const mergeJs = (htmlFile, outputDir, jsFile, uglify = false, sourcemaps = false, sourcemapsComment = false, replaces = []) => {
+const mergeJs = (htmlFile, outputDir, jsFile, uglify, sourcemaps, sourcemapsComment, replaces = []) => {
     return (done) => {
         var loadFiles = [...files];
         loadFiles.push(...HtmlUtils.readLocalFiles({ file: htmlFile, selector: 'script', attribute: 'src', exclude: { build: 'unpack' } }));
@@ -69,9 +69,9 @@ const cleanTemp = (outputDir) => {
     }
 }
 
-const mergejsTask = (htmlFile, outputDir, jsFile, uglify, replaces) => {
+const mergejsTask = (htmlFile, outputDir, jsFile, uglify, sourcemaps, sourcemapsComment, replaces) => {
     gulp.task('mergeJs-downloadRemoteJs', downloadRemoteJs(htmlFile, outputDir));
-    gulp.task('mergeJs-mergeJs', mergeJs(htmlFile, outputDir, jsFile, uglify, replaces));
+    gulp.task('mergeJs-mergeJs', mergeJs(htmlFile, outputDir, jsFile, uglify, sourcemaps, sourcemapsComment, replaces));
     gulp.task('mergeJs-cleanTemp', cleanTemp(outputDir));
     return gulp.series(['mergeJs-downloadRemoteJs', 'mergeJs-mergeJs', 'mergeJs-cleanTemp']);
 }
