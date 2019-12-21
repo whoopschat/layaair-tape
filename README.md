@@ -13,9 +13,16 @@
 ```
 
 ### CLI
+
+#### create new project
+```
+> layaair-tape create
+```
+
+#### build
 ```
 > layaair-tape
-  Usage: layaair-tape [options]
+  Usage: layaair-tape build [options]
     --input            input dir
     --output           output dir
     --env              [Optional] development || production(prod)
