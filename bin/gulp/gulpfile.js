@@ -5,14 +5,12 @@ const File = require('./utils/file');
 const Html = require('./utils/html');
 const Empty = require('./tasks/empty');
 const Test = require('./tasks/bin');
-const Android = require('./tasks/android');
 const Clean = require('./tasks/clean');
 const Resources = require('./tasks/resources');
 const Pngquant = require('./tasks/pngquant');
 const Template = require('./tasks/template');
 const Mergejs = require('./tasks/mergejs');
 const Zipe = require('./tasks/zip');
-const Obfuscate = require('./tasks/obfuscate');
 const Injection = require('./tasks/injection');
 
 const gulp = require('gulp');
@@ -77,7 +75,7 @@ const initReplaceList = (htmlFile) => {
 }
 
 const begin = () => {
-    let platforms = ['h5', 'android'];
+    let platforms = ['h5'];
     let checkPlatform = platforms.indexOf(program.platform) >= 0;
     let checkInput = !!program.input;
     let checkOutput = !!program.output;
@@ -118,7 +116,7 @@ gulp.task('help', Empty.emptyTask(() => {
     console.log("  --input            input dir");
     console.log("  --output           output dir");
     console.log("  --env              [Optional] development(dev) || production(prod)");
-    console.log("  --platform         [Optional] h5 || android");
+    console.log("  --platform         [Optional] only h5");
     console.log("  --index            [Optional] index.html file def: index.html");
     console.log("  --version          [Optional] version code def: read package.json");
     console.log("  --jsfile           [Optional] jsfile def: code.js");
@@ -130,7 +128,6 @@ gulp.task('help', Empty.emptyTask(() => {
     console.log("  --bgcolor          [Optional] h5 body bg color");
     console.log("  --zip              [Optional] [bool] zip build.zip");
     console.log("  --min              [Optional] [bool] uglify js");
-    console.log("  --obfuscate        [Optional] [bool] obfuscate code");
     console.log("  --force            [Optional] [bool] ignore .lock file");
     console.log("  --x                [Optional] show this help");
     console.log("");
@@ -149,11 +146,7 @@ gulp.task('pngquant', Pngquant.pngquantTask(program.input, program.outputTemp, p
 
 gulp.task('mergejs', Mergejs.mergejsTask(`${program.input}/${program.index}`, program.outputTemp, program.jsfile, !program.obfuscate && program.min, replaceList));
 
-gulp.task('obfuscate', Obfuscate.obfuscateTask(program.outputTemp, program.jsfile));
-
 gulp.task('zip', Zipe.zipTask(program.outputTemp));
-
-gulp.task('android', Android.androidTask(program.outputTemp, "http://stand.alone.version/index.html", program.output));
 
 gulp.task('injection', Injection.injectionTask(program.outputTemp, program.injection, program['injection-append'], program.force));
 
@@ -172,14 +165,8 @@ gulp.task('build', function (done) {
             tasks.push('pngquant');
         }
         tasks.push('mergejs');
-        if (program.obfuscate) {
-            tasks.push('obfuscate');
-        }
         if (program.zip) {
             tasks.push('zip');
-        }
-        if (program.platform === 'android') {
-            tasks.push('android');
         }
         if (program.injection) {
             tasks.push('injection');

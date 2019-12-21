@@ -1,7 +1,7 @@
 {
   "name": "layaair-tape",
   "main": "./dist/tape.js",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "A layaair game library",
   "scripts": {
     "start": "webpack --config webpack.dev.js --watch",
@@ -45,7 +45,6 @@
     "gulp-pngquant": "1.0.12",
     "gulp-uglify": "3.0.1",
     "gulp-replace": "1.0.0",
-    "gulp-javascript-obfuscator": "1.1.5",
     "minimist": "1.2.0",
     "through2": "3.0.0",
     "iconv-lite": "0.4.24",
