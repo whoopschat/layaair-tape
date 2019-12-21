@@ -8,7 +8,6 @@
     "build": "webpack --config webpack.prod.js",
     "build-dev": "webpack --config webpack.dev.js",
     "test-create-project": "node ./bin/build.js create test",
-    "test-build-android": "node ./bin/build.js build --platform android --output ./build/ --input ./test/bin/",
     "test-build-h5": "node ./bin/build.js build --platform h5 --output ./build/ --input ./test/bin/"
   },
   "author": "liangmayong",
