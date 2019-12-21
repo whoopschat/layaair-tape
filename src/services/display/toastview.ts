@@ -1,6 +1,6 @@
 import toast from "./toastmanager";
-import ui from "./ui";
 import screen from "../manager/screen";
+import ui from "./ui";
 
 export default class ToastView extends ui {
 

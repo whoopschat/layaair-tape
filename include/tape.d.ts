@@ -14,54 +14,6 @@ declare module Tape {
         onLoaded?: () => void;
     }
 
-    /** UserinfoPayload */
-    interface UserinfoPayload {
-        platform: string,
-        playerId: string,
-        nickname: string,
-        avatarUrl: string,
-        gender: number,
-        country: string,
-        city: string,
-        province: string,
-        raw: obj
-    }
-
-    /** ModalPayload */
-    interface ModalPayload {
-        title?: string,
-        content?: string,
-        showCancel?: boolean,
-        cancelText?: string,
-        cancelColor?: string,
-        confirmText?: string,
-        confirmColor?: string,
-        success?: (result: { cancel: boolean, confirm: boolean }) => void,
-        fail?: any;
-        complete?: any;
-    }
-
-    /** ToastPayload */
-    interface ToastPayload {
-        title: string,
-        image?: string,
-        icon?: 'success' | 'loading' | 'none',
-        duration?: number,
-        mask?: boolean,
-        success?: any,
-        fail?: any;
-        complete?: any;
-    }
-
-    /** LoadingPayload */
-    interface LoadingPayload {
-        title: string,
-        mask?: boolean,
-        success?: any,
-        fail?: any;
-        complete?: any;
-    }
-
     /** AudioController */
     interface AudioController {
         readonly url: string;
@@ -87,23 +39,6 @@ declare module Tape {
     function init3D(width: number, height: number, ...options): void;
     /** start */
     function start(options: StartPayload | null, onLoaded?: () => void): void;
-    /** exit */
-    function exit(): void;
-
-    /** showToast */
-    function showToast(params: ToastPayload): void;
-    /** hideToast */
-    function hideToast(): void;
-    /** showModal */
-    function showModal(params: ModalPayload): void;
-    /** showToast */
-    function showLoading(params?: LoadingPayload): void;
-    /** hideLoading */
-    function hideLoading(): void;
-    /** vibrateShort */
-    function vibrateShort(): void;
-    /** vibrateLong */
-    function vibrateLong(): void;
 
     /** bg */
     module bg {
@@ -147,118 +82,6 @@ declare module Tape {
         function stopAll(): void;
         /** stopAllSound */
         function stopAllSound(): void;
-    }
-
-    /** env */
-    module env {
-        /** getVersion */
-        function getAppVersion(): string;
-        /** getVersion */
-        function getVersion(): string;
-        /** isLayaApp */
-        function isLayaApp(): boolean;
-        /** isConchApp */
-        function isConchApp(): boolean;
-        /** sendMessageToConch */
-        function sendMessageToConch(params: obj, callback: (result: obj) => void): void;
-        /** isBrowserApp */
-        function isBrowserApp(): boolean;
-        /** execBR */
-        function execBR(func, ...options): any;
-        /** isQQApp */
-        function isQQApp(): boolean;
-        /** execQQ */
-        function execQQ(func, ...options): any;
-        /** isFacebookApp */
-        function isFacebookApp(): boolean;
-        /** execFB */
-        function execFB(func, ...options): any;
-        /** isWechatApp */
-        function isWechatApp(): boolean;
-        /** execWX */
-        function execWX(func, ...options): any;
-        /** isBaiduApp */
-        function isBaiduApp(): boolean;
-        /** execBD */
-        function execBD(func, ...options): any;
-        /** setDebug */
-        function setDebug(debug: boolean): void;
-        /** printDebug */
-        function printDebug(message: any, ...options): void;
-        /** printError */
-        function printError(message: any, ...options): void;
-        /** getEnv */
-        function getEnv(): string;
-        /** setEnv */
-        function setEnv(env): void;
-        /** isDev */
-        function isDev(): boolean;
-        /** isProd */
-        function isProd(): boolean;
-        /** getPlatform */
-        function getPlatform(): string;
-    }
-
-    /** ad */
-    module ad {
-        /** isSupportedRewardedVideo */
-        function isSupportedRewardedVideo(): boolean;
-        /** isPreloadRewardedVideoAd */
-        function isPreloadRewardedVideoAd(): boolean;
-        /** setRewardedVideoAd */
-        function configRewardedVideoAd(platform: string, adId: string): void;
-        /** watchRewardedVideoAd */
-        function watchRewardedVideoAd(onRewarded?: () => void, onCancal?: () => void, onError?: (error: any) => void): void;
-        /** isSupportedBannerAd */
-        function isSupportedBannerAd(): boolean;
-        /** configBannerAd */
-        function configBannerAd(platform: string, adId: string): void;
-        /** showBannerAd */
-        function showBannerAd(x: number, y: number, width: number, height: number, onError?: (error: any) => void): void;
-        /** hideBannerAd */
-        function hideBannerAd(): void;
-    }
-
-    /** app */
-    module app {
-        /** onLaunch */
-        function onLaunch(callback: (options: { scene: string, query: obj, platform: string }) => void);
-        /** onPause */
-        function onPause(callback: () => void): void;
-        /** getUserInfo */
-        function getUserInfo(callback: (userinfo: UserinfoPayload) => void, options?: { imageUrl?: string, x?: number, y?: number, width?: number, height?: number }): void;
-    }
-
-    /** rank */
-    module rank {
-        /** isSupportedRank */
-        function isSupportedRank(): boolean;
-        /** createRankView */
-        function createRankView(x?: number, y?: number, width?: number, height?: number): Laya.Sprite;
-        /** setRankLocationSelf */
-        function setRankLocationSelf(enable: boolean, offset?: number): void;
-        /** setRankKey */
-        function setRankKey(key: string, count?: number, offset?: number): void;
-        /** setRankScore */
-        function setRankScore(key: string, score: number, extraData?: string): void;
-        /** showRank */
-        function showRank(ui: obj | obj[]): void;
-        /** hideRank */
-        function hideRank(): void;
-    }
-
-    /** other */
-    module other {
-        /** isSupportKefuConversation */
-        function isSupportKefuConversation(): boolean;
-        /** openKefuConversation */
-        function openKefuConversation(options?: { sessionFrom?: string, showMessageCard?: boolean, sendMessageTitle?: string, sendMessagePath?: string, sendMessageImg?: string }): void;
-        /** isSupportClubButton */
-        function isSupportClubButton(): boolean;
-        /** showClubButton */
-        function showClubButton(icon: string, x: number, y: number, w: number, h: number): void;
-        /** hideClubButton */
-        function hideClubButton(): void;
     }
 
     /** utils */

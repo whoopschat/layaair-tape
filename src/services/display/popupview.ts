@@ -1,6 +1,6 @@
 import popup from "./popupmanager";
-import ui from "./ui";
 import screen from "../manager/screen";
+import ui from "./ui";
 
 export default class PopupView extends ui {
 

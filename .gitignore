@@ -3,7 +3,6 @@
 .DS_Store
 
 # node.js
-node_modules/
 npm-debug.log
 yarn-error.log
 
@@ -13,11 +12,8 @@ yarn-error.log
 # idea
 .idea
 
-# dev
-dist-dev/
-
-# buidl
-build/
-
-# examples package-lock
-examples/*/package-lock.json
+# folder
+node_modules/
+/dist-dev
+/build
+/test

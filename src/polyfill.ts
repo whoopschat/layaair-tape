@@ -11,7 +11,7 @@ if (typeof Object.assign != 'function') {
   
         for (var index = 1; index < arguments.length; index++) {
           var nextSource = arguments[index];
-  
+          
           if (nextSource != null) { // Skip over if undefined or null
             for (var nextKey in nextSource) {
               // Avoid bugs when hasOwnProperty is shadowed
