@@ -5,6 +5,7 @@
 # node.js
 npm-debug.log
 yarn-error.log
+package-lock.json
 
 # vim
 *.swp

@@ -25,11 +25,10 @@
   Usage: layaair-tape build [options]
     --input            input dir
     --output           output dir
-    --env              [Optional] development || production(prod)
-    --platform         [Optional] platform : h5 || android , def: h5
+    --env              [Optional] development | production(prod)
+    --platform         [Optional] only h5
     --index            [Optional] index.html file def: index.html
     --version          [Optional] version code def: read package.json
-    --buildnum         [Optional] version build num def: 0
     --jsfile           [Optional] jsfile def: code.js
     --projectname      [Optional] project name
     --packagename      [Optional] android package name
@@ -38,7 +37,6 @@
     --injection        [Optional] injection js file
     --zip              [Optional] [bool] zip build.zip
     --min              [Optional] [bool] uglify js
-    --obfuscate        [Optional] [bool] obfuscate code
     --force            [Optional] [bool] ignore .lock file
     --x                [Optional] show this help
 ```
