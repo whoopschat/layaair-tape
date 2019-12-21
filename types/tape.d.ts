@@ -40,6 +40,32 @@ declare module Tape {
     /** start */
     function start(options: StartPayload | null, onLoaded?: () => void): void;
 
+    /** env */
+    module env {
+        /** isLayaApp */
+        function isLayaApp(): boolean;
+        /** isConchApp */
+        function isConchApp(): boolean;
+        /** getVersion */
+        function getAppVersion(): string;
+        /** getVersion */
+        function getVersion(): string;
+        /** setDebug */
+        function setDebug(debug: boolean): void;
+        /** printDebug */
+        function printDebug(message: any, ...options): void;
+        /** printError */
+        function printError(message: any, ...options): void;
+        /** setEnv */
+        function setEnv(env): void;
+        /** getEnv */
+        function getEnv(): string;
+        /** isDev */
+        function isDev(): boolean;
+        /** isProd */
+        function isProd(): boolean;
+    }
+
     /** bg */
     module bg {
         /** setBgColor */
@@ -96,10 +122,8 @@ declare module Tape {
         function randomArray(source: any[], length?: number): any[];
         /** randomArrayItem */
         function randomArrayItem(source: any[]): any;
-        /** tryToObject */
-        function tryToObject(source): any;
-        /** anyToArray */
-        function anyToArray(source: any): any[];
+        /** toAny */
+        function toAny(source: any, def: any): any;
     }
 
     /** runtime */
@@ -134,7 +158,6 @@ declare module Tape {
         class btn_box extends Laya.Box {
             public sound: string;
         }
-
     }
 
     /** navigator */

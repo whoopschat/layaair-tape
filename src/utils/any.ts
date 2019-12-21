@@ -1,7 +1,3 @@
-function _toBoolean_(value) {
-    return value === 'true' || value === '1';
-}
-
 function _toNumber_(value) {
     try {
         return JSON.parse(value);
@@ -10,12 +6,36 @@ function _toNumber_(value) {
     }
 }
 
-function _toObject_(value) {
+function _toBoolean_(value) {
+    return !!value && value != 'false' && value != '0';
+}
+
+function _toString_(value, def) {
+    try {
+        let type = typeof value;
+        if (type === 'string') {
+            return value;
+        } else if (type === 'boolean') {
+            return value ? 'true' : 'false';
+        } else if (type === 'number') {
+            return `${value}`;
+        } else if (type === 'object') {
+            return JSON.stringify(value);
+        }
+    } catch (ex) {
+    }
+    return def;
+}
+
+function _toObject_(value, def) {
+    if (typeof value === 'object') {
+        return value;
+    }
     try {
         return JSON.parse(value);
     } catch (ex) {
-        return null;
     }
+    return def;
 }
 
 function _inferType(value) {
@@ -35,53 +55,26 @@ function _inferType(value) {
     }
 }
 
-
-function _toString_(value) {
-    try {
-        let type = typeof value;
-        if (type === 'string') {
-            return value;
-        } else if (type === 'boolean') {
-            return value ? 'true' : 'false';
-        } else if (type === 'number') {
-            return `${value}`;
-        } else if (type === 'object') {
-            return JSON.stringify(value);
-        }
-        return null;
-    } catch (ex) {
-        return null;
-    }
-}
-
-export function toAny(value, defaultValue) {
-
+export function toAny(value, def) {
     if (value === undefined || value === null) {
-        return defaultValue;
+        return def;
     }
-
     // try to infer type and return
     let type = _inferType(value);
-
-    if (defaultValue !== undefined && defaultValue !== null) {
-        type = typeof defaultValue;
+    if (def !== undefined && def !== null) {
+        type = typeof def;
     }
-
     switch (type) {
-        case 'boolean':
-            return _toBoolean_(value);
         case 'number':
             return _toNumber_(value);
+        case 'boolean':
+            return _toBoolean_(value);
         case 'object':
-            return _toObject_(value);
+            return _toObject_(value, def);
         case 'string':
-            return _toString_(value);
+            return _toString_(value, def);
         default:
             break;
     }
-    return value;
-}
-
-export function toStr(value) {
-    return toAny(value, '')
+    return def;
 }

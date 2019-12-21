@@ -1,3 +1,5 @@
+import { toAny } from "../utils/any";
+
 function randomUUID() {
     let _s4 = () => (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
     return (_s4() + _s4() + "-" + _s4() + "-" + _s4() + "-" + _s4() + "-" + _s4() + _s4() + _s4());
@@ -45,38 +47,11 @@ function randomArrayItem(source: any[]): any {
     return undefined;
 }
 
-function tryToObject(source) {
-    if (typeof source === 'object') {
-        return source;
-    }
-    try {
-        return JSON.parse(source);
-    } catch (error) {
-        return source;
-    }
-}
-
-function anyToArray(source: any) {
-    if (source === null || source === '' || source === undefined) {
-        return [];
-    }
-    let value = tryToObject(source);
-    if (typeof value === 'string') {
-        return value.split(',');
-    }
-    if (value instanceof Array) {
-        return value;
-    } else {
-        return [value]
-    }
-}
-
 export default {
     randomUUID,
     randomInteger,
     randomNumber,
     randomArray,
     randomArrayItem,
-    anyToArray,
-    tryToObject,
+    toAny
 }
