@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "layaair-build --platform h5 --input ./bin --output ./dist",   
+    "build": "layaair-tape build --platform h5 --input ./bin --output ./dist",   
     "clean": "del release && del bin/js",
     "compile": "layaair-cmd compile",
     "start": "npm run clean && concurrently --kill-others \"npm run watch-bin\" \"npm run watch-src\"",
