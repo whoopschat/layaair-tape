@@ -7,8 +7,10 @@
     "start": "webpack --config webpack.dev.js --watch",
     "build": "webpack --config webpack.prod.js",
     "build-dev": "webpack --config webpack.dev.js",
-    "build-test-android": "node ./bin/build.js --platform android --output ./build/ --input ./test/cat/bin/",
-    "build-test-h5": "node ./bin/build.js --platform h5 --output ./build/ --input ./test/cat/bin/ --injection code2.js,code3.js --injection-append code4.js --force --source"
+    "cli": "node ./bin/build.js build --platform android --output ./build/ --input ./test/cat/bin/",
+    "cli2": "node ./bin/build.js create test1",
+    "build-test-android": "node ./bin/build.js build --platform android --output ./build/ --input ./test/cat/bin/",
+    "build-test-h5": "node ./bin/build.js build --platform h5 --output ./build/ --input ./test/cat/bin/ --injection code2.js,code3.js --injection-append code4.js --force --source --zip"
   },
   "author": "liangmayong",
   "license": "UNLICENSED",
@@ -25,7 +27,7 @@
     "layaair-tapex"
   ],
   "bin": {
-    "layaair-tapex": "./bin/build.js"
+    "layaair-tape": "./bin/build.js"
   },
   "files": [
     "tpl",
@@ -43,7 +45,6 @@
     "gulp-downloader": "1.0.4",
     "gulp-pngquant": "1.0.12",
     "gulp-uglify": "3.0.1",
-    "gulp-sourcemaps": "2.6.5",
     "gulp-replace": "1.0.0",
     "gulp-javascript-obfuscator": "1.1.5",
     "minimist": "1.2.0",

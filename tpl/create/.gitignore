@@ -1,0 +1,17 @@
+# OSX
+#
+.DS_Store
+
+# node.js
+npm-debug.log
+yarn-error.log
+package-lock.log
+
+# vim
+*.swp
+
+# idea
+.idea
+
+# folder
+node_modules/

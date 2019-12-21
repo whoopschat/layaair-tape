@@ -1,0 +1,14 @@
+{
+  "name": "#project-name#",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build-h5": "layaair-build --platform h5 --input ./bin --output ./dist"
+  },
+  "devDependencies": {
+    "layaair-tape": "#layaair-tape-version#"
+  },
+  "author": "",
+  "license": "ISC"
+}

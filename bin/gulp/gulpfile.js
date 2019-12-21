@@ -23,10 +23,6 @@ if (!program.platform) {
     program.platform = 'h5';
 }
 
-if (!program.buildnum) {
-    program.buildnum = 0;
-}
-
 if (program.env) {
     if (program.env === 'prod' || program.env === 'production') {
         program.env = 'production';
@@ -118,16 +114,14 @@ gulp.task('error', Empty.emptyTask(() => {
 gulp.task('help', Empty.emptyTask(() => {
     console.log("");
     console.log("");
-    console.log("Usage: layaair-tapex [options]");
+    console.log("Usage: layaair-tape build [options]");
     console.log("  --input            input dir");
     console.log("  --output           output dir");
     console.log("  --env              [Optional] development(dev) || production(prod)");
     console.log("  --platform         [Optional] h5 || android");
     console.log("  --index            [Optional] index.html file def: index.html");
     console.log("  --version          [Optional] version code def: read package.json");
-    console.log("  --buildnum         [Optional] version build num def: 0");
     console.log("  --jsfile           [Optional] jsfile def: code.js");
-    console.log("  --appid            [Optional] wechat or baidu app id");
     console.log("  --projectname      [Optional] project name");
     console.log("  --packagename      [Optional] android package name");
     console.log("  --orientation      [Optional] android screen orientation");
