@@ -1,6 +1,6 @@
 import env from "../utils/env";
 import { initScreen } from "./manager/screen";
-import { initNavigator } from "./navigator/init";
+import { initNavigator, setNavigatorReady } from "./navigator/init";
 
 let _inited = false;
 
@@ -56,7 +56,6 @@ export function start(options, onLoaded = null) {
             options.onLoaded && options.onLoaded();
         }
     }
-    alert('--------')
-    console.log(newOptions);
     initNavigator(newOptions);
+    setNavigatorReady();
 }

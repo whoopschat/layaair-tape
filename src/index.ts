@@ -14,13 +14,13 @@ import ToastView from "./services/display/toastview";
 import { init, init3D, start } from './services/init';
 
 const Tape = {
+    env,
     init,
     init3D,
     start,
     bg,
     screen,
     audio,
-    env,
     runtime,
     utils,
     navigator,

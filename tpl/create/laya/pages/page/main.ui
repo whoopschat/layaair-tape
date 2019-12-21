@@ -2,7 +2,7 @@
     "x":0,
     "type":"View",
     "selectedBox":1,
-    "selecteID":25,
+    "selecteID":26,
     "props":{"y":0,"x":-2,"width":750,"sceneColor":"#000000","height":1334},
     "nodeParent":-1,
     "label":"View",
@@ -35,6 +35,19 @@
             "isAniNode":true,
             "hasChild":false,
             "compId":25,
+            "child":[
+                ]
+        },
+        {
+            "x":15,
+            "type":"Button",
+            "props":{"y":1011,"x":314,"width":129,"var":"btnMusic","skin":"comp/button.png","runtime":"Tape.runtime.btn","label":"music","height":64},
+            "nodeParent":1,
+            "label":"Button(btnMusic)",
+            "isDirectory":false,
+            "isAniNode":true,
+            "hasChild":false,
+            "compId":26,
             "child":[
                 ]
         }],
