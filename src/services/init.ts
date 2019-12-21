@@ -56,5 +56,7 @@ export function start(options, onLoaded = null) {
             options.onLoaded && options.onLoaded();
         }
     }
+    alert('--------')
+    console.log(newOptions);
     initNavigator(newOptions);
 }
