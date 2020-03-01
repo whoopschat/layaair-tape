@@ -2,7 +2,7 @@ module runtime {
 
     export let clickSound = null;
     export let scaleTime: number = 100;
-    export let scaleSmalValue: number = 0.8;
+    export let scaleSmallValue: number = 0.8;
     export let scaleBigValue: number = 1;
 
     function pivotCenter(view) {
@@ -26,7 +26,7 @@ module runtime {
 
     export function bindClick(view) {
         view.offAll();
-        view.on(Laya.Event.MOUSE_DOWN, view, () => viewScale(view, scaleSmalValue));
+        view.on(Laya.Event.MOUSE_DOWN, view, () => viewScale(view, scaleSmallValue));
         view.on(Laya.Event.MOUSE_UP, view, () => viewScale(view, scaleBigValue));
         view.on(Laya.Event.MOUSE_OUT, view, () => viewScale(view, scaleBigValue));
         view.on(Laya.Event.CLICK, view, () => playClickSound(view.sound));
