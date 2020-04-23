@@ -11,7 +11,7 @@ const Pngquant = require('./tasks/pngquant');
 const Template = require('./tasks/template');
 const Mergejs = require('./tasks/mergejs');
 const Zipe = require('./tasks/zip');
-const Injection = require('./tasks/injection');
+const Injection = require('./tasks/injectjs');
 
 const gulp = require('gulp');
 const minimist = require('minimist');
@@ -126,6 +126,7 @@ gulp.task('help', Empty.emptyTask(() => {
     console.log("  --pngquant         [Optional] pngquant quality def:65-80");
     console.log("  --injection        [Optional] injection js file");
     console.log("  --bgcolor          [Optional] h5 body bg color");
+    console.log("  --imgbase64        [Optional] h5 html image base64");
     console.log("  --zip              [Optional] [bool] zip build.zip");
     console.log("  --min              [Optional] [bool] uglify js");
     console.log("  --force            [Optional] [bool] ignore .lock file");
@@ -138,17 +139,17 @@ gulp.task('clean', Clean.cleanTask(program.output, `${program.platform}-game.loc
 
 gulp.task('copybin', Test.testTask('./tpl/bin', program.bin, 'bin.lock'));
 
-gulp.task('template', Template.templateTask(`./tpl/build/${program.platform}`, program.output, replaceList, `${program.platform}-game.lock`, program.force));
-
 gulp.task('resources', Resources.resourcesTask(program.input, program.outputTemp));
+
+gulp.task('template', Template.templateTask(`./tpl/build/${program.platform}`, program.output, replaceList, `${program.platform}-game.lock`, program.imagebase64, program.force));
 
 gulp.task('pngquant', Pngquant.pngquantTask(program.input, program.outputTemp, program.pngquant));
 
-gulp.task('mergejs', Mergejs.mergejsTask(`${program.input}/${program.index}`, program.outputTemp, program.jsfile, !program.obfuscate && program.min, replaceList));
+gulp.task('mergeJs', Mergejs.mergeJsTask(`${program.input}/${program.index}`, program.outputTemp, program.jsfile, !program.obfuscate && program.min, replaceList));
 
 gulp.task('zip', Zipe.zipTask(program.outputTemp));
 
-gulp.task('injection', Injection.injectionTask(program.outputTemp, program.injection, program['injection-append'], program.force));
+gulp.task('injectJs', Injection.injectJsTask(program.index, program.outputTemp, program.jsfile, program.injection, program['injection-append'], program.force));
 
 gulp.task('build', function (done) {
     let tasks = [];
@@ -159,18 +160,16 @@ gulp.task('build', function (done) {
     } else {
         tasks.push('clean');
         tasks.push('copybin');
-        tasks.push('template');
         tasks.push('resources');
+        tasks.push('template');
         if (program.pngquant) {
             tasks.push('pngquant');
         }
-        tasks.push('mergejs');
+        tasks.push('mergeJs');
         if (program.zip) {
             tasks.push('zip');
         }
-        if (program.injection) {
-            tasks.push('injection');
-        }
+        tasks.push('injectJs');
     }
     return gulp.series(tasks)((error) => {
         done();

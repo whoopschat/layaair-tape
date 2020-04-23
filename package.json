@@ -8,7 +8,7 @@
     "build": "webpack --config webpack.prod.js",
     "build-dev": "webpack --config webpack.dev.js",
     "test-create-project": "node ./bin/build.js create test",
-    "test-build-h5": "node ./bin/build.js build --platform h5 --output ./build/ --input ./test/bin/"
+    "test-build-h5": "node ./bin/build.js build --platform h5 --output ./build/ --input ./test/bin/ --force"
   },
   "author": "liangmayong",
   "license": "UNLICENSED",
@@ -34,21 +34,22 @@
     "types"
   ],
   "dependencies": {
-    "del": "3.0.0",
     "cheerio": "1.0.0-rc.2",
+    "del": "3.0.0",
+    "exec-sh": "0.3.2",
     "gulp": "4.0.0",
-    "gulp-zip": "4.2.0",
+    "gulp-html-img64": "^1.0.8",
     "gulp-cheerio": "0.6.3",
     "gulp-concat": "2.6.1",
     "gulp-downloader": "1.0.4",
     "gulp-pngquant": "1.0.12",
-    "gulp-uglify": "3.0.1",
     "gulp-replace": "1.0.0",
-    "minimist": "1.2.0",
-    "through2": "3.0.0",
+    "gulp-uglify": "3.0.1",
+    "gulp-zip": "4.2.0",
     "iconv-lite": "0.4.24",
     "layadcc": "1.8.3",
-    "exec-sh": "0.3.2"
+    "minimist": "1.2.0",
+    "through2": "3.0.0"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",
@@ -57,9 +58,9 @@
     "babel-preset-env": "^1.7.0",
     "fs-extra": "^6.0.1",
     "string-replace-loader": "^2.1.1",
-    "uglifyjs-webpack-plugin": "^1.2.2",
     "ts-loader": "^4.4.1",
     "typescript": "^2.9.2",
+    "uglifyjs-webpack-plugin": "^1.2.2",
     "webpack": "^4.19.1",
     "webpack-cli": "^3.1.0"
   }
