@@ -39,6 +39,7 @@
     --injection-append [Optional] injection append js file
     --bgcolor          [Optional] h5 body bg color
     --imgbase64        [Optional] h5 html image base64
+    --copybin          [Optional] [bool] copy bin run env
     --zip              [Optional] [bool] zip build.zip
     --min              [Optional] [bool] uglify js
     --force            [Optional] [bool] ignore .lock file

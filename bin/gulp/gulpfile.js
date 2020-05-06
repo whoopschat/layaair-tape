@@ -57,8 +57,13 @@ if (program.input) {
 }
 
 if (program.output) {
-    program.bin = path.join((program.bincwd || '.') + "/" + program.output + "/bin");
-    program.output = path.join((program.bincwd || '.') + "/" + program.output + "/" + program.platform);
+    if (program.copybin) {
+        program.bin = path.join((program.bincwd || '.') + "/" + program.output + "/bin");
+        program.output = path.join((program.bincwd || '.') + "/" + program.output + "/" + program.platform);
+    } else {
+        program.bin = false;
+        program.output = path.join((program.bincwd || '.') + "/" + program.output);
+    }
     program.outputTemp = program.platform == 'android' ? program.output + '/temp' : program.output;
 }
 
@@ -134,6 +139,7 @@ gulp.task('help', Empty.emptyTask(() => {
     console.log("  --injection-append [Optional] injection append js file");
     console.log("  --bgcolor          [Optional] h5 body bg color");
     console.log("  --imgbase64        [Optional] h5 html image base64");
+    console.log("  --copybin          [Optional] [bool] copy bin run env");
     console.log("  --zip              [Optional] [bool] zip build.zip");
     console.log("  --min              [Optional] [bool] uglify js");
     console.log("  --force            [Optional] [bool] ignore .lock file");
@@ -142,13 +148,13 @@ gulp.task('help', Empty.emptyTask(() => {
     console.log("");
 }));
 
-gulp.task('clean', Clean.cleanTask(program.output, `${program.platform}-game.lock`, program.force));
+gulp.task('clean', Clean.cleanTask(program.output, `${program.platform}.lock`, program.force));
 
 gulp.task('copybin', Test.testTask('./tpl/bin', program.bin, 'bin.lock'));
 
 gulp.task('resources', Resources.resourcesTask(program.input, program.outputTemp));
 
-gulp.task('template', Template.templateTask(`./tpl/build/${program.platform}`, program.output, replaceList, `${program.platform}-game.lock`, program.imagebase64, program.force));
+gulp.task('template', Template.templateTask(`./tpl/build/${program.platform}`, program.output, replaceList, `${program.platform}.lock`, program.imagebase64, program.force));
 
 gulp.task('pngquant', Pngquant.pngquantTask(program.input, program.outputTemp, program.pngquant));
 
@@ -168,7 +174,9 @@ gulp.task('build', function (done) {
         tasks.push('error');
     } else {
         tasks.push('clean');
-        tasks.push('copybin');
+        if (program.bin) {
+            tasks.push('copybin');
+        }
         tasks.push('resources');
         tasks.push('template');
         if (program.pngquant) {
