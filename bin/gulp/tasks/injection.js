@@ -3,11 +3,16 @@ const gulp = require('gulp');
 const gulpCheerio = require('gulp-cheerio');
 const FileUtils = require('../utils/file');
 
-const injectJsTask = (htmlFile, outputDir, jsFile, injectionJs, appendInjectionJs, force) => {
+const injectTask = (htmlFile, outputDir, cssFile, jsFile, injectionJs, appendInjectionJs, force) => {
     return (done) => {
         let indexHtml = path.join(outputDir, htmlFile);
         if (FileUtils.existsSync(indexHtml) && force) {
             let pipe = gulp.src(indexHtml);
+            if (FileUtils.existsSync(path.join(outputDir, cssFile))) {
+                pipe = pipe.pipe(gulpCheerio(function ($) {
+                    $('body').append('<link href="' + cssFile + '" rel="stylesheet">');
+                }))
+            }
             if (FileUtils.existsSync(path.join(outputDir, jsFile))) {
                 pipe = pipe.pipe(gulpCheerio(function ($) {
                     $('body').append('<script src="' + jsFile + '"></script>');
@@ -47,5 +52,5 @@ const injectJsTask = (htmlFile, outputDir, jsFile, injectionJs, appendInjectionJ
 }
 
 module.exports = {
-    injectJsTask
+    injectTask
 }

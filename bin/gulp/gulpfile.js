@@ -10,8 +10,9 @@ const Resources = require('./tasks/resources');
 const Pngquant = require('./tasks/pngquant');
 const Template = require('./tasks/template');
 const Mergejs = require('./tasks/mergejs');
+const Mergecss = require('./tasks/mergecss');
+const Injection = require('./tasks/injection');
 const Zipe = require('./tasks/zip');
-const Injection = require('./tasks/injectjs');
 
 const gulp = require('gulp');
 const minimist = require('minimist');
@@ -29,6 +30,10 @@ if (program.env) {
     }
 } else {
     program.env = 'development';
+}
+
+if (!program.cssfile) {
+    program.cssfile = 'style.css';
 }
 
 if (!program.jsfile) {
@@ -119,12 +124,14 @@ gulp.task('help', Empty.emptyTask(() => {
     console.log("  --platform         [Optional] only h5");
     console.log("  --index            [Optional] index.html file def: index.html");
     console.log("  --version          [Optional] version code def: read package.json");
+    console.log("  --cssfile          [Optional] cssfile def: style.css");
     console.log("  --jsfile           [Optional] jsfile def: code.js");
     console.log("  --projectname      [Optional] project name");
     console.log("  --packagename      [Optional] android package name");
     console.log("  --orientation      [Optional] android screen orientation");
     console.log("  --pngquant         [Optional] pngquant quality def:65-80");
     console.log("  --injection        [Optional] injection js file");
+    console.log("  --injection-append [Optional] injection append js file");
     console.log("  --bgcolor          [Optional] h5 body bg color");
     console.log("  --imgbase64        [Optional] h5 html image base64");
     console.log("  --zip              [Optional] [bool] zip build.zip");
@@ -145,11 +152,13 @@ gulp.task('template', Template.templateTask(`./tpl/build/${program.platform}`, p
 
 gulp.task('pngquant', Pngquant.pngquantTask(program.input, program.outputTemp, program.pngquant));
 
+gulp.task('mergeCss', Mergecss.mergeCssTask(`${program.input}/${program.index}`, program.outputTemp, program.cssfile, !program.obfuscate && program.min, replaceList));
+
 gulp.task('mergeJs', Mergejs.mergeJsTask(`${program.input}/${program.index}`, program.outputTemp, program.jsfile, !program.obfuscate && program.min, replaceList));
 
-gulp.task('zip', Zipe.zipTask(program.outputTemp));
+gulp.task('inject', Injection.injectTask(program.index, program.outputTemp, program.cssfile, program.jsfile, program.injection, program['injection-append'], program.force));
 
-gulp.task('injectJs', Injection.injectJsTask(program.index, program.outputTemp, program.jsfile, program.injection, program['injection-append'], program.force));
+gulp.task('zip', Zipe.zipTask(program.outputTemp));
 
 gulp.task('build', function (done) {
     let tasks = [];
@@ -165,11 +174,12 @@ gulp.task('build', function (done) {
         if (program.pngquant) {
             tasks.push('pngquant');
         }
+        tasks.push('mergeCss');
         tasks.push('mergeJs');
+        tasks.push('inject');
         if (program.zip) {
             tasks.push('zip');
         }
-        tasks.push('injectJs');
     }
     return gulp.series(tasks)((error) => {
         done();
