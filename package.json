@@ -50,7 +50,7 @@
     "gulp-sourcemaps": "2.6.5",
     "gulp-replace": "1.0.0",
     "gulp-javascript-obfuscator": "1.1.5",
-    "minimist": "1.2.0",
+    "minimist": "1.2.6",
     "through2": "3.0.0",
     "iconv-lite": "0.4.24",
     "layadcc": "1.8.3",
